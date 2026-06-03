@@ -1,0 +1,79 @@
+name: mkulima_app
+description: MkulimaForum - Agricultural Super App for East Africa
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # State Management
+  flutter_bloc: ^8.1.6
+  provider: ^6.1.2
+  
+  # Navigation
+  go_router: ^14.2.0
+  
+  # Networking
+  dio: ^5.4.3
+  retrofit: ^4.1.0
+  
+  # Offline-First Database
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.24
+  
+  # Local Storage
+  shared_preferences: ^2.2.3
+  flutter_secure_storage: ^9.2.2
+  
+  # Image Handling
+  cached_network_image: ^3.3.1
+  image_picker: ^1.1.2
+  
+  # AI / ML
+  tflite_flutter: ^0.10.4
+  google_generative_ai: ^0.4.3
+  
+  # Payments
+  flutter_mpesa: ^1.0.0
+  
+  # Push Notifications
+  firebase_messaging: ^15.0.2
+  flutter_local_notifications: ^17.2.1
+  
+  # Maps & Location
+  google_maps_flutter: ^2.7.0
+  geolocator: ^12.0.0
+  
+  # Utilities
+  intl: ^0.19.0
+  logger: ^2.3.0
+  equatable: ^2.0.5
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+  connectivity_plus: ^6.0.3
+  workmanager: ^0.5.2
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.11
+  drift_dev: ^2.18.0
+  retrofit_generator: ^8.1.0
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/models/disease_model.tflite
+    - assets/labels/disease_labels.txt
