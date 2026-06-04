@@ -6,7 +6,7 @@ import '../services/local_database.dart';
 class AuthProvider extends ChangeNotifier {
   final ApiService _api;
   final LocalDatabase _db;
-  
+
   User? _user;
   bool _isLoading = false;
   String? _error;
@@ -84,10 +84,10 @@ class AuthProvider extends ChangeNotifier {
       final token = response['token'];
       final userData = response['user'];
       _user = User.fromJson(userData);
-      
+
       _api.setToken(token);
       await _db.saveUser(_user!, token);
-      
+
       _isLoading = false;
       notifyListeners();
       return true;

@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import '../models/product.dart' as domain;
+import '../models/user.dart' as domain;
+import '../models/order.dart' as domain;
 
 part 'local_database.g.dart';
 
@@ -76,7 +78,7 @@ class LocalDatabase extends _$LocalDatabase {
       categoryId: Value(product.categoryId),
       sellerId: Value(product.sellerId),
       unit: Value(product.unit),
-      images: Value(product.images?.join(','));
+      images: Value(product.images?.join(',')),
       minOrder: Value(product.minOrder),
       isAvailable: Value(product.isAvailable),
       syncedAt: Value(DateTime.now()),

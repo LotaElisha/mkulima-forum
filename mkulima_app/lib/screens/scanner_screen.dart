@@ -117,6 +117,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2E7D32),
                     foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
               ),
@@ -126,6 +127,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   onPressed: () => _pickImage(ImageSource.gallery),
                   icon: const Icon(Icons.photo_library),
                   label: const Text('Ghalari'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                 ),
               ),
             ],
@@ -142,7 +146,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   foregroundColor: Colors.white,
                 ),
                 child: _isScanning
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text('Inachunguza...'),
+                        ],
+                      )
                     : const Text('Kagua Ugonjwa'),
               ),
             ),
@@ -154,15 +172,22 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Matokeo ya Uchunguzi',
-                      style: Theme.of(context).textTheme.titleLarge,
+                    Row(
+                      children: [
+                        Icon(Icons.medical_services, color: Colors.red[700]),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Matokeo ya Uchunguzi',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ],
                     ),
                     const Divider(),
                     _buildResultRow('Ugonjwa', _result!['disease_name'] ?? 'Haijulikani'),
                     _buildResultRow('Uthibitisho', '${((_result!['confidence'] ?? 0) * 100).toStringAsFixed(1)}%'),
+                    _buildResultRow('Dalili', _result!['symptoms'] ?? 'Hakuna maelezo'),
                     _buildResultRow('Tiba', _result!['treatment'] ?? 'Hakuna maelezo'),
-                    _buildResultRow('Kinga', _result!['prevention'] ?? 'Hakana maelezo'),
+                    _buildResultRow('Kinga', _result!['prevention'] ?? 'Hakuna maelezo'),
                   ],
                 ),
               ),
@@ -175,7 +200,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   Widget _buildResultRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -6,6 +6,7 @@ import 'forum_screen.dart';
 import 'scanner_screen.dart';
 import 'agronomist_screen.dart';
 import 'profile_screen.dart';
+import 'cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,6 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
         actions: [
+          if (_currentIndex == 0)
+            IconButton(
+              icon: const Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                );
+              },
+            ),
           if (auth.user != null)
             Padding(
               padding: const EdgeInsets.only(right: 16),

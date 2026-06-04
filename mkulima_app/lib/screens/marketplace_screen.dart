@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/connectivity_provider.dart';
 import '../services/api_service.dart';
 import '../models/product.dart';
+import 'product_detail_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -14,6 +15,7 @@ class MarketplaceScreen extends StatefulWidget {
 class _MarketplaceScreenState extends State<MarketplaceScreen> {
   List<Product> _products = [];
   bool _isLoading = true;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -48,13 +50,31 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               children: [
                 Icon(Icons.wifi_off, color: Colors.orange[800]),
                 const SizedBox(width: 8),
-                Text(
-                  'Hakuna mtandao. Baadhi ya data zinaweza kuwa zamani.',
-                  style: TextStyle(color: Colors.orange[800], fontSize: 12),
+                Expanded(
+                  child: Text(
+                    'Hakuna mtandao. Baadhi ya data zinaweza kuwa zamani.',
+                    style: TextStyle(color: Colors.orange[800], fontSize: 12),
+                  ),
                 ),
               ],
             ),
           ),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Tafuta bidhaa...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onChanged: (value) {
+              // Implement search
+            },
+          ),
+        ),
         Expanded(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -91,64 +111,73 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              color: Colors.grey[200],
-              child: product.images != null && product.images!.isNotEmpty
-                  ? Image.network(
-                      product.images!.first,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    )
-                  : const Center(
-                      child: Icon(Icons.image, size: 40, color: Colors.grey),
-                    ),
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(product: product),
           ),
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'TSh ${product.price.toStringAsFixed(0)} / ${product.unit}',
-                    style: TextStyle(
-                      color: Colors.green[700],
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Stock: ${product.stock}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+        );
+      },
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Container(
+                color: Colors.grey[200],
+                child: product.images != null && product.images!.isNotEmpty
+                    ? Image.network(
+                        product.images!.first,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      )
+                    : const Center(
+                        child: Icon(Icons.image, size: 40, color: Colors.grey),
+                      ),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'TSh ${product.price.toStringAsFixed(0)} / ${product.unit}',
+                      style: TextStyle(
+                        color: Colors.green[700],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Stock: ${product.stock}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

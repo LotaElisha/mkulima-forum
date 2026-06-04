@@ -14,8 +14,15 @@ class _AgronomistScreenState extends State<AgronomistScreen> {
   final List<Map<String, String>> _messages = [];
   bool _isLoading = false;
 
-  Future<void> _sendQuery() async {
-    final query = _queryController.text.trim();
+  final List<String> _quickQuestions = [
+    'Je, nawapiga dawa wadudu wanaoharibu mahindi?',
+    'Ni lini bora kupanda mbegu za nyanya?',
+    'Changamoto za ukame na suluhisho zake',
+    'Dawa bora za kuzuia magonjwa ya mizizi',
+    'Jinsi ya kuongeza mavuno ya mpunga',
+  ];
+
+  Future<void> _sendQuery(String query) async {
     if (query.isEmpty) return;
 
     setState(() {
@@ -49,38 +56,78 @@ class _AgronomistScreenState extends State<AgronomistScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: _messages.length,
-            itemBuilder: (context, index) {
-              final msg = _messages[index];
-              final isUser = msg['role'] == 'user';
-              return Align(
-                alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isUser
-                        ? const Color(0xFF2E7D32)
-                        : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.75,
-                  ),
-                  child: Text(
-                    msg['text']!,
+        if (_messages.isEmpty)
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.psychology, size: 60, color: Color(0xFF2E7D32)),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Mtaalamu wa AI',
                     style: TextStyle(
-                      color: isUser ? Colors.white : Colors.black87,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              );
-            },
+                  const SizedBox(height: 8),
+                  Text(
+                    'Uliza swali lolote kuhusu kilimo, mifugo, au dawa za mimea.',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Maswali Ya Kawaida:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  ..._quickQuestions.map((q) => Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      title: Text(q),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () => _sendQuery(q),
+                    ),
+                  )),
+                ],
+              ),
+            ),
+          )
+        else
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final msg = _messages[index];
+                final isUser = msg['role'] == 'user';
+                return Align(
+                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isUser
+                          ? const Color(0xFF2E7D32)
+                          : Colors.grey[200],
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.75,
+                    ),
+                    child: Text(
+                      msg['text']!,
+                      style: TextStyle(
+                        color: isUser ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
-        ),
         if (_isLoading)
           const Padding(
             padding: EdgeInsets.all(8),
@@ -103,7 +150,7 @@ class _AgronomistScreenState extends State<AgronomistScreen> {
                       vertical: 14,
                     ),
                   ),
-                  onSubmitted: (_) => _sendQuery(),
+                  onSubmitted: (value) => _sendQuery(value),
                 ),
               ),
               const SizedBox(width: 8),
@@ -111,7 +158,7 @@ class _AgronomistScreenState extends State<AgronomistScreen> {
                 backgroundColor: const Color(0xFF2E7D32),
                 child: IconButton(
                   icon: const Icon(Icons.send, color: Colors.white),
-                  onPressed: _sendQuery,
+                  onPressed: () => _sendQuery(_queryController.text),
                 ),
               ),
             ],

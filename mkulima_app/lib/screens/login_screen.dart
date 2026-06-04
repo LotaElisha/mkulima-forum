@@ -72,7 +72,18 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              const Icon(Icons.eco, size: 60, color: Color(0xFF2E7D32)),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2E7D32).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.eco,
+                  size: 60,
+                  color: Color(0xFF2E7D32),
+                ),
+              ),
               const SizedBox(height: 24),
               Text(
                 'Karibu MkulimaForum',
@@ -119,9 +130,24 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
               if (auth.error != null) ...[
                 const SizedBox(height: 12),
-                Text(
-                  auth.error!,
-                  style: const TextStyle(color: Colors.red),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error, color: Colors.red[700], size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          auth.error!,
+                          style: TextStyle(color: Colors.red[700]),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
               const SizedBox(height: 24),
@@ -140,7 +166,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   child: auth.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : Text(_otpSent ? 'Thibitisha' : 'Pata OTP'),
                 ),
               ),

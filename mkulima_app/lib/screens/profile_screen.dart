@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
+import 'orders_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -23,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
             radius: 50,
             backgroundColor: const Color(0xFF2E7D32),
             child: Text(
-              user.name[0].toUpperCase(),
+              user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
               style: const TextStyle(fontSize: 36, color: Colors.white),
             ),
           ),
@@ -49,7 +50,11 @@ class ProfileScreen extends StatelessWidget {
           _buildMenuItem(
             icon: Icons.shopping_bag,
             title: 'Maagizo Yangu',
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const OrdersScreen()),
+              );
+            },
           ),
           _buildMenuItem(
             icon: Icons.location_on,
@@ -66,6 +71,11 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.verified_user,
             title: 'KYC Status',
             subtitle: user.kycStatus.toUpperCase(),
+            onTap: () {},
+          ),
+          _buildMenuItem(
+            icon: Icons.help,
+            title: 'Msaada',
             onTap: () {},
           ),
           const SizedBox(height: 32),
@@ -100,12 +110,15 @@ class ProfileScreen extends StatelessWidget {
     String? subtitle,
     required VoidCallback onTap,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: const Color(0xFF2E7D32)),
-      title: Text(title),
-      subtitle: subtitle != null ? Text(subtitle) : null,
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: Icon(icon, color: const Color(0xFF2E7D32)),
+        title: Text(title),
+        subtitle: subtitle != null ? Text(subtitle) : null,
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
+      ),
     );
   }
 }
