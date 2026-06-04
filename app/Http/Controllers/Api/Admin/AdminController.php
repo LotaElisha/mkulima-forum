@@ -18,6 +18,14 @@ class AdminController extends Controller
     public function dashboard(): JsonResponse
     {
         $stats = [
+            'total_users' => User::count(),
+            'total_orders' => Order::count(),
+            'total_revenue' => Order::where('status', 'completed')->sum('total'),
+            'active_escrows' => Escrow::where('status', 'held')->count(),
+            'pending_kyc' => User::where('kyc_status', 'pending')->count(),
+            'active_orders' => Order::whereIn('status', ['pending', 'paid', 'processing'])->count(),
+            'escrow_holdings' => Escrow::where('status', 'held')->sum('amount'),
+            'new_today' => User::whereDate('created_at', today())->count(),
             'users' => [
                 'total' => User::count(),
                 'farmers' => User::where('role', 'farmer')->count(),
@@ -52,6 +60,19 @@ class AdminController extends Controller
         return response()->json($stats);
     }
 
+    public function showUser(string $uuid): JsonResponse
+    {
+        $user = User::where('uuid', $uuid)
+            ->with('tenant')
+            ->firstOrFail();
+
+        return response()->json([
+            'user' => $user,
+            'permissions' => $user->getAllPermissions()->pluck('name'),
+            'roles' => $user->getRoleNames(),
+        ]);
+    }
+
     public function users(Request $request): JsonResponse
     {
         $query = User::with('tenant')->latest();
@@ -73,7 +94,11 @@ class AdminController extends Controller
             });
         }
 
-        return response()->json($query->paginate(50));
+        $users = $query->paginate(50);
+
+        return response()->json([
+            'users' => $users
+        ]);
     }
 
     public function updateUser(Request $request, string $uuid): JsonResponse
@@ -82,16 +107,63 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'role' => 'sometimes|string|in:farmer,agrodealer,agronomist,veterinary,admin',
-            'kyc_status' => 'sometimes|string|in:pending,verified,rejected',
-            'is_active' => 'sometimes|boolean',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
+            'phone' => 'sometimes|string|regex:/^255[0-9]{9}$/|unique:users,phone,' . $user->id,
+            'role' => 'sometimes|string|in:farmer,agrodealer,agronomist,veterinary,buyer,seller,admin,superadmin',
+            'kyc_status' => 'sometimes|string|in:pending,verified,rejected,not_submitted',
+            'status' => 'sometimes|string|in:active,suspended,terminated',
+            'preferred_language' => 'sometimes|string|in:sw,en,lg,rw,fr',
         ]);
 
         $user->update($validated);
 
         return response()->json([
-            'message' => 'User updated',
+            'message' => 'User updated successfully',
             'user' => $user,
+        ]);
+    }
+
+    public function createUser(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'phone' => 'required|string|regex:/^255[0-9]{9}$/|unique:users',
+            'password' => 'required|string|min:8',
+            'role' => 'required|string|in:farmer,agrodealer,agronomist,veterinary,buyer,seller',
+            'tenant_id' => 'required|exists:tenants,id',
+            'kyc_status' => 'string|in:pending,verified,rejected,not_submitted',
+            'status' => 'string|in:active,suspended',
+        ]);
+
+        $validated['password'] = bcrypt($validated['password']);
+        $validated['uuid'] = \Illuminate\Support\Str::uuid();
+        $validated['kyc_status'] = $validated['kyc_status'] ?? 'not_submitted';
+        $validated['status'] = $validated['status'] ?? 'active';
+
+        $user = User::create($validated);
+        $user->assignRole($validated['role']);
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $user,
+        ], 201);
+    }
+
+    public function deleteUser(string $uuid): JsonResponse
+    {
+        $user = User::where('uuid', $uuid)->firstOrFail();
+        
+        // Prevent deleting self
+        if ($user->id === auth()->id()) {
+            return response()->json(['message' => 'Cannot delete your own account'], 403);
+        }
+
+        $user->tokens()->delete();
+        $user->delete();
+
+        return response()->json([
+            'message' => 'User deleted successfully',
         ]);
     }
 
@@ -103,7 +175,64 @@ class AdminController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        return response()->json($query->paginate(50));
+        $orders = $query->paginate(50);
+
+        return response()->json([
+            'orders' => $orders
+        ]);
+    }
+
+    public function showOrder(string $uuid): JsonResponse
+    {
+        $order = Order::where('uuid', $uuid)
+            ->with(['buyer', 'seller', 'items.product'])
+            ->firstOrFail();
+
+        return response()->json([
+            'order' => $order
+        ]);
+    }
+
+    public function updateOrder(Request $request, string $uuid): JsonResponse
+    {
+        $order = Order::where('uuid', $uuid)->firstOrFail();
+
+        $validated = $request->validate([
+            'status' => 'sometimes|string|in:pending,paid,processing,shipped,delivered,cancelled,refunded',
+            'payment_status' => 'sometimes|string|in:pending,paid,failed,refunded',
+            'notes' => 'nullable|string',
+            'delivery_address' => 'nullable|string',
+            'delivery_phone' => 'nullable|string',
+        ]);
+
+        $order->update($validated);
+
+        // Update timestamps based on status
+        if ($request->input('status') === 'paid' && !$order->paid_at) {
+            $order->update(['paid_at' => now()]);
+        }
+        if ($request->input('status') === 'shipped' && !$order->shipped_at) {
+            $order->update(['shipped_at' => now()]);
+        }
+        if ($request->input('status') === 'delivered' && !$order->delivered_at) {
+            $order->update(['delivered_at' => now()]);
+        }
+
+        return response()->json([
+            'message' => 'Order updated successfully',
+            'order' => $order->fresh()->load('buyer', 'seller', 'items.product'),
+        ]);
+    }
+
+    public function deleteOrder(string $uuid): JsonResponse
+    {
+        $order = Order::where('uuid', $uuid)->firstOrFail();
+        $order->items()->delete();
+        $order->delete();
+
+        return response()->json([
+            'message' => 'Order deleted successfully',
+        ]);
     }
 
     public function escrows(Request $request): JsonResponse
@@ -114,7 +243,11 @@ class AdminController extends Controller
             $query->where('status', $request->input('status'));
         }
 
-        return response()->json($query->paginate(50));
+        $escrows = $query->paginate(50);
+
+        return response()->json([
+            'escrows' => $escrows
+        ]);
     }
 
     public function releaseEscrow(Request $request, string $uuid): JsonResponse
@@ -144,7 +277,9 @@ class AdminController extends Controller
             ->latest()
             ->paginate(20);
 
-        return response()->json($users);
+        return response()->json([
+            'kyc' => $users
+        ]);
     }
 
     public function verifyKyc(Request $request, string $uuid): JsonResponse

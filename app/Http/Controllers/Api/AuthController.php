@@ -21,6 +21,45 @@ class AuthController extends Controller
     }
 
     /**
+     * Login with email and password (for admin dashboard)
+     */
+    public function login(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::where('email', $request->input('email'))->first();
+
+        if (!$user || !Hash::check($request->input('password'), $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials.',
+            ], 401);
+        }
+
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'Account is not active.',
+            ], 403);
+        }
+
+        $token = $user->createToken('admin-dashboard', ['*'])->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful.',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'user' => [
+                'uuid' => $user->uuid,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
+        ]);
+    }
+
+    /**
      * Request OTP for phone verification
      */
     public function requestOtp(Request $request): JsonResponse

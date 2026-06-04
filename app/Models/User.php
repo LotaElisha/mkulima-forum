@@ -18,8 +18,10 @@ class User extends Authenticatable
         'phone',
         'email',
         'name',
+        'password',
         'avatar',
         'role',
+        'status',
         'kyc_status',
         'kyc_documents',
         'device_fingerprint',
@@ -31,6 +33,7 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
+        'password',
         'remember_token',
     ];
 

@@ -8,6 +8,12 @@ use App\Http\Controllers\Api\DiseaseScannerController;
 use App\Http\Controllers\Api\AgronomistController;
 use App\Http\Controllers\Api\Payments\PaymentController;
 use App\Http\Controllers\Api\Admin\AdminController;
+use App\Http\Controllers\Api\Admin\AdminProfileController;
+use App\Http\Controllers\Api\Admin\CatalogController;
+use App\Http\Controllers\Api\Admin\FinancialReportController;
+use App\Http\Controllers\Api\Admin\HrController;
+use App\Http\Controllers\Api\Admin\PosController;
+use App\Http\Controllers\Api\Admin\VendorController;
 use App\Http\Middleware\AdminMiddleware;
 
 /*
@@ -32,6 +38,7 @@ Route::get('/health', function () {
 */
 
 Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
     Route::post('/otp/request', [AuthController::class, 'requestOtp']);
     Route::post('/otp/verify', [AuthController::class, 'verifyOtp']);
 
@@ -130,8 +137,14 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard']);
         Route::get('/users', [AdminController::class, 'users']);
+        Route::post('/users', [AdminController::class, 'createUser']);
+        Route::get('/users/{uuid}', [AdminController::class, 'showUser']);
         Route::put('/users/{uuid}', [AdminController::class, 'updateUser']);
+        Route::delete('/users/{uuid}', [AdminController::class, 'deleteUser']);
         Route::get('/orders', [AdminController::class, 'orders']);
+        Route::get('/orders/{uuid}', [AdminController::class, 'showOrder']);
+        Route::put('/orders/{uuid}', [AdminController::class, 'updateOrder']);
+        Route::delete('/orders/{uuid}', [AdminController::class, 'deleteOrder']);
         Route::get('/escrows', [AdminController::class, 'escrows']);
         Route::post('/escrows/{uuid}/release', [AdminController::class, 'releaseEscrow']);
         Route::post('/escrows/{uuid}/refund', [AdminController::class, 'refundEscrow']);
@@ -139,4 +152,51 @@ Route::prefix('admin')
         Route::post('/kyc/{uuid}/verify', [AdminController::class, 'verifyKyc']);
         Route::post('/kyc/{uuid}/reject', [AdminController::class, 'rejectKyc']);
         Route::get('/analytics', [AdminController::class, 'analytics']);
+
+        // Admin Profile
+        Route::get('/profile', [AdminProfileController::class, 'show']);
+        Route::put('/profile', [AdminProfileController::class, 'update']);
+        Route::post('/profile/change-password', [AdminProfileController::class, 'changePassword']);
+        Route::post('/profile/avatar', [AdminProfileController::class, 'updateAvatar']);
+        Route::get('/profile/activity', [AdminProfileController::class, 'activityLog']);
+
+        // Human Resources
+        Route::get('/hr/staff', [HrController::class, 'index']);
+        Route::post('/hr/staff', [HrController::class, 'store']);
+        Route::get('/hr/staff/{uuid}', [HrController::class, 'show']);
+        Route::put('/hr/staff/{uuid}', [HrController::class, 'update']);
+        Route::delete('/hr/staff/{uuid}', [HrController::class, 'destroy']);
+        Route::get('/hr/statistics', [HrController::class, 'statistics']);
+        Route::post('/hr/staff/{uuid}/permissions', [HrController::class, 'assignPermissions']);
+
+        // Field POS Terminal
+        Route::get('/pos/products', [PosController::class, 'searchProducts']);
+        Route::post('/pos/orders', [PosController::class, 'createOrder']);
+        Route::get('/pos/orders/{uuid}/receipt', [PosController::class, 'receipt']);
+        Route::get('/pos/history', [PosController::class, 'history']);
+        Route::get('/pos/daily-summary', [PosController::class, 'dailySummary']);
+
+        // Market Catalog Management
+        Route::get('/catalog/products', [CatalogController::class, 'index']);
+        Route::post('/catalog/products', [CatalogController::class, 'store']);
+        Route::get('/catalog/products/{uuid}', [CatalogController::class, 'show']);
+        Route::put('/catalog/products/{uuid}', [CatalogController::class, 'update']);
+        Route::delete('/catalog/products/{uuid}', [CatalogController::class, 'destroy']);
+        Route::post('/catalog/products/bulk-delete', [CatalogController::class, 'bulkDelete']);
+        Route::post('/catalog/products/bulk-status', [CatalogController::class, 'bulkUpdateStatus']);
+        Route::post('/catalog/products/export', [CatalogController::class, 'export']);
+        Route::get('/catalog/low-stock', [CatalogController::class, 'lowStock']);
+        Route::get('/catalog/categories', [CatalogController::class, 'categories']);
+
+        // Vendor & Partner Audit
+        Route::get('/vendors', [VendorController::class, 'index']);
+        Route::get('/vendors/{uuid}', [VendorController::class, 'show']);
+        Route::put('/vendors/{uuid}', [VendorController::class, 'update']);
+        Route::post('/vendors/{uuid}/suspend', [VendorController::class, 'suspend']);
+        Route::post('/vendors/{uuid}/reactivate', [VendorController::class, 'reactivate']);
+        Route::get('/vendors/{uuid}/reviews', [VendorController::class, 'reviews']);
+
+        // Financial Reports
+        Route::get('/financial-reports', [FinancialReportController::class, 'index']);
+        Route::get('/financial-reports/daily', [FinancialReportController::class, 'dailyReport']);
     });
