@@ -7,6 +7,7 @@ import 'scanner_screen.dart';
 import 'agronomist_screen.dart';
 import 'profile_screen.dart';
 import 'cart_screen.dart';
+import 'notifications_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,6 +54,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const NotificationsScreen(),
+                ),
+              );
+            },
+          ),
           if (auth.user != null)
             Padding(
               padding: const EdgeInsets.only(right: 16),
@@ -71,23 +82,28 @@ class _HomeScreenState extends State<HomeScreen> {
         onDestinationSelected: (index) => setState(() => _currentIndex = index),
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.store),
+            icon: Icon(Icons.store_outlined),
+            selectedIcon: Icon(Icons.store),
             label: 'Soko',
           ),
           NavigationDestination(
-            icon: Icon(Icons.forum),
+            icon: Icon(Icons.forum_outlined),
+            selectedIcon: Icon(Icons.forum),
             label: 'Jukwaa',
           ),
           NavigationDestination(
-            icon: Icon(Icons.camera_alt),
+            icon: Icon(Icons.camera_alt_outlined),
+            selectedIcon: Icon(Icons.camera_alt),
             label: 'Kagua',
           ),
           NavigationDestination(
-            icon: Icon(Icons.psychology),
+            icon: Icon(Icons.psychology_outlined),
+            selectedIcon: Icon(Icons.psychology),
             label: 'AI',
           ),
           NavigationDestination(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
             label: 'Wasifu',
           ),
         ],

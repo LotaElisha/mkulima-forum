@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 import 'orders_screen.dart';
+import 'kyc_screen.dart';
+import 'settings_screen.dart';
+import 'seller_dashboard_screen.dart';
+import 'notifications_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -48,6 +52,16 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           _buildMenuItem(
+            icon: Icons.notifications,
+            title: 'Arifa',
+            badge: '2',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              );
+            },
+          ),
+          _buildMenuItem(
             icon: Icons.shopping_bag,
             title: 'Maagizo Yangu',
             onTap: () {
@@ -56,22 +70,36 @@ class ProfileScreen extends StatelessWidget {
               );
             },
           ),
-          _buildMenuItem(
-            icon: Icons.location_on,
-            title: 'Anwani ya Utoaji',
-            onTap: () {},
-          ),
-          _buildMenuItem(
-            icon: Icons.language,
-            title: 'Lugha',
-            subtitle: user.preferredLanguage == 'sw' ? 'Kiswahili' : 'English',
-            onTap: () {},
-          ),
+          if (user.role == 'farmer' || user.role == 'agrodealer')
+            _buildMenuItem(
+              icon: Icons.store,
+              title: 'Dashibodi ya Muuzaji',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SellerDashboardScreen(),
+                  ),
+                );
+              },
+            ),
           _buildMenuItem(
             icon: Icons.verified_user,
-            title: 'KYC Status',
+            title: 'KYC Verification',
             subtitle: user.kycStatus.toUpperCase(),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const KycScreen()),
+              );
+            },
+          ),
+          _buildMenuItem(
+            icon: Icons.settings,
+            title: 'Mipangilio',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
           ),
           _buildMenuItem(
             icon: Icons.help,
@@ -108,6 +136,7 @@ class ProfileScreen extends StatelessWidget {
     required IconData icon,
     required String title,
     String? subtitle,
+    String? badge,
     required VoidCallback onTap,
   }) {
     return Card(
@@ -116,7 +145,19 @@ class ProfileScreen extends StatelessWidget {
         leading: Icon(icon, color: const Color(0xFF2E7D32)),
         title: Text(title),
         subtitle: subtitle != null ? Text(subtitle) : null,
-        trailing: const Icon(Icons.chevron_right),
+        trailing: badge != null
+            ? Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badge,
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              )
+            : const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
     );

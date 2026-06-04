@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import 'payment_screen.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -64,6 +65,13 @@ class ProductDetailScreen extends StatelessWidget {
                   'Stock: ${product.stock} ${product.unit}',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
+                const SizedBox(width: 16),
+                Icon(Icons.local_shipping, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  'Escrow',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -77,29 +85,54 @@ class ProductDetailScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
             const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Add to cart / order
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Imeongezwa kwenye rukwama')),
-                  );
-                },
-                icon: const Icon(Icons.shopping_cart),
-                label: const Text(
-                  'Nunua Sasa',
-                  style: TextStyle(fontSize: 18),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 56,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Imeongezwa kwenye rukwama'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.shopping_cart),
+                      label: const Text('Ongeza Rukwama'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF2E7D32),
+                        side: const BorderSide(color: Color(0xFF2E7D32)),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: SizedBox(
+                    height: 56,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => PaymentScreen(
+                              amount: product.price,
+                              orderId: product.id,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.payment),
+                      label: const Text('Nunua Sasa'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2E7D32),
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

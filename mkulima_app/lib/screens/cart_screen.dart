@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -33,6 +34,15 @@ class _CartScreenState extends State<CartScreen> {
                     'Rukwama yako ni tupu',
                     style: TextStyle(color: Colors.grey[600]),
                   ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2E7D32),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Endelea Kununua'),
+                  ),
                 ],
               ),
             )
@@ -50,7 +60,10 @@ class _CartScreenState extends State<CartScreen> {
                           leading: Container(
                             width: 60,
                             height: 60,
-                            color: Colors.grey[200],
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             child: const Icon(Icons.image, color: Colors.grey),
                           ),
                           title: Text(item['name']),
@@ -60,7 +73,8 @@ class _CartScreenState extends State<CartScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.remove_circle),
+                                icon: const Icon(Icons.remove_circle,
+                                    color: Colors.red),
                                 onPressed: () {
                                   setState(() {
                                     if (item['quantity'] > 1) {
@@ -73,7 +87,8 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               Text('${item['quantity']}'),
                               IconButton(
-                                icon: const Icon(Icons.add_circle),
+                                icon: const Icon(Icons.add_circle,
+                                    color: Color(0xFF2E7D32)),
                                 onPressed: () {
                                   setState(() => item['quantity']++);
                                 },
@@ -125,7 +140,14 @@ class _CartScreenState extends State<CartScreen> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () {
-                              // Proceed to checkout
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => PaymentScreen(
+                                    amount: _total,
+                                    orderId: 'cart_${DateTime.now().millisecondsSinceEpoch}',
+                                  ),
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF2E7D32),
