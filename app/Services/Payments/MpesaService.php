@@ -16,11 +16,11 @@ class MpesaService
 
     public function __construct()
     {
-        $this->consumerKey = config('services.mpesa.consumer_key', '');
-        $this->consumerSecret = config('services.mpesa.consumer_secret', '');
-        $this->passkey = config('services.mpesa.passkey', '');
-        $this->shortcode = config('services.mpesa.shortcode', '174379');
-        $this->sandbox = config('services.mpesa.sandbox', true);
+        $this->consumerKey = config('services.mpesa.consumer_key') ?? '';
+        $this->consumerSecret = config('services.mpesa.consumer_secret') ?? '';
+        $this->passkey = config('services.mpesa.passkey') ?? '';
+        $this->shortcode = config('services.mpesa.shortcode') ?? '174379';
+        $this->sandbox = (bool) (config('services.mpesa.sandbox') ?? true);
         $this->baseUrl = $this->sandbox
             ? 'https://sandbox.safaricom.co.ke'
             : 'https://api.safaricom.co.ke';

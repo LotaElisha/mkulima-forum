@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -15,6 +15,7 @@ import PosTerminal from './pages/PosTerminal'
 import CatalogManager from './pages/CatalogManager'
 import Vendors from './pages/Vendors'
 import FinancialReports from './pages/FinancialReports'
+import FeatureFlags from './pages/FeatureFlags'
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('admin_token')
@@ -29,7 +30,7 @@ function ProtectedRoute({ children }) {
         return
       }
       try {
-        const res = await fetch('http://76.13.56.180:8000/api/auth/me', {
+        const res = await fetch('/api/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {
@@ -55,14 +56,14 @@ function ProtectedRoute({ children }) {
     )
   }
 
-  return isAuth ? children : <Navigate to="/admin/login" replace />
+  return isAuth ? children : <Navigate to="/login" replace />
 }
 
 function App() {
   return (
     <Routes>
-      <Route path="/admin/login" element={<Login />} />
-      <Route path="/admin" element={
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={
         <ProtectedRoute>
           <Layout />
         </ProtectedRoute>
@@ -80,6 +81,7 @@ function App() {
         <Route path="catalog" element={<CatalogManager />} />
         <Route path="vendors" element={<Vendors />} />
         <Route path="financial-reports" element={<FinancialReports />} />
+        <Route path="features" element={<FeatureFlags />} />
       </Route>
     </Routes>
   )

@@ -39,6 +39,7 @@ Route::get('/health', function () {
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login/email', [AuthController::class, 'loginWithEmail']);
     Route::post('/otp/request', [AuthController::class, 'requestOtp']);
     Route::post('/otp/verify', [AuthController::class, 'verifyOtp']);
 
@@ -56,10 +57,15 @@ Route::prefix('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('marketplace')->middleware('auth:sanctum')->group(function () {
+// Public - browse without login
+Route::prefix('marketplace')->group(function () {
     Route::get('/categories', [MarketplaceController::class, 'categories']);
     Route::get('/products', [MarketplaceController::class, 'products']);
     Route::get('/products/{uuid}', [MarketplaceController::class, 'product']);
+});
+
+// Protected - requires login
+Route::prefix('marketplace')->middleware('auth:sanctum')->group(function () {
     Route::post('/products', [MarketplaceController::class, 'createProduct']);
     Route::put('/products/{uuid}', [MarketplaceController::class, 'updateProduct']);
     Route::delete('/products/{uuid}', [MarketplaceController::class, 'deleteProduct']);
@@ -75,14 +81,20 @@ Route::prefix('marketplace')->middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('forum')->middleware('auth:sanctum')->group(function () {
+// Public - read without login
+Route::prefix('forum')->group(function () {
     Route::get('/categories', [ForumController::class, 'categories']);
     Route::get('/threads', [ForumController::class, 'threads']);
-    Route::post('/threads', [ForumController::class, 'createThread']);
     Route::get('/threads/{uuid}', [ForumController::class, 'thread']);
+});
+
+// Protected - requires login to post
+Route::prefix('forum')->middleware('auth:sanctum')->group(function () {
+    Route::post('/threads', [ForumController::class, 'createThread']);
     Route::post('/threads/{uuid}/replies', [ForumController::class, 'createReply']);
     Route::post('/threads/{uuid}/upvote', [ForumController::class, 'upvoteThread']);
     Route::post('/replies/{replyId}/upvote', [ForumController::class, 'upvoteReply']);
+    Route::post('/replies/{replyId}/mark-expert-answer', [ForumController::class, 'markExpertAnswer']);
 });
 
 /*
@@ -91,8 +103,13 @@ Route::prefix('forum')->middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('scanner')->middleware('auth:sanctum')->group(function () {
+// Public - AI scan without login
+Route::prefix('scanner')->group(function () {
     Route::post('/scan', [DiseaseScannerController::class, 'scan']);
+});
+
+// Protected - history requires login
+Route::prefix('scanner')->middleware('auth:sanctum')->group(function () {
     Route::get('/history', [DiseaseScannerController::class, 'history']);
     Route::get('/scans/{uuid}', [DiseaseScannerController::class, 'show']);
 });
@@ -103,10 +120,36 @@ Route::prefix('scanner')->middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('agronomist')->middleware('auth:sanctum')->group(function () {
-    Route::post('/ask', [AgronomistController::class, 'ask']);
+// Public - KB search without login
+Route::prefix('agronomist')->group(function () {
     Route::get('/kb/search', [AgronomistController::class, 'searchKb']);
     Route::get('/kb/{uuid}', [AgronomistController::class, 'kbDocument']);
+});
+
+// Protected - ask requires login
+Route::prefix('agronomist')->middleware('auth:sanctum')->group(function () {
+    Route::post('/ask', [AgronomistController::class, 'ask']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Services Marketplace Routes (agronomist / veterinary / soil testing)
+|--------------------------------------------------------------------------
+*/
+
+// Public - browse provider directory
+Route::prefix('services')->group(function () {
+    Route::get('/providers', [\App\Http\Controllers\Api\ServiceBookingController::class, 'providers']);
+    Route::get('/providers/{uuid}', [\App\Http\Controllers\Api\ServiceBookingController::class, 'provider']);
+});
+
+// Protected - register & book
+Route::prefix('services')->middleware('auth:sanctum')->group(function () {
+    Route::post('/providers', [\App\Http\Controllers\Api\ServiceBookingController::class, 'registerProvider']);
+    Route::get('/bookings', [\App\Http\Controllers\Api\ServiceBookingController::class, 'bookings']);
+    Route::post('/bookings', [\App\Http\Controllers\Api\ServiceBookingController::class, 'createBooking']);
+    Route::put('/bookings/{uuid}', [\App\Http\Controllers\Api\ServiceBookingController::class, 'updateBooking']);
+    Route::post('/bookings/{uuid}/rate', [\App\Http\Controllers\Api\ServiceBookingController::class, 'rateBooking']);
 });
 
 /*
@@ -199,4 +242,119 @@ Route::prefix('admin')
         // Financial Reports
         Route::get('/financial-reports', [FinancialReportController::class, 'index']);
         Route::get('/financial-reports/daily', [FinancialReportController::class, 'dailyReport']);
+
+        // Feature Flags Management
+        Route::get('/features', [\App\Http\Controllers\Admin\FeatureController::class, 'index']);
+        Route::post('/features/{key}/toggle', [\App\Http\Controllers\Admin\FeatureController::class, 'toggle']);
+        Route::put('/features/{key}', [\App\Http\Controllers\Admin\FeatureController::class, 'update']);
+        Route::get('/features/category/{category}', [\App\Http\Controllers\Admin\FeatureController::class, 'byCategory']);
     });
+
+
+// Notifications API
+require __DIR__ . '/api_notifications.php';
+
+
+// Seller API
+require __DIR__ . '/api_seller.php';
+
+
+// KYC API
+require __DIR__ . '/api_kyc.php';
+
+/*
+|--------------------------------------------------------------------------
+| Weather Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('weather')->group(function () {
+    Route::get('/current', [\App\Http\Controllers\Api\WeatherController::class, 'current']);
+    Route::get('/forecast', [\App\Http\Controllers\Api\WeatherController::class, 'forecast']);
+    Route::get('/advisory', [\App\Http\Controllers\Api\WeatherController::class, 'advisory']);
+    Route::get('/report', [\App\Http\Controllers\Api\WeatherController::class, 'fullReport']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| SMS Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('sms')->middleware('auth:sanctum')->group(function () {
+    Route::post('/send', [\App\Http\Controllers\Api\SmsController::class, 'send']);
+    Route::get('/history', [\App\Http\Controllers\Api\SmsController::class, 'getHistory']);
+});
+
+Route::post('/sms/callback', [\App\Http\Controllers\Api\SmsController::class, 'callback']);
+Route::post('/sms/receive', [\App\Http\Controllers\Api\SmsController::class, 'receive']);
+
+/*
+|--------------------------------------------------------------------------
+| Wallet Routes (Mkulima Pay)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('wallet')->middleware('auth:sanctum')->group(function () {
+    Route::get('/balance', [\App\Http\Controllers\Api\WalletController::class, 'getBalance']);
+    Route::get('/transactions', [\App\Http\Controllers\Api\WalletController::class, 'getTransactions']);
+    Route::post('/deposit', [\App\Http\Controllers\Api\WalletController::class, 'deposit']);
+    Route::post('/withdraw', [\App\Http\Controllers\Api\WalletController::class, 'withdraw']);
+    Route::post('/transfer', [\App\Http\Controllers\Api\WalletController::class, 'transfer']);
+    Route::get('/history', [\App\Http\Controllers\Api\WalletController::class, 'getTransactions']);
+    Route::get('/stats', [\App\Http\Controllers\Api\WalletController::class, 'getBalance']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| IVR Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('ivr')->group(function () {
+    Route::post('/incoming', [\App\Http\Controllers\Api\IvrController::class, 'handleIncoming']);
+    Route::post('/callback', [\App\Http\Controllers\Api\IvrController::class, 'handleCallback']);
+});
+
+// Weather APIs
+Route::get('/weather/current', [App\Http\Controllers\Api\WeatherController::class, 'getCurrent']);
+Route::get('/weather/advisory', [App\Http\Controllers\Api\WeatherController::class, 'getAdvisory']);
+
+// Admin Feature Management
+Route::prefix('admin')->middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
+    Route::get('/features', [App\Http\Controllers\Admin\FeatureController::class, 'index']);
+    Route::post('/features/{key}/toggle', [App\Http\Controllers\Admin\FeatureController::class, 'toggle']);
+    Route::put('/features/{key}', [App\Http\Controllers\Admin\FeatureController::class, 'update']);
+    Route::get('/features/category/{category}', [App\Http\Controllers\Admin\FeatureController::class, 'byCategory']);
+});
+
+// Public feature status
+Route::get('/features/status', [App\Http\Controllers\Admin\FeatureController::class, 'publicStatus']);
+Route::get('/features/check/{key}', [App\Http\Controllers\Admin\FeatureController::class, 'check']);
+
+// Drone APIs
+Route::get('/drone/services', [App\Http\Controllers\Api\DroneController::class, 'services']);
+Route::middleware('auth:sanctum')->prefix('drone')->group(function () {
+    Route::post('/book', [App\Http\Controllers\Api\DroneController::class, 'book']);
+    Route::get('/bookings', [App\Http\Controllers\Api\DroneController::class, 'myBookings']);
+});
+
+// IoT APIs
+Route::get('/iot/sensors', [App\Http\Controllers\Api\IoTController::class, 'sensors']);
+Route::middleware('auth:sanctum')->prefix('iot')->group(function () {
+    Route::get('/my-sensors', [App\Http\Controllers\Api\IoTController::class, 'mySensors']);
+    Route::get('/readings/{sensorId}', [App\Http\Controllers\Api\IoTController::class, 'readings']);
+    Route::post('/readings', [App\Http\Controllers\Api\IoTController::class, 'storeReading']);
+});
+
+// Yield Estimation APIs
+Route::middleware('auth:sanctum')->prefix('yield')->group(function () {
+    Route::post('/estimate', [App\Http\Controllers\Api\YieldController::class, 'estimate']);
+    Route::post('/analyze-photo', [App\Http\Controllers\Api\YieldController::class, 'analyzePhoto']);
+    Route::get('/history', [App\Http\Controllers\Api\YieldController::class, 'history']);
+});
+
+// Escrow APIs
+Route::middleware('auth:sanctum')->prefix('escrow')->group(function () {
+    Route::post('/create', [App\Http\Controllers\Api\EscrowController::class, 'create']);
+    Route::get('/my-escrows', [App\Http\Controllers\Api\EscrowController::class, 'myEscrows']);
+    Route::post('/{escrowId}/release', [App\Http\Controllers\Api\EscrowController::class, 'release']);
+    Route::post('/{escrowId}/dispute', [App\Http\Controllers\Api\EscrowController::class, 'dispute']);
+    Route::get('/stats', [App\Http\Controllers\Api\EscrowController::class, 'stats']);
+});

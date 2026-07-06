@@ -13,6 +13,10 @@ class EscrowLedger extends Model
 
     protected $fillable = [
         'escrow_id',
+        'entry_type',
+        'amount',
+        'balance_after',
+        'description',
         'from_status',
         'to_status',
         'triggered_by',
@@ -20,6 +24,8 @@ class EscrowLedger extends Model
     ];
 
     protected $casts = [
+        'amount' => 'decimal:2',
+        'balance_after' => 'decimal:2',
         'metadata' => 'array',
     ];
 

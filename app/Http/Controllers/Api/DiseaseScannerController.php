@@ -28,21 +28,26 @@ class DiseaseScannerController extends Controller
         $imagePath = $request->file('image')->store('disease-scans', 'public');
         $fullPath = Storage::disk('public')->path($imagePath);
 
-        // Try on-device TF Lite first (simulated for now)
-        $useCloud = $request->boolean('use_cloud', false);
-        $tfliteResult = null;
+        // v1 is cloud-only (Gemini Vision). On-device TF Lite is a Phase 3 feature —
+        // see REDESIGN.md. We do not pretend to run local inference.
+        $finalResult = $this->runGeminiInference($fullPath, $validated['crop_type'] ?? null);
 
-        if (!$useCloud) {
-            $tfliteResult = $this->runTfliteInference($fullPath, $validated['crop_type'] ?? null);
-        }
+        if (!$finalResult) {
+            // Do not record a fake "completed" scan — be honest that analysis failed.
+            DiseaseScan::create([
+                'tenant_id' => $user->tenant_id,
+                'user_id' => $user->id,
+                'image_path' => $imagePath,
+                'disease_name' => null,
+                'confidence_score' => 0,
+                'scan_source' => 'cloud',
+                'status' => 'failed',
+            ]);
 
-        // If TF Lite confidence is low or cloud requested, use Gemini
-        $finalResult = $tfliteResult;
-        if (!$tfliteResult || ($tfliteResult['confidence'] ?? 0) < 0.7 || $useCloud) {
-            $geminiResult = $this->runGeminiInference($fullPath, $validated['crop_type'] ?? null);
-            if ($geminiResult) {
-                $finalResult = $geminiResult;
-            }
+            return response()->json([
+                'message' => 'Uchambuzi wa picha haukufanikiwa kwa sasa. Tafadhali jaribu tena baadaye.',
+                'error' => 'analysis_unavailable',
+            ], 503);
         }
 
         // Save scan record
@@ -124,16 +129,6 @@ class DiseaseScannerController extends Controller
     }
 
     /**
-     * Run TF Lite inference (simulated - will be replaced with actual model)
-     */
-    private function runTfliteInference(string $imagePath, ?string $cropType): ?array
-    {
-        // TODO: Integrate actual TensorFlow Lite model
-        // For now, return null to trigger Gemini fallback
-        return null;
-    }
-
-    /**
      * Run Gemini Vision inference
      */
     private function runGeminiInference(string $imagePath, ?string $cropType): ?array
@@ -153,9 +148,10 @@ class DiseaseScannerController extends Controller
             }
             $prompt .= "Provide: 1) Disease name (or 'Healthy' if no disease), 2) Confidence 0-1, 3) Brief description, 4) Treatment recommendation, 5) Affected plant areas. Return as JSON with keys: disease_name, confidence, description, treatment, affected_areas (array).";
 
+            $model = config('services.gemini.model', 'gemini-2.5-flash');
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}", [
+            ])->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [

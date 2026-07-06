@@ -18,7 +18,7 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      let url = 'http://76.13.56.180:8000/api/admin/orders'
+      let url = '/api/admin/orders'
       const params = new URLSearchParams()
       if (filterStatus) params.append('status', filterStatus)
       if (params.toString()) url += '?' + params.toString()
@@ -38,7 +38,7 @@ export default function OrdersPage() {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/orders/${editingOrder.uuid}`, {
+      const res = await fetch(`/api/admin/orders/${editingOrder.uuid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export default function OrdersPage() {
     if (!confirm('Delete this order permanently?')) return
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch(`http://76.13.56.180:8000/api/admin/orders/${uuid}`, {
+      await fetch(`/api/admin/orders/${uuid}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       })

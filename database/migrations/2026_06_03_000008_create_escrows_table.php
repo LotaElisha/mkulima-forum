@@ -12,19 +12,29 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->string('reference', 50)->unique();
-            $table->enum('status', ['HELD', 'RELEASED', 'DISPUTED', 'REFUNDED', 'FINALIZED', 'ARBITRATED'])->default('HELD');
+            $table->foreignId('buyer_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('seller_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('uuid', 36)->unique();
+            $table->string('reference', 50)->nullable()->unique();
+            // Statuses match EscrowService transitions (lowercase).
+            $table->enum('status', [
+                'pending', 'held', 'released', 'disputed',
+                'refunded', 'failed', 'finalized', 'arbitrated',
+            ])->default('pending');
             $table->decimal('amount', 15, 2);
             $table->string('currency', 3)->default('TZS');
-            $table->string('provider', 20)->default('mpesa'); // mpesa, tigo_pesa, airtel_money
+            $table->string('payment_method', 20)->default('mpesa'); // mpesa, tigopesa, airtel_money
             $table->string('provider_reference')->nullable();
+            $table->string('transaction_reference')->nullable()->index(); // gateway CheckoutRequestID
+            $table->text('failure_reason')->nullable();
             $table->json('metadata')->nullable();
+            $table->timestamp('paid_at')->nullable();
             $table->timestamp('released_at')->nullable();
-            $table->timestamp('expires_at');
+            $table->timestamp('hold_until')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
             $table->index(['tenant_id', 'status']);
-            $table->index('reference');
         });
     }
 

@@ -14,7 +14,7 @@ export default function KycVerificationPage() {
   const fetchKyc = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/kyc/pending', {
+      const res = await fetch('/api/admin/kyc/pending', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -31,7 +31,7 @@ export default function KycVerificationPage() {
   const handleApprove = async (uuid) => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/kyc/${uuid}/verify`, {
+      const res = await fetch(`/api/admin/kyc/${uuid}/verify`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -48,7 +48,7 @@ export default function KycVerificationPage() {
     if (!reason) return
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/kyc/${uuid}/reject`, {
+      const res = await fetch(`/api/admin/kyc/${uuid}/reject`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

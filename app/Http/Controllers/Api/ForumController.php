@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ForumCategory;
 use App\Models\ForumThread;
 use App\Models\ForumReply;
+use App\Models\ForumVote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,9 +18,17 @@ class ForumController extends Controller
      */
     public function categories(Request $request): JsonResponse
     {
-        $categories = ForumCategory::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get(['id', 'name', 'slug', 'description', 'icon', 'requires_expert']);
+        $query = ForumCategory::where('is_active', true);
+
+        // Regional sub-forums: ?region=Mbeya returns national + regional categories.
+        if ($request->filled('region')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereNull('region')->orWhere('region', $request->input('region'));
+            });
+        }
+
+        $categories = $query->orderBy('sort_order')
+            ->get(['id', 'name', 'slug', 'description', 'icon', 'requires_expert', 'region']);
 
         return response()->json([
             'categories' => $categories,
@@ -31,8 +40,15 @@ class ForumController extends Controller
      */
     public function threads(Request $request): JsonResponse
     {
-        $query = ForumThread::with(['user:id,uuid,name,avatar', 'category:id,name,slug'])
+        $query = ForumThread::with([
+                'user:id,uuid,name,avatar,is_verified_expert,expert_title',
+                'category:id,name,slug',
+            ])
             ->where('status', 'active');
+
+        if ($request->filled('region')) {
+            $query->where('region', $request->input('region'));
+        }
 
         if ($request->has('category')) {
             $query->whereHas('category', function ($q) use ($request) {
@@ -79,6 +95,7 @@ class ForumController extends Controller
             'media' => ['nullable', 'array'],
             'media.*' => ['file', 'max:5120'],
             'language' => ['nullable', 'string', 'in:sw,en,lg,rw,fr'],
+            'region' => ['nullable', 'string', 'max:64'],
         ]);
 
         $validated['user_id'] = $user->id;
@@ -173,30 +190,74 @@ class ForumController extends Controller
     }
 
     /**
-     * Upvote thread
+     * Toggle upvote on a thread (one vote per user).
      */
-    public function upvoteThread(string $uuid): JsonResponse
+    public function upvoteThread(Request $request, string $uuid): JsonResponse
     {
         $thread = ForumThread::where('uuid', $uuid)->firstOrFail();
-        $thread->increment('upvote_count');
 
-        return response()->json([
-            'message' => 'Thread upvoted.',
-            'upvote_count' => $thread->upvote_count,
-        ]);
+        return $this->toggleVote($request->user()->id, $thread);
     }
 
     /**
-     * Upvote reply
+     * Toggle upvote on a reply (one vote per user).
      */
-    public function upvoteReply(int $replyId): JsonResponse
+    public function upvoteReply(Request $request, int $replyId): JsonResponse
     {
         $reply = ForumReply::findOrFail($replyId);
-        $reply->increment('upvote_count');
+
+        return $this->toggleVote($request->user()->id, $reply);
+    }
+
+    /**
+     * Mark a reply as the accepted/expert answer. Allowed for the thread
+     * author or a verified expert/admin.
+     */
+    public function markExpertAnswer(Request $request, int $replyId): JsonResponse
+    {
+        $user = $request->user();
+        $reply = ForumReply::with('thread')->findOrFail($replyId);
+        $thread = $reply->thread;
+
+        $canMark = $thread->user_id === $user->id
+            || $user->is_verified_expert
+            || $user->hasRole('admin');
+
+        if (!$canMark) {
+            return response()->json(['message' => 'Not authorized.'], 403);
+        }
+
+        $reply->update(['is_expert_answer' => true]);
+        $thread->update(['is_verified_answer' => true]);
+
+        return response()->json(['message' => 'Reply marked as verified answer.']);
+    }
+
+    private function toggleVote(int $userId, ForumThread|ForumReply $votable): JsonResponse
+    {
+        $existing = ForumVote::where('user_id', $userId)
+            ->where('votable_type', $votable->getMorphClass())
+            ->where('votable_id', $votable->id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+            $votable->decrement('upvote_count');
+            $voted = false;
+        } else {
+            ForumVote::create([
+                'user_id' => $userId,
+                'votable_type' => $votable->getMorphClass(),
+                'votable_id' => $votable->id,
+            ]);
+            $votable->increment('upvote_count');
+            $voted = true;
+        }
 
         return response()->json([
-            'message' => 'Reply upvoted.',
-            'upvote_count' => $reply->upvote_count,
+            'message' => $voted ? 'Upvoted.' : 'Upvote removed.',
+            'voted' => $voted,
+            'upvote_count' => $votable->fresh()->upvote_count,
         ]);
     }
 }

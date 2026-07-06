@@ -15,10 +15,10 @@ class TigoPesaService
 
     public function __construct()
     {
-        $this->apiKey = config('services.tigopesa.api_key', '');
-        $this->apiSecret = config('services.tigopesa.api_secret', '');
-        $this->merchantId = config('services.tigopesa.merchant_id', '');
-        $this->sandbox = config('services.tigopesa.sandbox', true);
+        $this->apiKey = config('services.tigopesa.api_key') ?? '';
+        $this->apiSecret = config('services.tigopesa.api_secret') ?? '';
+        $this->merchantId = config('services.tigopesa.merchant_id') ?? '';
+        $this->sandbox = (bool) (config('services.tigopesa.sandbox') ?? true);
         $this->baseUrl = $this->sandbox
             ? 'https://openapiuat.tigo.co.tz'
             : 'https://openapi.tigo.co.tz';

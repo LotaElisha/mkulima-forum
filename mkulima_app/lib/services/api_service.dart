@@ -1,14 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../models/product.dart';
 import '../models/order.dart';
+import '../providers/cache_provider.dart';
 
 class ApiService {
   final Dio _dio;
-  String? _token;
 
   ApiService({required String baseUrl})
       : _dio = Dio(BaseOptions(
@@ -27,12 +26,10 @@ class ApiService {
   }
 
   void setToken(String token) {
-    _token = token;
     _dio.options.headers['Authorization'] = 'Bearer $token';
   }
 
   void clearToken() {
-    _token = null;
     _dio.options.headers.remove('Authorization');
   }
 
@@ -75,53 +72,85 @@ class ApiService {
     String? search,
     int page = 1,
   }) async {
-    final response = await _dio.get('/marketplace/products', queryParameters: {
-      if (categoryId != null) 'category_id': categoryId,
-      if (search != null) 'search': search,
-      'page': page,
-    });
-    return (response.data['data'] as List)
-        .map((e) => Product.fromJson(e))
-        .toList();
+    try {
+      final response = await _dio.get('/marketplace/products', queryParameters: {
+        if (categoryId != null) 'category_id': categoryId,
+        if (search != null) 'search': search,
+        'page': page,
+      });
+      final products = (response.data['products'] as List? ?? [])
+          .map((e) => Product.fromJson(e))
+          .toList();
+      // Cache for offline use
+      await CacheProvider.cacheProducts(response.data['products'] ?? []);
+      return products;
+    } catch (e) {
+      // Try to return cached data if offline
+      final cached = await CacheProvider.getCachedProducts();
+      if (cached != null) {
+        return cached.map((e) => Product.fromJson(e)).toList();
+      }
+      rethrow;
+    }
   }
 
   Future<Product> getProduct(String id) async {
     final response = await _dio.get('/marketplace/products/$id');
-    return Product.fromJson(response.data['data']);
+    return Product.fromJson(response.data['product'] ?? response.data['data']);
   }
 
   Future<Product> createProduct(Map<String, dynamic> data) async {
     final response = await _dio.post('/marketplace/products', data: data);
-    return Product.fromJson(response.data['data']);
+    return Product.fromJson(response.data['product'] ?? response.data['data']);
   }
 
   // Order APIs
   Future<Order> createOrder(Map<String, dynamic> data) async {
     final response = await _dio.post('/marketplace/orders', data: data);
-    return Order.fromJson(response.data['data']);
+    return Order.fromJson(response.data['order'] ?? response.data['data']);
   }
 
   Future<List<Order>> getOrders() async {
     final response = await _dio.get('/marketplace/orders');
-    return (response.data['data'] as List)
+    return (response.data['orders'] ?? response.data['data'] ?? [])
         .map((e) => Order.fromJson(e))
         .toList();
   }
 
   // Forum APIs
   Future<List<dynamic>> getForumCategories() async {
-    final response = await _dio.get('/forum/categories');
-    return response.data['data'];
+    try {
+      final response = await _dio.get('/forum/categories');
+      await CacheProvider.cacheForumCategories(response.data['categories'] ?? response.data['data'] ?? []);
+      return response.data['categories'] ?? response.data['data'] ?? [];
+    } catch (e) {
+      final cached = await CacheProvider.getCachedForumCategories();
+      if (cached != null) return cached;
+      rethrow;
+    }
   }
 
   Future<List<dynamic>> getThreads(String categoryId) async {
-    final response = await _dio.get('/forum/categories/$categoryId/threads');
-    return response.data['data'];
+    final response = await _dio.get('/forum/threads', queryParameters: {
+      'category_id': categoryId,
+    });
+    return response.data['threads'] ?? response.data['data'] ?? [];
   }
 
   Future<Map<String, dynamic>> createThread(Map<String, dynamic> data) async {
     final response = await _dio.post('/forum/threads', data: data);
-    return response.data;
+    return response.data['thread'] ?? response.data;
+  }
+
+  Future<Map<String, dynamic>> getThread(String threadId) async {
+    final response = await _dio.get('/forum/threads/$threadId');
+    return response.data['thread'] ?? response.data['data'] ?? response.data;
+  }
+
+  Future<void> createReply(String threadId, String body) async {
+    await _dio.post('/forum/threads/$threadId/replies', data: {
+      'body': body,
+    });
   }
 
   // Disease Scanner APIs
@@ -130,24 +159,122 @@ class ApiService {
       'image': await MultipartFile.fromFile(image.path),
     });
     final response = await _dio.post('/scanner/scan', data: formData);
-    return response.data;
+    return response.data['scan'] ?? response.data['data'] ?? response.data;
   }
 
   Future<List<dynamic>> getDiseaseHistory() async {
     final response = await _dio.get('/scanner/history');
-    return response.data['data'];
+    return response.data['scans'] ?? response.data['data'] ?? [];
   }
 
   // AI Agronomist APIs
   Future<Map<String, dynamic>> askAgronomist(String query) async {
     final response = await _dio.post('/agronomist/ask', data: {
-      'query': query,
+      'question': query,
     });
-    return response.data;
+    return response.data['answer'] ?? response.data;
   }
 
   Future<List<dynamic>> getKbDocuments() async {
-    final response = await _dio.get('/agronomist/kb');
-    return response.data['data'];
+    final response = await _dio.get('/agronomist/kb/search');
+    return response.data['documents'] ?? response.data['data'] ?? [];
+  }
+
+  // Notifications APIs
+  Future<Map<String, dynamic>> getNotifications() async {
+    final response = await _dio.get('/notifications');
+    return response.data['notifications'] ?? response.data;
+  }
+
+  Future<void> markNotificationRead(String id) async {
+    await _dio.post('/notifications/$id/read');
+  }
+
+  Future<void> markAllNotificationsRead() async {
+    await _dio.post('/notifications/read-all');
+  }
+
+  // Seller APIs
+  Future<Map<String, dynamic>> getSellerDashboard() async {
+    final response = await _dio.get('/seller/dashboard');
+    return response.data['stats'] ?? response.data;
+  }
+
+  Future<List<dynamic>> getSellerProducts() async {
+    final response = await _dio.get('/seller/products');
+    return response.data['products'] ?? [];
+  }
+
+  Future<List<dynamic>> getSellerOrders() async {
+    final response = await _dio.get('/seller/orders');
+    return response.data['orders'] ?? [];
+  }
+
+  // KYC APIs
+  Future<Map<String, dynamic>> getKycStatus() async {
+    final response = await _dio.get('/kyc/status');
+    return response.data['kyc'] ?? response.data;
+  }
+
+  Future<void> submitKyc(Map<String, dynamic> data) async {
+    await _dio.post('/kyc/submit', data: data);
+  }
+
+  // Wallet APIs
+  Future<Map<String, dynamic>> getWalletBalance() async {
+    final response = await _dio.get('/wallet/balance');
+    return response.data['wallet'] ?? response.data;
+  }
+
+  Future<List<dynamic>> getWalletTransactions() async {
+    final response = await _dio.get('/wallet/transactions');
+    return response.data['transactions'] ?? response.data['data'] ?? [];
+  }
+
+  Future<void> deposit(double amount, String phone, String provider) async {
+    await _dio.post('/wallet/deposit', data: {
+      'amount': amount,
+      'phone': phone,
+      'provider': provider,
+    });
+  }
+
+  Future<void> transfer(String phone, double amount, {String? description}) async {
+    await _dio.post('/wallet/transfer', data: {
+      'recipient_phone': phone,
+      'amount': amount,
+      'description': description,
+    });
+  }
+
+  // Weather APIs
+  Future<Map<String, dynamic>> getWeather() async {
+    final response = await _dio.get('/weather/current');
+    return response.data['weather'] ?? response.data;
+  }
+
+  // Generic HTTP methods
+  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+    return await _dio.get(path, queryParameters: queryParameters);
+  }
+
+  Future<Response> post(String path, {dynamic data}) async {
+    return await _dio.post(path, data: data);
+  }
+
+  Future<Response> put(String path, {dynamic data}) async {
+    return await _dio.put(path, data: data);
+  }
+
+  Future<Response> delete(String path) async {
+    return await _dio.delete(path);
+  }
+
+  // SMS APIs
+  Future<void> sendSms(String phone, String message) async {
+    await _dio.post('/sms/send', data: {
+      'phone': phone,
+      'message': message,
+    });
   }
 }

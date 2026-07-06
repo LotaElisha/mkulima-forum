@@ -13,7 +13,7 @@ export default function Vendors() {
   const fetchVendors = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/vendors', {
+      const res = await fetch('/api/admin/vendors', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -31,7 +31,7 @@ export default function Vendors() {
     if (!confirm('Suspend this vendor? All products will be deactivated.')) return
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch(`http://76.13.56.180:8000/api/admin/vendors/${uuid}/suspend`, {
+      await fetch(`/api/admin/vendors/${uuid}/suspend`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -44,7 +44,7 @@ export default function Vendors() {
   const handleReactivate = async (uuid) => {
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch(`http://76.13.56.180:8000/api/admin/vendors/${uuid}/reactivate`, {
+      await fetch(`/api/admin/vendors/${uuid}/reactivate`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       })

@@ -15,23 +15,41 @@ class Escrow extends Model
     protected $fillable = [
         'tenant_id',
         'order_id',
+        'buyer_id',
+        'seller_id',
+        'uuid',
         'reference',
         'status',
         'amount',
         'currency',
-        'provider',
+        'payment_method',
         'provider_reference',
+        'transaction_reference',
+        'failure_reason',
         'metadata',
+        'paid_at',
         'released_at',
+        'hold_until',
         'expires_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'metadata' => 'array',
+        'paid_at' => 'datetime',
         'released_at' => 'datetime',
+        'hold_until' => 'datetime',
         'expires_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($escrow) {
+            if (empty($escrow->uuid)) {
+                $escrow->uuid = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
 
     public function order()
     {
@@ -46,9 +64,10 @@ class Escrow extends Model
     public function canTransitionTo(string $newStatus): bool
     {
         $valid = match ($this->status) {
-            'HELD' => ['RELEASED', 'DISPUTED', 'REFUNDED'],
-            'RELEASED' => ['DISPUTED', 'FINALIZED'],
-            'DISPUTED' => ['RELEASED', 'REFUNDED', 'ARBITRATED'],
+            'pending' => ['held', 'failed'],
+            'held' => ['released', 'disputed', 'refunded'],
+            'released' => ['disputed', 'finalized'],
+            'disputed' => ['released', 'refunded', 'arbitrated'],
             default => [],
         };
 

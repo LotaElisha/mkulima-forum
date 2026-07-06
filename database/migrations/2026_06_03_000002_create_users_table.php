@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->string('name');
             $table->string('avatar')->nullable();
-            $table->enum('role', ['farmer', 'agrodealer', 'agronomist', 'driver', 'veterinary', 'warehouse', 'admin', 'moderator'])->default('farmer');
-            $table->enum('kyc_status', ['pending', 'verified', 'rejected'])->default('pending');
+            // String (not enum): role list must match App\Support\Roles::ALL and
+            // the Spatie roles seeded in RolesAndPermissionsSeeder.
+            $table->string('role', 32)->default('farmer');
+            $table->enum('kyc_status', ['pending', 'verified', 'rejected', 'not_submitted'])->default('pending');
             $table->json('kyc_documents')->nullable();
             $table->string('device_fingerprint')->nullable();
             $table->string('passkey_id')->nullable();

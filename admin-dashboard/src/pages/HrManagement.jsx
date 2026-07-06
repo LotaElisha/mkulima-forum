@@ -21,7 +21,7 @@ export default function HrManagement() {
   const fetchStaff = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/hr/staff', {
+      const res = await fetch('/api/admin/hr/staff', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -38,7 +38,7 @@ export default function HrManagement() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/hr/statistics', {
+      const res = await fetch('/api/admin/hr/statistics', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -53,7 +53,7 @@ export default function HrManagement() {
   const handleCreate = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/hr/staff', {
+      const res = await fetch('/api/admin/hr/staff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default function HrManagement() {
     if (!confirm('Terminate this staff member?')) return
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch(`http://76.13.56.180:8000/api/admin/hr/staff/${uuid}`, {
+      await fetch(`/api/admin/hr/staff/${uuid}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       })

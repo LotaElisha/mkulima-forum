@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../providers/auth_provider.dart';
 import 'payment_screen.dart';
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  final List<Map<String, dynamic>> _cartItems = [];
-
-  double get _total => _cartItems.fold(
-      0, (sum, item) => sum + (item['price'] * item['quantity']));
-
-  @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
+    final auth = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rukwama'),
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
       ),
-      body: _cartItems.isEmpty
+      body: cart.items.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -51,47 +47,65 @@ class _CartScreenState extends State<CartScreen> {
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),
-                    itemCount: _cartItems.length,
+                    itemCount: cart.items.length,
                     itemBuilder: (context, index) {
-                      final item = _cartItems[index];
+                      final item = cart.items[index];
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          leading: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(Icons.image, color: Colors.grey),
-                          ),
-                          title: Text(item['name']),
-                          subtitle: Text(
-                              'TSh ${item['price'].toStringAsFixed(0)} x ${item['quantity']}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle,
-                                    color: Colors.red),
-                                onPressed: () {
-                                  setState(() {
-                                    if (item['quantity'] > 1) {
-                                      item['quantity']--;
-                                    } else {
-                                      _cartItems.removeAt(index);
-                                    }
-                                  });
-                                },
-                              ),
-                              Text('${item['quantity']}'),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle,
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.green[50],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(Icons.eco,
                                     color: Color(0xFF2E7D32)),
-                                onPressed: () {
-                                  setState(() => item['quantity']++);
-                                },
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.product.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      'TSh ${item.product.price.toStringAsFixed(0)} / ${item.product.unit}',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove_circle),
+                                    onPressed: () => cart.updateQuantity(
+                                      item.product.id,
+                                      item.quantity - 1,
+                                    ),
+                                  ),
+                                  Text('${item.quantity}'),
+                                  IconButton(
+                                    icon: const Icon(Icons.add_circle),
+                                    onPressed: () => cart.updateQuantity(
+                                      item.product.id,
+                                      item.quantity + 1,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -106,8 +120,8 @@ class _CartScreenState extends State<CartScreen> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
                       ),
                     ],
                   ),
@@ -119,32 +133,35 @@ class _CartScreenState extends State<CartScreen> {
                           children: [
                             const Text(
                               'Jumla:',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontSize: 18),
                             ),
                             Text(
-                              'TSh ${_total.toStringAsFixed(0)}',
-                              style: TextStyle(
+                              'TSh ${cart.total.toStringAsFixed(0)}',
+                              style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.green[700],
+                                color: Color(0xFF2E7D32),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
-                          height: 50,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              if (!auth.isAuthenticated) {
+                                final ok = await AuthProvider.requireAuth(
+                                  context,
+                                  action: 'kukamilisha ununuzi',
+                                );
+                                if (!ok) return;
+                              }
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => PaymentScreen(
-                                    amount: _total,
-                                    orderId: 'cart_${DateTime.now().millisecondsSinceEpoch}',
+                                    amount: cart.total,
+                                    orderId: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
                                   ),
                                 ),
                               );
@@ -152,8 +169,12 @@ class _CartScreenState extends State<CartScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF2E7D32),
                               foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
-                            child: const Text('Endelea na Malipo'),
+                            child: const Text(
+                              'Endelea na Malipo',
+                              style: TextStyle(fontSize: 18),
+                            ),
                           ),
                         ),
                       ],

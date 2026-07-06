@@ -2,43 +2,38 @@
 
 namespace Database\Factories;
 
+use App\Support\Roles;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
     /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * Matches the custom users schema (phone-first, tenant-scoped).
      */
     public function definition(): array
     {
         return [
+            'tenant_id' => 1,
             'name' => fake()->name(),
+            'phone' => '2557' . fake()->unique()->numerify('########'),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'role' => Roles::FARMER,
+            'kyc_status' => 'pending',
+            'status' => 'active',
+            'phone_verified_at' => now(),
+            'preferred_language' => 'sw',
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function role(string $role): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(fn () => ['role' => $role]);
     }
 }

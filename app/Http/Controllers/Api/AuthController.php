@@ -21,8 +21,46 @@ class AuthController extends Controller
     }
 
     /**
-     * Login with email and password (for admin dashboard)
+     * Login with email and password (mobile app)
      */
+    public function loginWithEmail(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::where('email', $request->input('email'))->first();
+
+        if (!$user || !Hash::check($request->input('password'), $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials.',
+            ], 401);
+        }
+
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'Account is not active.',
+            ], 403);
+        }
+
+        $token = $user->createToken('mobile-app', ['*'])->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful.',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'user' => [
+                'uuid' => $user->uuid,
+                'name' => $user->name,
+                'phone' => $user->phone,
+                'email' => $user->email,
+                'role' => $user->role,
+                'kyc_status' => $user->kyc_status,
+                'preferred_language' => $user->preferred_language,
+            ],
+        ]);
+    }
     public function login(Request $request): JsonResponse
     {
         $request->validate([
@@ -80,15 +118,21 @@ class AuthController extends Controller
 
         $result = $this->otpService->generate($phone, $purpose);
 
-        // In production, send actual SMS
+        // TODO: wire real SMS delivery (SmsService) before launch.
         // $this->otpService->sendSms($phone, "Your MkulimaForum code: {$result['code']}");
 
-        // For development, return code in response
-        return response()->json([
+        $response = [
             'message' => $result['message'],
             'expires_in' => $result['expires_in'],
-            'dev_code' => $result['code'], // Remove in production
-        ]);
+        ];
+
+        // SECURITY: only expose the code in local/testing debug builds.
+        // Leaking it in production lets anyone authenticate as any phone number.
+        if (app()->environment('local', 'testing') && config('app.debug')) {
+            $response['dev_code'] = $result['code'];
+        }
+
+        return response()->json($response);
     }
 
     /**
@@ -101,7 +145,7 @@ class AuthController extends Controller
             'code' => ['required', 'string', 'size:6'],
             'purpose' => ['nullable', 'string', 'in:login,register,reset'],
             'name' => ['nullable', 'string', 'max:255'],
-            'role' => ['nullable', 'string', 'in:farmer,agrodealer'],
+            'role' => ['nullable', 'string', \App\Support\Roles::rule(\App\Support\Roles::SELF_REGISTERABLE)],
             'country_code' => ['nullable', 'string', 'size:2'],
         ]);
 
@@ -147,8 +191,14 @@ class AuthController extends Controller
                 'preferred_language' => 'sw',
             ]);
 
-            // Assign default role using Spatie
-            $user->assignRole($user->role);
+            // Assign Spatie role; firstOrCreate guards against an unseeded DB
+            // (assignRole throws RoleDoesNotExist otherwise).
+            $user->assignRole(
+                \Spatie\Permission\Models\Role::firstOrCreate([
+                    'name' => $user->role,
+                    'guard_name' => 'web',
+                ])
+            );
         }
 
         if ($user) {

@@ -19,7 +19,7 @@ export default function CatalogManager() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/catalog/products', {
+      const res = await fetch('/api/admin/catalog/products', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -36,7 +36,7 @@ export default function CatalogManager() {
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/catalog/categories', {
+      const res = await fetch('/api/admin/catalog/categories', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -64,7 +64,7 @@ export default function CatalogManager() {
     if (!confirm(`Delete ${selected.length} products?`)) return
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch('http://76.13.56.180:8000/api/admin/catalog/products/bulk-delete', {
+      await fetch('/api/admin/catalog/products/bulk-delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default function CatalogManager() {
     if (!confirm('Delete this product?')) return
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch(`http://76.13.56.180:8000/api/admin/catalog/products/${uuid}`, {
+      await fetch(`/api/admin/catalog/products/${uuid}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       })

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://76.13.56.180:8000/api'
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -64,4 +64,11 @@ export const kycApi = {
   rejectKyc: (id, reason) => api.post(`/admin/kyc/${id}/reject`, { reason })
 }
 
+export const featureApi = {
+  getFeatures: () => api.get('/admin/features'),
+  toggleFeature: (key) => api.post(`/admin/features/${key}/toggle`),
+  updateFeature: (key, data) => api.put(`/admin/features/${key}`, data)
+}
+
+export { API_BASE }
 export default api

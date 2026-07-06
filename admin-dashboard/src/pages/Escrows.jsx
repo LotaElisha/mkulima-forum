@@ -14,7 +14,7 @@ export default function EscrowsPage() {
   const fetchEscrows = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      let url = 'http://76.13.56.180:8000/api/admin/escrows'
+      let url = '/api/admin/escrows'
       if (filterStatus) url += `?status=${filterStatus}`
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
       if (res.ok) {
@@ -32,7 +32,7 @@ export default function EscrowsPage() {
     if (!confirm('Release funds to seller?')) return
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/escrows/${uuid}/release`, {
+      const res = await fetch(`/api/admin/escrows/${uuid}/release`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -49,7 +49,7 @@ export default function EscrowsPage() {
     if (!reason) return
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/escrows/${uuid}/refund`, {
+      const res = await fetch(`/api/admin/escrows/${uuid}/refund`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -55,6 +55,7 @@ class AgronomistController extends Controller
     public function searchKb(Request $request): JsonResponse
     {
         $user = $request->user();
+        $tenantId = $user ? $user->tenant_id : 1; // Default tenant for public access
 
         $validated = $request->validate([
             'query' => ['required', 'string', 'min:2'],
@@ -62,7 +63,7 @@ class AgronomistController extends Controller
             'source' => ['nullable', 'string', 'in:tari,fao,kephis,custom'],
         ]);
 
-        $query = KbDocument::where('tenant_id', $user->tenant_id)
+        $query = KbDocument::where('tenant_id', $tenantId)
             ->where('is_verified', true)
             ->where(function ($q) use ($validated) {
                 $q->where('title', 'ilike', "%{$validated['query']}%")
@@ -98,7 +99,13 @@ class AgronomistController extends Controller
     {
         $doc = KbDocument::where('uuid', $uuid)
             ->where('is_verified', true)
-            ->firstOrFail();
+            ->first();
+
+        if (!$doc) {
+            return response()->json([
+                'message' => 'Document not found',
+            ], 404);
+        }
 
         return response()->json([
             'document' => [

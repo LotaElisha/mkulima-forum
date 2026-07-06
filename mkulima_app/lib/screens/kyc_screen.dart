@@ -1,14 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
+import '../services/api_service.dart';
 
-class KycScreen extends StatelessWidget {
+class KycScreen extends StatefulWidget {
   const KycScreen({super.key});
 
   @override
+  State<KycScreen> createState() => _KycScreenState();
+}
+
+class _KycScreenState extends State<KycScreen> {
+  String? _kycStatus;
+  bool _isLoading = true;
+  bool _isSubmitting = false;
+
+  final _idNumberController = TextEditingController();
+  final _fullNameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _regionController = TextEditingController();
+  final _districtController = TextEditingController();
+
+  String _selectedIdType = 'national_id';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadKycStatus();
+  }
+
+  Future<void> _loadKycStatus() async {
+    try {
+      final api = Provider.of<ApiService>(context, listen: false);
+      final data = await api.getKycStatus();
+      setState(() {
+        _kycStatus = data['kyc_status'] ?? 'not_submitted';
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _kycStatus = 'not_submitted';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _submitKyc() async {
+    final fullName = _fullNameController.text.trim();
+    final idNumber = _idNumberController.text.trim();
+    final address = _addressController.text.trim();
+    final region = _regionController.text.trim();
+    final district = _districtController.text.trim();
+
+    if (fullName.isEmpty || idNumber.isEmpty || address.isEmpty ||
+        region.isEmpty || district.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tafadhali jaza sehemu zote')),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final api = Provider.of<ApiService>(context, listen: false);
+      await api.submitKyc({
+        'id_type': _selectedIdType,
+        'id_number': idNumber,
+        'full_name': fullName,
+        'address': address,
+        'region': region,
+        'district': district,
+      });
+
+      setState(() {
+        _kycStatus = 'pending';
+        _isSubmitting = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('KYC yametumwa kikamilifu. Inasubiri ukaguzi.')),
+        );
+      }
+    } catch (e) {
+      setState(() => _isSubmitting = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kosa: $e')),
+        );
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-    final user = auth.user;
+
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -30,12 +121,16 @@ class KycScreen extends StatelessWidget {
                     Row(
                       children: [
                         Icon(
-                          user?.kycStatus == 'verified'
+                          _kycStatus == 'verified'
                               ? Icons.verified
-                              : Icons.pending,
-                          color: user?.kycStatus == 'verified'
+                              : _kycStatus == 'pending'
+                                  ? Icons.pending
+                                  : Icons.warning,
+                          color: _kycStatus == 'verified'
                               ? Colors.green
-                              : Colors.orange,
+                              : _kycStatus == 'pending'
+                                  ? Colors.orange
+                                  : Colors.red,
                           size: 40,
                         ),
                         const SizedBox(width: 16),
@@ -44,16 +139,18 @@ class KycScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Status: ${user?.kycStatus.toUpperCase()}',
+                                'Status: ${_kycStatus?.toUpperCase() ?? 'NOT SUBMITTED'}',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Text(
-                                user?.kycStatus == 'verified'
+                                _kycStatus == 'verified'
                                     ? 'Akaunti yako imethibitishwa'
-                                    : 'Tafadhali thibitisha utambulisho wako',
+                                    : _kycStatus == 'pending'
+                                        ? 'Maombi yako yanasubiri ukaguzi'
+                                        : 'Tafadhali thibitisha utambulisho wako',
                                 style: TextStyle(color: Colors.grey[600]),
                               ),
                             ],
@@ -66,75 +163,115 @@ class KycScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            if (user?.kycStatus != 'verified') ...[
+            if (_kycStatus != 'verified' && _kycStatus != 'pending') ...[
               const Text(
-                'Nyaraka Zinazohitajika:',
+                'Taarifa za KYC:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              _buildDocumentCard(
-                icon: Icons.badge,
-                title: 'Kitambulisho cha Taifa',
-                subtitle: 'NIDA, Passport, au Leseni ya Udereva',
-                onTap: () {},
+              DropdownButtonFormField<String>(
+                value: _selectedIdType,
+                decoration: const InputDecoration(
+                  labelText: 'Aina ya Kitambulisho',
+                  border: OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'national_id', child: Text('NIDA')),
+                  DropdownMenuItem(value: 'drivers_license', child: Text('Leseni ya Udereva')),
+                  DropdownMenuItem(value: 'passport', child: Text('Passport')),
+                  DropdownMenuItem(value: 'voter_id', child: Text('Kitambulisho cha Mpiga Kura')),
+                ],
+                onChanged: (v) => setState(() => _selectedIdType = v!),
               ),
-              _buildDocumentCard(
-                icon: Icons.home,
-                title: 'Uthibitisho wa Anwani',
-                subtitle: 'Bili ya umeme, maji, au barua ya mtaa',
-                onTap: () {},
+              const SizedBox(height: 12),
+              TextField(
+                controller: _idNumberController,
+                decoration: const InputDecoration(
+                  labelText: 'Namba ya Kitambulisho',
+                  hintText: 'Mfano: 1234567890123',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              _buildDocumentCard(
-                icon: Icons.photo_camera,
-                title: 'Picha ya Selfie',
-                subtitle: 'Picha ya uso wako kwa uwazi',
-                onTap: () {},
+              const SizedBox(height: 12),
+              TextField(
+                controller: _fullNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Jina Kamili',
+                  hintText: 'Mfano: Juma Hamisi',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _addressController,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  labelText: 'Anwani',
+                  hintText: 'Mfano: Kariakoo, Dar es Salaam',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _regionController,
+                decoration: const InputDecoration(
+                  labelText: 'Mkoa',
+                  hintText: 'Mfano: Dar es Salaam',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _districtController,
+                decoration: const InputDecoration(
+                  labelText: 'Wilaya',
+                  hintText: 'Mfano: Ilala',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Maombi yametumwa kwa ukaguzi'),
-                      ),
-                    );
-                  },
+                  onPressed: _isSubmitting ? null : _submitKyc,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2E7D32),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Wasilisha Maombi'),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Wasilisha Maombi'),
+                ),
+              ),
+            ] else if (_kycStatus == 'pending') ...[
+              const Center(
+                child: Column(
+                  children: [
+                    SizedBox(height: 32),
+                    Icon(Icons.hourglass_top, size: 64, color: Colors.orange),
+                    SizedBox(height: 16),
+                    Text(
+                      'Maombi yako yanasubiri ukaguzi',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Utapata arifa baada ya kukamilika',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
                 ),
               ),
             ],
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDocumentCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF2E7D32)),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2E7D32),
-            foregroundColor: Colors.white,
-          ),
-          child: const Text('Pakia'),
         ),
       ),
     );

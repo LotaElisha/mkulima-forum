@@ -22,7 +22,7 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      let url = 'http://76.13.56.180:8000/api/admin/users'
+      let url = '/api/admin/users'
       const params = new URLSearchParams()
       if (search) params.append('search', search)
       if (filterRole) params.append('role', filterRole)
@@ -43,7 +43,7 @@ export default function UsersPage() {
   const handleCreate = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/users', {
+      const res = await fetch('/api/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export default function UsersPage() {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/users/${editingUser.uuid}`, {
+      const res = await fetch(`/api/admin/users/${editingUser.uuid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function UsersPage() {
     if (!confirm('Delete this user permanently?')) return
     try {
       const token = localStorage.getItem('admin_token')
-      await fetch(`http://76.13.56.180:8000/api/admin/users/${uuid}`, {
+      await fetch(`/api/admin/users/${uuid}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       })

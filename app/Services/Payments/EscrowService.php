@@ -26,6 +26,9 @@ class EscrowService
     {
         return DB::transaction(function () use ($order, $paymentMethod) {
             $escrow = Escrow::create([
+                // Explicit: webhooks/jobs have no authenticated user for the
+                // BelongsToTenant trait to infer from.
+                'tenant_id' => $order->tenant_id,
                 'order_id' => $order->id,
                 'buyer_id' => $order->buyer_id,
                 'seller_id' => $order->seller_id,
@@ -164,42 +167,56 @@ class EscrowService
         $resultCode = $callback['ResultCode'] ?? null;
         $resultDesc = $callback['ResultDesc'] ?? '';
 
-        // Find escrow by checkout request ID
-        $escrow = Escrow::where('transaction_reference', $checkoutRequestId)->first();
+        // Idempotent processing: lock the row and only act on escrows still
+        // awaiting payment. Mobile money gateways retry callbacks — a
+        // duplicate must not double-post ledger entries or flip status.
+        \Illuminate\Support\Facades\DB::transaction(function () use ($checkoutRequestId, $resultCode, $resultDesc) {
+            $escrow = Escrow::where('transaction_reference', $checkoutRequestId)
+                ->lockForUpdate()
+                ->first();
 
-        if (!$escrow) {
-            Log::warning('Escrow not found for checkout request', ['checkout_id' => $checkoutRequestId]);
-            return;
-        }
+            if (!$escrow) {
+                Log::warning('Escrow not found for checkout request', ['checkout_id' => $checkoutRequestId]);
+                return;
+            }
 
-        if ($resultCode === 0) {
-            // Payment successful
-            $escrow->update([
-                'status' => 'held',
-                'paid_at' => now(),
-            ]);
+            if (!in_array($escrow->status, ['pending', 'initiated'])) {
+                Log::info('Duplicate payment callback ignored', [
+                    'escrow_id' => $escrow->id,
+                    'status' => $escrow->status,
+                ]);
+                return;
+            }
 
-            EscrowLedger::create([
-                'escrow_id' => $escrow->id,
-                'entry_type' => 'deposit',
-                'amount' => $escrow->amount,
-                'balance_after' => $escrow->amount,
-                'description' => 'M-Pesa payment received: ' . $resultDesc,
-            ]);
+            if ($resultCode === 0) {
+                // Payment successful
+                $escrow->update([
+                    'status' => 'held',
+                    'paid_at' => now(),
+                ]);
 
-            $escrow->order->update(['status' => 'paid']);
-        } else {
-            // Payment failed
-            $escrow->update([
-                'status' => 'failed',
-                'failure_reason' => $resultDesc,
-            ]);
+                EscrowLedger::create([
+                    'escrow_id' => $escrow->id,
+                    'entry_type' => 'deposit',
+                    'amount' => $escrow->amount,
+                    'balance_after' => $escrow->amount,
+                    'description' => 'M-Pesa payment received: ' . $resultDesc,
+                ]);
 
-            Log::error('M-Pesa payment failed', [
-                'escrow_id' => $escrow->id,
-                'result' => $resultDesc,
-            ]);
-        }
+                $escrow->order->update(['status' => 'paid']);
+            } else {
+                // Payment failed
+                $escrow->update([
+                    'status' => 'failed',
+                    'failure_reason' => $resultDesc,
+                ]);
+
+                Log::error('M-Pesa payment failed', [
+                    'escrow_id' => $escrow->id,
+                    'result' => $resultDesc,
+                ]);
+            }
+        });
     }
 
     /**

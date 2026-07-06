@@ -30,6 +30,8 @@ class User extends Authenticatable
         'last_active_at',
         'preferred_language',
         'is_active',
+        'is_verified_expert',
+        'expert_title',
     ];
 
     protected $hidden = [
@@ -42,6 +44,7 @@ class User extends Authenticatable
         'last_active_at' => 'datetime',
         'kyc_documents' => 'array',
         'is_active' => 'boolean',
+        'is_verified_expert' => 'boolean',
     ];
 
     protected static function boot()
@@ -81,11 +84,12 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 'admin' || $this->role === 'superadmin' || $this->hasRole('admin');
     }
 
     public function isExpert(): bool
     {
-        return in_array($this->role, ['agronomist', 'veterinary']);
+        return $this->is_verified_expert
+            || in_array($this->role, ['agronomist', 'veterinary']);
     }
 }

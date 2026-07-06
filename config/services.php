@@ -40,4 +40,19 @@ return [
         'shortcode' => env('MPESA_SHORTCODE'),
         'env' => env('MPESA_ENV', 'sandbox'),
     ],
+
+    'openweather' => [
+        'api_key' => env('OPENWEATHER_API_KEY'),
+    ],
+
+    'sms' => [
+        'gateway' => env('SMS_GATEWAY', 'africastalking'),
+        'sender_id' => env('SMS_SENDER_ID', 'MKULIMA'),
+    ],
+
+    'twilio' => [
+        'sid' => env('TWILIO_SID'),
+        'token' => env('TWILIO_TOKEN'),
+        'from' => env('TWILIO_FROM'),
+    ],
 ];

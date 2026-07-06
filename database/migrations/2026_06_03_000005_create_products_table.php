@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -32,7 +33,9 @@ return new class extends Migration
             $table->index(['tenant_id', 'status']);
             $table->index(['tenant_id', 'category_id']);
             $table->index(['tenant_id', 'user_id']);
-            $table->fullText(['name', 'description']);
+            if (in_array(DB::getDriverName(), ['mysql', 'mariadb'])) {
+                $table->fullText(['name', 'description']);
+            }
         });
     }
 

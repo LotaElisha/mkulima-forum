@@ -21,7 +21,7 @@ export default function PosTerminal() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/pos/products', {
+      const res = await fetch('/api/admin/pos/products', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -78,7 +78,7 @@ export default function PosTerminal() {
     setLoading(true)
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/pos/orders', {
+      const res = await fetch('/api/admin/pos/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

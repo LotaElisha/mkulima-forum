@@ -16,7 +16,7 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const res = await fetch('http://76.13.56.180:8000/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -26,7 +26,7 @@ export default function Login() {
 
       if (res.ok && data.token) {
         localStorage.setItem('admin_token', data.token)
-        navigate('/admin')
+        navigate('/')
       } else {
         setError(data.message || 'Invalid credentials')
       }

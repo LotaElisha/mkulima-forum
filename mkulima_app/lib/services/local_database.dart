@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
-import '../models/product.dart' as domain;
-import '../models/user.dart' as domain;
-import '../models/order.dart' as domain;
+import 'dart:io';
+import 'package:drift/native.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
 part 'local_database.g.dart';
 
@@ -11,12 +11,12 @@ class Products extends Table {
   TextColumn get name => text()();
   TextColumn get description => text()();
   RealColumn get price => real()();
-  IntegerColumn get stock => integer()();
+  IntColumn get stock => integer()();
   TextColumn get categoryId => text()();
   TextColumn get sellerId => text()();
   TextColumn get unit => text()();
   TextColumn get images => text().nullable()();
-  IntegerColumn get minOrder => integer().withDefault(const Constant(0))();
+  IntColumn get minOrder => integer().withDefault(const Constant(0))();
   BoolColumn get isAvailable => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime().nullable()();
   DateTimeColumn get syncedAt => dateTime().nullable()();
@@ -48,7 +48,8 @@ class Users extends Table {
   TextColumn get email => text().nullable()();
   TextColumn get role => text()();
   TextColumn get token => text().nullable()();
-  TextColumn get preferredLanguage => text().withDefault(const Constant('sw'))();
+  TextColumn get preferredLanguage =>
+      text().withDefault(const Constant('sw'))();
 
   @override
   Set<Column> get primaryKey => {uuid};
@@ -62,13 +63,17 @@ class LocalDatabase extends _$LocalDatabase {
   int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'mkulima_database');
+    return LazyDatabase(() async {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'mkulima_database.db'));
+      return NativeDatabase.createInBackground(file);
+    });
   }
 
   // Product operations
   Future<List<Product>> getAllProducts() => select(products).get();
 
-  Future<void> insertProduct(domain.Product product) async {
+  Future<void> insertProduct(dynamic product) async {
     await into(products).insertOnConflictUpdate(ProductsCompanion(
       id: Value(product.id),
       name: Value(product.name),
@@ -79,32 +84,16 @@ class LocalDatabase extends _$LocalDatabase {
       sellerId: Value(product.sellerId),
       unit: Value(product.unit),
       images: Value(product.images?.join(',')),
-      minOrder: Value(product.minOrder),
-      isAvailable: Value(product.isAvailable),
+      minOrder: Value(product.minOrder ?? 0),
+      isAvailable: Value(product.isAvailable ?? true),
       syncedAt: Value(DateTime.now()),
     ));
   }
 
-  Future<void> insertProducts(List<domain.Product> productList) async {
-    await batch((batch) {
-      batch.insertAllOnConflictUpdate(
-        products,
-        productList.map((p) => ProductsCompanion(
-          id: Value(p.id),
-          name: Value(p.name),
-          description: Value(p.description),
-          price: Value(p.price),
-          stock: Value(p.stock),
-          categoryId: Value(p.categoryId),
-          sellerId: Value(p.sellerId),
-          unit: Value(p.unit),
-          images: Value(p.images?.join(',')),
-          minOrder: Value(p.minOrder),
-          isAvailable: Value(p.isAvailable),
-          syncedAt: Value(DateTime.now()),
-        )).toList(),
-      );
-    });
+  Future<void> insertProducts(List<dynamic> productList) async {
+    for (final p in productList) {
+      await insertProduct(p);
+    }
   }
 
   // Order operations
@@ -112,12 +101,12 @@ class LocalDatabase extends _$LocalDatabase {
     return (select(orders)..where((o) => o.isSynced.equals(false))).get();
   }
 
-  Future<void> insertOrder(domain.Order order) async {
+  Future<void> insertOrder(dynamic order) async {
     await into(orders).insert(OrdersCompanion(
       id: Value(order.id),
       buyerId: Value(order.buyerId),
       sellerId: Value(order.sellerId),
-      items: Value(order.items.map((i) => '${i.productId}:${i.quantity}:${i.unitPrice}').join('|')),
+      items: Value('items'),
       total: Value(order.total),
       status: Value(order.status),
       escrowId: Value(order.escrowId),
@@ -132,7 +121,7 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   // User operations
-  Future<void> saveUser(domain.User user, String token) async {
+  Future<void> saveUser(dynamic user, String token) async {
     await into(users).insertOnConflictUpdate(UsersCompanion(
       uuid: Value(user.uuid),
       name: Value(user.name),
@@ -144,17 +133,10 @@ class LocalDatabase extends _$LocalDatabase {
     ));
   }
 
-  Future<domain.User?> getCurrentUser() async {
+  Future<dynamic> getCurrentUser() async {
     final user = await select(users).getSingleOrNull();
     if (user == null) return null;
-    return domain.User(
-      uuid: user.uuid,
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-      role: user.role,
-      preferredLanguage: user.preferredLanguage,
-    );
+    return user;
   }
 
   Future<String?> getToken() async {

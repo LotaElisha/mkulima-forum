@@ -15,7 +15,8 @@ import {
   CreditCard,
   Package,
   Store,
-  TrendingUp
+  TrendingUp,
+  ToggleRight
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -25,23 +26,24 @@ export default function Layout() {
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token')
-    navigate('/admin/login')
+    navigate('/login')
   }
 
   const navItems = [
-    { to: '/admin', icon: LayoutDashboard, label: 'Overview' },
-    { to: '/admin/pos', icon: CreditCard, label: 'Field POS' },
-    { to: '/admin/catalog', icon: Package, label: 'Catalog' },
-    { to: '/admin/users', icon: Users, label: 'Users' },
-    { to: '/admin/vendors', icon: Store, label: 'Vendors' },
-    { to: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
-    { to: '/admin/escrows', icon: Shield, label: 'Escrows' },
-    { to: '/admin/kyc', icon: UserCheck, label: 'KYC' },
-    { to: '/admin/financial-reports', icon: TrendingUp, label: 'Financial' },
-    { to: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-    { to: '/admin/hr', icon: Briefcase, label: 'HR / Staff' },
-    { to: '/admin/settings', icon: Settings, label: 'Settings' },
-    { to: '/admin/profile', icon: UserCircle, label: 'My Profile' },
+    { to: '/', icon: LayoutDashboard, label: 'Overview' },
+    { to: '/pos', icon: CreditCard, label: 'Field POS' },
+    { to: '/catalog', icon: Package, label: 'Catalog' },
+    { to: '/users', icon: Users, label: 'Users' },
+    { to: '/vendors', icon: Store, label: 'Vendors' },
+    { to: '/orders', icon: ShoppingCart, label: 'Orders' },
+    { to: '/escrows', icon: Shield, label: 'Escrows' },
+    { to: '/kyc', icon: UserCheck, label: 'KYC' },
+    { to: '/financial-reports', icon: TrendingUp, label: 'Financial' },
+    { to: '/features', icon: ToggleRight, label: 'Feature Flags' },
+    { to: '/analytics', icon: BarChart3, label: 'Analytics' },
+    { to: '/hr', icon: Briefcase, label: 'HR / Staff' },
+    { to: '/settings', icon: Settings, label: 'Settings' },
+    { to: '/profile', icon: UserCircle, label: 'My Profile' },
   ]
 
   return (
@@ -76,7 +78,7 @@ export default function Layout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/admin'}
+                end={item.to === '/'}
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 text-gray-600 rounded-lg hover:bg-green-50 hover:text-green-700 transition-colors ${isActive ? 'bg-green-50 text-green-700 font-medium' : ''}`

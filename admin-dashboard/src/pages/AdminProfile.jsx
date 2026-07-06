@@ -16,7 +16,7 @@ export default function AdminProfile() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/profile', {
+      const res = await fetch('/api/admin/profile', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -39,7 +39,7 @@ export default function AdminProfile() {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/profile', {
+      const res = await fetch('/api/admin/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export default function AdminProfile() {
   const handleChangePassword = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/profile/change-password', {
+      const res = await fetch('/api/admin/profile/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

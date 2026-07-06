@@ -1,5 +1,10 @@
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  errors:
+    # freezed/json_serializable annotate constructor params by design
+    invalid_annotation_target: ignore
+
 linter:
   rules:
     avoid_print: false

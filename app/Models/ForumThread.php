@@ -19,6 +19,7 @@ class ForumThread extends Model
         'body',
         'media',
         'language',
+        'region',
         'is_pinned',
         'is_locked',
         'is_verified_answer',

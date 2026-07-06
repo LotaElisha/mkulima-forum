@@ -30,7 +30,7 @@ export default function Analytics() {
   const fetchAnalytics = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch(`http://76.13.56.180:8000/api/admin/analytics?period=${period}`, {
+      const res = await fetch(`/api/admin/analytics?period=${period}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {

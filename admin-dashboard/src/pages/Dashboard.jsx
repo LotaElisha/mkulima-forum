@@ -20,7 +20,7 @@ export default function Dashboard() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('http://76.13.56.180:8000/api/admin/dashboard', {
+      const res = await fetch('/api/admin/dashboard', {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
