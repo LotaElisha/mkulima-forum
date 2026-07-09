@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/strings.dart';
 import '../providers/connectivity_provider.dart';
 
 /// Slim banner shown when the device is offline. Wrap screen bodies:
@@ -23,7 +24,7 @@ class MkOfflineBanner extends StatelessWidget {
             Icon(Icons.wifi_off, size: 16, color: Colors.white),
             SizedBox(width: 8),
             Text(
-              'Hakuna mtandao — unaona taarifa zilizohifadhiwa',
+              MkStrings.offline,
               style: TextStyle(color: Colors.white, fontSize: 12),
             ),
           ],

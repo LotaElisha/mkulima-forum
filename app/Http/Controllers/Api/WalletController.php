@@ -75,8 +75,15 @@ class WalletController extends Controller
             ]
         );
 
-        // In production, integrate with M-Pesa/Tigo Pesa API
-        // For now, simulate successful deposit
+        // Direct wallet crediting is only available in sandbox/testing.
+        // Production deposits must flow through /payments/initiate so money
+        // is only credited by a verified mobile-money callback.
+        if (app()->environment('production')) {
+            return response()->json([
+                'message' => 'Direct deposits are disabled. Use /payments/initiate to top up via mobile money.',
+            ], 503);
+        }
+
         $transaction = $wallet->deposit(
             $request->input('amount'),
             'Deposit via ' . strtoupper($request->input('provider')),
@@ -90,6 +97,45 @@ class WalletController extends Controller
             'message' => 'Deposit successful',
             'transaction' => $transaction,
             'new_balance' => $wallet->balance,
+        ]);
+    }
+
+    public function withdraw(Request $request): JsonResponse
+    {
+        $request->validate([
+            'amount' => ['required', 'numeric', 'min:100'],
+            'phone' => ['required', 'string'],
+            'provider' => ['required', 'string', 'in:mpesa,tigopesa,airtelmoney,bank'],
+        ]);
+
+        // Payouts require a mobile-money disbursement integration; simulated
+        // only outside production (mirror of deposit()).
+        if (app()->environment('production')) {
+            return response()->json([
+                'message' => 'Withdrawals are not yet available. Your balance is safe.',
+            ], 503);
+        }
+
+        $user = $request->user();
+        $wallet = Wallet::where('user_id', $user->id)->first();
+
+        $transaction = $wallet?->withdraw(
+            $request->input('amount'),
+            'Withdrawal via ' . strtoupper($request->input('provider')),
+            [
+                'phone' => $request->input('phone'),
+                'provider' => $request->input('provider'),
+            ]
+        );
+
+        if (!$transaction) {
+            return response()->json(['message' => 'Insufficient balance'], 422);
+        }
+
+        return response()->json([
+            'message' => 'Withdrawal successful',
+            'transaction' => $transaction,
+            'new_balance' => $wallet->fresh()->balance,
         ]);
     }
 
@@ -117,6 +163,12 @@ class WalletController extends Controller
             ], 404);
         }
 
+        if ($recipient->id === $user->id) {
+            return response()->json([
+                'message' => 'You cannot transfer to yourself.',
+            ], 422);
+        }
+
         $recipientWallet = Wallet::firstOrCreate(
             ['user_id' => $recipient->id],
             [
@@ -132,6 +184,14 @@ class WalletController extends Controller
             $request->input('amount'),
             $request->input('description')
         );
+
+        if (!$transaction) {
+            return response()->json([
+                'message' => 'Insufficient balance',
+            ], 422);
+        }
+
+        $senderWallet->refresh();
 
         return response()->json([
             'message' => 'Transfer successful',

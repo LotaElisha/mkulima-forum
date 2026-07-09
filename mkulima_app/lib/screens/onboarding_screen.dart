@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +19,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'emoji': '🌾',
       'title': 'Karibu Mkulima Forum',
       'subtitle': 'Soko la kilimo kwa wote. Nunua na uza bidhaa za kilimo kwa urahisi.',
-      'color': Color(0xFF2E7D32),
+      'color': MkColors.primary,
     },
     {
       'emoji': '🤖',
@@ -42,7 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'emoji': '🔒',
       'title': 'Malipo Salama',
       'subtitle': 'Lipa kwa kutumia Escrow. Pesa zinahifadhiwa hadi bidhaa ifike salama.',
-      'color': Color(0xFF2E7D32),
+      'color': MkColors.primary,
     },
   ];
 
@@ -139,7 +140,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF1B5E20),
+                            color: MkColors.primaryDark,
                           ),
                           textAlign: TextAlign.center,
                         ),

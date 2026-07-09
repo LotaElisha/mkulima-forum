@@ -29,9 +29,9 @@ class ProductDetailScreen extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const CartScreen()),
-                  );
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (_) => const CartScreen()));
                 },
               ),
               if (cart.itemCount > 0)
@@ -75,9 +75,9 @@ class ProductDetailScreen extends StatelessWidget {
             const SizedBox(height: 20),
             Text(
               product.name,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -100,10 +100,7 @@ class ProductDetailScreen extends StatelessWidget {
                 const SizedBox(width: 16),
                 Icon(Icons.local_shipping, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
-                Text(
-                  'Escrow',
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
+                Text('Escrow', style: TextStyle(color: Colors.grey[600])),
               ],
             ),
             const SizedBox(height: 20),
@@ -149,8 +146,10 @@ class ProductDetailScreen extends StatelessWidget {
                       height: 56,
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          final ok = await AuthProvider.requireAuth(context,
-                              action: 'kununua bidhaa');
+                          final ok = await AuthProvider.requireAuth(
+                            context,
+                            action: 'kununua bidhaa',
+                          );
                           if (ok && context.mounted) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -186,7 +185,10 @@ class ProductDetailScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.check_circle, color: Color(0xFF2E7D32)),
+                        const Icon(
+                          Icons.check_circle,
+                          color: Color(0xFF2E7D32),
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Ipo kwenye rukwama ($quantity)',
@@ -205,9 +207,7 @@ class ProductDetailScreen extends StatelessWidget {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const CartScreen(),
-                          ),
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
                         );
                       },
                       icon: const Icon(Icons.shopping_cart_checkout),
@@ -236,7 +236,7 @@ class ProductDetailScreen extends StatelessWidget {
             imageUrl,
             fit: BoxFit.cover,
             width: double.infinity,
-            errorBuilder: (_, __, ___) => _placeholderImage(),
+            errorBuilder: (_, _, _) => _placeholderImage(),
           ),
         );
       }
@@ -252,12 +252,17 @@ class ProductDetailScreen extends StatelessWidget {
           Icon(Icons.eco, size: 80, color: Colors.green[300]),
           const SizedBox(height: 8),
           Text(
-            product.categoryId == '1' ? 'MBEGU'
-            : product.categoryId == '2' ? 'MBOLEA'
-            : product.categoryId == '3' ? 'Dawa'
-            : product.categoryId == '4' ? 'Vifaa'
-            : product.categoryId == '5' ? 'Chakula'
-            : 'Kilimo',
+            product.categoryId == '1'
+                ? 'MBEGU'
+                : product.categoryId == '2'
+                ? 'MBOLEA'
+                : product.categoryId == '3'
+                ? 'Dawa'
+                : product.categoryId == '4'
+                ? 'Vifaa'
+                : product.categoryId == '5'
+                ? 'Chakula'
+                : 'Kilimo',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

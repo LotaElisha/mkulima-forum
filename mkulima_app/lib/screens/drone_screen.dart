@@ -36,6 +36,7 @@ class _DroneScreenState extends State<DroneScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,7 +60,11 @@ class _DroneScreenState extends State<DroneScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.flight_takeoff, size: 48, color: Colors.white),
+                      const Icon(
+                        Icons.flight_takeoff,
+                        size: 48,
+                        color: Colors.white,
+                      ),
                       const SizedBox(height: 12),
                       const Text(
                         'Drone za Kilimo',
@@ -83,10 +88,12 @@ class _DroneScreenState extends State<DroneScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                ..._services.map((service) => _ServiceCard(
-                  service: service,
-                  onBook: () => _showBookingDialog(service),
-                )),
+                ..._services.map(
+                  (service) => _ServiceCard(
+                    service: service,
+                    onBook: () => _showBookingDialog(service),
+                  ),
+                ),
               ],
             ),
     );
@@ -127,7 +134,7 @@ class _ServiceCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
+                    color: const Color(0xFF2E7D32).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.flight, color: Color(0xFF2E7D32)),
@@ -228,7 +235,10 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
               children: [
                 Text(
                   'Weka Nafasi: ${widget.service['name']}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -260,9 +270,11 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
             const SizedBox(height: 12),
             ListTile(
               leading: const Icon(Icons.calendar_today),
-              title: Text(_selectedDate == null
-                  ? 'Chagua Tarehe'
-                  : 'Tarehe: ${_selectedDate!.toLocal().toString().split(' ')[0]}'),
+              title: Text(
+                _selectedDate == null
+                    ? 'Chagua Tarehe'
+                    : 'Tarehe: ${_selectedDate!.toLocal().toString().split(' ')[0]}',
+              ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 final date = await showDatePicker(
@@ -305,7 +317,10 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
                   backgroundColor: const Color(0xFF2E7D32),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Thibitisha Nafasi', style: TextStyle(fontSize: 16)),
+                child: const Text(
+                  'Thibitisha Nafasi',
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -319,14 +334,14 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
     if (_formKey.currentState?.validate() ?? false) {
       final size = double.tryParse(_sizeController.text) ?? 1;
       final cost = (widget.service['price_per_acre'] as int) * size;
-      
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Nafasi Imewekwa'),
           content: Text(
             'Ombi lako la ${widget.service['name']} limepokelewa.\n\n'
-            'Ukubwa: ${size} acres\n'
+            'Ukubwa: $size acres\n'
             'Gharama: TZS ${cost.toStringAsFixed(0)}\n\n'
             'Utapokea ujumbe wa kuthibitisha hivi karibuni.',
           ),

@@ -160,87 +160,89 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error, size: 64, color: Colors.red[300]),
-                      const SizedBox(height: 16),
-                      Text('Kosa: $_error'),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadNotifications,
-                        child: const Text('Jaribu Tena'),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, size: 64, color: Colors.red[300]),
+                  const SizedBox(height: 16),
+                  Text('Kosa: $_error'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadNotifications,
+                    child: const Text('Jaribu Tena'),
                   ),
-                )
-              : _notifications.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                ],
+              ),
+            )
+          : _notifications.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.notifications_off,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Hakuna arifa',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadNotifications,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _notifications.length,
+                itemBuilder: (context, index) {
+                  final notif = _notifications[index];
+                  final isRead = notif['read'] ?? true;
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    color: isRead ? null : Colors.green[50],
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: _notificationColor(
+                          notif['type'] ?? 'general',
+                        ).withOpacity(0.2),
+                        child: Icon(
+                          _notificationIcon(notif['type'] ?? 'general'),
+                          color: _notificationColor(notif['type'] ?? 'general'),
+                        ),
+                      ),
+                      title: Text(
+                        notif['title'] ?? 'Arifa',
+                        style: TextStyle(
+                          fontWeight: isRead
+                              ? FontWeight.normal
+                              : FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.notifications_off,
-                              size: 80, color: Colors.grey[400]),
-                          const SizedBox(height: 16),
+                          Text(notif['message'] ?? ''),
+                          const SizedBox(height: 4),
                           Text(
-                            'Hakuna arifa',
-                            style: TextStyle(color: Colors.grey[600]),
+                            notif['created_at'] ?? '',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
                           ),
                         ],
                       ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: _loadNotifications,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: _notifications.length,
-                        itemBuilder: (context, index) {
-                          final notif = _notifications[index];
-                          final isRead = notif['read'] ?? true;
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            color: isRead ? null : Colors.green[50],
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: _notificationColor(
-                                        notif['type'] ?? 'general')
-                                    .withValues(alpha: 0.2),
-                                child: Icon(
-                                  _notificationIcon(notif['type'] ?? 'general'),
-                                  color: _notificationColor(
-                                      notif['type'] ?? 'general'),
-                                ),
-                              ),
-                              title: Text(
-                                notif['title'] ?? 'Arifa',
-                                style: TextStyle(
-                                  fontWeight: isRead
-                                      ? FontWeight.normal
-                                      : FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(notif['message'] ?? ''),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    notif['created_at'] ?? '',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              isThreeLine: true,
-                              onTap: () => _markRead(notif['id'] ?? ''),
-                            ),
-                          );
-                        },
-                      ),
+                      isThreeLine: true,
+                      onTap: () => _markRead(notif['id'] ?? ''),
                     ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }

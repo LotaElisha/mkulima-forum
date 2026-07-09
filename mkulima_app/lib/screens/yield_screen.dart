@@ -35,19 +35,22 @@ class _YieldScreenState extends State<YieldScreen> {
     setState(() => _isLoading = true);
     try {
       final api = context.read<ApiService>();
-      final response = await api.post('/yield/estimate', data: {
-        'crop_type': _cropType,
-        'farm_size_acres': double.parse(_acresController.text),
-      });
+      final response = await api.post(
+        '/yield/estimate',
+        data: {
+          'crop_type': _cropType,
+          'farm_size_acres': double.parse(_acresController.text),
+        },
+      );
       setState(() {
         _result = response.data;
         _isLoading = false;
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hitilafu: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Hitilafu: $e')));
     }
   }
 
@@ -126,7 +129,7 @@ class _YieldScreenState extends State<YieldScreen> {
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _cropType,
+                    initialValue: _cropType,
                     decoration: const InputDecoration(
                       labelText: 'Aina ya Mazao',
                       prefixIcon: Icon(Icons.grass),
@@ -164,7 +167,10 @@ class _YieldScreenState extends State<YieldScreen> {
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Kadiria', style: TextStyle(fontSize: 16)),
+                          : const Text(
+                              'Kadiria',
+                              style: TextStyle(fontSize: 16),
+                            ),
                     ),
                   ),
                 ],
@@ -196,7 +202,7 @@ class _YieldScreenState extends State<YieldScreen> {
         ),
         const SizedBox(height: 16),
         Card(
-          color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
+          color: const Color(0xFF2E7D32).withOpacity(0.1),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -238,31 +244,35 @@ class _YieldScreenState extends State<YieldScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        ...factors.map((f) => ListTile(
-              leading: Icon(
-                f['impact'] == 'Chanya' ? Icons.trending_up : Icons.trending_down,
-                color: f['impact'] == 'Chanya' ? Colors.green : Colors.orange,
-              ),
-              title: Text(f['name']),
-              trailing: Text('${f['score']}%'),
-            )),
+        ...factors.map(
+          (f) => ListTile(
+            leading: Icon(
+              f['impact'] == 'Chanya' ? Icons.trending_up : Icons.trending_down,
+              color: f['impact'] == 'Chanya' ? Colors.green : Colors.orange,
+            ),
+            title: Text(f['name']),
+            trailing: Text('${f['score']}%'),
+          ),
+        ),
         const SizedBox(height: 16),
         const Text(
           'Mapendekezo',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        ...recommendations.map((r) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.lightbulb, color: Colors.amber, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(r)),
-                ],
-              ),
-            )),
+        ...recommendations.map(
+          (r) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.lightbulb, color: Colors.amber, size: 20),
+                const SizedBox(width: 8),
+                Expanded(child: Text(r)),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

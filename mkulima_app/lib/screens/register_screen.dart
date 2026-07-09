@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       'label': 'Mkulima',
       'icon': Icons.agriculture,
       'desc': 'Nunua bidhaa za kilimo',
-      'color': const Color(0xFF2E7D32),
+      'color': MkColors.primary,
     },
     {
       'value': 'agrodealer',
@@ -145,7 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('OTP ya majaribio: ${auth.devOtp}'),
-            backgroundColor: const Color(0xFF2E7D32),
+            backgroundColor: MkColors.primary,
           ),
         );
       }
@@ -217,8 +218,8 @@ class _RegisterScreenState extends State<RegisterScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF1B5E20),
-              Color(0xFF2E7D32),
+              MkColors.primaryDark,
+              MkColors.primary,
               Color(0xFF4CAF50),
             ],
           ),
@@ -273,7 +274,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 '${index + 1}',
                                 style: TextStyle(
                                   color: index <= _currentStep
-                                      ? const Color(0xFF2E7D32)
+                                      ? MkColors.primary
                                       : Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -332,7 +333,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   .headlineSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF1B5E20),
+                                    color: MkColors.primaryDark,
                                   ),
                             ),
                             const SizedBox(height: 4),
@@ -366,7 +367,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   .headlineSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF1B5E20),
+                                    color: MkColors.primaryDark,
                                   ),
                             ),
                             const SizedBox(height: 4),
@@ -387,7 +388,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                   .headlineSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF1B5E20),
+                                    color: MkColors.primaryDark,
                                   ),
                             ),
                             const SizedBox(height: 4),
@@ -424,13 +425,13 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 TextButton(
                                   onPressed: _canResend ? _requestOtp : null,
                                   style: TextButton.styleFrom(
-                                    foregroundColor: const Color(0xFF2E7D32),
+                                    foregroundColor: MkColors.primary,
                                   ),
                                   child: Text(
                                     'Tuma OTP tena',
                                     style: TextStyle(
                                       color: _canResend
-                                          ? const Color(0xFF2E7D32)
+                                          ? MkColors.primary
                                           : Colors.grey,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -480,11 +481,11 @@ class _RegisterScreenState extends State<RegisterScreen>
                                       ? _verifyOtp
                                       : _nextStep),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2E7D32),
+                                backgroundColor: MkColors.primary,
                                 foregroundColor: Colors.white,
                                 elevation: 4,
                                 shadowColor:
-                                    const Color(0xFF2E7D32).withValues(alpha: 0.4),
+                                    MkColors.primary.withValues(alpha: 0.4),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -539,7 +540,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                                       Navigator.of(context).pop();
                                     },
                                     style: TextButton.styleFrom(
-                                      foregroundColor: const Color(0xFF2E7D32),
+                                      foregroundColor: MkColors.primary,
                                     ),
                                     child: const Text(
                                       'Ingia Hapa',
@@ -587,7 +588,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         labelText: label,
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-        prefixIcon: Icon(icon, color: const Color(0xFF2E7D32), size: 22),
+        prefixIcon: Icon(icon, color: MkColors.primary, size: 22),
         filled: true,
         fillColor: Colors.grey[50],
         border: OutlineInputBorder(
@@ -600,7 +601,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
+          borderSide: const BorderSide(color: MkColors.primary, width: 2),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

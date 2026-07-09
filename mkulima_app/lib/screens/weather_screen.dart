@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
@@ -37,7 +38,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hali ya Hewa'),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
       ),
       body: _isLoading
@@ -189,7 +190,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             color: Colors.green[50],
                             child: ListTile(
                               leading: const Icon(Icons.eco,
-                                  color: Color(0xFF2E7D32)),
+                                  color: MkColors.primary),
                               title: Text(tip),
                             ),
                           ),

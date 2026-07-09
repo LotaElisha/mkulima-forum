@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import 'dart:ui';
+import '../core/strings.dart';
+import '../core/theme.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
+import '../widgets/mk_empty_state.dart';
+import '../widgets/mk_product_tile.dart';
 import 'product_detail_screen.dart';
+import 'weather_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -139,82 +145,63 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+              colors: [MkColors.primary, MkColors.primaryDark],
             ),
           ),
           child: Column(
             children: [
-              // Weather gadget
-              if (_weather != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _getWeatherIcon(_weather!['condition']),
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${_weather!['temperature']}°C',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+              // Promotional Slider with floating Weather overlay
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  _buildPromotionalSlider(),
+                  if (_weather != null)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const WeatherScreen()),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.35),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _getWeatherIcon(_weather!['condition']),
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '${_weather!['temperature'] ?? 28}°C',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              _weather!['condition'] ?? 'Hali ya Hewa',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.water_drop, color: Colors.white70, size: 14),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${_weather!['humidity'] ?? 0}%',
-                                style: const TextStyle(color: Colors.white70, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.air, color: Colors.white70, size: 14),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${_weather!['wind_speed'] ?? 0} km/h',
-                                style: const TextStyle(color: Colors.white70, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              // Promotional Slider
-              _buildPromotionalSlider(),
+                    ),
+                ],
+              ),
               const SizedBox(height: 16),
               // Search bar
               Container(
@@ -226,7 +213,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   onChanged: (value) => setState(() => _searchQuery = value),
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Tafuta bidhaa...',
+                    hintText: MkStrings.searchProducts,
                     hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                     prefixIcon: const Icon(Icons.search, color: Colors.white70),
                     border: InputBorder.none,
@@ -259,7 +246,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
                         selectedColor: Colors.white,
                         labelStyle: TextStyle(
-                          color: isSelected ? const Color(0xFF2E7D32) : Colors.white,
+                          color: isSelected ? MkColors.primary : Colors.white,
                           fontSize: 12,
                         ),
                         padding: EdgeInsets.zero,
@@ -303,52 +290,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   Widget _buildErrorView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              'Imeshindwa kupakia bidhaa',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _error!,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[500]),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _loadProducts,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Jaribu Tena'),
-            ),
-          ],
-        ),
-      ),
+    return MkEmptyState(
+      icon: Icons.error_outline,
+      title: MkStrings.productsLoadFailed,
+      subtitle: _error,
+      actionLabel: MkStrings.retry,
+      onAction: _loadProducts,
     );
   }
 
   Widget _buildEmptyView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              'Hakuna bidhaa zilizopatikana',
-              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-            ),
-          ],
-        ),
-      ),
+    return const MkEmptyState(
+      icon: Icons.search_off,
+      title: MkStrings.noProductsFound,
     );
   }
 
@@ -366,7 +320,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         itemCount: _filteredProducts.length,
         itemBuilder: (context, index) {
           final product = _filteredProducts[index];
-          return _ProductCard(
+          return MkProductTile(
             product: product,
             onTap: () {
               Navigator.of(context).push(
@@ -476,7 +430,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   LinearGradient _getSliderGradient(String type) {
     if (type == 'orange') {
       return const LinearGradient(
-        colors: [Color(0xFFF9A825), Color(0xFFE65100)],
+        colors: [MkColors.accent, Color(0xFFE65100)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
@@ -488,7 +442,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       );
     } else {
       return const LinearGradient(
-        colors: [Color(0xFF81C784), Color(0xFF2E7D32)],
+        colors: [Color(0xFF81C784), MkColors.primary],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
@@ -506,102 +460,3 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 }
 
-class _ProductCard extends StatelessWidget {
-  final dynamic product;
-  final VoidCallback onTap;
-
-  const _ProductCard({required this.product, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    // Handle both Product objects and Map data
-    final price = product is Product ? product.price : (product['price'] ?? 0);
-    final stock = product is Product ? product.stock : (product['stock_quantity'] ?? product['stock'] ?? 0);
-    final imageUrl = product is Product ? (product.images?.isNotEmpty == true ? product.images!.first : null) : (product['image_url'] ?? product['image']);
-    final name = product is Product ? product.name : (product['name'] ?? 'Bidhaa');
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 3,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                child: imageUrl != null
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                      )
-                    : _buildPlaceholder(),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'TZS ${price.toString()}',
-                      style: const TextStyle(
-                        color: Color(0xFF2E7D32),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.inventory_2_outlined,
-                          size: 14,
-                          color: Colors.grey[600],
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$stock zimebaki',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return Container(
-      color: Colors.grey[200],
-      child: const Center(
-        child: Icon(Icons.image, size: 40, color: Colors.grey),
-      ),
-    );
-  }
-}

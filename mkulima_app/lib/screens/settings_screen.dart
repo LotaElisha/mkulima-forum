@@ -61,7 +61,10 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.language, color: Color(0xFF2E7D32)),
+                    leading: const Icon(
+                      Icons.language,
+                      color: Color(0xFF2E7D32),
+                    ),
                     title: const Text('Lugha'),
                     subtitle: const Text('Kiswahili'),
                     trailing: const Icon(Icons.chevron_right),
@@ -69,22 +72,28 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.notifications, color: Color(0xFF2E7D32)),
+                    leading: const Icon(
+                      Icons.notifications,
+                      color: Color(0xFF2E7D32),
+                    ),
                     title: const Text('Arifa'),
                     trailing: Switch(
                       value: true,
                       onChanged: (v) {},
-                      activeColor: const Color(0xFF2E7D32),
+                      activeThumbColor: const Color(0xFF2E7D32),
                     ),
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.dark_mode, color: Color(0xFF2E7D32)),
+                    leading: const Icon(
+                      Icons.dark_mode,
+                      color: Color(0xFF2E7D32),
+                    ),
                     title: const Text('Hali ya Giza'),
                     trailing: Switch(
                       value: false,
                       onChanged: (v) {},
-                      activeColor: const Color(0xFF2E7D32),
+                      activeThumbColor: const Color(0xFF2E7D32),
                     ),
                   ),
                 ],
@@ -113,7 +122,10 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.privacy_tip, color: Color(0xFF2E7D32)),
+                    leading: const Icon(
+                      Icons.privacy_tip,
+                      color: Color(0xFF2E7D32),
+                    ),
                     title: const Text('Sera ya Faragha'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {},

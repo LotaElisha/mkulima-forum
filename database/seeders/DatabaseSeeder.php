@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class, // must run before any user creation
             TenantSeeder::class,
+            AdminUserSeeder::class,
             CategoryProductSeeder::class,
             ForumSeeder::class,
             FeatureFlagSeeder::class,

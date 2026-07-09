@@ -8,9 +8,11 @@ import '../providers/cache_provider.dart';
 
 class ApiService {
   final Dio _dio;
+  String? _token;
 
   ApiService({required String baseUrl})
-      : _dio = Dio(BaseOptions(
+    : _dio = Dio(
+        BaseOptions(
           baseUrl: baseUrl,
           connectTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
@@ -18,27 +20,29 @@ class ApiService {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-        )) {
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: kDebugMode,
-      responseBody: kDebugMode,
-    ));
+        ),
+      ) {
+    _dio.interceptors.add(
+      LogInterceptor(requestBody: kDebugMode, responseBody: kDebugMode),
+    );
   }
 
   void setToken(String token) {
+    _token = token;
     _dio.options.headers['Authorization'] = 'Bearer $token';
   }
 
   void clearToken() {
+    _token = null;
     _dio.options.headers.remove('Authorization');
   }
 
   // Auth APIs
   Future<Map<String, dynamic>> requestOtp(String phone, String purpose) async {
-    final response = await _dio.post('/auth/otp/request', data: {
-      'phone': phone,
-      'purpose': purpose,
-    });
+    final response = await _dio.post(
+      '/auth/otp/request',
+      data: {'phone': phone, 'purpose': purpose},
+    );
     return response.data;
   }
 
@@ -50,14 +54,17 @@ class ApiService {
     String? countryCode,
     String? role,
   }) async {
-    final response = await _dio.post('/auth/otp/verify', data: {
-      'phone': phone,
-      'code': code,
-      'purpose': purpose,
-      if (name != null) 'name': name,
-      if (countryCode != null) 'country_code': countryCode,
-      if (role != null) 'role': role,
-    });
+    final response = await _dio.post(
+      '/auth/otp/verify',
+      data: {
+        'phone': phone,
+        'code': code,
+        'purpose': purpose,
+        'name': ?name,
+        'country_code': ?countryCode,
+        'role': ?role,
+      },
+    );
     return response.data;
   }
 
@@ -73,11 +80,14 @@ class ApiService {
     int page = 1,
   }) async {
     try {
-      final response = await _dio.get('/marketplace/products', queryParameters: {
-        if (categoryId != null) 'category_id': categoryId,
-        if (search != null) 'search': search,
-        'page': page,
-      });
+      final response = await _dio.get(
+        '/marketplace/products',
+        queryParameters: {
+          'category_id': ?categoryId,
+          'search': ?search,
+          'page': page,
+        },
+      );
       final products = (response.data['products'] as List? ?? [])
           .map((e) => Product.fromJson(e))
           .toList();
@@ -121,7 +131,9 @@ class ApiService {
   Future<List<dynamic>> getForumCategories() async {
     try {
       final response = await _dio.get('/forum/categories');
-      await CacheProvider.cacheForumCategories(response.data['categories'] ?? response.data['data'] ?? []);
+      await CacheProvider.cacheForumCategories(
+        response.data['categories'] ?? response.data['data'] ?? [],
+      );
       return response.data['categories'] ?? response.data['data'] ?? [];
     } catch (e) {
       final cached = await CacheProvider.getCachedForumCategories();
@@ -131,9 +143,10 @@ class ApiService {
   }
 
   Future<List<dynamic>> getThreads(String categoryId) async {
-    final response = await _dio.get('/forum/threads', queryParameters: {
-      'category_id': categoryId,
-    });
+    final response = await _dio.get(
+      '/forum/threads',
+      queryParameters: {'category_id': categoryId},
+    );
     return response.data['threads'] ?? response.data['data'] ?? [];
   }
 
@@ -148,9 +161,7 @@ class ApiService {
   }
 
   Future<void> createReply(String threadId, String body) async {
-    await _dio.post('/forum/threads/$threadId/replies', data: {
-      'body': body,
-    });
+    await _dio.post('/forum/threads/$threadId/replies', data: {'body': body});
   }
 
   // Disease Scanner APIs
@@ -169,9 +180,10 @@ class ApiService {
 
   // AI Agronomist APIs
   Future<Map<String, dynamic>> askAgronomist(String query) async {
-    final response = await _dio.post('/agronomist/ask', data: {
-      'question': query,
-    });
+    final response = await _dio.post(
+      '/agronomist/ask',
+      data: {'question': query},
+    );
     return response.data['answer'] ?? response.data;
   }
 
@@ -232,19 +244,25 @@ class ApiService {
   }
 
   Future<void> deposit(double amount, String phone, String provider) async {
-    await _dio.post('/wallet/deposit', data: {
-      'amount': amount,
-      'phone': phone,
-      'provider': provider,
-    });
+    await _dio.post(
+      '/wallet/deposit',
+      data: {'amount': amount, 'phone': phone, 'provider': provider},
+    );
   }
 
-  Future<void> transfer(String phone, double amount, {String? description}) async {
-    await _dio.post('/wallet/transfer', data: {
-      'recipient_phone': phone,
-      'amount': amount,
-      'description': description,
-    });
+  Future<void> transfer(
+    String phone,
+    double amount, {
+    String? description,
+  }) async {
+    await _dio.post(
+      '/wallet/transfer',
+      data: {
+        'recipient_phone': phone,
+        'amount': amount,
+        'description': description,
+      },
+    );
   }
 
   // Weather APIs
@@ -254,7 +272,10 @@ class ApiService {
   }
 
   // Generic HTTP methods
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return await _dio.get(path, queryParameters: queryParameters);
   }
 
@@ -272,9 +293,6 @@ class ApiService {
 
   // SMS APIs
   Future<void> sendSms(String phone, String message) async {
-    await _dio.post('/sms/send', data: {
-      'phone': phone,
-      'message': message,
-    });
+    await _dio.post('/sms/send', data: {'phone': phone, 'message': message});
   }
 }

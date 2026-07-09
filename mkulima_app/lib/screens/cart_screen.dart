@@ -23,8 +23,11 @@ class CartScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_cart_outlined,
-                      size: 80, color: Colors.grey[400]),
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Rukwama yako ni tupu',
@@ -63,14 +66,15 @@ class CartScreen extends StatelessWidget {
                                   color: Colors.green[50],
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Icon(Icons.eco,
-                                    color: Color(0xFF2E7D32)),
+                                child: const Icon(
+                                  Icons.eco,
+                                  color: Color(0xFF2E7D32),
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       item.product.name,
@@ -120,7 +124,7 @@ class CartScreen extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 8,
                       ),
                     ],
@@ -161,7 +165,8 @@ class CartScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (_) => PaymentScreen(
                                     amount: cart.total,
-                                    orderId: 'ORD-${DateTime.now().millisecondsSinceEpoch}',
+                                    orderId:
+                                        'ORD-${DateTime.now().millisecondsSinceEpoch}',
                                   ),
                                 ),
                               );

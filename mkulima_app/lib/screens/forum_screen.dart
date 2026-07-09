@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../core/strings.dart';
+import '../core/theme.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/mk_empty_state.dart';
+import '../widgets/mk_thread_tile.dart';
 import 'login_modal.dart';
 
 class ForumScreen extends StatefulWidget {
@@ -43,7 +47,10 @@ class _ForumScreenState extends State<ForumScreen> {
     }
 
     if (_categories.isEmpty) {
-      return const Center(child: Text('Hakuna mijadala kwa sasa'));
+      return const MkEmptyState(
+        icon: Icons.forum_outlined,
+        title: MkStrings.emptyList,
+      );
     }
 
     return Column(
@@ -79,7 +86,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: const Color(0xFF2E7D32),
+                    backgroundColor: MkColors.primary,
                     child: Icon(
                       _getIcon(cat['icon'] ?? 'forum'),
                       color: Colors.white,
@@ -210,10 +217,11 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                 return;
               }
 
+              final messenger = ScaffoldMessenger.of(this.context);
+              final api = Provider.of<ApiService>(context, listen: false);
               Navigator.of(context).pop();
 
               try {
-                final api = Provider.of<ApiService>(context, listen: false);
                 await api.createThread({
                   'category_id': widget.categoryId,
                   'title': title,
@@ -222,21 +230,18 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
 
                 _loadThreads();
 
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Mada imetumwa kikamilifu')),
-                  );
-                }
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('Mada imetumwa kikamilifu')),
+                );
               } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Kosa: $e')),
-                  );
-                }
+                messenger.showSnackBar(
+                  SnackBar(content: Text('Kosa: $e')),
+                );
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2E7D32),
+              backgroundColor: MkColors.primary,
+              foregroundColor: Colors.white,
             ),
             child: const Text('Tuma'),
           ),
@@ -250,13 +255,14 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.categoryName),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _threads.isEmpty
-              ? const Center(child: Text('Hakuna mada kwa sasa'))
+              ? const MkEmptyState(
+                  icon: Icons.chat_bubble_outline,
+                  title: MkStrings.emptyList,
+                )
               : RefreshIndicator(
                   onRefresh: _loadThreads,
                   child: ListView.builder(
@@ -264,47 +270,18 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                     itemCount: _threads.length,
                     itemBuilder: (context, index) {
                       final thread = _threads[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          title: Text(
-                            thread['title'] ?? 'Thread',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                thread['body'] ?? '',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                      return MkThreadTile(
+                        thread: thread,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => ThreadDetailScreen(
+                                threadId: thread['uuid'] ?? '',
+                                threadTitle: thread['title'] ?? 'Thread',
                               ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.comment, size: 14, color: Colors.grey[600]),
-                                  Text(' ${thread['reply_count'] ?? 0}',
-                                      style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-                                  const SizedBox(width: 12),
-                                  Icon(Icons.remove_red_eye, size: 14, color: Colors.grey[600]),
-                                  Text(' ${thread['view_count'] ?? 0}',
-                                      style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-                                ],
-                              ),
-                            ],
-                          ),
-                          isThreeLine: true,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => ThreadDetailScreen(
-                                  threadId: thread['uuid'] ?? '',
-                                  threadTitle: thread['title'] ?? 'Thread',
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -317,8 +294,8 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
             _showCreateThreadDialog();
           }
         },
-        backgroundColor: const Color(0xFF2E7D32),
-        child: const Icon(Icons.add),
+        backgroundColor: MkColors.primary,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -371,7 +348,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     if (!auth.isAuthenticated) {
       final ok = await AuthProvider.requireAuth(context, action: 'kujibu mada');
-      if (!ok) return;
+      if (!ok || !mounted) return;
     }
 
     try {
@@ -398,8 +375,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.threadTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -508,7 +483,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.send, color: Color(0xFF2E7D32)),
+                          icon: const Icon(Icons.send, color: MkColors.primary),
                           onPressed: _postReply,
                         ),
                       ],

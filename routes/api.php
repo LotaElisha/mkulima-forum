@@ -133,6 +133,19 @@ Route::prefix('agronomist')->middleware('auth:sanctum')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Mkulima Bot — AI chatbot & farm advisor
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('bot')->middleware('auth:sanctum')->group(function () {
+    Route::post('/chat', [\App\Http\Controllers\Api\MkulimaBotController::class, 'chat']);
+    Route::get('/conversations', [\App\Http\Controllers\Api\MkulimaBotController::class, 'conversations']);
+    Route::get('/conversations/{uuid}', [\App\Http\Controllers\Api\MkulimaBotController::class, 'show']);
+    Route::delete('/conversations/{uuid}', [\App\Http\Controllers\Api\MkulimaBotController::class, 'destroy']);
+});
+
+/*
+|--------------------------------------------------------------------------
 | Services Marketplace Routes (agronomist / veterinary / soil testing)
 |--------------------------------------------------------------------------
 */
@@ -150,6 +163,35 @@ Route::prefix('services')->middleware('auth:sanctum')->group(function () {
     Route::post('/bookings', [\App\Http\Controllers\Api\ServiceBookingController::class, 'createBooking']);
     Route::put('/bookings/{uuid}', [\App\Http\Controllers\Api\ServiceBookingController::class, 'updateBooking']);
     Route::post('/bookings/{uuid}/rate', [\App\Http\Controllers\Api\ServiceBookingController::class, 'rateBooking']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Logistics Routes (EF-005) & Warehouse Routes (EF-006)
+|--------------------------------------------------------------------------
+*/
+
+// Public directories
+Route::get('/logistics/transporters', [\App\Http\Controllers\Api\LogisticsController::class, 'transporters']);
+Route::get('/warehouses', [\App\Http\Controllers\Api\WarehouseController::class, 'index']);
+Route::get('/warehouses/{uuid}', [\App\Http\Controllers\Api\WarehouseController::class, 'show'])
+    ->where('uuid', '[0-9a-fA-F-]{36}');
+
+// Protected
+Route::prefix('logistics')->middleware('auth:sanctum')->group(function () {
+    Route::post('/transporters', [\App\Http\Controllers\Api\LogisticsController::class, 'registerTransporter']);
+    Route::get('/freight', [\App\Http\Controllers\Api\LogisticsController::class, 'freight']);
+    Route::post('/freight', [\App\Http\Controllers\Api\LogisticsController::class, 'createFreight']);
+    Route::post('/freight/{uuid}/quote', [\App\Http\Controllers\Api\LogisticsController::class, 'quoteFreight']);
+    Route::put('/freight/{uuid}', [\App\Http\Controllers\Api\LogisticsController::class, 'updateFreight']);
+    Route::post('/freight/{uuid}/rate', [\App\Http\Controllers\Api\LogisticsController::class, 'rateFreight']);
+});
+
+Route::prefix('warehouses')->middleware('auth:sanctum')->group(function () {
+    Route::post('/', [\App\Http\Controllers\Api\WarehouseController::class, 'store']);
+    Route::get('/bookings', [\App\Http\Controllers\Api\WarehouseController::class, 'bookings']);
+    Route::post('/bookings', [\App\Http\Controllers\Api\WarehouseController::class, 'createBooking']);
+    Route::put('/bookings/{uuid}', [\App\Http\Controllers\Api\WarehouseController::class, 'updateBooking']);
 });
 
 /*

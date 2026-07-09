@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import '../services/api_service.dart';
 
 class KycScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _KycScreenState extends State<KycScreen> {
   bool _isLoading = true;
   bool _isSubmitting = false;
 
+  final _idTypeController = TextEditingController();
   final _idNumberController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _addressController = TextEditingController();
@@ -51,8 +53,11 @@ class _KycScreenState extends State<KycScreen> {
     final region = _regionController.text.trim();
     final district = _districtController.text.trim();
 
-    if (fullName.isEmpty || idNumber.isEmpty || address.isEmpty ||
-        region.isEmpty || district.isEmpty) {
+    if (fullName.isEmpty ||
+        idNumber.isEmpty ||
+        address.isEmpty ||
+        region.isEmpty ||
+        district.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Tafadhali jaza sehemu zote')),
       );
@@ -79,26 +84,28 @@ class _KycScreenState extends State<KycScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('KYC yametumwa kikamilifu. Inasubiri ukaguzi.')),
+          const SnackBar(
+            content: Text('KYC yametumwa kikamilifu. Inasubiri ukaguzi.'),
+          ),
         );
       }
     } catch (e) {
       setState(() => _isSubmitting = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kosa: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+    final user = auth.user;
 
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -124,13 +131,13 @@ class _KycScreenState extends State<KycScreen> {
                           _kycStatus == 'verified'
                               ? Icons.verified
                               : _kycStatus == 'pending'
-                                  ? Icons.pending
-                                  : Icons.warning,
+                              ? Icons.pending
+                              : Icons.warning,
                           color: _kycStatus == 'verified'
                               ? Colors.green
                               : _kycStatus == 'pending'
-                                  ? Colors.orange
-                                  : Colors.red,
+                              ? Colors.orange
+                              : Colors.red,
                           size: 40,
                         ),
                         const SizedBox(width: 16),
@@ -149,8 +156,8 @@ class _KycScreenState extends State<KycScreen> {
                                 _kycStatus == 'verified'
                                     ? 'Akaunti yako imethibitishwa'
                                     : _kycStatus == 'pending'
-                                        ? 'Maombi yako yanasubiri ukaguzi'
-                                        : 'Tafadhali thibitisha utambulisho wako',
+                                    ? 'Maombi yako yanasubiri ukaguzi'
+                                    : 'Tafadhali thibitisha utambulisho wako',
                                 style: TextStyle(color: Colors.grey[600]),
                               ),
                             ],
@@ -170,16 +177,22 @@ class _KycScreenState extends State<KycScreen> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedIdType,
+                initialValue: _selectedIdType,
                 decoration: const InputDecoration(
                   labelText: 'Aina ya Kitambulisho',
                   border: OutlineInputBorder(),
                 ),
                 items: const [
                   DropdownMenuItem(value: 'national_id', child: Text('NIDA')),
-                  DropdownMenuItem(value: 'drivers_license', child: Text('Leseni ya Udereva')),
+                  DropdownMenuItem(
+                    value: 'drivers_license',
+                    child: Text('Leseni ya Udereva'),
+                  ),
                   DropdownMenuItem(value: 'passport', child: Text('Passport')),
-                  DropdownMenuItem(value: 'voter_id', child: Text('Kitambulisho cha Mpiga Kura')),
+                  DropdownMenuItem(
+                    value: 'voter_id',
+                    child: Text('Kitambulisho cha Mpiga Kura'),
+                  ),
                 ],
                 onChanged: (v) => setState(() => _selectedIdType = v!),
               ),

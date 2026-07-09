@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
 
-    final screens = const [
+    const screens = [
       MarketplaceScreen(),
       FeaturesScreen(),
       AgronomistScreen(),
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ProfileScreen(),
     ];
 
-    final titles = const [
+    const titles = [
       'Soko la Mkulima',
       'Huduma za Kilimo',
       'Mtaalamu wa AI (Chatbot)',
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'Wasifu Wangu',
     ];
 
-    final destinations = const [
+    const destinations = [
       NavigationDestination(
         icon: Icon(Icons.store_outlined),
         selectedIcon: Icon(Icons.store),
@@ -87,9 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: const Icon(Icons.shopping_cart),
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const CartScreen(),
-                          ),
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
                         );
                       },
                     ),
@@ -162,10 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
           else
             TextButton(
               onPressed: () => LoginModal.show(context),
-              child: const Text(
-                'Ingia',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text('Ingia', style: TextStyle(color: Colors.white)),
             ),
         ],
       ),
@@ -236,7 +231,8 @@ class GuestFeaturesScreen extends StatelessWidget {
           _GuestFeatureCard(
             icon: Icons.forum,
             title: 'Soma Jukwaa',
-            description: 'Soma mijadala na ushauri wa kilimo kutoka kwa wataalamu',
+            description:
+                'Soma mijadala na ushauri wa kilimo kutoka kwa wataalamu',
             color: Colors.blue,
             onTap: () {},
           ),
@@ -301,10 +297,7 @@ class GuestFeaturesScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Ingia Sasa',
-                style: TextStyle(fontSize: 18),
-              ),
+              child: const Text('Ingia Sasa', style: TextStyle(fontSize: 18)),
             ),
           ),
           const SizedBox(height: 12),
@@ -381,9 +374,7 @@ class _GuestFeatureCard extends StatelessWidget {
           trailing: locked
               ? const Icon(Icons.chevron_right, color: Colors.grey)
               : const Icon(Icons.chevron_right),
-          onTap: locked
-              ? () => LoginModal.show(context)
-              : onTap,
+          onTap: locked ? () => LoginModal.show(context) : onTap,
         ),
       ),
     );
@@ -401,9 +392,7 @@ class LoginScreenPlaceholder extends StatelessWidget {
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
       ),
-      body: const Center(
-        child: Text('Login Screen'),
-      ),
+      body: const Center(child: Text('Login Screen')),
     );
   }
 }

@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import '../core/strings.dart';
+import '../core/theme.dart';
 import '../services/api_service.dart';
 import '../providers/connectivity_provider.dart';
+import '../widgets/mk_button.dart';
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
@@ -42,6 +45,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       });
     } catch (e) {
       setState(() => _isScanning = false);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Kosa: $e')),
       );
@@ -100,7 +104,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   Icon(Icons.camera_alt, size: 60, color: Colors.grey[400]),
                   const SizedBox(height: 12),
                   Text(
-                    'Chukua picha ya mmea',
+                    MkStrings.scanPlant,
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                 ],
@@ -115,7 +119,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   icon: const Icon(Icons.camera_alt),
                   label: const Text('Kamera'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2E7D32),
+                    backgroundColor: MkColors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
@@ -136,33 +140,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
           ),
           const SizedBox(height: 16),
           if (_image != null)
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isScanning ? null : _scanDisease,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange[700],
-                  foregroundColor: Colors.white,
-                ),
-                child: _isScanning
-                    ? const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Text('Inachunguza...'),
-                        ],
-                      )
-                    : const Text('Kagua Ugonjwa'),
-              ),
+            MkButton(
+              label: MkStrings.titleScanner,
+              icon: Icons.biotech,
+              loading: _isScanning,
+              onPressed: _scanDisease,
             ),
           if (_result != null) ...[
             const SizedBox(height: 24),

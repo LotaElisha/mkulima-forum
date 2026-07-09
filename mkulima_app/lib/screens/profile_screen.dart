@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
@@ -13,7 +14,7 @@ import 'wallet_screen.dart';
 import 'weather_screen.dart';
 import 'sms_screen.dart';
 import 'ivr_screen.dart';
-import 'agronomist_screen.dart';
+import 'mkulima_bot_screen.dart';
 import 'scanner_screen.dart';
 import 'drone_screen.dart';
 import 'iot_screen.dart';
@@ -70,10 +71,10 @@ class ProfileScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             icon: Icons.psychology,
-            title: 'Mtaalamu wa AI',
-            subtitle: 'Uliza maswali ya kilimo',
-            color: Colors.teal,
-            onTap: () => _navigate(context, const AgronomistScreen()),
+            title: 'Mkulima Bot',
+            subtitle: 'Msaidizi wako wa kilimo wa AI',
+            color: Colors.blue,
+            onTap: () => _navigate(context, const MkulimaBotScreen()),
           ),
           _buildMenuItem(
             icon: Icons.camera_alt,
@@ -206,13 +207,13 @@ class ProfileScreen extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
+                color: MkColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: const Icon(
                 Icons.person_outline,
                 size: 60,
-                color: Color(0xFF2E7D32),
+                color: MkColors.primary,
               ),
             ),
             const SizedBox(height: 24),
@@ -236,7 +237,7 @@ class ProfileScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => LoginModal.show(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -261,8 +262,8 @@ class ProfileScreen extends StatelessWidget {
                   );
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF2E7D32),
-                  side: const BorderSide(color: Color(0xFF2E7D32)),
+                  foregroundColor: MkColors.primary,
+                  side: const BorderSide(color: MkColors.primary),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -284,7 +285,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundColor: const Color(0xFF2E7D32),
+              backgroundColor: MkColors.primary,
               child: Text(
                 user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
                 style: const TextStyle(fontSize: 36, color: Colors.white),
@@ -312,7 +313,7 @@ class ProfileScreen extends StatelessWidget {
                     user.role.toUpperCase(),
                     style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                 ),
                 const SizedBox(width: 8),
                 Chip(
@@ -382,7 +383,7 @@ class ProfileScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF2E7D32),
+            color: MkColors.primary,
           ),
         ),
       ),

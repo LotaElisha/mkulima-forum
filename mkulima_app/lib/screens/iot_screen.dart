@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
@@ -42,7 +43,7 @@ class _IoTScreenState extends State<IoTScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Vifaa vya IoT'),
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: MkColors.primary,
           foregroundColor: Colors.white,
         ),
         body: Center(
@@ -66,7 +67,7 @@ class _IoTScreenState extends State<IoTScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vifaa vya IoT'),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
       ),
       body: _isLoading

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'core/app_router.dart';
 import 'core/theme.dart';
@@ -30,21 +31,35 @@ void main() async {
   runApp(MkulimaApp(db: db, api: api));
 }
 
-class MkulimaApp extends StatelessWidget {
+class MkulimaApp extends StatefulWidget {
   final LocalDatabase db;
   final ApiService api;
 
   const MkulimaApp({super.key, required this.db, required this.api});
 
   @override
+  State<MkulimaApp> createState() => _MkulimaAppState();
+}
+
+class _MkulimaAppState extends State<MkulimaApp> {
+  late final AuthProvider _auth;
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _auth = AuthProvider(api: widget.api, db: widget.db);
+    // Router listens to auth so protected routes redirect on logout.
+    _router = buildAppRouter(_auth);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider.value(value: api),
+        Provider.value(value: widget.api),
         ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
-        ChangeNotifierProvider(
-          create: (_) => AuthProvider(api: api, db: db),
-        ),
+        ChangeNotifierProvider.value(value: _auth),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MaterialApp.router(
@@ -52,7 +67,7 @@ class MkulimaApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: mkLightTheme(),
         darkTheme: mkDarkTheme(),
-        routerConfig: appRouter,
+        routerConfig: _router,
       ),
     );
   }

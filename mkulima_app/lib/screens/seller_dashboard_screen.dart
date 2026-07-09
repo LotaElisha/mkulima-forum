@@ -99,43 +99,43 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error, size: 64, color: Colors.red[300]),
-                      const SizedBox(height: 16),
-                      Text('Kosa: $_error'),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadDashboard,
-                        child: const Text('Jaribu Tena'),
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, size: 64, color: Colors.red[300]),
+                  const SizedBox(height: 16),
+                  Text('Kosa: $_error'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _loadDashboard,
+                    child: const Text('Jaribu Tena'),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _loadDashboard,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildStatsGrid(),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Oda za Hivi Karibuni',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadDashboard,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildStatsGrid(),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Oda za Hivi Karibuni',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildRecentOrders(),
-                      ],
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    _buildRecentOrders(),
+                  ],
                 ),
+              ),
+            ),
     );
   }
 
@@ -188,18 +188,12 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
             const Spacer(),
             Text(
               value,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -236,11 +230,15 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: statusColor.withValues(alpha: 0.2),
+              backgroundColor: statusColor.withOpacity(0.2),
               child: Icon(Icons.shopping_bag, color: statusColor),
             ),
-            title: Text('Oda #${order['uuid']?.toString().substring(0, 8) ?? '---'}'),
-            subtitle: Text('${order['buyer_name'] ?? 'Unknown'} - ${order['items_count'] ?? 0} items'),
+            title: Text(
+              'Oda #${order['uuid']?.toString().substring(0, 8) ?? '---'}',
+            ),
+            subtitle: Text(
+              '${order['buyer_name'] ?? 'Unknown'} - ${order['items_count'] ?? 0} items',
+            ),
             trailing: Text(
               'TSh ${(order['total'] ?? 0).toStringAsFixed(0)}',
               style: const TextStyle(fontWeight: FontWeight.bold),
@@ -253,12 +251,18 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
   Color _statusColor(String status) {
     switch (status) {
-      case 'pending': return Colors.orange;
-      case 'confirmed': return Colors.blue;
-      case 'shipped': return Colors.purple;
-      case 'delivered': return Colors.green;
-      case 'cancelled': return Colors.red;
-      default: return Colors.grey;
+      case 'pending':
+        return Colors.orange;
+      case 'confirmed':
+        return Colors.blue;
+      case 'shipped':
+        return Colors.purple;
+      case 'delivered':
+        return Colors.green;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
   }
 }

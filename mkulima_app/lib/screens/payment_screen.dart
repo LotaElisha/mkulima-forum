@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
@@ -30,7 +31,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Malipo'),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -53,7 +54,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E7D32),
+                        color: MkColors.primary,
                       ),
                     ),
                   ],
@@ -107,23 +108,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            _buildPaymentMethod(
-              value: 'escrow',
-              title: 'Escrow (Salama)',
-              subtitle: 'Pesa zinahifadhiwa hadi bidhaa ifike',
-              icon: Icons.security,
-            ),
-            _buildPaymentMethod(
-              value: 'mpesa',
-              title: 'M-Pesa',
-              subtitle: 'Lipa kwa M-Pesa (hivi karibuni)',
-              icon: Icons.phone_android,
-            ),
-            _buildPaymentMethod(
-              value: 'tigopesa',
-              title: 'Tigo Pesa',
-              subtitle: 'Lipa kwa Tigo Pesa (hivi karibuni)',
-              icon: Icons.phone_android,
+            RadioGroup<String>(
+              groupValue: _selectedMethod,
+              onChanged: (v) => setState(() => _selectedMethod = v!),
+              child: Column(
+                children: [
+                  _buildPaymentMethod(
+                    value: 'escrow',
+                    title: 'Escrow (Salama)',
+                    subtitle: 'Pesa zinahifadhiwa hadi bidhaa ifike',
+                    icon: Icons.security,
+                  ),
+                  _buildPaymentMethod(
+                    value: 'mpesa',
+                    title: 'M-Pesa',
+                    subtitle: 'Lipa kwa M-Pesa (hivi karibuni)',
+                    icon: Icons.phone_android,
+                  ),
+                  _buildPaymentMethod(
+                    value: 'tigopesa',
+                    title: 'Tigo Pesa',
+                    subtitle: 'Lipa kwa Tigo Pesa (hivi karibuni)',
+                    icon: Icons.phone_android,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             TextField(
@@ -145,7 +154,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: ElevatedButton(
                 onPressed: _isProcessing ? null : _processPayment,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: _isProcessing
@@ -280,11 +289,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: RadioListTile<String>(
         value: value,
-        groupValue: _selectedMethod,
-        onChanged: (v) => setState(() => _selectedMethod = v!),
         title: Text(title),
         subtitle: Text(subtitle),
-        secondary: Icon(icon, color: const Color(0xFF2E7D32)),
+        secondary: Icon(icon, color: MkColors.primary),
       ),
     );
   }

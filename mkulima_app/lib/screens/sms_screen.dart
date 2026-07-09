@@ -20,9 +20,9 @@ class _SmsScreenState extends State<SmsScreen> {
     final message = _messageController.text.trim();
 
     if (phone.isEmpty || message.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Weka namba na ujumbe')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Weka namba na ujumbe')));
       return;
     }
 
@@ -35,16 +35,16 @@ class _SmsScreenState extends State<SmsScreen> {
       _phoneController.clear();
       _messageController.clear();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('SMS imetumwa')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('SMS imetumwa')));
       }
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kosa: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
       }
     }
   }

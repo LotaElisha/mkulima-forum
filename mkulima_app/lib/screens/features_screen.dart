@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../services/api_service.dart';
 import '../core/theme.dart';
 import 'weather_screen.dart';
 import 'wallet_screen.dart';
 import 'sms_screen.dart';
 import 'ivr_screen.dart';
-import 'agronomist_screen.dart';
+import 'mkulima_bot_screen.dart';
 import 'scanner_screen.dart';
-import 'notifications_screen.dart';
 import 'orders_screen.dart';
-import 'seller_dashboard_screen.dart';
 import 'kyc_screen.dart';
 import 'settings_screen.dart';
 import 'drone_screen.dart';
@@ -49,8 +46,6 @@ class FeaturesScreen extends StatefulWidget {
 }
 
 class _FeaturesScreenState extends State<FeaturesScreen> {
-  Map<String, dynamic>? _weather;
-  bool _weatherLoading = true;
 
   final List<ServiceItem> _miamalaServices = [
     const ServiceItem(
@@ -94,12 +89,12 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
     ),
     const ServiceItem(
       icon: Icons.psychology_outlined,
-      name: 'Mtaalamu wa AI',
-      description: 'Uliza na upate msaada wa kilimo kutoka kwa AI.',
-      requiredPlan: 'Pro',
+      name: 'Mkulima Bot',
+      description: 'Msaidizi wako wa kilimo wa AI — mazungumzo na ushauri wa haraka.',
+      requiredPlan: 'Free',
       color: Colors.blue,
-      targetScreen: AgronomistScreen(),
-      benefits: ['Msaada wa saa 24/7', 'Utambuzi wa magonjwa ya mazao', 'Ushauri wa matumizi ya mbolea'],
+      targetScreen: MkulimaBotScreen(),
+      benefits: ['Mazungumzo yanayoendelea (kumbukumbu)', 'Msaada wa saa 24/7', 'Utambuzi wa magonjwa ya mazao', 'Ushauri wa mazao, mbolea na wadudu'],
     ),
     const ServiceItem(
       icon: Icons.center_focus_strong,
@@ -181,28 +176,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
     ),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchWeather();
-  }
 
-  Future<void> _fetchWeather() async {
-    try {
-      final api = Provider.of<ApiService>(context, listen: false);
-      final weatherData = await api.getWeather();
-      if (mounted) {
-        setState(() {
-          _weather = weatherData;
-          _weatherLoading = false;
-        });
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() => _weatherLoading = false);
-      }
-    }
-  }
 
   int _getPlanRank(String plan) {
     switch (plan.toLowerCase()) {
@@ -277,12 +251,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
     final auth = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          setState(() => _weatherLoading = true);
-          await _fetchWeather();
-        },
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -326,7 +295,6 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -337,134 +305,64 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+          colors: [MkColors.primary, MkColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+            color: MkColors.primary.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
         ],
       ),
       padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Habari, $userName!',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Habari, $userName!',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    auth.isAuthenticated
-                        ? 'Kifurushi chako: ${auth.subscriptionPlan}'
-                        : 'Jiunge leo kupata huduma zote',
-                    style: const TextStyle(color: Colors.white70, fontSize: 13),
-                  ),
-                ],
-              ),
-              if (!auth.isAuthenticated)
-                ElevatedButton(
-                  onPressed: () => AuthProvider.requireAuth(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF2E7D32),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  child: const Text('Ingia', style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          const Divider(color: Colors.white24, height: 1),
-          const SizedBox(height: 16),
-
-          // Embedded Weather Gadget
-          GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const WeatherScreen()),
+                const SizedBox(height: 4),
+                Text(
+                  auth.isAuthenticated
+                      ? 'Kifurushi chako: ${auth.subscriptionPlan}'
+                      : 'Jiunge leo kupata huduma zote',
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
             ),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(16),
+          ),
+          if (!auth.isAuthenticated)
+            ElevatedButton(
+              onPressed: () => AuthProvider.requireAuth(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: MkColors.primary,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),
-              child: _weatherLoading
-                  ? const Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    )
-                  : Row(
-                      children: [
-                        const Icon(Icons.cloud, color: Colors.white, size: 36),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _weather?['location']?['city'] ?? 'Dar es Salaam',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                _weather?['current']?['description'] ?? 'Mawingu kiasi',
-                                style: const TextStyle(color: Colors.white70, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${_weather?['current']?['temp'] ?? 28}°C',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Text(
-                              'Unyevu: 70%',
-                              style: TextStyle(color: Colors.white60, fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              child: const Text('Ingia', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildCategoryBlock(String categoryTitle, List<ServiceItem> services) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth >= 600;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -475,18 +373,18 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2E7D32),
+              color: MkColors.primary,
             ),
           ),
         ),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.15,
+            childAspectRatio: isTablet ? 1.1 : 0.82,
           ),
           itemCount: services.length,
           itemBuilder: (context, index) {

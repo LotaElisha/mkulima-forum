@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 
 class IvrScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class IvrScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('IVR - Simu ya Kupiga'),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -21,7 +22,7 @@ class IvrScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
+                  colors: [MkColors.primary, MkColors.primaryDark],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -58,7 +59,7 @@ class IvrScreen extends StatelessWidget {
                     label: const Text('Piga Sasa'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF2E7D32),
+                      foregroundColor: MkColors.primary,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
                         vertical: 12,
@@ -162,7 +163,7 @@ class _MenuOption extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: MkColors.primary,
           child: Text(
             number,
             style: const TextStyle(
@@ -173,7 +174,7 @@ class _MenuOption extends StatelessWidget {
         ),
         title: Text(title),
         subtitle: Text(description),
-        trailing: Icon(icon, color: const Color(0xFF2E7D32)),
+        trailing: Icon(icon, color: MkColors.primary),
       ),
     );
   }

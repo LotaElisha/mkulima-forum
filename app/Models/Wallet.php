@@ -84,10 +84,29 @@ class Wallet extends Model
 
     public function transferTo(Wallet $recipient, float $amount, string $description = null): ?WalletTransaction
     {
-        if ($this->balance < $amount) {
+        if ($recipient->id === $this->id) {
             return null;
         }
 
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($recipient, $amount, $description) {
+            // Re-read both wallets under row locks (deadlock-safe: lock in id order)
+            $first = $this->id < $recipient->id ? $this : $recipient;
+            $second = $this->id < $recipient->id ? $recipient : $this;
+            $first->newQuery()->whereKey($first->id)->lockForUpdate()->first();
+            $second->newQuery()->whereKey($second->id)->lockForUpdate()->first();
+            $this->refresh();
+            $recipient->refresh();
+
+            if ($this->balance < $amount) {
+                return null;
+            }
+
+            return $this->performTransfer($recipient, $amount, $description);
+        });
+    }
+
+    private function performTransfer(Wallet $recipient, float $amount, ?string $description): WalletTransaction
+    {
         $this->balance -= $amount;
         $this->save();
 

@@ -51,7 +51,11 @@ class _WalletScreenState extends State<WalletScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.account_balance_wallet, size: 64, color: Colors.grey),
+              const Icon(
+                Icons.account_balance_wallet,
+                size: 64,
+                color: Colors.grey,
+              ),
               const SizedBox(height: 16),
               const Text('Tafadhali ingia kwanza'),
               const SizedBox(height: 16),
@@ -96,7 +100,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.green.withValues(alpha: 0.3),
+                            color: Colors.green.withOpacity(0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -187,9 +191,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 isIncoming
                                     ? Icons.arrow_downward
                                     : Icons.arrow_upward,
-                                color: isIncoming
-                                    ? Colors.green
-                                    : Colors.red,
+                                color: isIncoming ? Colors.green : Colors.red,
                               ),
                             ),
                             title: Text(tx['description'] ?? 'Transaction'),
@@ -197,9 +199,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             trailing: Text(
                               '${isIncoming ? '+' : ''}TZS ${tx['amount']}',
                               style: TextStyle(
-                                color: isIncoming
-                                    ? Colors.green
-                                    : Colors.red,
+                                color: isIncoming ? Colors.green : Colors.red,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -222,7 +222,10 @@ class _WalletScreenState extends State<WalletScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.phone_android, color: Color(0xFF2E7D32)),
+              leading: const Icon(
+                Icons.phone_android,
+                color: Color(0xFF2E7D32),
+              ),
               title: const Text('M-Pesa'),
               onTap: () {
                 Navigator.pop(context);
@@ -266,9 +269,9 @@ class _WalletScreenState extends State<WalletScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kosa: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
       }
     }
   }
@@ -325,9 +328,9 @@ class _WalletScreenState extends State<WalletScreen> {
                 }
               } catch (e) {
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Kosa: $e')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
                 }
               }
             },
@@ -360,7 +363,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: Colors.white.withOpacity(0.2),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

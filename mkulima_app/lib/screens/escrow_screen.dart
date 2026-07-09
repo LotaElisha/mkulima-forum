@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
@@ -42,7 +43,7 @@ class _EscrowScreenState extends State<EscrowScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Mkulima Escrow'),
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: MkColors.primary,
           foregroundColor: Colors.white,
         ),
         body: Center(
@@ -66,7 +67,7 @@ class _EscrowScreenState extends State<EscrowScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mkulima Escrow'),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
       ),
       body: _isLoading
@@ -80,7 +81,7 @@ class _EscrowScreenState extends State<EscrowScreen> {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+                        colors: [Color(0xFF4CAF50), MkColors.primary],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -236,7 +237,7 @@ class _EscrowScreenState extends State<EscrowScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Unda Escrow'),
@@ -319,7 +320,7 @@ class _EscrowCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2E7D32),
+                    color: MkColors.primary,
                   ),
                 ),
                 if (escrow['status'] == 'in_escrow')

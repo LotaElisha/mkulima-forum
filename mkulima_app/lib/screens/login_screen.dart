@@ -1,3 +1,4 @@
+import '../core/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
@@ -79,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('OTP ya majaribio: ${auth.devOtp}'),
-            backgroundColor: const Color(0xFF2E7D32),
+            backgroundColor: MkColors.primary,
           ),
         );
       }
@@ -143,8 +144,8 @@ class _LoginScreenState extends State<LoginScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF1B5E20),
-              Color(0xFF2E7D32),
+              MkColors.primaryDark,
+              MkColors.primary,
               Color(0xFF4CAF50),
             ],
           ),
@@ -231,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     .headlineSmall
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF1B5E20),
+                                      color: MkColors.primaryDark,
                                     ),
                               ),
                               const SizedBox(height: 4),
@@ -257,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     'Simu',
                                     Icons.phone_android,
                                     !_useEmail && !_otpSent,
-                                    const Color(0xFF2E7D32),
+                                    MkColors.primary,
                                     () => setState(() {
                                       _useEmail = false;
                                       _otpSent = false;
@@ -321,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   child: TextButton(
                                     onPressed: () {},
                                     style: TextButton.styleFrom(
-                                      foregroundColor: const Color(0xFF2E7D32),
+                                      foregroundColor: MkColors.primary,
                                     ),
                                     child: const Text(
                                       'Umesahau password?',
@@ -391,10 +392,10 @@ class _LoginScreenState extends State<LoginScreen>
                                               ? _verifyOtp
                                               : _requestOtp)),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF2E7D32),
+                                    backgroundColor: MkColors.primary,
                                     foregroundColor: Colors.white,
                                     elevation: 4,
-                                    shadowColor: const Color(0xFF2E7D32)
+                                    shadowColor: MkColors.primary
                                         .withValues(alpha: 0.4),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
@@ -445,7 +446,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       },
                                       style: TextButton.styleFrom(
                                         foregroundColor:
-                                            const Color(0xFF2E7D32),
+                                            MkColors.primary,
                                       ),
                                       child: const Text(
                                         'Jiunge Hapa',
@@ -556,7 +557,7 @@ class _LoginScreenState extends State<LoginScreen>
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
         prefixIcon:
-            Icon(icon, color: const Color(0xFF2E7D32), size: 22),
+            Icon(icon, color: MkColors.primary, size: 22),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.grey[50],
@@ -571,7 +572,7 @@ class _LoginScreenState extends State<LoginScreen>
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide:
-              const BorderSide(color: Color(0xFF2E7D32), width: 2),
+              const BorderSide(color: MkColors.primary, width: 2),
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
