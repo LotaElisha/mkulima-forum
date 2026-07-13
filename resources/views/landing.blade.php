@@ -271,7 +271,7 @@
       <p><span class="in">Wewe: BEI mahindi</span></p>
       <p class="out">Bei za mahindi:
 Kariakoo: TZS 45,000/gunia (12/07)
-App: mkulima.hudumapro.com</p>
+App: mkulimaforum.app</p>
       <p><span class="in">Wewe: HALI Dodoma</span></p>
       <p class="out">Hali ya hewa Dodoma:
 Joto: 22°C · Unyevu: 59%

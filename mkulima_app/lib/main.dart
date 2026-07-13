@@ -21,7 +21,7 @@ void main() async {
   final db = LocalDatabase();
   // Configure per environment:
   //   flutter run --dart-define=API_URL=http://10.0.2.2:8000/api   (local dev)
-  //   flutter build apk --dart-define=API_URL=https://mkulima.hudumapro.com/api
+  //   flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
   const apiUrl = String.fromEnvironment(
     'API_URL',
     defaultValue: 'http://10.0.2.2:8000/api',

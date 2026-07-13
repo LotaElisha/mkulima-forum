@@ -38,7 +38,7 @@ Route files: `routes/api.php` (core), `api_kyc.php`, `api_notifications.php`, `a
 cd mkulima_app
 flutter pub get
 flutter run --dart-define=API_URL=http://10.0.2.2:8000/api        # Android emulator → local API
-flutter build apk --dart-define=API_URL=https://mkulima.hudumapro.com/api
+flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
 ```
 
 The API base URL is injected via `--dart-define=API_URL` (defaults to production). No hardcoded hosts.
@@ -49,12 +49,12 @@ The API base URL is injected via `--dart-define=API_URL` (defaults to production
 cd admin-dashboard
 npm install
 npm run dev     # http://localhost:3020, proxies VITE_API_URL (default /api)
-npm run build   # uses .env.production → https://mkulima.hudumapro.com/api
+npm run build   # uses .env.production → https://mkulimaforum.app/api
 ```
 
 ## Canonical API Host
 
-All clients target **`https://mkulima.hudumapro.com/api`** in production. Change it in one place per client: `--dart-define=API_URL` (Flutter), `.env.production` (admin), `APP_URL` in `.env` (backend).
+All clients target **`https://mkulimaforum.app/api`** in production. Change it in one place per client: `--dart-define=API_URL` (Flutter), `.env.production` (admin), `APP_URL` in `.env` (backend).
 
 ## Status
 

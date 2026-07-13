@@ -20,9 +20,9 @@ This is the operational checklist to take Mkulima Forum from this repo to produc
 ## 2. Server & Environment (⛔)
 
 - [ ] Provision host with PHP 8.3+, PostgreSQL, Redis (cache/queue/rate-limits), Nginx + HTTPS (Let's Encrypt), supervisor.
-- [ ] `.env` production values: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://<host>`, `DB_CONNECTION=pgsql`, `CACHE_STORE=redis`, `QUEUE_CONNECTION=redis`, `SESSION_DRIVER=redis`. **Never** reuse dev `APP_KEY`.
+- [ ] `.env` production values: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://mkulimaforum.app`, `DB_CONNECTION=pgsql`, `CACHE_STORE=redis`, `QUEUE_CONNECTION=redis`, `SESSION_DRIVER=redis`. **Never** reuse dev `APP_KEY`.
 - [ ] `LOG_LEVEL=warning` + log rotation. Note: failed weather calls log the upstream URL **including the API key** (cURL error text) — either scrub in a log formatter or accept keys-in-logs risk with restricted log access.
-- [ ] Error monitoring (Sentry/Flare) + uptime check on `/api/health`.
+- [ ] Error monitoring (Sentry/Flare) + uptime check on `https://mkulimaforum.app/api/health`.
 - [ ] Database backups (daily dump + WAL/point-in-time if possible) and a tested restore.
 
 ## 3. Deploy Runbook (backend + admin + landing)
@@ -53,11 +53,11 @@ php artisan queue:work redis --daemon   # under supervisor
 # php artisan reverb:start              # only if realtime features enabled
 
 # 6. Admin dashboard (serve dist/ under /admin)
-cd admin-dashboard && echo "VITE_API_URL=https://<host>/api" > .env.production \
+cd admin-dashboard && echo "VITE_API_URL=https://mkulimaforum.app/api" > .env.production \
   && npm ci && npm run build            # deploy dist/
 
 # 7. Smoke test (read-only, run every deploy)
-./scripts/smoke.sh https://<host>       # must print "20 passed, 0 failed"
+./scripts/smoke.sh https://mkulimaforum.app       # must print "20 passed, 0 failed"
 ```
 
 **Immediately after first deploy:**
@@ -77,7 +77,7 @@ cd admin-dashboard && echo "VITE_API_URL=https://<host>/api" > .env.production \
 
 ```bash
 cd mkulima_app
-flutter build apk --release --dart-define=API_URL=https://<host>/api
+flutter build apk --release --dart-define=API_URL=https://mkulimaforum.app/api
 cp build/app/outputs/flutter-apk/app-release.apk ../public/app/mkulima-forum.apk
 ```
 - [ ] The landing page "Pakua APK" button points at `/app/mkulima-forum.apk` — the copy above makes it live.
