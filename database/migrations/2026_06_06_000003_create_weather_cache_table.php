@@ -13,8 +13,8 @@ return new class extends Migration
             $table->string('location');
             $table->decimal('lat', 10, 6)->nullable();
             $table->decimal('lon', 10, 6)->nullable();
-            $table->json('current_data');
-            $table->json('forecast_data');
+            $table->json('current_data')->nullable();
+            $table->json('forecast_data')->nullable();
             $table->json('advisory_data')->nullable();
             $table->timestamp('expires_at');
             $table->timestamps();

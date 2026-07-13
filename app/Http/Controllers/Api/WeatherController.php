@@ -3,172 +3,88 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\WeatherCache;
+use App\Services\WeatherService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
+/**
+ * Weather API backed by WeatherService (OpenWeather + stale-cache fallback).
+ * Never fabricates readings: when upstream is down the last cached reading is
+ * returned flagged `is_stale`, otherwise `available: false` with a message.
+ */
 class WeatherController extends Controller
 {
-    private const OPENWEATHER_API_KEY = 'demo_key'; // Replace with real key
-    private const CACHE_MINUTES = 30;
-
-    public function getCurrent(Request $request): JsonResponse
+    public function __construct(protected WeatherService $weather)
     {
-        $request->validate([
-            'lat' => ['nullable', 'numeric'],
-            'lon' => ['nullable', 'numeric'],
-            'city' => ['nullable', 'string'],
-        ]);
-
-        $city = $request->input('city', 'Dar es Salaam');
-        $lat = $request->input('lat', -6.7924);
-        $lon = $request->input('lon', 39.2083);
-
-        // Check cache
-        $cache = WeatherCache::where('location', $city)
-            ->where('expires_at', '>', now())
-            ->first();
-
-        if ($cache) {
-            return response()->json([
-                'current' => $cache->current_data,
-                'forecast' => $cache->forecast_data,
-                'advisory' => $cache->advisory_data,
-                'cached' => true,
-            ]);
-        }
-
-        // Demo weather data (replace with real API call)
-        $weatherData = $this->getDemoWeather($city, $lat, $lon);
-
-        // Cache the data
-        WeatherCache::updateOrCreate(
-            ['location' => $city],
-            [
-                'lat' => $lat,
-                'lon' => $lon,
-                'current_data' => $weatherData['current'],
-                'forecast_data' => $weatherData['forecast'],
-                'advisory_data' => $weatherData['advisory'],
-                'expires_at' => now()->addMinutes(self::CACHE_MINUTES),
-            ]
-        );
-
-        return response()->json($weatherData);
     }
 
-    public function getAdvisory(Request $request): JsonResponse
+    public function current(Request $request): JsonResponse
     {
-        $request->validate([
-            'crop' => ['required', 'string'],
-            'region' => ['required', 'string'],
-        ]);
-
-        $crop = $request->input('crop');
-        $region = $request->input('region');
-
-        // Demo advisory data
-        $advisory = $this->getDemoAdvisory($crop, $region);
+        $current = $this->weather->getCurrentWeather($this->location($request));
 
         return response()->json([
-            'crop' => $crop,
-            'region' => $region,
-            'advisory' => $advisory,
+            'current' => $current,
+            'available' => $current['available'] ?? true,
+            'is_stale' => $current['is_stale'] ?? false,
         ]);
     }
 
-    private function getDemoWeather(string $city, float $lat, float $lon): array
+    public function forecast(Request $request): JsonResponse
     {
-        $conditions = ['Clear', 'Clouds', 'Rain', 'Drizzle', 'Thunderstorm'];
-        $current = [
-            'temp' => rand(24, 32),
-            'feels_like' => rand(26, 34),
-            'humidity' => rand(60, 90),
-            'pressure' => rand(1010, 1020),
-            'wind_speed' => rand(5, 25),
-            'wind_direction' => rand(0, 360),
-            'visibility' => rand(8000, 10000),
-            'uvi' => rand(3, 10),
-            'condition' => $conditions[array_rand($conditions)],
-            'description' => 'Scattered clouds',
-            'icon' => '03d',
-            'sunrise' => '06:15',
-            'sunset' => '18:45',
-        ];
+        $forecast = $this->weather->getForecast($this->location($request));
 
-        $forecast = [];
-        for ($i = 1; $i <= 5; $i++) {
-            $forecast[] = [
-                'date' => now()->addDays($i)->format('Y-m-d'),
-                'day' => now()->addDays($i)->format('l'),
-                'temp_min' => rand(22, 26),
-                'temp_max' => rand(28, 34),
-                'humidity' => rand(55, 85),
-                'condition' => $conditions[array_rand($conditions)],
-                'description' => 'Partly cloudy',
-                'icon' => '02d',
-                'rain_chance' => rand(10, 60),
-                'wind_speed' => rand(8, 20),
-            ];
-        }
-
-        $advisory = [
-            'alert_level' => 'low',
-            'alerts' => [],
-            'farming_tips' => [
-                'Wakati mzuri wa kupanda mahindi',
-                'Hali ya hewa inafaa kwa kilimo cha mimea ya majani',
-                'Hakikisha umeweka mfumo wa umwagiliaji',
-            ],
-            'recommended_crops' => ['Mahindi', 'Mpunga', 'Mbogamboga'],
-            'irrigation_needed' => $current['humidity'] < 70,
-        ];
-
-        return [
-            'current' => $current,
+        return response()->json([
             'forecast' => $forecast,
-            'advisory' => $advisory,
-            'location' => [
-                'city' => $city,
-                'lat' => $lat,
-                'lon' => $lon,
-            ],
-        ];
+            'available' => !empty($forecast),
+        ]);
     }
 
-    private function getDemoAdvisory(string $crop, string $region): array
+    public function advisory(Request $request): JsonResponse
     {
-        $tips = [
-            'mahindi' => [
-                'Panda wakati wa mvua ya vuli (Oktoba-Desemba)',
-                'Tumia mbegu za kuthibitishwa',
-                'Weka mbali mita 75 kati ya mstari mmoja na mwingine',
-                'Tumia mbolea ya DAP wakati wa kupanda',
-            ],
-            'mpunga' => [
-                'Hakikisha shamba lina maji ya kutosha',
-                'Panda katika mstari mmoja kwa mmoja',
-                'Tumia mbolea ya NPK mwanzoni',
-                'Linda dhidi ya magonjwa ya bakteria',
-            ],
-            'mbogamboga' => [
-                'Panda karibu na chanzo cha maji',
-                'Tumia mbolea ya kuku au ngombe',
-                'Vuna mapema asubuhi',
-                'Hifadhi kwenye joto la chini',
-            ],
-        ];
+        $current = $this->weather->getCurrentWeather($this->location($request));
 
-        return [
-            'general' => $tips[strtolower($crop)] ?? ['Hali ya hewa inafaa kwa kilimo'],
-            'pest_alerts' => [],
-            'disease_alerts' => [],
-            'irrigation_schedule' => [
-                'Monday' => 'Morning',
-                'Wednesday' => 'Evening',
-                'Friday' => 'Morning',
-            ],
-        ];
+        if (($current['available'] ?? true) === false) {
+            return response()->json([
+                'advisory' => [],
+                'available' => false,
+                'message' => $current['message'] ?? 'Taarifa za hali ya hewa hazipatikani kwa sasa.',
+            ], 200);
+        }
+
+        return response()->json([
+            'advisory' => $this->weather->getFarmingAdvisory($current),
+            'based_on' => $current,
+            'available' => true,
+            'is_stale' => $current['is_stale'] ?? false,
+        ]);
+    }
+
+    public function fullReport(Request $request): JsonResponse
+    {
+        $location = $this->location($request);
+        $current = $this->weather->getCurrentWeather($location);
+        $available = ($current['available'] ?? true) !== false;
+
+        return response()->json([
+            'location' => $current['location'] ?? $location,
+            'available' => $available,
+            'is_stale' => $current['is_stale'] ?? false,
+            'current' => $available ? $current : null,
+            'forecast' => $available ? $this->weather->getForecast($location) : [],
+            'advisory' => $available ? $this->weather->getFarmingAdvisory($current) : [],
+            'message' => $available ? null : ($current['message'] ?? 'Taarifa za hali ya hewa hazipatikani kwa sasa.'),
+        ]);
+    }
+
+    protected function location(Request $request): string
+    {
+        $request->validate([
+            'location' => ['nullable', 'string', 'max:120'],
+            'city' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        return $request->input('location')
+            ?? $request->input('city')
+            ?? 'Dar es Salaam';
     }
 }

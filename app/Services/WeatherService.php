@@ -233,12 +233,17 @@ class WeatherService
 
     protected function cacheWeather(string $location, ?array $current, ?array $forecast, ?array $advisory): void
     {
-        $cache = WeatherCache::firstOrNew(['location' => $location]);
-        if ($current) $cache->current_data = $current;
-        if ($forecast) $cache->forecast_data = $forecast;
-        if ($advisory) $cache->advisory_data = $advisory;
-        $cache->expires_at = now()->addMinutes(30);
-        $cache->save();
+        // A cache-write failure must never break serving fresh upstream data.
+        try {
+            $cache = WeatherCache::firstOrNew(['location' => $location]);
+            if ($current) $cache->current_data = $current;
+            if ($forecast) $cache->forecast_data = $forecast;
+            if ($advisory) $cache->advisory_data = $advisory;
+            $cache->expires_at = now()->addMinutes(30);
+            $cache->save();
+        } catch (\Exception $e) {
+            Log::warning('Weather cache write failed: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -38,10 +38,12 @@ Route::get('/health', function () {
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/login/email', [AuthController::class, 'loginWithEmail']);
-    Route::post('/otp/request', [AuthController::class, 'requestOtp']);
-    Route::post('/otp/verify', [AuthController::class, 'verifyOtp']);
+    // IP-level throttling against credential brute force; OTP additionally
+    // has per-phone rate limiting inside OtpService.
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+    Route::post('/login/email', [AuthController::class, 'loginWithEmail'])->middleware('throttle:10,1');
+    Route::post('/otp/request', [AuthController::class, 'requestOtp'])->middleware('throttle:5,1');
+    Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->middleware('throttle:10,1');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
@@ -318,11 +320,96 @@ Route::prefix('weather')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Global Search
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/search', [\App\Http\Controllers\Api\SearchController::class, 'search'])
+    ->middleware('throttle:30,1');
+
+/*
+|--------------------------------------------------------------------------
+| Kagua Dawa — Counterfeit Agri-Input Verification
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('inputs')->group(function () {
+    // Public: registry lookup, confirmed alerts, hand-check checklist
+    Route::get('/verify', [\App\Http\Controllers\Api\InputVerificationController::class, 'verify'])
+        ->middleware('throttle:30,1');
+    Route::get('/alerts', [\App\Http\Controllers\Api\InputVerificationController::class, 'alerts']);
+    Route::get('/checklist', [\App\Http\Controllers\Api\InputVerificationController::class, 'checklist']);
+
+    // Auth: label photo check (Gemini) + community counterfeit report
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/check-label', [\App\Http\Controllers\Api\InputVerificationController::class, 'checkLabel'])
+            ->middleware('throttle:10,1');
+        Route::post('/report', [\App\Http\Controllers\Api\InputVerificationController::class, 'report'])
+            ->middleware('throttle:10,60');
+    });
+});
+
+// Admin: registry management + alert review queue
+Route::prefix('admin')
+    ->middleware(['auth:sanctum', AdminMiddleware::class])
+    ->group(function () {
+        Route::get('/inputs', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryIndex']);
+        Route::post('/inputs', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryStore']);
+        Route::put('/inputs/{uuid}', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryUpdate']);
+        Route::delete('/inputs/{uuid}', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryDestroy']);
+        Route::get('/input-alerts', [\App\Http\Controllers\Api\InputVerificationController::class, 'alertQueue']);
+        Route::post('/input-alerts/{uuid}/review', [\App\Http\Controllers\Api\InputVerificationController::class, 'reviewAlert']);
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Content Reporting & Moderation Routes
+|--------------------------------------------------------------------------
+*/
+
+// Any authenticated user can report content (throttled against abuse)
+Route::post('/reports', [\App\Http\Controllers\Api\ReportController::class, 'store'])
+    ->middleware(['auth:sanctum', 'throttle:10,60']);
+
+// Admin moderation queue
+Route::prefix('admin/reports')
+    ->middleware(['auth:sanctum', AdminMiddleware::class])
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\ReportController::class, 'index']);
+        Route::post('/{uuid}/resolve', [\App\Http\Controllers\Api\ReportController::class, 'resolve']);
+        Route::post('/{uuid}/dismiss', [\App\Http\Controllers\Api\ReportController::class, 'dismiss']);
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Market Prices Routes
+|--------------------------------------------------------------------------
+*/
+
+// Public price board
+Route::prefix('market-prices')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\MarketPriceController::class, 'index']);
+    Route::get('/filters', [\App\Http\Controllers\Api\MarketPriceController::class, 'filters']);
+});
+
+// Admin price management
+Route::prefix('admin/market-prices')
+    ->middleware(['auth:sanctum', AdminMiddleware::class])
+    ->group(function () {
+        Route::post('/', [\App\Http\Controllers\Api\MarketPriceController::class, 'store']);
+        Route::put('/{uuid}', [\App\Http\Controllers\Api\MarketPriceController::class, 'update']);
+        Route::delete('/{uuid}', [\App\Http\Controllers\Api\MarketPriceController::class, 'destroy']);
+    });
+
+/*
+|--------------------------------------------------------------------------
 | SMS Routes
 |--------------------------------------------------------------------------
 */
 Route::prefix('sms')->middleware('auth:sanctum')->group(function () {
-    Route::post('/send', [\App\Http\Controllers\Api\SmsController::class, 'send']);
+    // Sending arbitrary SMS is an admin-only capability (spam prevention).
+    Route::post('/send', [\App\Http\Controllers\Api\SmsController::class, 'send'])
+        ->middleware(AdminMiddleware::class);
     Route::get('/history', [\App\Http\Controllers\Api\SmsController::class, 'getHistory']);
 });
 
@@ -354,18 +441,6 @@ Route::prefix('ivr')->group(function () {
     Route::post('/callback', [\App\Http\Controllers\Api\IvrController::class, 'handleCallback']);
 });
 
-// Weather APIs
-Route::get('/weather/current', [App\Http\Controllers\Api\WeatherController::class, 'getCurrent']);
-Route::get('/weather/advisory', [App\Http\Controllers\Api\WeatherController::class, 'getAdvisory']);
-
-// Admin Feature Management
-Route::prefix('admin')->middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
-    Route::get('/features', [App\Http\Controllers\Admin\FeatureController::class, 'index']);
-    Route::post('/features/{key}/toggle', [App\Http\Controllers\Admin\FeatureController::class, 'toggle']);
-    Route::put('/features/{key}', [App\Http\Controllers\Admin\FeatureController::class, 'update']);
-    Route::get('/features/category/{category}', [App\Http\Controllers\Admin\FeatureController::class, 'byCategory']);
-});
-
 // Public feature status
 Route::get('/features/status', [App\Http\Controllers\Admin\FeatureController::class, 'publicStatus']);
 Route::get('/features/check/{key}', [App\Http\Controllers\Admin\FeatureController::class, 'check']);
@@ -390,13 +465,4 @@ Route::middleware('auth:sanctum')->prefix('yield')->group(function () {
     Route::post('/estimate', [App\Http\Controllers\Api\YieldController::class, 'estimate']);
     Route::post('/analyze-photo', [App\Http\Controllers\Api\YieldController::class, 'analyzePhoto']);
     Route::get('/history', [App\Http\Controllers\Api\YieldController::class, 'history']);
-});
-
-// Escrow APIs
-Route::middleware('auth:sanctum')->prefix('escrow')->group(function () {
-    Route::post('/create', [App\Http\Controllers\Api\EscrowController::class, 'create']);
-    Route::get('/my-escrows', [App\Http\Controllers\Api\EscrowController::class, 'myEscrows']);
-    Route::post('/{escrowId}/release', [App\Http\Controllers\Api\EscrowController::class, 'release']);
-    Route::post('/{escrowId}/dispute', [App\Http\Controllers\Api\EscrowController::class, 'dispute']);
-    Route::get('/stats', [App\Http\Controllers\Api\EscrowController::class, 'stats']);
 });

@@ -3,50 +3,56 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\YieldEstimate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class YieldController extends Controller
 {
-    public function estimate(Request $request)
+    /**
+     * Regional average yields & indicative farm-gate prices (TZS) used as a
+     * reference table. This is openly labelled as a rough planning estimate —
+     * it is NOT an AI prediction of the caller's specific farm.
+     */
+    protected const REFERENCE = [
+        'mahindi' => ['yield_per_acre' => 25, 'unit' => 'gunia', 'price_per_unit' => 35000],
+        'mpunga' => ['yield_per_acre' => 40, 'unit' => 'gunia', 'price_per_unit' => 45000],
+        'maharage' => ['yield_per_acre' => 15, 'unit' => 'gunia', 'price_per_unit' => 60000],
+        'alizeti' => ['yield_per_acre' => 18, 'unit' => 'gunia', 'price_per_unit' => 55000],
+        'miwa' => ['yield_per_acre' => 35, 'unit' => 'tani', 'price_per_unit' => 80000],
+        'kahawa' => ['yield_per_acre' => 8, 'unit' => 'gunia', 'price_per_unit' => 120000],
+        'chai' => ['yield_per_acre' => 12, 'unit' => 'gunia', 'price_per_unit' => 40000],
+        'cassava' => ['yield_per_acre' => 50, 'unit' => 'gunia', 'price_per_unit' => 25000],
+    ];
+
+    public function estimate(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'crop_type' => 'required|string',
-            'farm_size_acres' => 'required|numeric|min:0.1',
-            'photo_count' => 'nullable|integer|min:1',
+            'crop_type' => 'required|string|in:' . implode(',', array_keys(self::REFERENCE)),
+            'farm_size_acres' => 'required|numeric|min:0.1|max:10000',
         ]);
 
-        $cropType = $validated['crop_type'];
-        $acres = $validated['farm_size_acres'];
-        
-        // AI estimation based on crop type
-        $estimates = [
-            'mahindi' => ['yield_per_acre' => 25, 'unit' => 'gunia', 'price_per_unit' => 35000],
-            'mpunga' => ['yield_per_acre' => 40, 'unit' => 'gunia', 'price_per_unit' => 45000],
-            'maharage' => ['yield_per_acre' => 15, 'unit' => 'gunia', 'price_per_unit' => 60000],
-            'alizeti' => ['yield_per_acre' => 18, 'unit' => 'gunia', 'price_per_unit' => 55000],
-            'miwa' => ['yield_per_acre' => 35, 'unit' => 'tani', 'price_per_unit' => 80000],
-            'kahawa' => ['yield_per_acre' => 8, 'unit' => 'gunia', 'price_per_unit' => 120000],
-            'chai' => ['yield_per_acre' => 12, 'unit' => 'gunia', 'price_per_unit' => 40000],
-            'cassava' => ['yield_per_acre' => 50, 'unit' => 'gunia', 'price_per_unit' => 25000],
-        ];
+        $crop = self::REFERENCE[$validated['crop_type']];
+        $acres = (float) $validated['farm_size_acres'];
 
-        $crop = $estimates[$cropType] ?? ['yield_per_acre' => 20, 'unit' => 'gunia', 'price_per_unit' => 40000];
-        
-        $totalYield = $crop['yield_per_acre'] * $acres;
-        $totalRevenue = $totalYield * $crop['price_per_unit'];
-        $confidence = rand(75, 95);
+        $totalYield = round($crop['yield_per_acre'] * $acres, 2);
+        $totalRevenue = round($totalYield * $crop['price_per_unit'], 2);
 
-        // Factors affecting yield
-        $factors = [
-            ['name' => 'Hali ya Hewa', 'impact' => 'Chanya', 'score' => 85],
-            ['name' => 'Udongo', 'impact' => 'Chanya', 'score' => 78],
-            ['name' => 'Mbolea', 'impact' => 'Wastani', 'score' => 65],
-            ['name' => 'Maji', 'impact' => 'Chanya', 'score' => 90],
-        ];
+        $estimate = YieldEstimate::create([
+            'user_id' => $request->user()->id,
+            'crop_type' => $validated['crop_type'],
+            'farm_size_acres' => $acres,
+            'yield_per_acre' => $crop['yield_per_acre'],
+            'estimated_yield_total' => $totalYield,
+            'yield_unit' => $crop['unit'],
+            'price_per_unit' => $crop['price_per_unit'],
+            'estimated_revenue' => $totalRevenue,
+            'method' => 'reference_table',
+        ]);
 
         return response()->json([
-            'crop_type' => $cropType,
+            'id' => $estimate->uuid,
+            'crop_type' => $validated['crop_type'],
             'farm_size_acres' => $acres,
             'estimated_yield' => [
                 'total' => $totalYield,
@@ -58,69 +64,49 @@ class YieldController extends Controller
                 'per_unit' => $crop['price_per_unit'],
                 'currency' => 'TZS',
             ],
-            'confidence_score' => $confidence,
-            'factors' => $factors,
-            'recommendations' => [
-                'Ongeza mbolea ya phosphate kuongeza mavuno',
-                'Hakikisha umwagiliaji wa kutosha wakati wa kukua',
-                'Piga dawa ya magugu mapema',
-                'Fuatilia wadudu hasa wakati wa mavuno',
-            ],
+            'method' => 'reference_table',
+            'disclaimer' => 'Haya ni makadirio ya wastani wa kanda, si utabiri wa shamba lako. '
+                . 'Mavuno halisi hutegemea mbegu, udongo, hali ya hewa na utunzaji. '
+                . 'Kwa ushauri wa shamba lako, wasiliana na mtaalamu wa kilimo.',
         ]);
     }
 
-    public function analyzePhoto(Request $request)
+    public function analyzePhoto(Request $request): JsonResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'photo' => 'required|image|max:10240',
             'crop_type' => 'required|string',
         ]);
 
-        // Simulate AI analysis of crop photo
-        $analysis = [
-            'plant_count' => rand(800, 1500),
-            'health_score' => rand(70, 95),
-            'growth_stage' => 'Vegatation',
-            'issues_detected' => [
-                ['type' => 'Magonjwa', 'severity' => 'low', 'description' => 'Dalili za mildew'],
-                ['type' => 'Wadudu', 'severity' => 'medium', 'description' => 'Aphids wachache'],
-            ],
-            'estimated_yield_from_photo' => [
-                'plants_per_acre' => rand(800, 1200),
-                'expected_yield_per_plant' => rand(0.8, 1.5),
-                'total_expected_yield' => rand(20, 35),
-            ],
-        ];
-
+        // No image-analysis model is wired to this endpoint yet. Answer
+        // honestly instead of returning fabricated plant counts (audit
+        // 2026-07-12). Use the disease scanner (/scanner/scan) for real
+        // AI image analysis.
         return response()->json([
-            'message' => 'Picha imechambuliwa',
-            'analysis' => $analysis,
-        ]);
+            'message' => 'Uchambuzi wa picha kwa makadirio ya mavuno bado haujawashwa. '
+                . 'Tumia "Kagua Ugonjwa" kwa uchambuzi wa magonjwa ya mimea.',
+            'available' => false,
+        ], 501);
     }
 
-    public function history()
+    public function history(Request $request): JsonResponse
     {
-        $history = [
-            [
-                'id' => 'EST-001',
-                'crop_type' => 'mahindi',
-                'farm_size_acres' => 3,
-                'estimated_yield' => 75,
-                'actual_yield' => 72,
-                'accuracy' => 96,
-                'date' => '2025-03-15',
-            ],
-            [
-                'id' => 'EST-002',
-                'crop_type' => 'mpunga',
-                'farm_size_acres' => 2,
-                'estimated_yield' => 80,
-                'actual_yield' => 85,
-                'accuracy' => 94,
-                'date' => '2025-04-20',
-            ],
-        ];
+        $estimates = YieldEstimate::where('user_id', $request->user()->id)
+            ->latest()
+            ->paginate(20);
 
-        return response()->json(['history' => $history]);
+        return response()->json([
+            'history' => $estimates->map(fn ($e) => [
+                'id' => $e->uuid,
+                'crop_type' => $e->crop_type,
+                'farm_size_acres' => (float) $e->farm_size_acres,
+                'estimated_yield' => (float) $e->estimated_yield_total,
+                'yield_unit' => $e->yield_unit,
+                'estimated_revenue' => (float) $e->estimated_revenue,
+                'method' => $e->method,
+                'date' => $e->created_at->toDateString(),
+            ]),
+            'total' => $estimates->total(),
+        ]);
     }
 }

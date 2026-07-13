@@ -108,14 +108,14 @@ class FeatureFlagSeeder extends Seeder
             [
                 'key' => 'iot_sensors',
                 'name' => 'IoT Sensors',
-                'description' => 'Soil moisture and weather sensors',
+                'description' => 'Soil moisture and weather sensors (no device fleet yet)',
                 'category' => 'phase4',
-                'enabled' => true,
+                'enabled' => false,
             ],
             [
                 'key' => 'yield_estimation',
                 'name' => 'Yield Estimation',
-                'description' => 'AI harvest prediction',
+                'description' => 'Reference-table harvest planning estimates',
                 'category' => 'phase4',
                 'enabled' => true,
             ],

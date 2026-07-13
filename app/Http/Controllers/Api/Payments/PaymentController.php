@@ -103,7 +103,7 @@ class PaymentController extends Controller
      */
     public function status(Request $request, string $uuid): JsonResponse
     {
-        $escrow = Escrow::with(['ledger', 'order'])->where('uuid', $uuid)->firstOrFail();
+        $escrow = Escrow::with(['ledgerEntries', 'order'])->where('uuid', $uuid)->firstOrFail();
 
         // Verify access
         if ($escrow->buyer_id !== $request->user()->id && $escrow->seller_id !== $request->user()->id) {
@@ -112,7 +112,7 @@ class PaymentController extends Controller
 
         return response()->json([
             'escrow' => $escrow,
-            'ledger' => $escrow->ledger,
+            'ledger' => $escrow->ledgerEntries,
         ]);
     }
 
@@ -121,11 +121,19 @@ class PaymentController extends Controller
      */
     public function myEscrows(Request $request): JsonResponse
     {
-        $escrows = Escrow::where('buyer_id', $request->user()->id)
-            ->orWhere('seller_id', $request->user()->id)
+        $userId = $request->user()->id;
+
+        $escrows = Escrow::where(function ($q) use ($userId) {
+                $q->where('buyer_id', $userId)->orWhere('seller_id', $userId);
+            })
             ->with('order')
             ->latest()
             ->paginate(20);
+
+        $escrows->getCollection()->transform(function ($escrow) use ($userId) {
+            $escrow->setAttribute('direction', $escrow->buyer_id === $userId ? 'buying' : 'selling');
+            return $escrow;
+        });
 
         return response()->json($escrows);
     }
