@@ -34,36 +34,34 @@ export default function Dashboard() {
     }
   }
 
+  // No fabricated growth percentages: `change` renders only when the API
+  // provides a real month-over-month figure (stats.changes.*).
   const statCards = [
     {
       title: 'Total Users',
       value: stats?.total_users || 0,
-      change: '+12%',
-      trend: 'up',
+      change: stats?.changes?.users,
       icon: Users,
       color: 'blue'
     },
     {
       title: 'Total Orders',
       value: stats?.total_orders || 0,
-      change: '+8%',
-      trend: 'up',
+      change: stats?.changes?.orders,
       icon: ShoppingCart,
       color: 'green'
     },
     {
       title: 'Total Revenue',
       value: `TSh ${(stats?.total_revenue || 0).toLocaleString()}`,
-      change: '+15%',
-      trend: 'up',
+      change: stats?.changes?.revenue,
       icon: DollarSign,
       color: 'yellow'
     },
     {
       title: 'Active Escrows',
       value: stats?.active_escrows || 0,
-      change: '-3%',
-      trend: 'down',
+      change: stats?.changes?.escrows,
       icon: Shield,
       color: 'purple'
     }
@@ -92,17 +90,19 @@ export default function Dashboard() {
               <div>
                 <p className="text-sm text-gray-500">{card.title}</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{card.value}</p>
-                <div className="flex items-center gap-1 mt-2">
-                  {card.trend === 'up' ? (
-                    <TrendingUp className="w-4 h-4 text-green-500" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4 text-red-500" />
-                  )}
-                  <span className={`text-sm font-medium ${card.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                    {card.change}
-                  </span>
-                  <span className="text-sm text-gray-400">vs last month</span>
-                </div>
+                {card.change != null && (
+                  <div className="flex items-center gap-1 mt-2">
+                    {card.change >= 0 ? (
+                      <TrendingUp className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4 text-red-500" />
+                    )}
+                    <span className={`text-sm font-medium ${card.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {card.change >= 0 ? '+' : ''}{card.change}%
+                    </span>
+                    <span className="text-sm text-gray-400">vs last month</span>
+                  </div>
+                )}
               </div>
               <div className={`p-3 rounded-xl bg-${card.color}-50`}>
                 <card.icon className={`w-6 h-6 text-${card.color}-600`} />

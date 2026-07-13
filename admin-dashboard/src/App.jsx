@@ -16,6 +16,9 @@ import CatalogManager from './pages/CatalogManager'
 import Vendors from './pages/Vendors'
 import FinancialReports from './pages/FinancialReports'
 import FeatureFlags from './pages/FeatureFlags'
+import Moderation from './pages/Moderation'
+import MarketPrices from './pages/MarketPrices'
+import InputSafety from './pages/InputSafety'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthContext, RequireRole } from './components/AuthContext'
 
@@ -91,6 +94,9 @@ function App() {
         <Route path="pos" element={<PosTerminal />} />
         <Route path="catalog" element={<CatalogManager />} />
         <Route path="vendors" element={<Vendors />} />
+        <Route path="moderation" element={<Moderation />} />
+        <Route path="market-prices" element={<MarketPrices />} />
+        <Route path="input-safety" element={<InputSafety />} />
         <Route path="financial-reports" element={
           <RequireRole roles={['superadmin']}><FinancialReports /></RequireRole>
         } />

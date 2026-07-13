@@ -16,7 +16,10 @@ import {
   Package,
   Store,
   TrendingUp,
-  ToggleRight
+  ToggleRight,
+  Flag,
+  LineChart,
+  ShieldAlert
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -38,6 +41,9 @@ export default function Layout() {
     { to: '/orders', icon: ShoppingCart, label: 'Orders' },
     { to: '/escrows', icon: Shield, label: 'Escrows' },
     { to: '/kyc', icon: UserCheck, label: 'KYC' },
+    { to: '/moderation', icon: Flag, label: 'Moderation' },
+    { to: '/market-prices', icon: LineChart, label: 'Market Prices' },
+    { to: '/input-safety', icon: ShieldAlert, label: 'Input Safety' },
     { to: '/financial-reports', icon: TrendingUp, label: 'Financial' },
     { to: '/features', icon: ToggleRight, label: 'Feature Flags' },
     { to: '/analytics', icon: BarChart3, label: 'Analytics' },
