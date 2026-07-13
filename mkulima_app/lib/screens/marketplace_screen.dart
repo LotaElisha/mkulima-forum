@@ -95,11 +95,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       });
       final api = context.read<ApiService>();
       final response = await api.getProducts();
+      if (!mounted) return;
       setState(() {
         _products = response as List<dynamic>;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -111,8 +113,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     try {
       final api = context.read<ApiService>();
       final response = await api.getWeather();
+      if (!mounted) return;
       setState(() {
-        _weather = response;
+        // Only show the chip when real data is available — never a made-up
+        // default temperature.
+        _weather = response['available'] == true
+            ? response['current'] as Map<String, dynamic>?
+            : null;
       });
     } catch (e) {
       // Weather is optional, ignore errors
@@ -180,13 +187,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    _getWeatherIcon(_weather!['condition']),
+                                    _getWeatherIcon(_weather!['description']?.toString()),
                                     color: Colors.white,
                                     size: 18,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    '${_weather!['temperature'] ?? 28}°C',
+                                    '${_weather!['temperature']}°C',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
@@ -272,21 +279,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   IconData _getWeatherIcon(String? condition) {
-    switch (condition?.toLowerCase()) {
-      case 'sunny':
-      case 'clear':
-        return Icons.wb_sunny;
-      case 'cloudy':
-        return Icons.wb_cloudy;
-      case 'rainy':
-      case 'rain':
-        return Icons.water_drop;
-      case 'storm':
-      case 'thunderstorm':
-        return Icons.thunderstorm;
-      default:
-        return Icons.wb_sunny;
+    // OpenWeather descriptions are phrases ("overcast clouds", "light rain"),
+    // so match by substring.
+    final desc = (condition ?? '').toLowerCase();
+    if (desc.contains('thunder') || desc.contains('storm')) {
+      return Icons.thunderstorm;
     }
+    if (desc.contains('rain') || desc.contains('drizzle')) {
+      return Icons.water_drop;
+    }
+    if (desc.contains('cloud')) {
+      return Icons.wb_cloudy;
+    }
+    return Icons.wb_sunny;
   }
 
   Widget _buildErrorView() {

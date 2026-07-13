@@ -29,11 +29,13 @@ class _ForumScreenState extends State<ForumScreen> {
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final categories = await api.getForumCategories();
+      if (!mounted) return;
       setState(() {
         _categories = categories;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -162,11 +164,13 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final threads = await api.getThreads(widget.categoryId);
+      if (!mounted) return;
       setState(() {
         _threads = threads;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -331,12 +335,14 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final thread = await api.getThread(widget.threadId);
+      if (!mounted) return;
       setState(() {
         _thread = thread;
         _replies = thread['replies'] ?? [];
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }

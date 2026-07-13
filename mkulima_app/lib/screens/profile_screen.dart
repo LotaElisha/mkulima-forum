@@ -71,7 +71,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           _buildMenuItem(
             icon: Icons.psychology,
-            title: 'Mkulima Bot',
+            title: 'Mkulima AI',
             subtitle: 'Msaidizi wako wa kilimo wa AI',
             color: Colors.blue,
             onTap: () => _navigate(context, const MkulimaBotScreen()),

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
@@ -8,7 +7,6 @@ import '../providers/cache_provider.dart';
 
 class ApiService {
   final Dio _dio;
-  String? _token;
 
   ApiService({required String baseUrl})
     : _dio = Dio(
@@ -28,12 +26,10 @@ class ApiService {
   }
 
   void setToken(String token) {
-    _token = token;
     _dio.options.headers['Authorization'] = 'Bearer $token';
   }
 
   void clearToken() {
-    _token = null;
     _dio.options.headers.remove('Authorization');
   }
 
@@ -165,9 +161,12 @@ class ApiService {
   }
 
   // Disease Scanner APIs
-  Future<Map<String, dynamic>> scanDisease(File image) async {
+  Future<Map<String, dynamic>> scanDisease(
+    Uint8List imageBytes,
+    String filename,
+  ) async {
     final formData = FormData.fromMap({
-      'image': await MultipartFile.fromFile(image.path),
+      'image': MultipartFile.fromBytes(imageBytes, filename: filename),
     });
     final response = await _dio.post('/scanner/scan', data: formData);
     return response.data['scan'] ?? response.data['data'] ?? response.data;
@@ -190,6 +189,21 @@ class ApiService {
   Future<List<dynamic>> getKbDocuments() async {
     final response = await _dio.get('/agronomist/kb/search');
     return response.data['documents'] ?? response.data['data'] ?? [];
+  }
+
+  // Mkulima Bot Chat APIs
+  Future<Map<String, dynamic>> botChat({
+    required String message,
+    String? conversationUuid,
+  }) async {
+    final response = await _dio.post(
+      '/bot/chat',
+      data: {
+        'message': message,
+        'conversation_uuid': conversationUuid,
+      },
+    );
+    return response.data;
   }
 
   // Notifications APIs
@@ -265,10 +279,15 @@ class ApiService {
     );
   }
 
-  // Weather APIs
-  Future<Map<String, dynamic>> getWeather() async {
-    final response = await _dio.get('/weather/current');
-    return response.data['weather'] ?? response.data;
+  // Weather APIs — full report: current + 5-day forecast + farming advisory.
+  // Data is real (OpenWeather); `available: false` means no data, and
+  // `is_stale: true` flags a cached last-known reading.
+  Future<Map<String, dynamic>> getWeather({String? location}) async {
+    final response = await _dio.get(
+      '/weather/report',
+      queryParameters: location != null ? {'location': location} : null,
+    );
+    return response.data;
   }
 
   // Generic HTTP methods
@@ -281,6 +300,21 @@ class ApiService {
 
   Future<Response> post(String path, {dynamic data}) async {
     return await _dio.post(path, data: data);
+  }
+
+  /// Multipart upload from bytes (works on mobile and web).
+  Future<Response> postMultipart(
+    String path, {
+    required String fileField,
+    required Uint8List fileBytes,
+    required String filename,
+    Map<String, dynamic>? fields,
+  }) async {
+    final formData = FormData.fromMap({
+      ...?fields,
+      fileField: MultipartFile.fromBytes(fileBytes, filename: filename),
+    });
+    return await _dio.post(path, data: formData);
   }
 
   Future<Response> put(String path, {dynamic data}) async {

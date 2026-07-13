@@ -230,7 +230,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: statusColor.withOpacity(0.2),
+              backgroundColor: statusColor.withValues(alpha: 0.2),
               child: Icon(Icons.shopping_bag, color: statusColor),
             ),
             title: Text(

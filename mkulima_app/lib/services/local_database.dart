@@ -1,8 +1,6 @@
 import 'package:drift/drift.dart';
-import 'dart:io';
-import 'package:drift/native.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'db_connection/connection_native.dart'
+    if (dart.library.html) 'db_connection/connection_web.dart';
 
 part 'local_database.g.dart';
 
@@ -63,11 +61,7 @@ class LocalDatabase extends _$LocalDatabase {
   int get schemaVersion => 1;
 
   static QueryExecutor _openConnection() {
-    return LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'mkulima_database.db'));
-      return NativeDatabase.createInBackground(file);
-    });
+    return openConnection();
   }
 
   // Product operations

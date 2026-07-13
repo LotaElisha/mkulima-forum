@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../core/theme.dart';
 import 'weather_screen.dart';
+import 'market_prices_screen.dart';
+import 'kagua_dawa_screen.dart';
 import 'wallet_screen.dart';
 import 'sms_screen.dart';
 import 'ivr_screen.dart';
@@ -88,8 +90,26 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       benefits: ['Utabiri wa siku 7', 'Tahadhari za ukame/mvua za ghafla', 'Ushauri wa kupanda mazao'],
     ),
     const ServiceItem(
+      icon: Icons.verified_user_outlined,
+      name: 'Kagua Dawa',
+      description: 'Gundua dawa na mbolea feki kabla ya kununua.',
+      requiredPlan: 'Free',
+      color: Colors.red,
+      targetScreen: KaguaDawaScreen(),
+      benefits: ['Orodha ya usajili ya TPRI/TFRA', 'Kagua lebo kwa picha (AI)', 'Tahadhari za dawa feki mkoani kwako'],
+    ),
+    const ServiceItem(
+      icon: Icons.price_change_outlined,
+      name: 'Bei za Masoko',
+      description: 'Bei halisi za mazao kwenye masoko makuu.',
+      requiredPlan: 'Free',
+      color: Colors.teal,
+      targetScreen: MarketPricesScreen(),
+      benefits: ['Bei za chini na juu kwa kila soko', 'Mwenendo wa bei (inapanda/inashuka)', 'Tarehe ya bei kuonyeshwa wazi'],
+    ),
+    const ServiceItem(
       icon: Icons.psychology_outlined,
-      name: 'Mkulima Bot',
+      name: 'Mkulima AI',
       description: 'Msaidizi wako wa kilimo wa AI — mazungumzo na ushauri wa haraka.',
       requiredPlan: 'Free',
       color: Colors.blue,
@@ -102,7 +122,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       description: 'Piga picha ugundue magonjwa ya mazao.',
       requiredPlan: 'Free',
       color: Colors.red,
-      targetScreen: ScannerScreen(),
+      targetScreen: ScannerPage(),
       benefits: ['Ugunduzi wa haraka ndani ya sekunde', 'Ushauri wa dawa na kinga ya mmea', 'Historia ya magonjwa yaliyopita'],
     ),
     const ServiceItem(

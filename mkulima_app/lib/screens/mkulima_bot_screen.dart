@@ -7,7 +7,7 @@ import '../providers/auth_provider.dart';
 import '../services/api_service.dart';
 import '../widgets/mk_empty_state.dart';
 
-/// Mkulima Bot — AI chatbot & farm advisor (multi-turn, Swahili-first).
+/// Mkulima AI — AI chatbot & farm advisor (multi-turn, Swahili-first).
 class MkulimaBotScreen extends StatefulWidget {
   const MkulimaBotScreen({super.key});
 
@@ -49,7 +49,7 @@ class _MkulimaBotScreenState extends State<MkulimaBotScreen> {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     if (!auth.isAuthenticated) {
       final ok = await AuthProvider.requireAuth(context,
-          action: 'kuzungumza na Mkulima Bot');
+          action: 'kuzungumza na Mkulima AI');
       if (!ok || !mounted) return;
     }
 

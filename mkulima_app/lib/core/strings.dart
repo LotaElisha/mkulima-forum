@@ -8,6 +8,7 @@ class MkStrings {
   static const tagline = 'Soko la Kilimo kwa Wote';
 
   // Navigation
+  static const navHome = 'Nyumbani';
   static const navMarket = 'Soko';
   static const navForum = 'Jukwaa';
   static const navServices = 'Huduma';
@@ -15,7 +16,16 @@ class MkStrings {
   static const navProfile = 'Wasifu';
   static const navLogin = 'Ingia';
 
+  // AI Plant Scanner — flagship feature marketing (consistent everywhere)
+  static const scannerBrand = 'AI Plant Scanner';
+  static const scannerTagline = 'Skani • Tambua • Tibu';
+  static const scannerHeroSubtitle =
+      'Piga picha ya mmea wako — AI itambue magonjwa, wadudu na upungufu wa virutubisho papo hapo.';
+  static const scannerCta = 'Kagua Mmea Sasa';
+  static const scannerTooltip = 'Kagua Mimea (AI)';
+
   // Screen titles (app bar)
+  static const titleHome = 'Mkulima Forum';
   static const titleMarket = 'Soko la Mkulima';
   static const titleForum = 'Jukwaa la Wakulima';
   static const titleServices = 'Huduma za Kilimo';
@@ -55,12 +65,12 @@ class MkStrings {
   static const upvote = 'Kubali';
   static const expertBadge = 'Mtaalamu';
 
-  // Mkulima Bot
-  static const botTitle = 'Mkulima Bot';
+  // Mkulima AI — single consistent name for the AI assistant
+  static const botTitle = 'Mkulima AI';
   static const botWelcome =
       'Msaidizi wako wa kilimo. Uliza chochote kuhusu mazao, mbolea, wadudu, bei za soko na zaidi.';
   static const botHint = 'Uliza swali lako...';
-  static const botThinking = 'Mkulima Bot inafikiri...';
+  static const botThinking = 'Mkulima AI inafikiri...';
   static const botNewChat = 'Mazungumzo mapya';
   static const botUnavailable =
       'Samahani, siwezi kujibu kwa sasa. Tafadhali jaribu tena baadaye.';

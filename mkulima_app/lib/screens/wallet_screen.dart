@@ -26,12 +26,14 @@ class _WalletScreenState extends State<WalletScreen> {
       final api = Provider.of<ApiService>(context, listen: false);
       final balance = await api.getWalletBalance();
       final transactions = await api.getWalletTransactions();
+      if (!mounted) return;
       setState(() {
         _balance = balance;
         _transactions = transactions;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -100,7 +102,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.green.withOpacity(0.3),
+                            color: Colors.green.withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 5),
                           ),
@@ -321,13 +323,13 @@ class _WalletScreenState extends State<WalletScreen> {
                   double.parse(amountController.text),
                 );
                 _loadData();
-                if (mounted) {
+                if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Pesa imetumwa kikamilifu')),
                   );
                 }
               } catch (e) {
-                if (mounted) {
+                if (context.mounted) {
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
@@ -363,7 +365,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

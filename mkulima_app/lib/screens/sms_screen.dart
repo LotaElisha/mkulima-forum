@@ -31,21 +31,19 @@ class _SmsScreenState extends State<SmsScreen> {
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       await api.sendSms(phone, message);
+      if (!mounted) return;
       setState(() => _isLoading = false);
       _phoneController.clear();
       _messageController.clear();
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('SMS imetumwa')));
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('SMS imetumwa')));
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
     }
   }
 

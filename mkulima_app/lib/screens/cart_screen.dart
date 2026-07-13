@@ -124,7 +124,7 @@ class CartScreen extends StatelessWidget {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 8,
                       ),
                     ],
@@ -161,6 +161,7 @@ class CartScreen extends StatelessWidget {
                                 );
                                 if (!ok) return;
                               }
+                              if (!context.mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => PaymentScreen(

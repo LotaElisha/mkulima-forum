@@ -208,7 +208,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       leading: CircleAvatar(
                         backgroundColor: _notificationColor(
                           notif['type'] ?? 'general',
-                        ).withOpacity(0.2),
+                        ).withValues(alpha: 0.2),
                         child: Icon(
                           _notificationIcon(notif['type'] ?? 'general'),
                           color: _notificationColor(notif['type'] ?? 'general'),

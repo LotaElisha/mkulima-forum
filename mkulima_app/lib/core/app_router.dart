@@ -25,6 +25,9 @@ import '../screens/sms_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/wallet_screen.dart';
 import '../screens/weather_screen.dart';
+import '../screens/market_prices_screen.dart';
+import '../screens/search_screen.dart';
+import '../screens/kagua_dawa_screen.dart';
 import '../screens/yield_screen.dart';
 
 /// Central route table (Phase 1 redesign — see REDESIGN.md).
@@ -72,8 +75,11 @@ GoRouter buildAppRouter(AuthProvider auth) {
       // Core pillars
       GoRoute(path: '/soko', builder: (context, state) => const MarketplaceScreen()),
       GoRoute(path: '/forum', builder: (context, state) => const ForumScreen()),
-      GoRoute(path: '/scanner', builder: (context, state) => const ScannerScreen()),
+      GoRoute(path: '/scanner', builder: (context, state) => const ScannerPage()),
       GoRoute(path: '/weather', builder: (context, state) => const WeatherScreen()),
+      GoRoute(path: '/market-prices', builder: (context, state) => const MarketPricesScreen()),
+      GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
+      GoRoute(path: '/kagua-dawa', builder: (context, state) => const KaguaDawaScreen()),
 
       // Services
       GoRoute(path: '/bot', builder: (context, state) => const MkulimaBotScreen()),

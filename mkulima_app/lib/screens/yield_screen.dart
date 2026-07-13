@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
@@ -47,6 +48,7 @@ class _YieldScreenState extends State<YieldScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(
         context,
@@ -62,7 +64,7 @@ class _YieldScreenState extends State<YieldScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Kadiria Mavuno'),
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: MkColors.primary,
           foregroundColor: Colors.white,
         ),
         body: Center(
@@ -86,7 +88,7 @@ class _YieldScreenState extends State<YieldScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kadiria Mavuno'),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -117,7 +119,7 @@ class _YieldScreenState extends State<YieldScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Tumia AI kukadiria mavuno na mapato yako',
+                    'Makadirio ya wastani wa kanda kwa mpango wa shamba lako',
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
@@ -162,7 +164,7 @@ class _YieldScreenState extends State<YieldScreen> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _estimate,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E7D32),
+                        backgroundColor: MkColors.primary,
                         foregroundColor: Colors.white,
                       ),
                       child: _isLoading
@@ -187,11 +189,9 @@ class _YieldScreenState extends State<YieldScreen> {
   }
 
   Widget _buildResultCard() {
-    final yield = _result!['estimated_yield'];
-    final revenue = _result!['estimated_revenue'];
-    final confidence = _result!['confidence_score'];
-    final factors = _result!['factors'] as List;
-    final recommendations = _result!['recommendations'] as List;
+    final yield = _result!['estimated_yield'] as Map<String, dynamic>;
+    final revenue = _result!['estimated_revenue'] as Map<String, dynamic>;
+    final disclaimer = _result!['disclaimer']?.toString();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _YieldScreenState extends State<YieldScreen> {
         ),
         const SizedBox(height: 16),
         Card(
-          color: const Color(0xFF2E7D32).withOpacity(0.1),
+          color: MkColors.primary.withValues(alpha: 0.1),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -224,55 +224,32 @@ class _YieldScreenState extends State<YieldScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                LinearProgressIndicator(
-                  value: confidence / 100,
-                  backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation(
-                    confidence > 80 ? Colors.green : Colors.orange,
+              ],
+            ),
+          ),
+        ),
+        if (disclaimer != null) ...[
+          const SizedBox(height: 16),
+          Card(
+            color: Colors.amber[50],
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline, color: Colors.amber[800], size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      disclaimer,
+                      style: const TextStyle(fontSize: 13),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text('Kiwango cha Uhakika: $confidence%'),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Vigezo vya Ukadiriaji',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        ...factors.map(
-          (f) => ListTile(
-            leading: Icon(
-              f['impact'] == 'Chanya' ? Icons.trending_up : Icons.trending_down,
-              color: f['impact'] == 'Chanya' ? Colors.green : Colors.orange,
-            ),
-            title: Text(f['name']),
-            trailing: Text('${f['score']}%'),
-          ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Mapendekezo',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        ...recommendations.map(
-          (r) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.lightbulb, color: Colors.amber, size: 20),
-                const SizedBox(width: 8),
-                Expanded(child: Text(r)),
-              ],
-            ),
-          ),
-        ),
+        ],
       ],
     );
   }

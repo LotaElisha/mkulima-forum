@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
 import '../services/api_service.dart';
 
 class KycScreen extends StatefulWidget {
@@ -15,7 +14,7 @@ class _KycScreenState extends State<KycScreen> {
   bool _isLoading = true;
   bool _isSubmitting = false;
 
-  final _idTypeController = TextEditingController();
+
   final _idNumberController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _addressController = TextEditingController();
@@ -101,9 +100,6 @@ class _KycScreenState extends State<KycScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-    final user = auth.user;
-
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }

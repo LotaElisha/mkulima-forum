@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +8,32 @@ import '../services/api_service.dart';
 import '../providers/connectivity_provider.dart';
 import '../widgets/mk_button.dart';
 
+/// Standalone page wrapper so the flagship AI Plant Scanner can be pushed
+/// from anywhere (App Bar button, center FAB, home hero) with one tap.
+class ScannerPage extends StatelessWidget {
+  const ScannerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Column(
+          children: [
+            Text(MkStrings.scannerBrand, style: TextStyle(fontSize: 17)),
+            Text(
+              MkStrings.scannerTagline,
+              style: TextStyle(fontSize: 11, color: Colors.white70),
+            ),
+          ],
+        ),
+        backgroundColor: MkColors.primary,
+        foregroundColor: Colors.white,
+      ),
+      body: const ScannerScreen(),
+    );
+  }
+}
+
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
 
@@ -16,7 +42,10 @@ class ScannerScreen extends StatefulWidget {
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
-  File? _image;
+  // Bytes instead of dart:io File so the scanner works on mobile AND web
+  // (Image.file / MultipartFile.fromFile crash on Flutter Web).
+  Uint8List? _imageBytes;
+  String _imageName = 'plant.jpg';
   bool _isScanning = false;
   Map<String, dynamic>? _result;
 
@@ -24,21 +53,24 @@ class _ScannerScreenState extends State<ScannerScreen> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: source, maxWidth: 1024);
     if (picked != null) {
+      final bytes = await picked.readAsBytes();
+      if (!mounted) return;
       setState(() {
-        _image = File(picked.path);
+        _imageBytes = bytes;
+        _imageName = picked.name;
         _result = null;
       });
     }
   }
 
   Future<void> _scanDisease() async {
-    if (_image == null) return;
+    if (_imageBytes == null) return;
 
     setState(() => _isScanning = true);
 
     try {
       final api = Provider.of<ApiService>(context, listen: false);
-      final result = await api.scanDisease(_image!);
+      final result = await api.scanDisease(_imageBytes!, _imageName);
       setState(() {
         _result = result;
         _isScanning = false;
@@ -80,11 +112,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
               ),
             ),
           const SizedBox(height: 16),
-          if (_image != null)
+          if (_imageBytes != null)
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.file(
-                _image!,
+              child: Image.memory(
+                _imageBytes!,
                 height: 250,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -139,7 +171,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          if (_image != null)
+          if (_imageBytes != null)
             MkButton(
               label: MkStrings.titleScanner,
               icon: Icons.biotech,
