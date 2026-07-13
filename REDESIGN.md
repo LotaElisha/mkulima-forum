@@ -114,3 +114,7 @@ The repo contains four surfaces:
 - `routes/flutter/` — delete empty dir.
 - `.env` — populate `GEMINI_API_KEY`, M-Pesa/Tigo sandbox creds.
 - `README.md` — replace stock Laravel readme with monorepo setup guide.
+
+## 8. Audit Pass 2 (2026-07-12)
+
+Full remediation pass executed — see **AUDIT_REPORT.md** for the complete report. Highlights: weather API de-faked and rebuilt on WeatherService (incl. a cache-write bug that made it always answer "unavailable"); fake `/escrow/*` API deleted and the Flutter app rewired to the real `/payments/escrows` (confirm/refund actions); drone/IoT/yield/SMS/notifications de-faked with real persistence or honest 503/501; **new Market Prices module** (API + admin page + Flutter screen) and **new content reporting/moderation module** (API + admin queue); login/OTP throttles, admin-only SMS send, closure routes converted to controllers (route:cache verified); Flutter nav now Soko/Jukwaa/Huduma/Mkulima AI/Wasifu with the AI assistant under the single name **Mkulima AI**. Suite: **56 tests / 226 assertions passing**; flutter analyze clean; admin build clean.

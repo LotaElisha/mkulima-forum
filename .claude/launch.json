@@ -1,0 +1,41 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "admin-dashboard",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "admin-dashboard"
+      ],
+      "port": 3020
+    },
+    {
+      "name": "flutter-web",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": [
+        "run",
+        "-d",
+        "web-server",
+        "--web-port",
+        "5051",
+        "--dart-define=API_URL=http://localhost:8000/api"
+      ],
+      "cwd": "mkulima_app",
+      "port": 5051
+    },
+    {
+      "name": "landing",
+      "runtimeExecutable": "php",
+      "runtimeArgs": [
+        "artisan",
+        "serve",
+        "--port=8001",
+        "--no-reload"
+      ],
+      "port": 8001
+    }
+  ]
+}
