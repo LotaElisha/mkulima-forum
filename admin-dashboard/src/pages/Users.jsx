@@ -10,6 +10,13 @@ export default function UsersPage() {
   const [message, setMessage] = useState('')
   const [filterRole, setFilterRole] = useState('')
 
+  // Permissions Modal State
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false)
+  const [permissionsUser, setPermissionsUser] = useState(null)
+  const [allPermissions, setAllPermissions] = useState([])
+  const [userPermissions, setUserPermissions] = useState([])
+  const [savingPermissions, setSavingPermissions] = useState(false)
+
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', password: '',
     role: 'farmer', tenant_id: 1, kyc_status: 'not_submitted', status: 'active'
@@ -118,6 +125,73 @@ export default function UsersPage() {
     setShowForm(true)
   }
 
+  const openPermissions = async (user) => {
+    setPermissionsUser(user)
+    setUserPermissions([])
+    setShowPermissionsModal(true)
+
+    try {
+      const token = localStorage.getItem('admin_token')
+
+      // Fetch all permissions if not already loaded
+      if (allPermissions.length === 0) {
+        const pRes = await fetch('/api/admin/permissions', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (pRes.ok) {
+          const pData = await pRes.json()
+          setAllPermissions(pData)
+        }
+      }
+
+      // Fetch this user's direct permissions
+      const uRes = await fetch(`/api/admin/users/${user.uuid}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (uRes.ok) {
+        const uData = await uRes.json()
+        setUserPermissions(uData.permissions || [])
+      }
+    } catch (err) {
+      console.error('Failed to load user permissions:', err)
+    }
+  }
+
+  const handleTogglePermission = (permName) => {
+    if (userPermissions.includes(permName)) {
+      setUserPermissions(userPermissions.filter(p => p !== permName))
+    } else {
+      setUserPermissions([...userPermissions, permName])
+    }
+  }
+
+  const handleSavePermissions = async () => {
+    setSavingPermissions(true)
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await fetch(`/api/admin/users/${permissionsUser.uuid}/permissions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ permissions: userPermissions })
+      })
+      if (res.ok) {
+        setMessage('User permissions updated successfully!')
+        setShowPermissionsModal(false)
+        setPermissionsUser(null)
+      } else {
+        const data = await res.json()
+        setMessage(data.message || 'Failed to update permissions')
+      }
+    } catch (err) {
+      setMessage('Network error')
+    } finally {
+      setSavingPermissions(false)
+    }
+  }
+
   const getRoleColor = (role) => {
     const colors = {
       admin: 'bg-purple-100 text-purple-800',
@@ -167,6 +241,7 @@ export default function UsersPage() {
               <option value="veterinary">Veterinary</option>
               <option value="buyer">Buyer</option>
               <option value="seller">Seller</option>
+              <option value="admin">Admin</option>
             </select>
             <select value={formData.kyc_status} onChange={(e) => setFormData({...formData, kyc_status: e.target.value})} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
               <option value="not_submitted">Not Submitted</option>
@@ -200,6 +275,7 @@ export default function UsersPage() {
             <option value="agronomist">Agronomists</option>
             <option value="buyer">Buyers</option>
             <option value="seller">Sellers</option>
+            <option value="admin">Admins</option>
           </select>
         </div>
 
@@ -258,6 +334,7 @@ export default function UsersPage() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
+                        <button onClick={() => openPermissions(user)} className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg" title="RBAC Permissions"><Shield className="w-4 h-4" /></button>
                         <button onClick={() => openEdit(user)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Edit"><Edit className="w-4 h-4" /></button>
                         <button onClick={() => handleDelete(user.uuid)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Delete"><Trash2 className="w-4 h-4" /></button>
                       </div>
@@ -269,6 +346,66 @@ export default function UsersPage() {
           </table>
         </div>
       </div>
+
+      {/* Permissions RBAC Management Modal */}
+      {showPermissionsModal && permissionsUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl border border-gray-200 max-w-lg w-full overflow-hidden">
+            <div className="bg-green-700 text-white p-6">
+              <div className="flex items-center gap-3">
+                <Shield className="w-6 h-6" />
+                <div>
+                  <h2 className="text-xl font-bold">Manage User Permissions (RBAC)</h2>
+                  <p className="text-green-100 text-sm mt-0.5">{permissionsUser.name} &bull; {permissionsUser.role}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 max-h-[60vh] overflow-y-auto space-y-4">
+              <p className="text-sm text-gray-500 font-medium">Assign specific direct permissions to override role defaults:</p>
+
+              {allPermissions.length === 0 ? (
+                <div className="flex items-center justify-center py-6">
+                  <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {allPermissions.map(perm => (
+                    <label key={perm} className="flex items-start gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer border border-transparent hover:border-gray-200 transition-all">
+                      <input
+                        type="checkbox"
+                        checked={userPermissions.includes(perm)}
+                        onChange={() => handleTogglePermission(perm)}
+                        className="w-4 h-4 text-green-600 rounded focus:ring-green-500 mt-1"
+                      />
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800">{perm.split('.')[1] || perm}</p>
+                        <p className="text-xs text-gray-400">{perm.split('.')[0] || 'general'}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-100">
+              <button
+                onClick={() => { setShowPermissionsModal(false); setPermissionsUser(null); }}
+                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSavePermissions}
+                disabled={savingPermissions}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors text-sm font-medium"
+              >
+                {savingPermissions ? 'Saving...' : 'Save Permissions'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

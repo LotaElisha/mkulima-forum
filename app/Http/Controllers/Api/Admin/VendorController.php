@@ -161,4 +161,22 @@ class VendorController extends Controller
             'avg_rating' => $vendor->products()->avg('rating') ?? 0,
         ]);
     }
+    /**
+     * Delete vendor permanently
+     */
+    public function destroy(string $uuid): JsonResponse
+    {
+        $vendor = User::where('uuid', $uuid)
+            ->whereIn('role', ['agrodealer', 'seller'])
+            ->firstOrFail();
+
+        // Revoke all tokens and delete
+        $vendor->tokens()->delete();
+        $vendor->products()->delete();
+        $vendor->delete();
+
+        return response()->json([
+            'message' => 'Vendor deleted successfully.',
+        ]);
+    }
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Admin\FinancialReportController;
 use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
 use App\Http\Controllers\Api\Admin\VendorController;
+use App\Http\Controllers\Api\Admin\AiManagementController;
 use App\Http\Middleware\AdminMiddleware;
 
 /*
@@ -228,6 +229,8 @@ Route::prefix('admin')
         Route::get('/users/{uuid}', [AdminController::class, 'showUser']);
         Route::put('/users/{uuid}', [AdminController::class, 'updateUser']);
         Route::delete('/users/{uuid}', [AdminController::class, 'deleteUser']);
+        Route::get('/permissions', [AdminController::class, 'getPermissions']);
+        Route::post('/users/{uuid}/permissions', [AdminController::class, 'assignPermissions']);
         Route::get('/orders', [AdminController::class, 'orders']);
         Route::get('/orders/{uuid}', [AdminController::class, 'showOrder']);
         Route::put('/orders/{uuid}', [AdminController::class, 'updateOrder']);
@@ -239,6 +242,8 @@ Route::prefix('admin')
         Route::post('/kyc/{uuid}/verify', [AdminController::class, 'verifyKyc']);
         Route::post('/kyc/{uuid}/reject', [AdminController::class, 'rejectKyc']);
         Route::get('/analytics', [AdminController::class, 'analytics']);
+        Route::get('/settings/landing', [AdminController::class, 'getLandingSettings']);
+        Route::post('/settings/landing', [AdminController::class, 'updateLandingSettings']);
 
         // Admin Profile
         Route::get('/profile', [AdminProfileController::class, 'show']);
@@ -282,6 +287,21 @@ Route::prefix('admin')
         Route::post('/vendors/{uuid}/suspend', [VendorController::class, 'suspend']);
         Route::post('/vendors/{uuid}/reactivate', [VendorController::class, 'reactivate']);
         Route::get('/vendors/{uuid}/reviews', [VendorController::class, 'reviews']);
+        Route::delete('/vendors/{uuid}', [VendorController::class, 'destroy']);
+
+        // AI Management
+        Route::get('/ai/stats', [AiManagementController::class, 'stats']);
+        Route::get('/ai/scans', [AiManagementController::class, 'scans']);
+        Route::get('/ai/scans/{uuid}', [AiManagementController::class, 'showScan']);
+        Route::delete('/ai/scans/{uuid}', [AiManagementController::class, 'deleteScan']);
+        Route::get('/ai/conversations', [AiManagementController::class, 'conversations']);
+        Route::get('/ai/conversations/{uuid}', [AiManagementController::class, 'showConversation']);
+        Route::delete('/ai/conversations/{uuid}', [AiManagementController::class, 'deleteConversation']);
+        Route::get('/ai/kb', [AiManagementController::class, 'kbDocuments']);
+        Route::post('/ai/kb', [AiManagementController::class, 'createKbDocument']);
+        Route::put('/ai/kb/{uuid}', [AiManagementController::class, 'updateKbDocument']);
+        Route::delete('/ai/kb/{uuid}', [AiManagementController::class, 'deleteKbDocument']);
+        Route::get('/ai/config', [AiManagementController::class, 'getAiConfig']);
 
         // Financial Reports
         Route::get('/financial-reports', [FinancialReportController::class, 'index']);

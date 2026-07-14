@@ -24,8 +24,20 @@ class RolesAndPermissionsSeeder extends Seeder
             'services.provide', 'services.book',
             // Finance
             'wallet.use', 'escrow.arbitrate', 'reports.view',
-            // Admin
-            'users.manage', 'vendors.manage', 'kyc.review', 'features.toggle',
+            // Admin / User management
+            'users.manage', 'users.create', 'users.update', 'users.delete',
+            // Vendors & KYC
+            'vendors.manage', 'kyc.review',
+            // Platform features
+            'features.toggle', 'landing.manage',
+            // Content
+            'categories.manage', 'threads.moderate', 'replies.moderate',
+            // Analytics
+            'analytics.view', 'analytics.export',
+            // HR / Staff
+            'staff.manage',
+            // Settings
+            'settings.manage',
         ];
 
         foreach ($permissions as $permission) {
@@ -33,17 +45,18 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         $matrix = [
-            Roles::FARMER => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
-            Roles::BUYER => ['orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
+            Roles::FARMER     => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
+            Roles::BUYER      => ['orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
             Roles::AGRODEALER => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
-            Roles::SELLER => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'wallet.use'],
+            Roles::SELLER     => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'wallet.use'],
             Roles::AGRONOMIST => ['forum.post', 'services.provide', 'wallet.use'],
             Roles::VETERINARY => ['forum.post', 'services.provide', 'wallet.use'],
-            Roles::DRIVER => ['forum.post', 'wallet.use'],
-            Roles::LOGISTICS => ['forum.post', 'wallet.use'],
-            Roles::WAREHOUSE => ['forum.post', 'wallet.use'],
-            Roles::MODERATOR => ['forum.post', 'forum.moderate'],
-            Roles::ADMIN => $permissions,
+            Roles::DRIVER     => ['forum.post', 'wallet.use'],
+            Roles::LOGISTICS  => ['forum.post', 'wallet.use'],
+            Roles::WAREHOUSE  => ['forum.post', 'wallet.use'],
+            Roles::MODERATOR  => ['forum.post', 'forum.moderate', 'threads.moderate', 'replies.moderate'],
+            // Admin & Superadmin get EVERY permission (full access)
+            Roles::ADMIN      => $permissions,
             Roles::SUPERADMIN => $permissions,
         ];
 

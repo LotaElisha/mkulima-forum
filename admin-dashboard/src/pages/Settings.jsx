@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Save, Bell, Shield, Globe, CreditCard } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Save, Bell, Shield, Globe, CreditCard, Layout } from 'lucide-react'
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('general')
@@ -22,13 +22,88 @@ export default function Settings() {
     escrowEnabled: true
   })
 
+  // Landing Page Settings State
+  const [landingSettings, setLandingSettings] = useState({
+    hero_title: '',
+    hero_tagline: '',
+    hero_lead: '',
+    badge_text: '',
+    kicker_jinsi: '',
+    title_jinsi: '',
+    sub_jinsi: '',
+    kicker_vipengele: '',
+    title_vipengele: '',
+    sub_vipengele: '',
+  })
+  const [landingLoading, setLandingLoading] = useState(false)
+
+  useEffect(() => {
+    if (activeTab === 'landing') {
+      fetchLandingSettings()
+    }
+  }, [activeTab])
+
+  const fetchLandingSettings = async () => {
+    setLandingLoading(true)
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await fetch('/api/admin/settings/landing', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setLandingSettings({
+          hero_title: data.hero_title || '',
+          hero_tagline: data.hero_tagline || '',
+          hero_lead: data.hero_lead || '',
+          badge_text: data.badge_text || '',
+          kicker_jinsi: data.kicker_jinsi || '',
+          title_jinsi: data.title_jinsi || '',
+          sub_jinsi: data.sub_jinsi || '',
+          kicker_vipengele: data.kicker_vipengele || '',
+          title_vipengele: data.title_vipengele || '',
+          sub_vipengele: data.sub_vipengele || '',
+        })
+      }
+    } catch (err) {
+      console.error('Failed to fetch landing settings:', err)
+    } finally {
+      setLandingLoading(false)
+    }
+  }
+
+  const handleSaveLanding = async () => {
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await fetch('/api/admin/settings/landing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ settings: landingSettings })
+      })
+      if (res.ok) {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 3000)
+      }
+    } catch (err) {
+      console.error('Failed to save landing settings:', err)
+    }
+  }
+
   const handleSave = () => {
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    if (activeTab === 'landing') {
+      handleSaveLanding()
+    } else {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    }
   }
 
   const tabs = [
     { id: 'general', label: 'General', icon: Globe },
+    { id: 'landing', label: 'Landing Page', icon: Layout },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'payments', label: 'Payments', icon: CreditCard },
     { id: 'security', label: 'Security', icon: Shield }
@@ -157,6 +232,155 @@ export default function Settings() {
               <span className="text-sm">Require KYC Verification</span>
             </label>
           </div>
+        </div>
+      )}
+
+      {/* Landing Page Settings */}
+      {activeTab === 'landing' && (
+        <div className="card space-y-6">
+          <h3 className="font-medium text-lg text-gray-900 border-b pb-2">Landing Page Hero & Main Content</h3>
+          
+          {landingLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hero Badge Text
+                </label>
+                <input
+                  type="text"
+                  value={landingSettings.badge_text}
+                  onChange={(e) => setLandingSettings({...landingSettings, badge_text: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. AI kwa Wakulima wa Tanzania"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hero Title (HTML supported)
+                </label>
+                <textarea
+                  value={landingSettings.hero_title}
+                  onChange={(e) => setLandingSettings({...landingSettings, hero_title: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Daktari wa Mimea<br>Mfukoni <span class='accent'>Mwako</span>"
+                  rows="3"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hero Tagline
+                </label>
+                <textarea
+                  value={landingSettings.hero_tagline}
+                  onChange={(e) => setLandingSettings({...landingSettings, hero_tagline: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. SKANI • TAMBUA • TIBU"
+                  rows="3"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hero Lead Paragraph (HTML supported)
+                </label>
+                <textarea
+                  value={landingSettings.hero_lead}
+                  onChange={(e) => setLandingSettings({...landingSettings, hero_lead: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Piga picha ya mmea wako — AI Plant Scanner itambue magonjwa..."
+                  rows="3"
+                />
+              </div>
+
+              <h3 className="md:col-span-2 font-medium text-lg text-gray-900 border-b pb-2 pt-4">"Jinsi Inavyofanya Kazi" Section</h3>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kicker (Small Category Text)
+                </label>
+                <input
+                  type="text"
+                  value={landingSettings.kicker_jinsi}
+                  onChange={(e) => setLandingSettings({...landingSettings, kicker_jinsi: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Jinsi Inavyofanya Kazi"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section Title
+                </label>
+                <input
+                  type="text"
+                  value={landingSettings.title_jinsi}
+                  onChange={(e) => setLandingSettings({...landingSettings, title_jinsi: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Hatua 3 tu — chini ya dakika moja"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section Subtitle
+                </label>
+                <textarea
+                  value={landingSettings.sub_jinsi}
+                  onChange={(e) => setLandingSettings({...landingSettings, sub_jinsi: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Huhitaji ujuzi wowote wa kiufundi..."
+                  rows="2"
+                />
+              </div>
+
+              <h3 className="md:col-span-2 font-medium text-lg text-gray-900 border-b pb-2 pt-4">"Vipengele" (Features) Section</h3>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kicker (Small Category Text)
+                </label>
+                <input
+                  type="text"
+                  value={landingSettings.kicker_vipengele}
+                  onChange={(e) => setLandingSettings({...landingSettings, kicker_vipengele: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Vipengele"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section Title
+                </label>
+                <input
+                  type="text"
+                  value={landingSettings.title_vipengele}
+                  onChange={(e) => setLandingSettings({...landingSettings, title_vipengele: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Zaidi ya scanner — mfumo kamili wa kilimo"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Section Subtitle
+                </label>
+                <textarea
+                  value={landingSettings.sub_vipengele}
+                  onChange={(e) => setLandingSettings({...landingSettings, sub_vipengele: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
+                  placeholder="e.g. Kila kitu mkulima anachohitaji..."
+                  rows="2"
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
 

@@ -36,6 +36,17 @@
         "--no-reload"
       ],
       "port": 8001
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "php",
+      "runtimeArgs": [
+        "artisan",
+        "serve",
+        "--port=8000",
+        "--no-reload"
+      ],
+      "port": 8000
     }
   ]
 }

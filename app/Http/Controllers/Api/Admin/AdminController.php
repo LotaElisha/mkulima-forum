@@ -68,8 +68,9 @@ class AdminController extends Controller
 
         return response()->json([
             'user' => $user,
-            'permissions' => $user->getAllPermissions()->pluck('name'),
             'roles' => $user->getRoleNames(),
+            'permissions' => $user->getDirectPermissions()->pluck('name'),
+            'effective_permissions' => $user->getAllPermissions()->pluck('name'),
         ]);
     }
 
@@ -115,6 +116,10 @@ class AdminController extends Controller
             'preferred_language' => 'sometimes|string|in:sw,en,lg,rw,fr',
         ]);
 
+        if (isset($validated['role']) && $validated['role'] !== $user->role) {
+            $user->syncRoles([$validated['role']]);
+        }
+
         $user->update($validated);
 
         return response()->json([
@@ -127,10 +132,10 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'email' => 'nullable|email|unique:users',
             'phone' => 'required|string|regex:/^255[0-9]{9}$/|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|string|' . \App\Support\Roles::rule(\App\Support\Roles::SELF_REGISTERABLE),
+            'role' => 'required|string|' . \App\Support\Roles::rule(),
             'tenant_id' => 'required|exists:tenants,id',
             'kyc_status' => 'string|in:pending,verified,rejected,not_submitted',
             'status' => 'string|in:active,suspended',
@@ -339,6 +344,55 @@ class AdminController extends Controller
             'daily_users' => $dailyUsers,
             'daily_orders' => $dailyOrders,
             'top_products' => $topProducts,
+        ]);
+    }
+
+    public function getLandingSettings(): JsonResponse
+    {
+        $settings = \App\Models\LandingSetting::pluck('value', 'key')->toArray();
+        return response()->json($settings);
+    }
+
+    public function updateLandingSettings(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'settings' => 'required|array',
+            'settings.*' => 'nullable|string',
+        ]);
+
+        foreach ($validated['settings'] as $key => $value) {
+            \App\Models\LandingSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
+        }
+
+        return response()->json([
+            'message' => 'Landing page settings updated successfully',
+            'settings' => \App\Models\LandingSetting::pluck('value', 'key')->toArray()
+        ]);
+    }
+
+    public function getPermissions(): JsonResponse
+    {
+        $permissions = \Spatie\Permission\Models\Permission::pluck('name');
+        return response()->json($permissions);
+    }
+
+    public function assignPermissions(Request $request, string $uuid): JsonResponse
+    {
+        $user = User::where('uuid', $uuid)->firstOrFail();
+
+        $validated = $request->validate([
+            'permissions' => ['required', 'array'],
+            'permissions.*' => ['string', 'exists:permissions,name'],
+        ]);
+
+        $user->syncPermissions($validated['permissions']);
+
+        return response()->json([
+            'message' => 'User permissions updated successfully',
+            'permissions' => $user->getAllPermissions()->pluck('name'),
         ]);
     }
 }

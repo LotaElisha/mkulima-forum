@@ -84,7 +84,18 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin' || $this->role === 'superadmin' || $this->hasRole('admin');
+        return $this->role === 'admin' || $this->role === 'superadmin' || $this->hasRole('admin') || $this->hasRole('superadmin');
+    }
+
+    /**
+     * Admin & superadmin bypass ALL permission checks — they have full access.
+     */
+    public function can($abilities, $arguments = []): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+        return parent::can($abilities, $arguments);
     }
 
     public function isExpert(): bool

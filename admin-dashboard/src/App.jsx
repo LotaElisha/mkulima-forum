@@ -19,6 +19,7 @@ import FeatureFlags from './pages/FeatureFlags'
 import Moderation from './pages/Moderation'
 import MarketPrices from './pages/MarketPrices'
 import InputSafety from './pages/InputSafety'
+import AiManagement from './pages/AiManagement'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthContext, RequireRole } from './components/AuthContext'
 
@@ -89,7 +90,7 @@ function App() {
         <Route path="settings" element={<Settings />} />
         <Route path="profile" element={<AdminProfile />} />
         <Route path="hr" element={
-          <RequireRole roles={['superadmin']}><HrManagement /></RequireRole>
+          <RequireRole roles={['admin', 'superadmin']}><HrManagement /></RequireRole>
         } />
         <Route path="pos" element={<PosTerminal />} />
         <Route path="catalog" element={<CatalogManager />} />
@@ -98,11 +99,12 @@ function App() {
         <Route path="market-prices" element={<MarketPrices />} />
         <Route path="input-safety" element={<InputSafety />} />
         <Route path="financial-reports" element={
-          <RequireRole roles={['superadmin']}><FinancialReports /></RequireRole>
+          <RequireRole roles={['admin', 'superadmin']}><FinancialReports /></RequireRole>
         } />
         <Route path="features" element={
-          <RequireRole roles={['superadmin']}><FeatureFlags /></RequireRole>
+          <RequireRole roles={['admin', 'superadmin']}><FeatureFlags /></RequireRole>
         } />
+        <Route path="ai-management" element={<AiManagement />} />
       </Route>
     </Routes>
   )

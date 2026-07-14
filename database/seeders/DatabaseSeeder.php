@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             CategoryProductSeeder::class,
             ForumSeeder::class,
             FeatureFlagSeeder::class,
+            LandingSettingSeeder::class,
         ]);
     }
 }

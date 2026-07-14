@@ -19,7 +19,8 @@ import {
   ToggleRight,
   Flag,
   LineChart,
-  ShieldAlert
+  ShieldAlert,
+  Brain
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -46,6 +47,7 @@ export default function Layout() {
     { to: '/input-safety', icon: ShieldAlert, label: 'Input Safety' },
     { to: '/financial-reports', icon: TrendingUp, label: 'Financial' },
     { to: '/features', icon: ToggleRight, label: 'Feature Flags' },
+    { to: '/ai-management', icon: Brain, label: 'AI Management' },
     { to: '/analytics', icon: BarChart3, label: 'Analytics' },
     { to: '/hr', icon: Briefcase, label: 'HR / Staff' },
     { to: '/settings', icon: Settings, label: 'Settings' },
