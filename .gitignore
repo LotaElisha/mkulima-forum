@@ -24,3 +24,4 @@ yarn-error.log
 .env.mkulima
 .DS_Store
 **/.DS_Store
+/scratch

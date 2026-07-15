@@ -3,7 +3,7 @@
 # Usage: ./deploy-ssh.expect "remote command"
 
 set timeout 60
-set password "u241489594@72.60B"
+set password $env(DEPLOY_SSH_PASSWORD)
 set host "72.60.93.176"
 set user "u241489594"
 set port "65002"
@@ -11,8 +11,8 @@ set cmd [lindex $argv 0]
 
 spawn ssh -p $port $user@$host $cmd
 expect {
-    "assword:" { send "$password\r"; exp_continue }
-    "yes/no"   { send "yes\r"; exp_continue }
-    eof        {}
-    timeout    { puts "Timeout!"; exit 1 }
+    "yes/no" { send "yes\r"; exp_continue }
+    -re {\(?\S+@\S+\)?'s password:} { send "$password\r" }
+    timeout  { puts "Timeout!"; exit 1 }
 }
+expect eof
