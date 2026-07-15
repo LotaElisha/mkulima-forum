@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Save, Bell, Shield, Globe, CreditCard, Layout } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Save, Bell, Shield, Globe, CreditCard, Layout, Upload, Trash2, Image as ImageIcon } from 'lucide-react'
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('general')
@@ -37,6 +37,14 @@ export default function Settings() {
   })
   const [landingLoading, setLandingLoading] = useState(false)
 
+  // Logo upload state
+  const [logoUrl, setLogoUrl] = useState('')
+  const [logoPreview, setLogoPreview] = useState('')
+  const [logoFile, setLogoFile] = useState(null)
+  const [logoUploading, setLogoUploading] = useState(false)
+  const [logoMessage, setLogoMessage] = useState('')
+  const logoInputRef = useRef(null)
+
   useEffect(() => {
     if (activeTab === 'landing') {
       fetchLandingSettings()
@@ -64,11 +72,66 @@ export default function Settings() {
           title_vipengele: data.title_vipengele || '',
           sub_vipengele: data.sub_vipengele || '',
         })
+        setLogoUrl(data.logo_url || '')
       }
     } catch (err) {
       console.error('Failed to fetch landing settings:', err)
     } finally {
       setLandingLoading(false)
+    }
+  }
+
+  const handleLogoSelect = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoFile(file)
+    setLogoPreview(URL.createObjectURL(file))
+    setLogoMessage('')
+  }
+
+  const handleLogoUpload = async () => {
+    if (!logoFile) return
+    setLogoUploading(true)
+    setLogoMessage('')
+    try {
+      const token = localStorage.getItem('admin_token')
+      const formData = new FormData()
+      formData.append('logo', logoFile)
+      const res = await fetch('/api/admin/settings/landing/logo', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setLogoUrl(data.logo_url)
+        setLogoFile(null)
+        setLogoPreview('')
+        setLogoMessage('Logo updated successfully!')
+      } else {
+        setLogoMessage(data.message || 'Upload failed')
+      }
+    } catch (err) {
+      setLogoMessage('Network error while uploading logo')
+    } finally {
+      setLogoUploading(false)
+    }
+  }
+
+  const handleLogoRemove = async () => {
+    if (!confirm('Remove the current logo? The landing page will fall back to the default.')) return
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await fetch('/api/admin/settings/landing/logo', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        setLogoUrl('')
+        setLogoMessage('Logo removed.')
+      }
+    } catch (err) {
+      setLogoMessage('Network error while removing logo')
     }
   }
 
@@ -246,6 +309,64 @@ export default function Settings() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Site Logo
+                </label>
+                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="w-16 h-16 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+                    {logoPreview || logoUrl ? (
+                      <img src={logoPreview || logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                    ) : (
+                      <ImageIcon className="w-6 h-6 text-gray-300" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                      onChange={handleLogoSelect}
+                      className="hidden"
+                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => logoInputRef.current?.click()}
+                        className="btn-secondary text-sm"
+                      >
+                        Choose file
+                      </button>
+                      {logoFile && (
+                        <button
+                          type="button"
+                          onClick={handleLogoUpload}
+                          disabled={logoUploading}
+                          className="btn-primary text-sm flex items-center gap-1 disabled:opacity-50"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          {logoUploading ? 'Uploading…' : 'Upload logo'}
+                        </button>
+                      )}
+                      {logoUrl && !logoFile && (
+                        <button
+                          type="button"
+                          onClick={handleLogoRemove}
+                          className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      PNG, JPG, WEBP or SVG, up to 2MB. Shown in the landing page header and footer.
+                    </p>
+                    {logoMessage && <p className="text-xs text-green-700 mt-1">{logoMessage}</p>}
+                  </div>
+                </div>
+              </div>
+
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Hero Badge Text

@@ -132,7 +132,14 @@
 
 <header>
   <div class="wrap nav">
-    <a class="logo" href="#"><span class="leaf">🌱</span> Mkulima Forum</a>
+    <a class="logo" href="#">
+      @if(!empty($settings['logo_url']))
+        <img src="{{ $settings['logo_url'] }}" alt="Mkulima Forum" style="height:30px;width:auto;border-radius:9px">
+      @else
+        <span class="leaf">🌱</span>
+      @endif
+      Mkulima Forum
+    </a>
     <nav class="nav-links">
       <a href="#jinsi">Jinsi Inavyofanya</a>
       <a href="#vipengele">Vipengele</a>
@@ -293,7 +300,14 @@ Mawingu kiasi</p>
 
 <footer>
   <div class="wrap foot">
-    <a class="logo" href="#"><span class="leaf">🌱</span> Mkulima Forum</a>
+    <a class="logo" href="#">
+      @if(!empty($settings['logo_url']))
+        <img src="{{ $settings['logo_url'] }}" alt="Mkulima Forum" style="height:30px;width:auto;border-radius:9px">
+      @else
+        <span class="leaf">🌱</span>
+      @endif
+      Mkulima Forum
+    </a>
     <div>Skani • Tambua • Tibu — AI kwa mkulima wa kawaida.</div>
     <div>&copy; {{ date('Y') }} Mkulima Forum · Tanzania</div>
   </div>

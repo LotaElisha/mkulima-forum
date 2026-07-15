@@ -373,6 +373,44 @@ class AdminController extends Controller
         ]);
     }
 
+    public function uploadLandingLogo(Request $request): JsonResponse
+    {
+        $request->validate([
+            'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+        ]);
+
+        $oldPath = \App\Models\LandingSetting::where('key', 'logo_path')->value('value');
+
+        $path = $request->file('logo')->store('branding', 'public');
+        $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+
+        \App\Models\LandingSetting::updateOrCreate(['key' => 'logo_path'], ['value' => $path]);
+        \App\Models\LandingSetting::updateOrCreate(['key' => 'logo_url'], ['value' => $url]);
+
+        if ($oldPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+        }
+
+        return response()->json([
+            'message' => 'Logo updated successfully',
+            'logo_url' => $url,
+        ]);
+    }
+
+    public function deleteLandingLogo(): JsonResponse
+    {
+        $oldPath = \App\Models\LandingSetting::where('key', 'logo_path')->value('value');
+
+        if ($oldPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+        }
+
+        \App\Models\LandingSetting::where('key', 'logo_path')->delete();
+        \App\Models\LandingSetting::where('key', 'logo_url')->delete();
+
+        return response()->json(['message' => 'Logo removed successfully']);
+    }
+
     public function getPermissions(): JsonResponse
     {
         $permissions = \Spatie\Permission\Models\Permission::pluck('name');
