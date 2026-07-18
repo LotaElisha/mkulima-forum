@@ -40,7 +40,7 @@ class DiseaseScannerController extends Controller
                 'image_path' => $imagePath,
                 'disease_name' => null,
                 'confidence_score' => 0,
-                'scan_source' => 'cloud',
+                'scan_source' => 'gemini_cloud',
                 'status' => 'failed',
             ]);
 
