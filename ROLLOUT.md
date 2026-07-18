@@ -8,14 +8,14 @@ This is the operational checklist to take Mkulima Forum from this repo to produc
 
 ## 1. Credentials & External Services (⛔ gather these first)
 
-| Service | Env vars | Status | Notes |
-|---|---|---|---|
-| SMS gateway (Africa's Talking) | `AFRICASTALKING_*` | ⛔ **missing** | **Launch blocker:** OTP codes are currently only logged, not sent — no farmer can register without this. Wire delivery in `AuthController::requestOtp` (TODO marked) + `SmsService`. |
-| OpenWeather | `OPENWEATHER_API_KEY` | ✅ set | Verify plan quota fits traffic (30-min cache per location keeps calls low). |
-| Gemini (scanner, Mkulima AI, Kagua Dawa label check) | `GEMINI_API_KEY`, `GEMINI_MODEL` | ✅ set | Confirm billing + rate limits on the key used in prod. |
-| M-Pesa | `MPESA_*` | ⚠️ sandbox | Confirm Tanzania (Vodacom OpenAPI) vs Kenya (Daraja) — service was written against Daraja-style flows. Run one real end-to-end money test before enabling escrow publicly. |
-| Tigo Pesa | `TIGOPESA_*` | ⚠️ sandbox | Same as above. |
-| FCM push | Firebase project | ⚠️ missing | `push_tokens` table exists; no sender wired yet. |
+| Service                                              | Env vars                             | Status              | Notes                                                                                                                                                                                           |
+| ---------------------------------------------------- | ------------------------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SMS gateway (Africa's Talking)                       | `AFRICASTALKING_*`                 | ⛔**missing** | **Launch blocker:** OTP codes are currently only logged, not sent — no farmer can register without this. Wire delivery in `AuthController::requestOtp` (TODO marked) + `SmsService`. |
+| OpenWeather                                          | `OPENWEATHER_API_KEY`              | ✅ set              | Verify plan quota fits traffic (30-min cache per location keeps calls low).                                                                                                                     |
+| Gemini (scanner, Mkulima AI, Kagua Dawa label check) | `GEMINI_API_KEY`, `GEMINI_MODEL` | ✅ set              | Confirm billing + rate limits on the key used in prod.                                                                                                                                          |
+| M-Pesa                                               | `MPESA_*`                          | ⚠️ sandbox        | Confirm Tanzania (Vodacom OpenAPI) vs Kenya (Daraja) — service was written against Daraja-style flows. Run one real end-to-end money test before enabling escrow publicly.                     |
+| Tigo Pesa                                            | `TIGOPESA_*`                       | ⚠️ sandbox        | Same as above.                                                                                                                                                                                  |
+| FCM push                                             | Firebase project                     | ⚠️ missing        | `push_tokens` table exists; no sender wired yet.                                                                                                                                              |
 
 ## 2. Server & Environment (⛔)
 
@@ -61,6 +61,7 @@ cd admin-dashboard && echo "VITE_API_URL=https://mkulimaforum.app/api" > .env.pr
 ```
 
 **Immediately after first deploy:**
+
 - [ ] Log in as the seeded admin (`admin@mkulima.forum`) and **change the password** (`admin123` is public in this repo).
 - [ ] Register a real test farmer via OTP end-to-end (proves SMS gateway).
 - [ ] Confirm `dev_code` is absent from the OTP response (it is gated to local/testing — verify anyway).
@@ -80,6 +81,7 @@ cd mkulima_app
 flutter build apk --release --dart-define=API_URL=https://mkulimaforum.app/api
 cp build/app/outputs/flutter-apk/app-release.apk ../public/app/mkulima-forum.apk
 ```
+
 - [ ] The landing page "Pakua APK" button points at `/app/mkulima-forum.apk` — the copy above makes it live.
 - [ ] Android signing keys generated and stored securely (`android/key.properties`).
 - [ ] Play Store listing (screenshots of Home hero, Kagua Dawa, Soko) — sideload APK works meanwhile.
