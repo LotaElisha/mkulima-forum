@@ -45,6 +45,11 @@ return [
         'api_key' => env('OPENWEATHER_API_KEY'),
     ],
 
+    'ratin' => [
+        'base_url' => env('RATIN_BASE_URL', 'https://ratin.net/ratinapp/api'),
+        'usd_to_tzs_rate' => env('RATIN_USD_TO_TZS_RATE'),
+    ],
+
     'sms' => [
         'gateway' => env('SMS_GATEWAY', 'africastalking'),
         'sender_id' => env('SMS_SENDER_ID', 'MKULIMA'),
