@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             ForumSeeder::class,
             FeatureFlagSeeder::class,
             LandingSettingSeeder::class,
+            MarketPriceSeeder::class,
         ]);
     }
 }
