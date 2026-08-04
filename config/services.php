@@ -47,7 +47,11 @@ return [
 
     'ratin' => [
         'base_url' => env('RATIN_BASE_URL', 'https://ratin.net/ratinapp/api'),
-        'usd_to_tzs_rate' => env('RATIN_USD_TO_TZS_RATE'),
+        'usd_to_tzs_rate' => env('RATIN_USD_TO_TZS_RATE', 2600),
+    ],
+
+    'weather' => [
+        'use_open_meteo' => env('WEATHER_USE_OPEN_METEO', true),
     ],
 
     'sms' => [

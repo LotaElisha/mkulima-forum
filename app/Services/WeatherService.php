@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Log;
 
 class WeatherService
 {
-    protected string $apiKey;
-    protected string $baseUrl = 'https://api.openweathermap.org/data/2.5';
+    protected ?string $openWeatherApiKey;
+    protected bool $useOpenMeteo;
+    protected string $openWeatherUrl = 'https://api.openweathermap.org/data/2.5';
+    protected string $openMeteoUrl = 'https://api.open-meteo.com/v1';
+    protected string $geocodingUrl = 'https://geocoding-api.open-meteo.com/v1';
 
     public function __construct()
     {
-        $this->apiKey = config('services.openweather.api_key') ?? env('OPENWEATHER_API_KEY', '');
+        $this->openWeatherApiKey = config('services.openweather.api_key') ?? env('OPENWEATHER_API_KEY', null);
+        $this->useOpenMeteo = config('services.weather.use_open_meteo', true);
     }
 
     public function getCurrentWeather(string $location): array
@@ -24,33 +28,13 @@ class WeatherService
         }
 
         try {
-            $response = Http::get("{$this->baseUrl}/weather", [
-                'q' => $location,
-                'appid' => $this->apiKey,
-                'units' => 'metric',
-            ]);
+            if ($this->openWeatherApiKey && !$this->useOpenMeteo) {
+                $result = $this->fetchOpenWeatherCurrent($location);
+            } else {
+                $result = $this->fetchOpenMeteoCurrent($location);
+            }
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $result = [
-                    'location' => $data['name'] ?? $location,
-                    'lat' => $data['coord']['lat'] ?? null,
-                    'lon' => $data['coord']['lon'] ?? null,
-                    'temperature' => round($data['main']['temp'] ?? 0, 1),
-                    'feels_like' => round($data['main']['feels_like'] ?? 0, 1),
-                    'humidity' => $data['main']['humidity'] ?? 0,
-                    'pressure' => $data['main']['pressure'] ?? 0,
-                    'wind_speed' => round($data['wind']['speed'] ?? 0, 1),
-                    'wind_direction' => $data['wind']['deg'] ?? 0,
-                    'description' => $data['weather'][0]['description'] ?? 'Unknown',
-                    'icon' => $data['weather'][0]['icon'] ?? '01d',
-                    'visibility' => $data['visibility'] ?? 0,
-                    'clouds' => $data['clouds']['all'] ?? 0,
-                    'sunrise' => $data['sys']['sunrise'] ?? null,
-                    'sunset' => $data['sys']['sunset'] ?? null,
-                    'timestamp' => now()->toIso8601String(),
-                ];
-
+            if ($result) {
                 $this->cacheWeather($location, $result, null, null);
                 return $result;
             }
@@ -58,7 +42,6 @@ class WeatherService
             Log::error('Weather API error: ' . $e->getMessage());
         }
 
-        // Fall back to last known (stale) reading — never fabricate weather data.
         $stale = $this->getStaleWeather($location);
         if ($stale) {
             $stale['is_stale'] = true;
@@ -85,38 +68,13 @@ class WeatherService
         }
 
         try {
-            $response = Http::get("{$this->baseUrl}/forecast", [
-                'q' => $location,
-                'appid' => $this->apiKey,
-                'units' => 'metric',
-                'cnt' => 40,
-            ]);
+            if ($this->openWeatherApiKey && !$this->useOpenMeteo) {
+                $forecast = $this->fetchOpenWeatherForecast($location);
+            } else {
+                $forecast = $this->fetchOpenMeteoForecast($location);
+            }
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $daily = [];
-
-                foreach ($data['list'] ?? [] as $item) {
-                    $date = date('Y-m-d', $item['dt']);
-                    if (!isset($daily[$date])) {
-                        $daily[$date] = [
-                            'date' => $date,
-                            'day_name' => date('l', $item['dt']),
-                            'temp_min' => $item['main']['temp_min'],
-                            'temp_max' => $item['main']['temp_max'],
-                            'humidity' => $item['main']['humidity'],
-                            'wind_speed' => $item['wind']['speed'],
-                            'description' => $item['weather'][0]['description'],
-                            'icon' => $item['weather'][0]['icon'],
-                            'rain_chance' => ($item['pop'] ?? 0) * 100,
-                        ];
-                    } else {
-                        $daily[$date]['temp_min'] = min($daily[$date]['temp_min'], $item['main']['temp_min']);
-                        $daily[$date]['temp_max'] = max($daily[$date]['temp_max'], $item['main']['temp_max']);
-                    }
-                }
-
-                $forecast = array_values(array_slice($daily, 0, 5));
+            if ($forecast !== null) {
                 $this->cacheWeather($location, null, $forecast, null);
                 return $forecast;
             }
@@ -124,7 +82,6 @@ class WeatherService
             Log::error('Forecast API error: ' . $e->getMessage());
         }
 
-        // Fall back to last known (stale) forecast — never fabricate weather data.
         $staleCache = WeatherCache::where('location', $location)->first();
         if ($staleCache && $staleCache->forecast_data) {
             $forecast = $staleCache->forecast_data;
@@ -137,6 +94,228 @@ class WeatherService
         return [];
     }
 
+    protected function fetchOpenMeteoCurrent(string $location): ?array
+    {
+        $coords = $this->geocode($location);
+        if (!$coords) {
+            Log::warning("Geocoding failed for {$location}");
+            return null;
+        }
+
+        $response = Http::timeout(30)->get("{$this->openMeteoUrl}/forecast", [
+            'latitude' => $coords['lat'],
+            'longitude' => $coords['lon'],
+            'current' => 'temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,precipitation,cloud_cover,surface_pressure',
+            'timezone' => 'auto',
+            'forecast_days' => 1,
+        ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $data = $response->json();
+        $current = $data['current'] ?? null;
+        if (!$current) {
+            return null;
+        }
+
+        return [
+            'location' => $coords['name'],
+            'lat' => $coords['lat'],
+            'lon' => $coords['lon'],
+            'temperature' => round($current['temperature_2m'] ?? 0, 1),
+            'feels_like' => round($current['temperature_2m'] ?? 0, 1),
+            'humidity' => $current['relative_humidity_2m'] ?? 0,
+            'pressure' => $current['surface_pressure'] ?? 0,
+            'wind_speed' => round($current['wind_speed_10m'] ?? 0, 1),
+            'wind_direction' => $current['wind_direction_10m'] ?? 0,
+            'description' => $this->wmoDescription($current['weather_code'] ?? 0),
+            'icon' => $this->wmoIcon($current['weather_code'] ?? 0),
+            'visibility' => 10000,
+            'clouds' => $current['cloud_cover'] ?? 0,
+            'sunrise' => null,
+            'sunset' => null,
+            'precipitation' => $current['precipitation'] ?? 0,
+            'timestamp' => now()->toIso8601String(),
+        ];
+    }
+
+    protected function fetchOpenMeteoForecast(string $location): ?array
+    {
+        $coords = $this->geocode($location);
+        if (!$coords) {
+            return null;
+        }
+
+        $response = Http::timeout(30)->get("{$this->openMeteoUrl}/forecast", [
+            'latitude' => $coords['lat'],
+            'longitude' => $coords['lon'],
+            'daily' => 'temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean,weather_code,wind_speed_10m_max,precipitation_sum,precipitation_probability_max',
+            'timezone' => 'auto',
+            'forecast_days' => 6,
+        ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $data = $response->json();
+        $daily = $data['daily'] ?? null;
+        if (!$daily) {
+            return null;
+        }
+
+        $forecast = [];
+        $days = count($daily['time'] ?? []);
+        for ($i = 0; $i < $days; $i++) {
+            $forecast[] = [
+                'date' => $daily['time'][$i] ?? null,
+                'day_name' => date('l', strtotime($daily['time'][$i] ?? 'now')),
+                'temp_min' => $daily['temperature_2m_min'][$i] ?? null,
+                'temp_max' => $daily['temperature_2m_max'][$i] ?? null,
+                'humidity' => $daily['relative_humidity_2m_mean'][$i] ?? null,
+                'wind_speed' => $daily['wind_speed_10m_max'][$i] ?? null,
+                'description' => $this->wmoDescription($daily['weather_code'][$i] ?? 0),
+                'icon' => $this->wmoIcon($daily['weather_code'][$i] ?? 0),
+                'rain_chance' => $daily['precipitation_probability_max'][$i] ?? 0,
+                'precipitation' => $daily['precipitation_sum'][$i] ?? 0,
+            ];
+        }
+
+        return array_values(array_slice($forecast, 0, 5));
+    }
+
+    protected function geocode(string $location): ?array
+    {
+        $response = Http::timeout(30)->get("{$this->geocodingUrl}/search", [
+            'name' => $location,
+            'count' => 1,
+            'language' => 'en',
+            'format' => 'json',
+        ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $results = $response->json('results');
+        if (empty($results) || !is_array($results)) {
+            return null;
+        }
+
+        $first = $results[0];
+        return [
+            'name' => $first['name'] ?? $location,
+            'lat' => $first['latitude'] ?? null,
+            'lon' => $first['longitude'] ?? null,
+            'country' => $first['country'] ?? null,
+        ];
+    }
+
+    protected function fetchOpenWeatherCurrent(string $location): ?array
+    {
+        $response = Http::get("{$this->openWeatherUrl}/weather", [
+            'q' => $location,
+            'appid' => $this->openWeatherApiKey,
+            'units' => 'metric',
+        ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $data = $response->json();
+        return [
+            'location' => $data['name'] ?? $location,
+            'lat' => $data['coord']['lat'] ?? null,
+            'lon' => $data['coord']['lon'] ?? null,
+            'temperature' => round($data['main']['temp'] ?? 0, 1),
+            'feels_like' => round($data['main']['feels_like'] ?? 0, 1),
+            'humidity' => $data['main']['humidity'] ?? 0,
+            'pressure' => $data['main']['pressure'] ?? 0,
+            'wind_speed' => round($data['wind']['speed'] ?? 0, 1),
+            'wind_direction' => $data['wind']['deg'] ?? 0,
+            'description' => $data['weather'][0]['description'] ?? 'Unknown',
+            'icon' => $data['weather'][0]['icon'] ?? '01d',
+            'visibility' => $data['visibility'] ?? 0,
+            'clouds' => $data['clouds']['all'] ?? 0,
+            'sunrise' => $data['sys']['sunrise'] ?? null,
+            'sunset' => $data['sys']['sunset'] ?? null,
+            'timestamp' => now()->toIso8601String(),
+        ];
+    }
+
+    protected function fetchOpenWeatherForecast(string $location): ?array
+    {
+        $response = Http::get("{$this->openWeatherUrl}/forecast", [
+            'q' => $location,
+            'appid' => $this->openWeatherApiKey,
+            'units' => 'metric',
+            'cnt' => 40,
+        ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+
+        $data = $response->json();
+        $daily = [];
+
+        foreach ($data['list'] ?? [] as $item) {
+            $date = date('Y-m-d', $item['dt']);
+            if (!isset($daily[$date])) {
+                $daily[$date] = [
+                    'date' => $date,
+                    'day_name' => date('l', $item['dt']),
+                    'temp_min' => $item['main']['temp_min'],
+                    'temp_max' => $item['main']['temp_max'],
+                    'humidity' => $item['main']['humidity'],
+                    'wind_speed' => $item['wind']['speed'],
+                    'description' => $item['weather'][0]['description'],
+                    'icon' => $item['weather'][0]['icon'],
+                    'rain_chance' => ($item['pop'] ?? 0) * 100,
+                ];
+            } else {
+                $daily[$date]['temp_min'] = min($daily[$date]['temp_min'], $item['main']['temp_min']);
+                $daily[$date]['temp_max'] = max($daily[$date]['temp_max'], $item['main']['temp_max']);
+            }
+        }
+
+        return array_values(array_slice($daily, 0, 5));
+    }
+
+    protected function wmoDescription(int $code): string
+    {
+        return match (true) {
+            $code === 0 => 'Clear sky',
+            $code <= 3 => 'Partly cloudy',
+            $code <= 48 => 'Foggy',
+            $code <= 57 => 'Drizzle',
+            $code <= 67 => 'Rain',
+            $code <= 77 => 'Snow',
+            $code <= 82 => 'Showers',
+            $code <= 86 => 'Snow showers',
+            $code === 95 => 'Thunderstorm',
+            $code <= 99 => 'Thunderstorm with hail',
+            default => 'Unknown',
+        };
+    }
+
+    protected function wmoIcon(int $code): string
+    {
+        return match (true) {
+            $code === 0 => '01d',
+            $code <= 3 => '03d',
+            $code <= 48 => '50d',
+            $code <= 67 => '10d',
+            $code <= 77 => '13d',
+            $code <= 86 => '09d',
+            $code <= 99 => '11d',
+            default => '01d',
+        };
+    }
+
     public function getFarmingAdvisory(array $weather): array
     {
         $temp = $weather['temperature'] ?? 25;
@@ -144,8 +323,7 @@ class WeatherService
         $desc = strtolower($weather['description'] ?? '');
         $advisories = [];
 
-        // Irrigation advisory
-        if (str_contains($desc, 'rain') || str_contains($desc, 'storm')) {
+        if (str_contains($desc, 'rain') || str_contains($desc, 'storm') || str_contains($desc, 'shower')) {
             $advisories[] = [
                 'category' => 'Umwagiliaji',
                 'title' => 'Mvua Inatarajiwa',
@@ -163,7 +341,6 @@ class WeatherService
             ];
         }
 
-        // Pest advisory
         if ($humidity > 80 && $temp > 25) {
             $advisories[] = [
                 'category' => 'Wadudu na Magonjwa',
@@ -174,7 +351,6 @@ class WeatherService
             ];
         }
 
-        // Harvest advisory
         if (str_contains($desc, 'clear') || str_contains($desc, 'sunny')) {
             $advisories[] = [
                 'category' => 'Uvunaji',
@@ -185,7 +361,6 @@ class WeatherService
             ];
         }
 
-        // General seasonal advice
         $month = (int) date('n');
         if ($month >= 3 && $month <= 5) {
             $advisories[] = [
@@ -233,7 +408,6 @@ class WeatherService
 
     protected function cacheWeather(string $location, ?array $current, ?array $forecast, ?array $advisory): void
     {
-        // A cache-write failure must never break serving fresh upstream data.
         try {
             $cache = WeatherCache::firstOrNew(['location' => $location]);
             if ($current) $cache->current_data = $current;
@@ -246,13 +420,9 @@ class WeatherService
         }
     }
 
-    /**
-     * Last known reading regardless of expiry — used as a clearly-flagged stale fallback.
-     */
     protected function getStaleWeather(string $location): ?array
     {
         $cache = WeatherCache::where('location', $location)->first();
-
         return ($cache && $cache->current_data) ? $cache->current_data : null;
     }
 }
