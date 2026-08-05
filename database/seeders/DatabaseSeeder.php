@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             FeatureFlagSeeder::class,
             LandingSettingSeeder::class,
             MarketPriceSeeder::class,
+            LogisticsServiceSeeder::class,
         ]);
     }
 }

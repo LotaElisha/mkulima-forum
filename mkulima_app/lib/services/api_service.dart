@@ -7,8 +7,9 @@ import '../providers/cache_provider.dart';
 
 class ApiService {
   final Dio _dio;
+  VoidCallback? onUnauthorized;
 
-  ApiService({required String baseUrl})
+  ApiService({required String baseUrl, this.onUnauthorized})
     : _dio = Dio(
         BaseOptions(
           baseUrl: baseUrl,
@@ -17,11 +18,23 @@ class ApiService {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
+            'User-Agent': 'MkulimaApp/1.0 (Mobile; Flutter)',
           },
         ),
       ) {
     _dio.interceptors.add(
       LogInterceptor(requestBody: kDebugMode, responseBody: kDebugMode),
+    );
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException err, ErrorInterceptorHandler handler) {
+          if (err.response?.statusCode == 401) {
+            clearToken();
+            onUnauthorized?.call();
+          }
+          return handler.next(err);
+        },
+      ),
     );
   }
 

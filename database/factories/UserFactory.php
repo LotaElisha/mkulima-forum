@@ -18,11 +18,12 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = \Faker\Factory::create();
         return [
             'tenant_id' => 1,
-            'name' => fake()->name(),
-            'phone' => '2557' . fake()->unique()->numerify('########'),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $faker->name(),
+            'phone' => '2557' . $faker->unique()->numerify('########'),
+            'email' => $faker->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
             'role' => Roles::FARMER,
             'kyc_status' => 'pending',

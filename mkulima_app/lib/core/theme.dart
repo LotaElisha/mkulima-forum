@@ -58,12 +58,37 @@ ThemeData mkLightTheme() {
 }
 
 ThemeData mkDarkTheme() {
+  final scheme = ColorScheme.fromSeed(
+    seedColor: MkColors.primary,
+    brightness: Brightness.dark,
+  );
   return ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: MkColors.primary,
-      brightness: Brightness.dark,
-    ),
+    colorScheme: scheme,
     useMaterial3: true,
     fontFamily: 'Roboto',
+    scaffoldBackgroundColor: const Color(0xFF121412),
+    appBarTheme: AppBarTheme(
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: scheme.surfaceContainerHigh,
+      foregroundColor: scheme.onSurface,
+    ),
+    cardTheme: CardThemeData(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(MkRadii.card),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MkRadii.button),
+        ),
+      ),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: scheme.surfaceContainer,
+      elevation: 8,
+    ),
   );
 }

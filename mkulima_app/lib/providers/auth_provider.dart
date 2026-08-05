@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
@@ -9,6 +10,7 @@ import '../screens/login_modal.dart';
 class AuthProvider extends ChangeNotifier {
   final ApiService _api;
   final db.LocalDatabase _db;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   User? _user;
   bool _isLoading = false;
@@ -19,6 +21,7 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider({required ApiService api, required db.LocalDatabase db})
       : _api = api,
         _db = db {
+    _api.onUnauthorized = logout;
     _loadUser();
     _loadSubscriptionPlan();
   }
@@ -51,7 +54,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> _loadUser() async {
-    final token = await _db.getToken();
+    final token = await _secureStorage.read(key: 'auth_token') ?? await _db.getToken();
     if (token != null) {
       _api.setToken(token);
       try {
@@ -119,6 +122,7 @@ class AuthProvider extends ChangeNotifier {
       _user = User.fromJson(userData);
 
       _api.setToken(token);
+      await _secureStorage.write(key: 'auth_token', value: token);
       await _db.saveUser(_user!, token);
 
       _isLoading = false;
@@ -142,6 +146,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     _api.clearToken();
+    await _secureStorage.delete(key: 'auth_token');
     await _db.clearUser();
     _user = null;
     _subscriptionPlan = 'Free';
@@ -168,6 +173,7 @@ class AuthProvider extends ChangeNotifier {
       _user = User.fromJson(userData);
 
       _api.setToken(token);
+      await _secureStorage.write(key: 'auth_token', value: token);
       await _db.saveUser(_user!, token);
 
       _isLoading = false;
