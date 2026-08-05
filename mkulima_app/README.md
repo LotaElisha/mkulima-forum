@@ -90,10 +90,19 @@ lib/
 
 ## API Configuration
 
-The app connects to the MkulimaForum backend API at:
-- Base URL: `http://76.13.56.180:8000/api`
+The app uses a production API URL passed at build time:
 
-Update the URL in `lib/main.dart` if needed.
+```bash
+flutter build apk --release --dart-define=API_URL=https://mkulimaforum.app/api
+```
+
+For local development (Android emulator):
+
+```bash
+flutter run --dart-define=API_URL=http://10.0.2.2:8000/api
+```
+
+The default in `lib/main.dart` is `http://10.0.2.2:8000/api` for development.
 
 ## Tech Stack
 
