@@ -476,9 +476,19 @@ function KnowledgeBase() {
 
 function AiConfig({ config }) {
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-6 max-w-2xl">
       <div className="card space-y-4">
-        <h3 className="font-semibold text-gray-800">Gemini AI Configuration</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-gray-800 text-base">Gemini & Multi-Provider AI Configuration</h3>
+          <a
+            href="/ai-providers"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white font-semibold text-xs rounded-xl transition-colors shadow-sm"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            Manage AI Providers
+          </a>
+        </div>
+
         <div className="space-y-3">
           <div className="flex items-center justify-between py-3 border-b border-gray-100">
             <div>
@@ -490,35 +500,41 @@ function AiConfig({ config }) {
               : <span className="flex items-center gap-1 text-red-700 bg-red-100 px-3 py-1 rounded-full text-sm font-medium"><XCircle className="w-4 h-4"/>Not Configured</span>
             }
           </div>
+
           <div className="flex items-center justify-between py-3 border-b border-gray-100">
             <div>
               <p className="text-sm font-medium text-gray-700">Active Model</p>
-              <p className="text-xs text-gray-500">Gemini model for all AI features</p>
+              <p className="text-xs text-gray-500">Currently assigned model</p>
             </div>
-            <code className="text-sm bg-gray-100 px-3 py-1 rounded-lg font-mono">{config?.model || '—'}</code>
+            <code className="text-sm bg-gray-100 px-3 py-1 rounded-lg font-mono text-green-800 font-semibold">{config?.model || 'gemini-2.0-flash'}</code>
           </div>
+
           <div className="flex items-center justify-between py-3">
             <div>
               <p className="text-sm font-medium text-gray-700">API Key</p>
-              <p className="text-xs text-gray-500">Stored in server .env as GEMINI_API_KEY</p>
+              <p className="text-xs text-gray-500">Encrypted in DB or server fallback</p>
             </div>
-            <code className="text-sm bg-gray-100 px-3 py-1 rounded-lg font-mono text-gray-500">{config?.api_key_preview}</code>
+            <code className="text-sm bg-gray-100 px-3 py-1 rounded-lg font-mono text-gray-600">{config?.api_key_preview || 'Configured'}</code>
           </div>
         </div>
       </div>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
-        <div className="flex gap-2">
-          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5"/>
+      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-5 text-sm">
+        <div className="flex gap-3 items-start">
+          <div className="w-8 h-8 rounded-xl bg-green-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+            <Zap className="w-4 h-4" />
+          </div>
           <div>
-            <p className="font-semibold text-amber-800 mb-1">To change the API key or model:</p>
-            <ol className="text-amber-700 space-y-1 list-decimal list-inside text-xs">
-              <li>SSH into the server: <code className="bg-amber-100 px-1 rounded">ssh -p 65002 u241489594@72.60.93.176</code></li>
-              <li>Edit: <code className="bg-amber-100 px-1 rounded">nano domains/mkulimaforum.app/public_html/.env</code></li>
-              <li>Set: <code className="bg-amber-100 px-1 rounded">GEMINI_API_KEY=your_key</code></li>
-              <li>Set: <code className="bg-amber-100 px-1 rounded">GEMINI_MODEL=gemini-2.0-flash</code></li>
-              <li>Run: <code className="bg-amber-100 px-1 rounded">php artisan config:cache</code></li>
-            </ol>
+            <p className="font-bold text-green-900 mb-1">Dynamic AI Provider System Enabled!</p>
+            <p className="text-xs text-green-800 leading-relaxed mb-3">
+              You no longer need to SSH into the server or edit <code>.env</code> files to change API keys or upgrade Gemini models. You can add, update, test credentials, and switch models (e.g. <code>gemini-2.0-flash</code>, <code>gemini-2.5-flash</code>) directly from the Admin Dashboard.
+            </p>
+            <a
+              href="/ai-providers"
+              className="inline-flex items-center gap-1.5 font-bold text-xs text-green-700 hover:text-green-900 hover:underline"
+            >
+              Open AI Provider Management & Routing Portal →
+            </a>
           </div>
         </div>
       </div>
