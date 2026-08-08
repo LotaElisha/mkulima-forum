@@ -292,11 +292,12 @@ class AiProviderController extends Controller
         $routes = AiFeatureRoute::with(['provider'])->get();
 
         $defaultFeatures = [
-            'plant_diagnosis' => 'Plant Disease Identification',
-            'farmer_chat' => 'Mkulima Bot Chat Assistant',
+            'plant_diagnosis' => 'Plant Disease Scanner (Gemini 3 Flash)',
+            'farmer_chat' => 'Virtual Agronomist Chat (Gemini 3 Flash)',
             'input_label_check' => 'Agri-Input Label Verification',
             'agronomist_kb' => 'Agricultural Knowledge Base RAG',
-            'market_analysis' => 'Market Price & Crop Trends',
+            'smart_search' => 'Smart Marketplace Search (Gemini 3 Flash)',
+            'weather_crop_advisory' => 'Weather & Crop Advisory Engine (Gemini 3 Pro + Search Grounding)',
             'document_analysis' => 'Document & Certificate Analysis',
         ];
 

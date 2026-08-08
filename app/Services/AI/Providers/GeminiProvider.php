@@ -19,7 +19,7 @@ class GeminiProvider implements AIProviderInterface
     public function __construct(array $config)
     {
         $this->apiKey = $config['api_key'] ?? '';
-        $this->model = $config['model'] ?? 'gemini-2.0-flash';
+        $this->model = $config['model'] ?? 'gemini-3-flash-preview';
         $this->baseUrl = rtrim($config['base_url'] ?? 'https://generativelanguage.googleapis.com', '/');
         $this->temperature = (float) ($config['temperature'] ?? 0.7);
         $this->maxTokens = (int) ($config['max_tokens'] ?? 2048);
@@ -47,6 +47,12 @@ class GeminiProvider implements AIProviderInterface
                 'maxOutputTokens' => $maxTokens,
             ],
         ];
+
+        if (!empty($options['enable_grounding']) || !empty($options['google_search'])) {
+            $payload['tools'] = [
+                ['googleSearch' => new \stdClass()],
+            ];
+        }
 
         if (!empty($options['system_instruction'])) {
             $payload['system_instruction'] = [
@@ -261,9 +267,10 @@ class GeminiProvider implements AIProviderInterface
     public function getModels(): array
     {
         $defaultModels = [
+            ['id' => 'gemini-3-flash-preview', 'name' => 'Gemini 3 Flash (Next-Gen Ultra Fast & Multimodal)', 'supports_vision' => true],
+            ['id' => 'gemini-3-pro-preview', 'name' => 'Gemini 3 Pro (Complex Reasoning & Search Grounding)', 'supports_vision' => true],
             ['id' => 'gemini-2.0-flash', 'name' => 'Gemini 2.0 Flash (Fast & Multimodal)', 'supports_vision' => true],
-            ['id' => 'gemini-1.5-flash', 'name' => 'Gemini 1.5 Flash (Lightweight)', 'supports_vision' => true],
-            ['id' => 'gemini-1.5-pro', 'name' => 'Gemini 1.5 Pro (Complex Reasoning)', 'supports_vision' => true],
+            ['id' => 'gemini-1.5-pro', 'name' => 'Gemini 1.5 Pro (Deep Context)', 'supports_vision' => true],
         ];
 
         if (empty($this->apiKey)) {

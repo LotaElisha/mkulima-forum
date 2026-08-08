@@ -321,6 +321,33 @@ class WeatherService
         $temp = $weather['temperature'] ?? 25;
         $humidity = $weather['humidity'] ?? 50;
         $desc = strtolower($weather['description'] ?? '');
+        $location = $weather['location'] ?? 'Tanzania';
+
+        try {
+            $aiService = app(\App\Services\AI\AIService::class);
+            $prompt = "Provide a JSON array of localized agricultural advisories for a farmer in {$location} with current weather {$temp}°C, humidity {$humidity}%, {$desc}. Search live regional micro-climate forecasts. Each item must have: category (string), title (string), message (string in Swahili), priority ('high'|'medium'|'low'), icon ('water_drop'|'wb_sunny'|'bug_report'|'agriculture'). Return ONLY valid JSON array.";
+
+            $aiResponse = $aiService->generateText(
+                'weather_crop_advisory',
+                [['role' => 'user', 'content' => $prompt]],
+                [
+                    'model' => 'gemini-3-pro-preview',
+                    'enable_grounding' => true,
+                    'temperature' => 0.3,
+                ]
+            );
+
+            if (!empty($aiResponse->text)) {
+                $cleanJson = preg_replace('/```json\s*|\s*```/', '', trim($aiResponse->text));
+                $parsed = json_decode($cleanJson, true);
+                if (is_array($parsed) && count($parsed) > 0) {
+                    return $parsed;
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::info('Gemini 3 Pro Weather Advisory fallback: ' . $e->getMessage());
+        }
+
         $advisories = [];
 
         if (str_contains($desc, 'rain') || str_contains($desc, 'storm') || str_contains($desc, 'shower')) {
