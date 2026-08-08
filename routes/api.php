@@ -247,6 +247,7 @@ Route::prefix('admin')
         Route::post('/settings/landing', [AdminController::class, 'updateLandingSettings']);
         Route::post('/settings/landing/logo', [AdminController::class, 'uploadLandingLogo']);
         Route::delete('/settings/landing/logo', [AdminController::class, 'deleteLandingLogo']);
+        Route::post('/settings/landing/media', [AdminController::class, 'uploadLandingMedia']);
 
         // Admin Profile
         Route::get('/profile', [AdminProfileController::class, 'show']);

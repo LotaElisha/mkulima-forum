@@ -351,14 +351,14 @@
 <header>
   <div class="wrap nav">
     <a class="brand-logo-container" href="#">
-      <img src="/images/brand-banner.png" alt="MkulimaForum — Shiriki. Jifunze. Endelea.">
+      <img src="{{ $settings['banner_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum — Shiriki. Jifunze. Endelea.">
     </a>
     <nav class="nav-links">
       <a href="#vipengele">Vipengele</a>
       <a href="#jaribu">Jaribu AI</a>
       <a href="#status">Hali ya Mfumo</a>
-      <a href="/admin/login" className="nav-admin-link" style="color: var(--forest-dark);">Admin Portal</a>
-      <a class="btn btn-gold" href="#pakua">Pakua App (APK)</a>
+      <a href="/admin/login" style="color: var(--forest-dark);">Admin Portal</a>
+      <a class="btn btn-gold" href="{{ $settings['app_apk_url'] ?? '/app/mkulima-forum.apk' }}">Pakua App (APK)</a>
     </nav>
   </div>
 </header>
@@ -369,25 +369,27 @@
     <div>
       <div class="motto-badge">
         <span class="pulse-dot"></span>
-        SHIRIKI &bull; JIFUNZE &bull; ENDELEA
+        {{ $settings['brand_motto'] ?? 'SHIRIKI • JIFUNZE • ENDELEA' }}
       </div>
 
-      <h1>Jukwaa la Kidigitali la Wakulima wa <span class="gold">Tanzania</span></h1>
+      <h1>{!! $settings['hero_title'] ?? 'Jukwaa la Kidigitali la Wakulima wa <span class="gold">Tanzania</span>' !!}</h1>
 
       <p class="lead">
-        Utambuzi wa magonjwa ya mimea kwa <b>Gemini 3 Flash AI</b>, ushauri wa kilimo kwa Kiswahili, masoko ya mazao, bei za masoko kwa wakati halisi, na usaidizi wa offline kupitia <b>Gemma 2B</b>.
+        {!! $settings['hero_lead'] ?? 'Utambuzi wa magonjwa ya mimea kwa <b>Gemini 3 Flash AI</b>, ushauri wa kilimo kwa Kiswahili, masoko ya mazao, bei za masoko kwa wakati halisi, na usaidizi wa offline kupitia <b>Gemma 2B</b>.' !!}
       </p>
 
       <!-- Core Brand Pillars -->
       <div class="pillars-bar">
-        <div class="pillar-item">🌱 Shiriki Maarifa</div>
-        <div class="pillar-item">📖 Jifunze Mbinu Bora</div>
-        <div class="pillar-item">👥 Jenga Jamii</div>
-        <div class="pillar-item">📈 Endelea Kukua</div>
+        <div class="pillar-item">{{ $settings['pillar_1'] ?? '🌱 Shiriki Maarifa' }}</div>
+        <div class="pillar-item">{{ $settings['pillar_2'] ?? '📖 Jifunze Mbinu Bora' }}</div>
+        <div class="pillar-item">{{ $settings['pillar_3'] ?? '👥 Jenga Jamii' }}</div>
+        <div class="pillar-item">{{ $settings['pillar_4'] ?? '📈 Endelea Kukua' }}</div>
       </div>
 
       <div class="hero-ctas">
-        <a class="btn btn-gold" href="/app/mkulima-forum.apk">
+        <a class="btn btn-gold" href="{{ $settings['app_apk_url'] ?? '/app/mkulima-forum.apk' }}">
+          📲 Pakua Android App (APK)
+        </a>
           📲 Pakua Android App (APK)
         </a>
         <a class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.6);" href="#jaribu">

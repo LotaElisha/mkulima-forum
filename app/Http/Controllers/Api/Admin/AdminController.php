@@ -411,6 +411,44 @@ class AdminController extends Controller
         return response()->json(['message' => 'Logo removed successfully']);
     }
 
+    public function uploadLandingMedia(Request $request): JsonResponse
+    {
+        $request->validate([
+            'media' => ['required', 'file', 'mimes:png,jpg,jpeg,svg,webp,gif,apk', 'max:51200'],
+            'key' => ['required', 'string', 'in:logo,banner,emblem,hero_bg,app_apk'],
+        ]);
+
+        $key = $request->input('key');
+        $fileKey = "{$key}_url";
+        $pathKey = "{$key}_path";
+
+        $oldPath = \App\Models\LandingSetting::where('key', $pathKey)->value('value');
+
+        $path = $request->file('media')->store('branding', 'public');
+        $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+
+        \App\Models\LandingSetting::updateOrCreate(['key' => $pathKey], ['value' => $path]);
+        \App\Models\LandingSetting::updateOrCreate(['key' => $fileKey], ['value' => $url]);
+
+        if ($key === 'logo' || $key === 'banner') {
+            \App\Models\LandingSetting::updateOrCreate(['key' => 'banner_url'], ['value' => $url]);
+            \App\Models\LandingSetting::updateOrCreate(['key' => 'logo_url'], ['value' => $url]);
+        }
+        if ($key === 'emblem') {
+            \App\Models\LandingSetting::updateOrCreate(['key' => 'emblem_url'], ['value' => $url]);
+        }
+
+        if ($oldPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+        }
+
+        return response()->json([
+            'message' => ucfirst($key) . ' media asset uploaded successfully',
+            'url' => $url,
+            'settings' => \App\Models\LandingSetting::pluck('value', 'key')->toArray(),
+        ]);
+    }
+
     public function getPermissions(): JsonResponse
     {
         $permissions = \Spatie\Permission\Models\Permission::pluck('name');

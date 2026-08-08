@@ -13,10 +13,17 @@ Route::get('/', function () {
     }
 
     $defaults = [
-        'hero_title' => 'Daktari wa Mimea<br>Mfukoni <span class="accent">Mwako</span>',
+        'logo_url' => '/images/brand-banner.png',
+        'banner_url' => '/images/brand-banner.png',
+        'emblem_url' => '/images/logo-icon.jpg',
+        'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
+        'hero_title' => 'Jukwaa la Kidigitali la Wakulima wa <span class="gold">Tanzania</span>',
         'hero_tagline' => 'SKANI &bull; TAMBUA &bull; TIBU',
-        'hero_lead' => 'Piga picha ya mmea wako — <b>AI Plant Scanner</b> itambue magonjwa, wadudu na upungufu wa virutubisho papo hapo, na kukupa ushauri wa tiba kwa Kiswahili.',
-        'badge_text' => 'AI kwa Wakulima wa Tanzania',
+        'hero_lead' => 'Utambuzi wa magonjwa ya mimea kwa <b>Gemini 3 Flash AI</b>, ushauri wa kilimo kwa Kiswahili, masoko ya mazao, bei za masoko kwa wakati halisi, na usaidizi wa offline kupitia <b>Gemma 2B</b>.',
+        'pillar_1' => '🌱 Shiriki Maarifa',
+        'pillar_2' => '📖 Jifunze Mbinu Bora',
+        'pillar_3' => '👥 Jenga Jamii',
+        'pillar_4' => '📈 Endelea Kukua',
         'kicker_jinsi' => 'Jinsi Inavyofanya Kazi',
         'title_jinsi' => 'Hatua 3 tu — chini ya dakika moja',
         'sub_jinsi' => 'Huhitaji ujuzi wowote wa kiufundi. Kama unaweza kupiga picha, unaweza kutumia Mkulima Forum.',

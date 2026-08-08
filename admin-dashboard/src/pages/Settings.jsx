@@ -65,6 +65,11 @@ export default function Settings() {
           hero_tagline: data.hero_tagline || '',
           hero_lead: data.hero_lead || '',
           badge_text: data.badge_text || '',
+          brand_motto: data.brand_motto || '',
+          pillar_1: data.pillar_1 || '',
+          pillar_2: data.pillar_2 || '',
+          pillar_3: data.pillar_3 || '',
+          pillar_4: data.pillar_4 || '',
           kicker_jinsi: data.kicker_jinsi || '',
           title_jinsi: data.title_jinsi || '',
           sub_jinsi: data.sub_jinsi || '',
@@ -72,7 +77,7 @@ export default function Settings() {
           title_vipengele: data.title_vipengele || '',
           sub_vipengele: data.sub_vipengele || '',
         })
-        setLogoUrl(data.logo_url || '')
+        setLogoUrl(data.banner_url || data.logo_url || '/images/brand-banner.png')
       }
     } catch (err) {
       console.error('Failed to fetch landing settings:', err)
@@ -364,6 +369,62 @@ export default function Settings() {
                     </p>
                     {logoMessage && <p className="text-xs text-green-700 mt-1">{logoMessage}</p>}
                   </div>
+                </div>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Brand Motto / Slogan
+                </label>
+                <input
+                  type="text"
+                  value={landingSettings.brand_motto}
+                  onChange={(e) => setLandingSettings({...landingSettings, brand_motto: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none font-bold text-green-800"
+                  placeholder="e.g. SHIRIKI • JIFUNZE • ENDELEA"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:col-span-2">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Pillar 1</label>
+                  <input
+                    type="text"
+                    value={landingSettings.pillar_1}
+                    onChange={(e) => setLandingSettings({...landingSettings, pillar_1: e.target.value})}
+                    className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                    placeholder="🌱 Shiriki Maarifa"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Pillar 2</label>
+                  <input
+                    type="text"
+                    value={landingSettings.pillar_2}
+                    onChange={(e) => setLandingSettings({...landingSettings, pillar_2: e.target.value})}
+                    className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                    placeholder="📖 Jifunze Mbinu Bora"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Pillar 3</label>
+                  <input
+                    type="text"
+                    value={landingSettings.pillar_3}
+                    onChange={(e) => setLandingSettings({...landingSettings, pillar_3: e.target.value})}
+                    className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                    placeholder="👥 Jenga Jamii"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Pillar 4</label>
+                  <input
+                    type="text"
+                    value={landingSettings.pillar_4}
+                    onChange={(e) => setLandingSettings({...landingSettings, pillar_4: e.target.value})}
+                    className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs"
+                    placeholder="📈 Endelea Kukua"
+                  />
                 </div>
               </div>
 
