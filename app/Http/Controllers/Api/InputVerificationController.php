@@ -338,7 +338,7 @@ class InputVerificationController extends Controller
                 . 'problems: blurry printing, spelling errors, missing expiry date, '
                 . 'tampered seal). If a field is not readable, use null.';
 
-            $model = config('services.gemini.model', 'gemini-2.5-flash');
+            $model = config('services.gemini.model', 'gemini-2.0-flash');
             $response = Http::timeout(25)->withHeaders([
                 'Content-Type' => 'application/json',
             ])->post(

@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('disease_scans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('uuid', 36)->unique();
             $table->string('image_path');
             $table->string('disease_name')->nullable();

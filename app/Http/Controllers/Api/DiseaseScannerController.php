@@ -35,8 +35,8 @@ class DiseaseScannerController extends Controller
         if (!$finalResult) {
             // Do not record a fake "completed" scan — be honest that analysis failed.
             DiseaseScan::create([
-                'tenant_id' => $user->tenant_id,
-                'user_id' => $user->id,
+                'tenant_id' => $user?->tenant_id ?? 1,
+                'user_id' => $user?->id,
                 'image_path' => $imagePath,
                 'disease_name' => null,
                 'confidence_score' => 0,
@@ -52,8 +52,8 @@ class DiseaseScannerController extends Controller
 
         // Save scan record
         $scan = DiseaseScan::create([
-            'tenant_id' => $user->tenant_id,
-            'user_id' => $user->id,
+            'tenant_id' => $user?->tenant_id ?? 1,
+            'user_id' => $user?->id,
             'image_path' => $imagePath,
             'disease_name' => $finalResult['disease_name'] ?? 'Unknown',
             'confidence_score' => $finalResult['confidence'] ?? 0,
@@ -148,7 +148,7 @@ class DiseaseScannerController extends Controller
             }
             $prompt .= "Provide: 1) Disease name (or 'Healthy' if no disease), 2) Confidence 0-1, 3) Brief description, 4) Treatment recommendation, 5) Affected plant areas. Return as JSON with keys: disease_name, confidence, description, treatment, affected_areas (array).";
 
-            $model = config('services.gemini.model', 'gemini-2.5-flash');
+            $model = config('services.gemini.model', 'gemini-2.0-flash');
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [

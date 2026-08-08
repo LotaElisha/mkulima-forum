@@ -342,4 +342,27 @@ class ApiService {
   Future<void> sendSms(String phone, String message) async {
     await _dio.post('/sms/send', data: {'phone': phone, 'message': message});
   }
+
+  /// Formats raw errors (e.g. DioException) into human-readable Swahili messages
+  static String formatError(dynamic error) {
+    if (error is DioException) {
+      if (error.response?.data is Map && error.response!.data['message'] != null) {
+        return error.response!.data['message'].toString();
+      }
+      switch (error.type) {
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+        case DioExceptionType.connectionError:
+          return 'Hakuna muunganisho wa mtandao au server haipatikani.';
+        default:
+          final status = error.response?.statusCode;
+          if (status == 500 || status == 503) {
+            return 'Huduma ya AI haipatikani kwa sasa. Tafadhali jaribu tena baadaye.';
+          }
+          return error.message ?? 'Imeshindikana kukamilisha ombi.';
+      }
+    }
+    return error.toString();
+  }
 }

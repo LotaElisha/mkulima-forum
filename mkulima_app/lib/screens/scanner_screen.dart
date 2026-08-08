@@ -79,7 +79,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       setState(() => _isScanning = false);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kosa: $e')),
+        SnackBar(content: Text('Kosa: ${ApiService.formatError(e)}')),
       );
     }
   }

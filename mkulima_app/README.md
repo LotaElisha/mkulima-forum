@@ -102,7 +102,7 @@ For local development (Android emulator):
 flutter run --dart-define=API_URL=http://10.0.2.2:8000/api
 ```
 
-The default in `lib/main.dart` is `http://10.0.2.2:8000/api` for development.
+The default in `lib/main.dart` is `https://mkulimaforum.app/api`.
 
 ## Tech Stack
 
