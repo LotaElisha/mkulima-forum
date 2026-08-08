@@ -3,227 +3,129 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MkulimaForum - Jukwaa la Wakulima wa Afrika Mashariki</title>
+    <title>MkulimaForum — Shiriki. Jifunze. Endelea.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a5f2a 0%, #0d3320 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0C3619 0%, #165A2A 100%);
             color: white;
             min-height: 100vh;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header {
-            text-align: center;
-            padding: 60px 20px 40px;
+        .container { max-width: 1140px; margin: 0 auto; padding: 30px 20px; }
+        header { text-align: center; padding: 40px 20px 20px; }
+        header img { height: 70px; width: auto; margin: 0 auto 15px; }
+        .motto { color: #FFBA36; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.9em; }
+
+        .cta-buttons { text-align: center; padding: 25px 0; }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #F5A623, #FFBA36);
+            color: #0C3619;
+            padding: 14px 34px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            margin: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(245,166,35,0.3);
         }
-        header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        header p {
-            font-size: 1.3em;
-            opacity: 0.9;
-        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(245,166,35,0.5); }
+        .btn-secondary { background: transparent; border: 2px solid rgba(255,255,255,0.4); color: white; box-shadow: none; }
+
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 40px 20px;
+            gap: 24px;
+            padding: 30px 0;
         }
         .feature-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid rgba(255,255,255,0.15);
             transition: transform 0.3s;
         }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.15);
-        }
-        .feature-card h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            color: #7fff7f;
-        }
-        .feature-card p {
-            opacity: 0.85;
-            line-height: 1.6;
-        }
+        .feature-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.12); }
+        .feature-card h3 { font-family: 'Outfit', sans-serif; font-size: 1.35em; margin-bottom: 10px; color: #9FE870; }
+        .feature-card p { opacity: 0.88; line-height: 1.6; font-size: 0.95em; }
+
         .api-section {
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
-            padding: 40px;
-            margin: 40px 20px;
+            background: rgba(0,0,0,0.35);
+            border-radius: 24px;
+            padding: 36px;
+            margin: 30px 0;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .api-section h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2em;
-        }
+        .api-section h2 { font-family: 'Outfit', sans-serif; text-align: center; margin-bottom: 24px; font-size: 1.8em; }
         .endpoint {
             background: rgba(0,0,0,0.4);
-            border-radius: 8px;
-            padding: 15px 20px;
+            border-radius: 12px;
+            padding: 14px 20px;
             margin: 10px 0;
-            font-family: 'Courier New', monospace;
+            font-family: ui-monospace, monospace;
+            font-size: 0.9em;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .method {
-            background: #4CAF50;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
-        }
-        .status {
-            text-align: center;
-            padding: 40px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            margin: 20px;
-        }
-        .status-badge {
-            display: inline-block;
-            background: #4CAF50;
-            padding: 10px 30px;
-            border-radius: 30px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        footer {
-            text-align: center;
-            padding: 40px;
-            opacity: 0.7;
-            font-size: 0.9em;
-        }
-        .cta-buttons {
-            text-align: center;
-            padding: 30px;
-        }
-        .btn {
-            display: inline-block;
-            background: #FFD700;
-            color: #0d3320;
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1em;
-            margin: 10px;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(255,215,0,0.4);
-        }
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid white;
-            color: white;
-        }
-        @media (max-width: 768px) {
-            header h1 { font-size: 2em; }
-            header p { font-size: 1em; }
-            .endpoint { flex-direction: column; text-align: center; gap: 10px; }
-        }
+        .method { background: #4C9B27; padding: 3px 10px; border-radius: 6px; font-size: 0.8em; font-weight: bold; }
+
+        footer { text-align: center; padding: 40px 0 20px; opacity: 0.75; font-size: 0.85em; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>MkulimaForum</h1>
-            <p>Jukwaa la Kidigitali la Wakulima wa Afrika Mashariki</p>
-            <p style="font-size: 0.9em; margin-top: 10px; opacity: 0.7;">Digital Super-App for East African Farmers</p>
+            <img src="/images/brand-banner.png" alt="MkulimaForum">
+            <div class="motto">Shiriki &bull; Jifunze &bull; Endelea</div>
         </header>
 
         <div class="cta-buttons">
-            <a href="/api/health" class="btn">Check API Status</a>
-            <a href="https://github.com/lotaanywaki/mkulima-forum" class="btn btn-secondary">GitHub Repo</a>
+            <a href="/" class="btn">Fungua Tovuti Kuu</a>
+            <a href="/app/mkulima-forum.apk" class="btn btn-secondary">Pakua Android APK</a>
+            <a href="/admin/login" class="btn btn-secondary">Admin Portal</a>
         </div>
 
         <div class="features">
             <div class="feature-card">
-                <h3>Soko la Kilimo</h3>
-                <p>Nunua na uza mbolea, mbegu, dawa za wadudu, na vifaa vya kilimo. Malipo salama kupesa M-Pesa na Tigo Pesa.</p>
+                <h3>🌿 AI Plant Scanner</h3>
+                <p>Gemini 3 Flash inatambua magonjwa ya mimea na kutoa tiba sahihi kwa Kiswahili.</p>
             </div>
             <div class="feature-card">
-                <h3>Kagua Mimea</h3>
-                <p>Piga picha mimea iliyoathirika na upewe utambuzi wa magonjwa na tiba kwa kutumia AI.</p>
+                <h3>💬 Mkulima Bot</h3>
+                <p>Ushauri wa kitaalamu wa kilimo kwa njia ya mazungumzo kupitia AI.</p>
             </div>
             <div class="feature-card">
-                <h3>Jukwaa la Majadiliano</h3>
-                <p>Shiriki uzoefu, uliza maswali, na jifunze kutoka kwa wakulima wengine kupitia jukwaa la kidigitali.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Mtaalamu wa AI</h3>
-                <p>Pata ushauri wa kitaalamu wa kilimo kutoka kwa mtaalamu wa AI anayezungumza Kiswahili.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Masoko ya Huduma</h3>
-                <p>Tafuta wataalamu wa kilimo, wakulima wa mifugo, na watoa huduma wengine karibu nawe.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Notisi za Papo Hapo</h3>
-                <p>Pata arifa za bei, hali ya hewa, na taarifa muhimu kwa wakati halisi.</p>
+                <h3>🛒 Soko la Kilimo</h3>
+                <p>Nunua na uza mbegu, mbolea, na mazao kwa ulinzi wa malipo ya Escrow.</p>
             </div>
         </div>
 
         <div class="api-section">
-            <h2>API Endpoints</h2>
+            <h2>API Core Endpoints</h2>
             <div class="endpoint">
                 <span><span class="method">GET</span> /api/health</span>
-                <span>Check server status</span>
-            </div>
-            <div class="endpoint">
-                <span><span class="method">POST</span> /api/auth/otp/request</span>
-                <span>Request OTP code</span>
-            </div>
-            <div class="endpoint">
-                <span><span class="method">POST</span> /api/auth/otp/verify</span>
-                <span>Verify OTP & get token</span>
-            </div>
-            <div class="endpoint">
-                <span><span class="method">GET</span> /api/marketplace/categories</span>
-                <span>List product categories</span>
-            </div>
-            <div class="endpoint">
-                <span><span class="method">GET</span> /api/marketplace/products</span>
-                <span>List all products</span>
+                <span>Server Health &amp; Version Check</span>
             </div>
             <div class="endpoint">
                 <span><span class="method">POST</span> /api/scanner/scan</span>
-                <span>Upload image for AI diagnosis</span>
+                <span>AI Plant Disease Scanning</span>
             </div>
             <div class="endpoint">
                 <span><span class="method">POST</span> /api/agronomist/ask</span>
-                <span>Ask AI agronomist</span>
-            </div>
-            <div class="endpoint">
-                <span><span class="method">POST</span> /api/payments/initiate</span>
-                <span>Initiate M-Pesa/Tigo payment</span>
+                <span>Virtual Agronomist Q&amp;A</span>
             </div>
         </div>
 
-        <div class="status">
-            <h2>Server Status</h2>
-            <div class="status-badge">ONLINE</div>
-            <p style="margin-top: 15px; opacity: 0.8;">
-                Version: 1.0.0 | Environment: Production<br>
-                Database: PostgreSQL + pgvector | Cache: Redis<br>
-                Auth: Laravel Sanctum | Payments: M-Pesa + Tigo Pesa
-            </p>
-        </div>
+        <footer>
+            MkulimaForum &copy; {{ date('Y') }} | Digital Platform for East African Farmers
+        </footer>
     </div>
-
-    <footer>
-        <p>MkulimaForum &copy; 2025 | Built for East African Farmers</p>
-        <p style="margin-top: 10px; font-size: 0.8em;">Powered by Laravel 11, PostgreSQL, Redis, Flutter & AI</p>
-    </footer>
 </body>
 </html>

@@ -42,11 +42,9 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Sprout className="w-8 h-8 text-white" />
-            </div>
+            <img src="/images/logo-icon.jpg" alt="MkulimaForum Logo" className="w-20 h-20 rounded-2xl object-cover shadow-md mx-auto mb-4 border-2 border-green-600" />
             <h1 className="text-2xl font-bold text-gray-900">MkulimaForum Admin</h1>
-            <p className="text-gray-500 mt-1">Sign in to manage your platform</p>
+            <p className="text-xs font-bold text-green-700 uppercase tracking-widest mt-1">Shiriki • Jifunze • Endelea</p>
           </div>
 
           {error && (

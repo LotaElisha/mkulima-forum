@@ -73,12 +73,10 @@ export default function Layout() {
         <div className="h-full flex flex-col">
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-600 rounded-xl flex items-center justify-center">
-                <Sprout className="w-6 h-6 text-white" />
-              </div>
+              <img src="/images/logo-icon.jpg" alt="MkulimaForum" className="w-10 h-10 rounded-xl object-cover shadow-sm border border-green-200" />
               <div>
-                <h1 className="font-bold text-lg text-gray-900">MkulimaForum</h1>
-                <p className="text-xs text-gray-500">Admin Panel</p>
+                <h1 className="font-bold text-base text-gray-900 leading-tight">MkulimaForum</h1>
+                <p className="text-[10px] font-bold text-green-800 tracking-tight">Shiriki • Jifunze • Endelea</p>
               </div>
             </div>
           </div>
