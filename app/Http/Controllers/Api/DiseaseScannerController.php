@@ -30,7 +30,7 @@ class DiseaseScannerController extends Controller
 
         // v1 is cloud-only (Gemini Vision). On-device TF Lite is a Phase 3 feature —
         // see REDESIGN.md. We do not pretend to run local inference.
-        $finalResult = $this->runGeminiInference($fullPath, $validated['crop_type'] ?? null);
+        $finalResult = $this->runGeminiInference($fullPath, $validated['crop_type'] ?? null, $user?->id);
 
         if (!$finalResult) {
             // Do not record a fake "completed" scan — be honest that analysis failed.
@@ -129,68 +129,34 @@ class DiseaseScannerController extends Controller
     }
 
     /**
-     * Run Gemini Vision inference
+     * Run AI Vision inference via AIService
      */
-    private function runGeminiInference(string $imagePath, ?string $cropType): ?array
+    private function runGeminiInference(string $imagePath, ?string $cropType, ?int $userId = null): ?array
     {
-        $apiKey = config('services.gemini.api_key');
-        if (!$apiKey) {
-            return null;
-        }
-
         try {
-            $imageData = base64_encode(file_get_contents($imagePath));
-            $mimeType = mime_content_type($imagePath) ?: 'image/jpeg';
-
             $prompt = "Analyze this plant image and identify any disease. ";
             if ($cropType) {
                 $prompt .= "The crop is {$cropType}. ";
             }
             $prompt .= "Provide: 1) Disease name (or 'Healthy' if no disease), 2) Confidence 0-1, 3) Brief description, 4) Treatment recommendation, 5) Affected plant areas. Return as JSON with keys: disease_name, confidence, description, treatment, affected_areas (array).";
 
-            $model = config('services.gemini.model', 'gemini-2.0-flash');
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}", [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $prompt],
-                            [
-                                'inline_data' => [
-                                    'mime_type' => $mimeType,
-                                    'data' => $imageData,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                'generationConfig' => [
-                    'response_mime_type' => 'application/json',
-                ],
-            ]);
+            $aiService = app(\App\Services\AI\AIService::class);
+            $aiResponse = $aiService->analyzeImage('plant_diagnosis', $imagePath, $prompt, ['require_json' => true], $userId);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-                if ($text) {
-                    $result = json_decode($text, true);
-                    if ($result) {
-                        return [
-                            'disease_name' => $result['disease_name'] ?? 'Unknown',
-                            'confidence' => (float) ($result['confidence'] ?? 0.5),
-                            'description' => $result['description'] ?? null,
-                            'treatment' => $result['treatment'] ?? null,
-                            'affected_areas' => $result['affected_areas'] ?? null,
-                            'source' => 'gemini_cloud',
-                            'raw_response' => $result,
-                        ];
-                    }
-                }
+            $result = $aiResponse->structuredData;
+            if ($result) {
+                return [
+                    'disease_name' => $result['disease_name'] ?? 'Unknown',
+                    'confidence' => (float) ($result['confidence'] ?? 0.5),
+                    'description' => $result['description'] ?? null,
+                    'treatment' => $result['treatment'] ?? null,
+                    'affected_areas' => $result['affected_areas'] ?? null,
+                    'source' => $aiResponse->provider . '_cloud',
+                    'raw_response' => $result,
+                ];
             }
         } catch (\Exception $e) {
-            \Log::error('Gemini inference failed: ' . $e->getMessage());
+            \Log::error('AI plant diagnosis inference failed: ' . $e->getMessage());
         }
 
         return null;

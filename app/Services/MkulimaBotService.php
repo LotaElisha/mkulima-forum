@@ -24,7 +24,13 @@ class MkulimaBotService
 
     public function isConfigured(): bool
     {
-        return (bool) config('services.gemini.api_key');
+        try {
+            $aiService = app(\App\Services\AI\AIService::class);
+            $provider = $aiService->getProviderForFeature('farmer_chat');
+            return true;
+        } catch (\Throwable $e) {
+            return (bool) config('services.gemini.api_key');
+        }
     }
 
     /**
@@ -42,45 +48,31 @@ class MkulimaBotService
 
         $kbDocs = $this->searchKb($userMessage, $conversation->tenant_id, $conversation->language);
 
-        $contents = [];
-        foreach ($conversation->messages()->latest('id')->limit(self::MAX_HISTORY_MESSAGES)->get()->reverse() as $msg) {
-            $contents[] = [
-                'role' => $msg->role,
-                'parts' => [['text' => $msg->content]],
-            ];
-        }
-        $contents[] = ['role' => 'user', 'parts' => [['text' => $userMessage]]];
+        $recentMessages = $conversation->messages()->latest('id')->limit(self::MAX_HISTORY_MESSAGES)->get()->reverse();
+        $systemInstruction = $this->systemPrompt($conversation->language, $region, $weather, $kbDocs);
 
-        $model = config('services.gemini.model', 'gemini-2.0-flash');
-        $apiKey = config('services.gemini.api_key');
+        $messages = [];
+        foreach ($recentMessages as $m) {
+            $role = ($m->role === 'bot' || $m->role === 'assistant') ? 'assistant' : 'user';
+            $messages[] = ['role' => $role, 'content' => $m->content];
+        }
+        $messages[] = ['role' => 'user', 'content' => $userMessage];
 
         try {
-            $response = Http::timeout(30)->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}",
-                [
-                    'system_instruction' => [
-                        'parts' => [['text' => $this->systemPrompt($conversation->language, $region, $weather, $kbDocs)]],
-                    ],
-                    'contents' => $contents,
-                    'generationConfig' => [
-                        'temperature' => 0.4,
-                        'maxOutputTokens' => 1024,
-                    ],
-                ],
+            $aiService = app(\App\Services\AI\AIService::class);
+            $aiResponse = $aiService->generateText(
+                'farmer_chat',
+                $messages,
+                ['system_instruction' => $systemInstruction, 'temperature' => 0.4],
+                $conversation->user_id
             );
 
-            if (!$response->successful()) {
-                Log::warning('Mkulima Bot: Gemini returned '.$response->status());
-                return null;
-            }
-
-            $text = $response->json('candidates.0.content.parts.0.text');
-            if (!$text) {
+            if (empty($aiResponse->text)) {
                 return null;
             }
 
             return [
-                'text' => $text,
+                'text' => $aiResponse->text,
                 'sources' => $kbDocs->map(fn ($doc) => [
                     'title' => $doc->title,
                     'source' => $doc->source,
@@ -88,7 +80,7 @@ class MkulimaBotService
                 ])->values()->all(),
             ];
         } catch (\Exception $e) {
-            Log::error('Mkulima Bot: Gemini query failed: '.$e->getMessage());
+            Log::error('Mkulima Bot AI query failed: '.$e->getMessage());
             return null;
         }
     }

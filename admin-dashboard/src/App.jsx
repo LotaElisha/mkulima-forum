@@ -20,6 +20,7 @@ import Moderation from './pages/Moderation'
 import MarketPrices from './pages/MarketPrices'
 import InputSafety from './pages/InputSafety'
 import AiManagement from './pages/AiManagement'
+import AiProviders from './pages/AiProviders'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthContext, RequireRole } from './components/AuthContext'
 
@@ -105,6 +106,9 @@ function App() {
           <RequireRole roles={['admin', 'superadmin']}><FeatureFlags /></RequireRole>
         } />
         <Route path="ai-management" element={<AiManagement />} />
+        <Route path="ai-providers" element={
+          <RequireRole roles={['admin', 'superadmin']}><AiProviders /></RequireRole>
+        } />
       </Route>
     </Routes>
   )

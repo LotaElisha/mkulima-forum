@@ -326,9 +326,6 @@ class InputVerificationController extends Controller
     protected function extractLabel(string $imagePath): ?array
     {
         try {
-            $imageData = base64_encode(file_get_contents($imagePath));
-            $mimeType = mime_content_type($imagePath) ?: 'image/jpeg';
-
             $prompt = 'This is a photo of an agricultural input label (pesticide, herbicide, '
                 . 'fungicide, fertilizer or veterinary product) sold in Tanzania. Extract ONLY '
                 . 'what is actually visible on the label — never guess or invent values. '
@@ -338,29 +335,11 @@ class InputVerificationController extends Controller
                 . 'problems: blurry printing, spelling errors, missing expiry date, '
                 . 'tampered seal). If a field is not readable, use null.';
 
-            $model = config('services.gemini.model', 'gemini-2.0-flash');
-            $response = Http::timeout(25)->withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key=" . config('services.gemini.api_key'),
-                [
-                    'contents' => [[
-                        'parts' => [
-                            ['text' => $prompt],
-                            ['inline_data' => ['mime_type' => $mimeType, 'data' => $imageData]],
-                        ],
-                    ]],
-                    'generationConfig' => ['response_mime_type' => 'application/json'],
-                ]
-            );
+            $aiService = app(\App\Services\AI\AIService::class);
+            $aiResponse = $aiService->analyzeImage('input_label_check', $imagePath, $prompt, ['require_json' => true], auth()->id());
 
-            if ($response->successful()) {
-                $text = $response->json('candidates.0.content.parts.0.text');
-                $result = $text ? json_decode($text, true) : null;
-
-                if (is_array($result)) {
-                    return $result;
-                }
+            if (is_array($aiResponse->structuredData)) {
+                return $aiResponse->structuredData;
             }
         } catch (\Exception $e) {
             Log::error('Label extraction failed: ' . $e->getMessage());

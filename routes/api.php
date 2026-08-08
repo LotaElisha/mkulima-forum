@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
 use App\Http\Controllers\Api\Admin\VendorController;
 use App\Http\Controllers\Api\Admin\AiManagementController;
+use App\Http\Controllers\Api\Admin\AiProviderController;
 use App\Http\Middleware\AdminMiddleware;
 
 /*
@@ -291,7 +292,20 @@ Route::prefix('admin')
         Route::get('/vendors/{uuid}/reviews', [VendorController::class, 'reviews']);
         Route::delete('/vendors/{uuid}', [VendorController::class, 'destroy']);
 
-        // AI Management
+        // AI Management & Providers
+        Route::get('/ai/providers', [AiProviderController::class, 'index']);
+        Route::post('/ai/providers', [AiProviderController::class, 'store']);
+        Route::get('/ai/providers/routes', [AiProviderController::class, 'getFeatureRoutes']);
+        Route::post('/ai/providers/routes', [AiProviderController::class, 'updateFeatureRoute']);
+        Route::get('/ai/providers/usage-stats', [AiProviderController::class, 'getStats']);
+        Route::get('/ai/providers/{uuid}', [AiProviderController::class, 'show']);
+        Route::put('/ai/providers/{uuid}', [AiProviderController::class, 'update']);
+        Route::delete('/ai/providers/{uuid}', [AiProviderController::class, 'destroy']);
+        Route::post('/ai/providers/{uuid}/test', [AiProviderController::class, 'test']);
+        Route::post('/ai/providers/{uuid}/set-default', [AiProviderController::class, 'setDefault']);
+        Route::post('/ai/providers/{uuid}/toggle', [AiProviderController::class, 'toggle']);
+        Route::get('/ai/providers/{uuid}/models', [AiProviderController::class, 'getModels']);
+
         Route::get('/ai/stats', [AiManagementController::class, 'stats']);
         Route::get('/ai/scans', [AiManagementController::class, 'scans']);
         Route::get('/ai/scans/{uuid}', [AiManagementController::class, 'showScan']);

@@ -11,7 +11,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            \App\Services\AI\Secrets\SecretManagerServiceInterface::class,
+            \App\Services\AI\Secrets\EncryptedDatabaseSecretManager::class
+        );
+
+        $this->app->singleton(\App\Services\AI\AIService::class);
     }
 
     /**

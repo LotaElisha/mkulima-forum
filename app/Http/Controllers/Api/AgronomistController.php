@@ -155,14 +155,6 @@ class AgronomistController extends Controller
      */
     private function queryGemini(string $question, string $context, string $language): array
     {
-        $apiKey = config('services.gemini.api_key');
-        if (!$apiKey) {
-            return [
-                'text' => 'AI service is temporarily unavailable. Please try again later.',
-                'confidence' => 'low',
-            ];
-        }
-
         $langName = match ($language) {
             'sw' => 'Swahili',
             'lg' => 'Luganda',
@@ -171,45 +163,27 @@ class AgronomistController extends Controller
             default => 'English',
         };
 
-        $prompt = "You are MkulimaForum AI Agronomist, an expert agricultural assistant for East African farmers. ";
-        $prompt .= "Answer the following question in {$langName}. ";
-        $prompt .= "Use the provided context from agricultural knowledge base. ";
-        $prompt .= "If the context doesn't contain enough information, say so and provide general agricultural advice. ";
-        $prompt .= "Keep answers practical and actionable for smallholder farmers.\n\n";
-        $prompt .= "Context:\n{$context}\n\n";
-        $prompt .= "Question: {$question}\n\n";
-        $prompt .= "Answer:";
+        $systemInstruction = "You are MkulimaForum AI Agronomist, an expert agricultural assistant for East African farmers. Answer questions in {$langName}. Use the provided context from agricultural knowledge base. If context doesn't contain enough info, say so and provide general advice. Keep answers practical and actionable for smallholder farmers.";
+
+        $prompt = "Context:\n{$context}\n\nQuestion: {$question}";
 
         try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post('https://generativelanguage.googleapis.com/v1beta/models/'.config('services.gemini.model', 'gemini-2.0-flash').":generateContent?key={$apiKey}", [
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $prompt],
-                        ],
-                    ],
-                ],
-                'generationConfig' => [
-                    'temperature' => 0.3,
-                    'maxOutputTokens' => 1024,
-                ],
-            ]);
+            $aiService = app(\App\Services\AI\AIService::class);
+            $aiResponse = $aiService->generateText(
+                'agronomist_kb',
+                [['role' => 'user', 'content' => $prompt]],
+                ['system_instruction' => $systemInstruction, 'temperature' => 0.3],
+                auth()->id()
+            );
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-                if ($text) {
-                    return [
-                        'text' => $text,
-                        'confidence' => 'high',
-                    ];
-                }
+            if (!empty($aiResponse->text)) {
+                return [
+                    'text' => $aiResponse->text,
+                    'confidence' => 'high',
+                ];
             }
         } catch (\Exception $e) {
-            \Log::error('Gemini query failed: ' . $e->getMessage());
+            \Log::error('AI agronomist query failed: ' . $e->getMessage());
         }
 
         return [
