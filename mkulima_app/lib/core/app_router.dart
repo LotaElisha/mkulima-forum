@@ -29,6 +29,7 @@ import '../screens/market_prices_screen.dart';
 import '../screens/search_screen.dart';
 import '../screens/kagua_dawa_screen.dart';
 import '../screens/yield_screen.dart';
+import '../screens/farm_management_screen.dart';
 
 /// Central route table (Phase 1 redesign — see REDESIGN.md).
 ///
@@ -89,6 +90,7 @@ GoRouter buildAppRouter(AuthProvider auth) {
       GoRoute(path: '/ivr', builder: (context, state) => const IvrScreen()),
       GoRoute(path: '/sms', builder: (context, state) => const SmsScreen()),
       GoRoute(path: '/yield', builder: (context, state) => const YieldScreen()),
+      GoRoute(path: '/farms', builder: (context, state) => const FarmManagementScreen()),
 
       // Protected (require login)
       GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),

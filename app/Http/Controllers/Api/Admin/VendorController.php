@@ -44,6 +44,47 @@ class VendorController extends Controller
     }
 
     /**
+     * Register / Onboard new Vendor, Agrodealer, Agrovet, Supplier, or Partner
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'unique:users,phone'],
+            'email' => ['nullable', 'email', 'unique:users,email'],
+            'role' => ['required', 'string', 'in:agrodealer,seller,supplier,partner'],
+            'store_name' => ['nullable', 'string', 'max:255'],
+            'store_location' => ['nullable', 'string', 'max:255'],
+            'business_license' => ['nullable', 'string', 'max:255'],
+            'store_description' => ['nullable', 'string'],
+            'password' => ['nullable', 'string', 'min:6'],
+            'kyc_status' => ['nullable', 'string', 'in:verified,pending,unverified'],
+        ]);
+
+        $password = $validated['password'] ?? 'password123';
+
+        $vendor = User::create([
+            'tenant_id' => $request->user()->tenant_id ?? 1,
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'email' => $validated['email'] ?? null,
+            'role' => $validated['role'],
+            'store_name' => $validated['store_name'] ?? $validated['name'],
+            'store_location' => $validated['store_location'] ?? null,
+            'business_license' => $validated['business_license'] ?? null,
+            'store_description' => $validated['store_description'] ?? null,
+            'password' => bcrypt($password),
+            'status' => 'active',
+            'kyc_status' => $validated['kyc_status'] ?? 'verified',
+        ]);
+
+        return response()->json([
+            'message' => 'Vendor / Partner registered successfully.',
+            'vendor' => $vendor,
+        ], 201);
+    }
+
+    /**
      * Show vendor details with products and ratings
      */
     public function show(string $uuid): JsonResponse

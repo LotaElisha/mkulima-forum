@@ -33,6 +33,10 @@ class User extends Authenticatable
         'is_active',
         'is_verified_expert',
         'expert_title',
+        'store_name',
+        'store_location',
+        'business_license',
+        'store_description',
     ];
 
     protected $hidden = [

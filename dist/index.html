@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MkulimaForum — Shiriki. Jifunze. Endelea.</title>
+<meta name="description" content="MkulimaForum: Jukwaa la Kidigitali la Wakulima wa Afrika Mashariki. AI Plant Scanner, Soko la Kilimo, Mkulima Bot, Masoko ya Mazao na Hali ya Hewa.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest-dark: #0C3619;
+    --forest-mid: #165A2A;
+    --leaf-green: #4C9B27;
+    --leaf-bright: #6BB535;
+    --sun-gold: #F5A623;
+    --sun-amber: #FFBA36;
+    --cream-bg: #FAF8F2;
+    --cream-card: #FFFFFF;
+    --ink-dark: #0C2314;
+    --ink-muted: #4A6351;
+    --border-light: #E2EADF;
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --shadow-soft: 0 12px 36px rgba(12, 54, 25, 0.08);
+    --shadow-hover: 0 20px 48px rgba(12, 54, 25, 0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: var(--ink-dark);
+    background: var(--cream-bg);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .brand-font {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  img, svg { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------------- Navigation ---------------- */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250, 248, 242, 0.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 76px;
+  }
+  .brand-logo-container {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .brand-logo-container img {
+    height: 48px; width: auto; object-fit: contain;
+  }
+  .nav-links {
+    display: flex; gap: 28px; align-items: center;
+    font-weight: 600; font-size: 0.95rem; color: var(--ink-muted);
+  }
+  .nav-links a { transition: color 0.2s ease; }
+  .nav-links a:hover { color: var(--forest-mid); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'Outfit', sans-serif; font-weight: 700;
+    border-radius: 999px; padding: 14px 28px;
+    font-size: 1rem; cursor: pointer; border: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(12, 54, 25, 0.08);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(12, 54, 25, 0.16);
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--sun-gold), var(--sun-amber));
+    color: var(--forest-dark);
+  }
+  .btn-forest {
+    background: linear-gradient(135deg, var(--forest-mid), var(--forest-dark));
+    color: #ffffff;
+  }
+  .btn-outline {
+    background: transparent; color: var(--forest-dark);
+    border: 2px solid var(--forest-mid);
+  }
+  .btn-outline:hover {
+    background: var(--forest-mid); color: #ffffff;
+  }
+  .nav .btn { padding: 10px 20px; font-size: 0.9rem; }
+
+  /* ---------------- Hero Section ---------------- */
+  .hero {
+    background: radial-gradient(circle at 80% 20%, #1a6b33 0%, var(--forest-dark) 70%);
+    color: #ffffff; position: relative; overflow: hidden;
+    padding: 60px 0 90px;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
+    background: var(--cream-bg);
+    clip-path: ellipse(60% 100% at 50% 100%);
+  }
+
+  .hero-grid {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px;
+    align-items: center; position: relative; z-index: 2;
+  }
+
+  .motto-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 8px 18px; border-radius: 999px; font-weight: 700;
+    font-size: 0.88rem; color: var(--sun-amber); letter-spacing: 0.05em;
+    margin-bottom: 24px; backdrop-filter: blur(6px);
+  }
+  .motto-badge .pulse-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--sun-amber); box-shadow: 0 0 10px var(--sun-amber);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.6; }
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    line-height: 1.12; font-weight: 900; margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 .gold { color: var(--sun-gold); }
+  .hero p.lead {
+    font-size: 1.15rem; color: rgba(255, 255, 255, 0.9);
+    max-width: 36rem; margin-bottom: 32px; font-weight: 400;
+  }
+
+  /* Pillars Bar */
+  .pillars-bar {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px;
+  }
+  .pillar-item {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 8px 16px; border-radius: 12px; font-size: 0.88rem;
+    font-weight: 600; color: #ffffff;
+  }
+
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+
+  .trust-strip {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    font-size: 0.85rem; color: rgba(255, 255, 255, 0.8);
+    border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px;
+  }
+  .trust-strip b { color: var(--sun-gold); }
+
+  /* ---------------- Phone Mockup ---------------- */
+  .phone-container {
+    display: flex; justify-content: center; position: relative;
+  }
+  .phone-mockup {
+    width: 290px; background: #07190C; border-radius: 44px;
+    padding: 14px; box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+    border: 3px solid rgba(255,255,255,0.15);
+    transform: perspective(1000px) rotateY(-8deg) rotateX(4deg);
+    transition: transform 0.5s ease;
+  }
+  .phone-mockup:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+  .screen {
+    background: #0B1E10; border-radius: 32px; overflow: hidden;
+    color: #ffffff; border: 1px solid rgba(255,255,255,0.1);
+  }
+  .screen-header {
+    background: var(--forest-mid); padding: 16px 14px 12px; text-align: center;
+  }
+  .screen-header h4 { font-size: 0.95rem; font-weight: 800; }
+  .screen-header p { font-size: 0.65rem; color: var(--sun-amber); font-weight: 700; letter-spacing: 0.08em; }
+
+  .scanner-view {
+    margin: 14px; height: 170px; border-radius: 20px;
+    background: linear-gradient(160deg, #1C4223, #0F2D15);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; border: 1px solid rgba(107, 181, 53, 0.3);
+  }
+  .scan-line {
+    position: absolute; width: 100%; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--leaf-bright), transparent);
+    box-shadow: 0 0 12px var(--leaf-bright);
+    animation: scanAnimation 2.5s infinite ease-in-out;
+  }
+  @keyframes scanAnimation {
+    0% { top: 10%; }
+    50% { top: 85%; }
+    100% { top: 10%; }
+  }
+  .scanner-icon { font-size: 52px; margin-bottom: 4px; }
+  .scanner-tag {
+    font-size: 0.68rem; font-weight: 700; background: rgba(76, 155, 39, 0.3);
+    padding: 3px 10px; border-radius: 999px; color: #9FE870;
+  }
+
+  .scan-result-card {
+    margin: 0 14px 16px; background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px; padding: 12px; font-size: 0.72rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .scan-result-card b { color: var(--sun-gold); font-size: 0.78rem; display: block; margin-bottom: 2px; }
+  .status-badge-ok { color: #7BD48A; font-weight: 700; }
+
+  /* ---------------- Sections ---------------- */
+  section { padding: 90px 0; }
+  .section-tag {
+    color: var(--leaf-green); font-weight: 800; text-transform: uppercase;
+    font-size: 0.85rem; letter-spacing: 0.14em; margin-bottom: 10px; display: block;
+  }
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+    color: var(--forest-dark); margin-bottom: 14px; line-height: 1.2;
+  }
+  .section-sub {
+    color: var(--ink-muted); font-size: 1.05rem; max-width: 42rem; margin-bottom: 48px;
+  }
+
+  /* Core Features Grid */
+  .grid-3 {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  }
+  @media(max-width: 960px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media(max-width: 640px) { .grid-3 { grid-template-columns: 1fr; } }
+
+  .feature-card {
+    background: var(--cream-card); border-radius: var(--radius-xl);
+    padding: 32px; border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-soft); transition: all 0.3s ease;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .feature-card:hover {
+    transform: translateY(-6px); box-shadow: var(--shadow-hover);
+    border-color: var(--leaf-green);
+  }
+  .feat-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: var(--cream-bg); border: 1px solid var(--border-light);
+    display: grid; place-items: center; font-size: 26px;
+    margin-bottom: 20px; color: var(--forest-mid);
+  }
+  .feature-card h3 {
+    font-size: 1.25rem; font-weight: 800; color: var(--forest-dark);
+    margin-bottom: 10px;
+  }
+  .feature-card p {
+    color: var(--ink-muted); font-size: 0.95rem; line-height: 1.65;
+  }
+  .pill-badge {
+    display: inline-block; font-size: 0.7rem; font-weight: 800;
+    padding: 4px 10px; border-radius: 999px; background: rgba(76, 155, 39, 0.12);
+    color: var(--forest-mid); margin-top: 16px; text-transform: uppercase;
+  }
+
+  /* Special Gemini Banner Card */
+  .card-gemini {
+    background: linear-gradient(135deg, var(--forest-dark), var(--forest-mid));
+    color: #ffffff; border: none;
+  }
+  .card-gemini h3 { color: #ffffff; }
+  .card-gemini p { color: rgba(255, 255, 255, 0.85); }
+  .card-gemini .pill-badge {
+    background: var(--sun-gold); color: var(--forest-dark);
+  }
+
+  /* ---------------- Interactive AI Trial Section ---------------- */
+  .try-section {
+    background: var(--forest-dark); color: #ffffff;
+    border-radius: 36px; padding: 60px 40px; margin: 40px 0;
+    position: relative; overflow: hidden;
+  }
+  .try-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+  }
+  @media(max-width: 840px) { .try-grid { grid-template-columns: 1fr; } }
+  .try-box {
+    background: rgba(255,255,255,0.06); border-radius: 24px; padding: 28px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .try-box input, .try-box textarea {
+    width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.95rem;
+    margin-bottom: 14px; outline: none;
+  }
+  .try-box input:focus, .try-box textarea:focus {
+    border-color: var(--sun-gold);
+  }
+
+  /* ---------------- Live Server Status ---------------- */
+  .status-card {
+    background: #ffffff; border-radius: var(--radius-xl); padding: 40px;
+    border: 1px solid var(--border-light); box-shadow: var(--shadow-soft);
+    text-center: center;
+  }
+  .status-indicator {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #E8F5E9; color: #1B5E20; padding: 10px 24px;
+    border-radius: 999px; font-size: 0.95rem; font-weight: 800; margin-bottom: 16px;
+  }
+  .status-indicator .dot {
+    width: 10px; height: 10px; border-radius: 50%; background: #2E7D32;
+    animation: pulse 1.5s infinite;
+  }
+
+  /* ---------------- Footer ---------------- */
+  footer {
+    background: #06190B; color: rgba(255,255,255,0.7);
+    padding: 60px 0 30px; font-size: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .foot-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px;
+  }
+  @media(max-width: 768px) { .foot-grid { grid-template-columns: 1fr; } }
+  .foot-brand p { color: rgba(255,255,255,0.6); margin-top: 12px; max-width: 24rem; }
+  .foot-title { font-family: 'Outfit', sans-serif; font-weight: 700; color: #fff; margin-bottom: 16px; }
+  .foot-links { list-style: none; display: grid; gap: 10px; }
+  .foot-links a:hover { color: var(--sun-gold); }
+
+  .copyright {
+    text-align: center; border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 30px; font-size: 0.82rem; color: rgba(255,255,255,0.5);
+  }
+
+  @media(max-width: 800px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="wrap nav">
+    <a class="brand-logo-container" href="#">
+      <img src="/images/brand-banner.png" alt="MkulimaForum — Shiriki. Jifunze. Endelea.">
+    </a>
+    <nav class="nav-links">
+      <a href="#vipengele">Vipengele</a>
+      <a href="#jaribu">Jaribu AI</a>
+      <a href="#status">Hali ya Mfumo</a>
+      <a href="/admin/login" style="color: var(--forest-dark);">Admin Portal</a>
+      <a class="btn btn-gold" href="/app/mkulima-forum.apk">Pakua App (APK)</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="motto-badge">
+        <span class="pulse-dot"></span>
+        SHIRIKI • JIFUNZE • ENDELEA
+      </div>
+
+      <h1>Jukwaa la Kidigitali la Wakulima wa <span class="gold">Tanzania</span></h1>
+
+      <p class="lead">
+        Utambuzi wa magonjwa ya mimea kwa <b>Gemini 3 Flash AI</b>, ushauri wa kilimo kwa Kiswahili, masoko ya mazao, bei za masoko kwa wakati halisi, na usaidizi wa offline kupitia <b>Gemma 2B</b>.
+      </p>
+
+      <!-- Core Brand Pillars -->
+      <div class="pillars-bar">
+        <div class="pillar-item">🌱 Shiriki Maarifa</div>
+        <div class="pillar-item">📖 Jifunze Mbinu Bora</div>
+        <div class="pillar-item">👥 Jenga Jamii</div>
+        <div class="pillar-item">📈 Endelea Kukua</div>
+      </div>
+
+      <div class="hero-ctas">
+        <a class="btn btn-gold" href="/app/mkulima-forum.apk">
+          📲 Pakua Android App (APK)
+        </a>
+          📲 Pakua Android App (APK)
+        </a>
+        <a class="btn btn-outline" style="color:#fff; border-color:rgba(255,255,255,0.6);" href="#jaribu">
+          📷 Jaribu Plant Scanner
+        </a>
+      </div>
+
+      <div class="trust-strip">
+        <span><b>✓</b> Gemini 3 Flash &amp; Pro Powered</span>
+        <span><b>✓</b> Swahili &amp; English</span>
+        <span><b>✓</b> Gemma 2B Offline Mode</span>
+        <span><b>✓</b> M-Pesa &amp; Tigo Pesa</span>
+      </div>
+    </div>
+
+    <!-- Phone Mockup -->
+    <div class="phone-container">
+      <div class="phone-mockup">
+        <div class="screen">
+          <div class="screen-header">
+            <h4>MkulimaForum AI</h4>
+            <p>SHIRIKI • JIFUNZE • ENDELEA</p>
+          </div>
+          <div class="scanner-view">
+            <div class="scan-line"></div>
+            <div class="scanner-icon">🌿</div>
+            <div class="scanner-tag">Gemini 3 Flash Active</div>
+          </div>
+          <div style="padding:0 14px 10px;">
+            <button class="btn btn-gold" style="width:100%; padding:10px; font-size:0.82rem; justify-content:center;">
+              📷 Piga Picha Utambue Mgonjwa
+            </button>
+          </div>
+          <div class="scan-result-card">
+            <b>Matokeo ya Uchunguzi</b>
+            Ugonjwa: Madoa ya Majani (Leaf Spot)<br>
+            Tiba: <span class="status-badge-ok">Dawa ya Shaba + Kupogoa Majani</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORE FEATURES SECTION -->
+<section id="vipengele">
+  <div class="wrap">
+    <span class="section-tag">HUDUMA ZETU KUU</span>
+    <h2 class="section-title">Kila Kitu Anachohitaji Mkulima wa Tanzania</h2>
+    <p class="section-sub">MkulimaForum inamwezesha mkulima kupata ushauri wa kitaalamu, masoko salama, na teknolojia ya AI bila kikwazo cha mtandao.</p>
+
+    <div class="grid-3">
+      <!-- Feature 1: Gemini 3 Plant Scanner -->
+      <div class="feature-card card-gemini">
+        <div>
+          <div class="feat-icon" style="background:rgba(255,255,255,0.15); color:#fff;">🌿</div>
+          <h3>AI Plant Disease Scanner</h3>
+          <p>Piga picha jani lililoathirika. Gemini 3 Flash inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.</p>
+        </div>
+        <div>
+          <span class="pill-badge">Gemini 3 Flash AI</span>
+        </div>
+      </div>
+
+      <!-- Feature 2: Mkulima Bot & Agronomist -->
+      <div class="feature-card">
+        <div>
+          <div class="feat-icon">💬</div>
+          <h3>Mkulima Bot Assistant</h3>
+          <p>Muulize maswali mtaalamu wetu wa AI kuhusu kanuni bora za kilimo, mbolea, msimu wa kupanda, na udhibiti wa magonjwa.</p>
+        </div>
+        <div>
+          <span class="pill-badge">Live Q&amp;A Chat</span>
+        </div>
+      </div>
+
+      <!-- Feature 3: Soko la Kilimo -->
+      <div class="feature-card">
+        <div>
+          <div class="feat-icon">🛒</div>
+          <h3>Soko la Kilimo &amp; Vifaa</h3>
+          <p>Nunua na uza mbegu bora, mbolea, na pembejeo zilizoidhinishwa na TPRI/TFRA. Malipo salama kwa Escrow.</p>
+        </div>
+        <div>
+          <span class="pill-badge">M-Pesa &amp; Tigo Pesa</span>
+        </div>
+      </div>
+
+      <!-- Feature 4: Input Verification -->
+      <div class="feature-card">
+        <div>
+          <div class="feat-icon">🛡️</div>
+          <h3>Uhakiki wa Pembejeo</h3>
+          <p>Kagua stika ya pembejeo kabla ya kununua ili kuepuka pembejeo za Bandia sokoni. Hifadhi usalama wa shamba lako.</p>
+        </div>
+        <div>
+          <span class="pill-badge">TPRI / TFRA Cross-Check</span>
+        </div>
+      </div>
+
+      <!-- Feature 5: Weather & Crop Advisory -->
+      <div class="feature-card">
+        <div>
+          <div class="feat-icon">⛅</div>
+          <h3>Hali ya Hewa &amp; Ushauri</h3>
+          <p>Gemini 3 Pro na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.</p>
+        </div>
+        <div>
+          <span class="pill-badge">Gemini 3 Pro Grounded</span>
+        </div>
+      </div>
+
+      <!-- Feature 6: Offline Gemma 2B -->
+      <div class="feature-card">
+        <div>
+          <div class="feat-icon">📱</div>
+          <h3>Offline Mode (Gemma 2B)</h3>
+          <p>Huna mtandao shambani? Gemma 2B INT4 quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.</p>
+        </div>
+        <div>
+          <span class="pill-badge">Google AI Edge SDK</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE TRY SECTION -->
+<section id="jaribu" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="try-section">
+      <div class="try-grid">
+        <div>
+          <span class="motto-badge" style="background:rgba(255,255,255,0.15);">JARIBU MTALAMU WA AI</span>
+          <h2 style="font-size:2.2rem; font-weight:800; margin-bottom:14px;">Uliza Swali la Kilimo Hapa</h2>
+          <p style="color:rgba(255,255,255,0.85); font-size:1rem; margin-bottom:20px;">
+            Jaribu uwezo wa <b>Mkulima Bot</b> kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.
+          </p>
+          <div style="font-size:0.88rem; color:var(--sun-gold);">
+            ✓ Inatumia Gemini 3 Flash &bull; Lugha ya Kiswahili
+          </div>
+        </div>
+
+        <div class="try-box">
+          <form id="agriAiForm" onsubmit="handleDemoQuestion(event)">
+            <textarea id="userQuestion" rows="3" placeholder="Mfano: Jinsi ya kuzuia funza wa mahindi..." required></textarea>
+            <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center;">
+              🚀 Tuma Swali kwa AI
+            </button>
+          </form>
+          <div id="aiAnswerOutput" style="display:none; margin-top:16px; padding:16px; background:rgba(0,0,0,0.4); border-radius:12px; font-size:0.9rem; border:1px solid rgba(255,255,255,0.15);">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVER STATUS & API SECTION -->
+<section id="status">
+  <div class="wrap">
+    <div class="status-card">
+      <div class="status-indicator">
+        <span class="dot"></span> MFUMO UPO HEWANI (ONLINE)
+      </div>
+      <h3 style="font-size:1.6rem; font-weight:800; color:var(--forest-dark); margin-bottom:10px;">
+        MkulimaForum API v1.0.0
+      </h3>
+      <p style="color:var(--ink-muted); max-width:32rem; margin:0 auto 24px; font-size:0.95rem;">
+        PostgreSQL (pgvector), Redis Cache, Laravel Sanctum Auth, M-Pesa &amp; Tigo Pesa Gateway, Gemini 3 AI Engine.
+      </p>
+
+      <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <a class="btn btn-forest" href="/api/health" target="_blank">
+          🔍 Kagua Status ya API (/api/health)
+        </a>
+        <a class="btn btn-outline" href="/admin/login">
+          🔐 Admin Dashboard Portal
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="/images/brand-banner.png" alt="MkulimaForum" style="height:44px; width:auto;">
+        <p>Jukwaa kuu la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.</p>
+      </div>
+
+      <div>
+        <h4 class="foot-title">Vipengele</h4>
+        <ul class="foot-links">
+          <li><a href="#vipengele">AI Plant Scanner</a></li>
+          <li><a href="#vipengele">Mkulima Bot Chat</a></li>
+          <li><a href="#vipengele">Soko la Pembejeo</a></li>
+          <li><a href="#status">API Endpoints</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="foot-title">Viungo vya Haraka</h4>
+        <ul class="foot-links">
+          <li><a href="/app/mkulima-forum.apk">Pakua App (APK)</a></li>
+          <li><a href="/admin/login">Admin Dashboard</a></li>
+          <li><a href="/api/health">API Health</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="copyright">
+      MkulimaForum &copy; 2026 | Shiriki. Jifunze. Endelea. &bull; Built for East African Farmers
+    </div>
+  </div>
+</footer>
+
+<script>
+async function handleDemoQuestion(e) {
+  e.preventDefault();
+  const q = document.getElementById('userQuestion').value;
+  const out = document.getElementById('aiAnswerOutput');
+  out.style.display = 'block';
+  out.innerHTML = '<div style="color:var(--sun-gold)">⏳ Mkulima Bot AI inaandaa majibu...</div>';
+
+  try {
+    const res = await fetch('/api/agronomist/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ question: q, language: 'sw' })
+    });
+    const data = await res.json();
+
+    if (data.text || data.answer) {
+      out.innerHTML = '<b>🤖 Majibu ya Mkulima Bot AI:</b><br><br>' + (data.text || data.answer);
+    } else {
+      out.innerHTML = '<b>🤖 Ushauri wa Kawaida:</b><br>Kuhusu ' + q + ', hakikisha unatumia mbolea iliyosajiliwa na TFRA na kunyunyizia dawa mara tu dalili za kwanza zinapojitokeza.';
+    }
+  } catch (err) {
+    out.innerHTML = '<b>🤖 Ushauri wa Mkulima Bot:</b><br>Kuhusu ' + q + ', hakikisha unakagua majani asubuhi na mapema na kutumia pembejeo sahihi zilizothibitishwa.';
+  }
+}
+</script>
+</body>
+</html>

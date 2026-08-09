@@ -21,7 +21,8 @@ import {
   LineChart,
   ShieldAlert,
   Brain,
-  Key
+  Key,
+  Tractor
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -36,6 +37,7 @@ export default function Layout() {
 
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: 'Overview' },
+    { to: '/farms', icon: Tractor, label: 'Farms' },
     { to: '/pos', icon: CreditCard, label: 'Field POS' },
     { to: '/catalog', icon: Package, label: 'Catalog' },
     { to: '/users', icon: Users, label: 'Users' },

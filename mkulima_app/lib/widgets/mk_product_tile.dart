@@ -21,8 +21,9 @@ class MkProductTile extends StatelessWidget {
     final imageUrl = product is Product
         ? (product.images?.isNotEmpty == true ? product.images!.first : null)
         : (product['image_url'] ?? product['image']);
-    final name =
-        product is Product ? product.name : (product['name'] ?? 'Bidhaa');
+    final name = product is Product
+        ? product.name
+        : (product['name'] ?? 'Bidhaa');
 
     return Card(
       child: InkWell(
@@ -34,14 +35,15 @@ class MkProductTile extends StatelessWidget {
             Expanded(
               flex: 3,
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(MkRadii.card)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(MkRadii.card),
+                ),
                 child: imageUrl != null
                     ? Image.network(
                         imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, __, ___) => const _ImagePlaceholder(),
+                        errorBuilder: (_, _, _) => const _ImagePlaceholder(),
                       )
                     : const _ImagePlaceholder(),
               ),

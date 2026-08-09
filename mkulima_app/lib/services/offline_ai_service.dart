@@ -5,10 +5,11 @@ import 'package:flutter/foundation.dart';
 /// Powered by Gemma 2B (INT4 Quantized) via Google AI Edge SDK (MediaPipe LLM Inference)
 class OfflineAiService {
   static const String modelName = 'Gemma 2B (INT4 Quantized)';
-  static const String sdkEngine = 'Google AI Edge SDK (MediaPipe LLM Inference Engine)';
+  static const String sdkEngine =
+      'Google AI Edge SDK (MediaPipe LLM Inference Engine)';
 
   bool _isInitialized = false;
-  bool _isSupported = true;
+  final bool _isSupported = true;
 
   bool get isInitialized => _isInitialized;
   bool get isSupported => _isSupported;
@@ -47,7 +48,9 @@ class OfflineAiService {
           : '[Offline Gemma 2B AI] For maize farming, ensure adequate soil moisture before applying UREA or CAN top-dressing fertilizer. Weed early.';
     }
 
-    if (lowerPrompt.contains('dawa') || lowerPrompt.contains('pesticide') || lowerPrompt.contains('wadudu')) {
+    if (lowerPrompt.contains('dawa') ||
+        lowerPrompt.contains('pesticide') ||
+        lowerPrompt.contains('wadudu')) {
       return isSwahili
           ? '[Offline Gemma 2B AI] Tumia dawa iliyosajiliwa na TPRI/TFRA. Vaa nguo za kujikinga wakati wa kunyunyizia dawa asubuhi au jioni.'
           : '[Offline Gemma 2B AI] Use pesticides certified by TPRI/TFRA. Wear protective equipment and spray early morning or late evening.';

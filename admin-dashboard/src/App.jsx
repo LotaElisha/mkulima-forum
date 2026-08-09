@@ -21,6 +21,7 @@ import MarketPrices from './pages/MarketPrices'
 import InputSafety from './pages/InputSafety'
 import AiManagement from './pages/AiManagement'
 import AiProviders from './pages/AiProviders'
+import FarmManagement from './pages/FarmManagement'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthContext, RequireRole } from './components/AuthContext'
 
@@ -83,6 +84,7 @@ function App() {
         </ProtectedRoute>
       }>
         <Route index element={<Dashboard />} />
+        <Route path="farms" element={<FarmManagement />} />
         <Route path="users" element={<Users />} />
         <Route path="orders" element={<Orders />} />
         <Route path="escrows" element={<Escrows />} />

@@ -343,6 +343,22 @@ class ApiService {
     await _dio.post('/sms/send', data: {'phone': phone, 'message': message});
   }
 
+  // Farm Management APIs
+  Future<List<dynamic>> getFarms() async {
+    final response = await _dio.get('/farms');
+    return response.data['farms'] ?? [];
+  }
+
+  Future<Map<String, dynamic>> createFarm(Map<String, dynamic> farmData) async {
+    final response = await _dio.post('/farms', data: farmData);
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>> addFarmActivity(String farmUuid, Map<String, dynamic> activityData) async {
+    final response = await _dio.post('/farms/$farmUuid/activities', data: activityData);
+    return response.data;
+  }
+
   /// Formats raw errors (e.g. DioException) into human-readable Swahili messages
   static String formatError(dynamic error) {
     if (error is DioException) {

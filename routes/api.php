@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\FeatureController;
 use App\Http\Controllers\Api\Admin\AdminController;
+use App\Http\Controllers\Api\Admin\AdminFarmController;
 use App\Http\Controllers\Api\Admin\AdminProfileController;
 use App\Http\Controllers\Api\Admin\AiManagementController;
 use App\Http\Controllers\Api\Admin\AiProviderController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Api\AgronomistController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DiseaseScannerController;
 use App\Http\Controllers\Api\DroneController;
+use App\Http\Controllers\Api\FarmController;
 use App\Http\Controllers\Api\ForumController;
 use App\Http\Controllers\Api\InputVerificationController;
 use App\Http\Controllers\Api\IoTController;
@@ -300,14 +302,19 @@ Route::prefix('admin')
         Route::get('/catalog/low-stock', [CatalogController::class, 'lowStock']);
         Route::get('/catalog/categories', [CatalogController::class, 'categories']);
 
-        // Vendor & Partner Audit
+        // Vendor & Partner Audit & Onboarding
         Route::get('/vendors', [VendorController::class, 'index']);
+        Route::post('/vendors', [VendorController::class, 'store']);
         Route::get('/vendors/{uuid}', [VendorController::class, 'show']);
         Route::put('/vendors/{uuid}', [VendorController::class, 'update']);
         Route::post('/vendors/{uuid}/suspend', [VendorController::class, 'suspend']);
         Route::post('/vendors/{uuid}/reactivate', [VendorController::class, 'reactivate']);
         Route::get('/vendors/{uuid}/reviews', [VendorController::class, 'reviews']);
         Route::delete('/vendors/{uuid}', [VendorController::class, 'destroy']);
+
+        // Admin Farm Management
+        Route::get('/farms', [AdminFarmController::class, 'index']);
+        Route::post('/farms', [AdminFarmController::class, 'store']);
 
         // AI Management & Providers
         Route::get('/ai/providers', [AiProviderController::class, 'index']);
@@ -516,3 +523,15 @@ Route::middleware('auth:sanctum')->prefix('yield')->group(function () {
     Route::post('/analyze-photo', [YieldController::class, 'analyzePhoto']);
     Route::get('/history', [YieldController::class, 'history']);
 });
+
+// Farm Management APIs
+Route::middleware('auth:sanctum')->prefix('farms')->group(function () {
+    Route::get('/', [FarmController::class, 'index']);
+    Route::post('/', [FarmController::class, 'store']);
+    Route::get('/{uuid}', [FarmController::class, 'show']);
+    Route::put('/{uuid}', [FarmController::class, 'update']);
+    Route::delete('/{uuid}', [FarmController::class, 'destroy']);
+    Route::post('/{uuid}/activities', [FarmController::class, 'storeActivity']);
+    Route::delete('/activities/{activityUuid}', [FarmController::class, 'destroyActivity']);
+});
+
