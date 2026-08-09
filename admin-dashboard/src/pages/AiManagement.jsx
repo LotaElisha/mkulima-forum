@@ -475,66 +475,277 @@ function KnowledgeBase() {
 }
 
 function AiConfig({ config }) {
+  const [providers, setProviders] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [showKey, setShowKey] = useState(false)
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+
+  const [form, setForm] = useState({
+    uuid: '',
+    name: 'Google Gemini Production',
+    provider_type: 'gemini',
+    api_key: '',
+    model: 'gemini-3-flash-preview',
+    status: 'active',
+    is_default: true,
+  })
+
+  const loadProviders = async () => {
+    setLoading(true)
+    try {
+      const data = await get('/ai/providers')
+      if (data?.providers) {
+        setProviders(data.providers)
+        const gemini = data.providers.find(p => p.provider_type === 'gemini') || data.providers[0]
+        if (gemini) {
+          setForm({
+            uuid: gemini.uuid,
+            name: gemini.name || 'Google Gemini Production',
+            provider_type: gemini.provider_type || 'gemini',
+            api_key: '',
+            model: gemini.model || 'gemini-3-flash-preview',
+            status: gemini.status || 'active',
+            is_default: gemini.is_default ?? true,
+          })
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load AI providers:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { loadProviders() }, [])
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setMessage('')
+    setError('')
+
+    try {
+      let res
+      if (form.uuid) {
+        res = await put(`/ai/providers/${form.uuid}`, form)
+      } else {
+        res = await post('/ai/providers', form)
+      }
+
+      if (res?.provider || res?.message?.includes('success')) {
+        setMessage('AI Provider key & configuration saved and encrypted successfully!')
+        if (res.provider) {
+          setForm(prev => ({ ...prev, uuid: res.provider.uuid, api_key: '' }))
+        }
+        loadProviders()
+      } else {
+        setError(res?.message || 'Failed to save AI configuration.')
+      }
+    } catch (err) {
+      setError('Network error while saving AI configuration.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleTest = async () => {
+    if (!form.uuid) {
+      setError('Please save the provider credentials first before testing connection.')
+      return
+    }
+    setTesting(true)
+    setMessage('')
+    setError('')
+    try {
+      const res = await post(`/ai/providers/${form.uuid}/test`, {})
+      if (res?.status === 'success' || res?.message?.includes('successful') || res?.message?.includes('Connected')) {
+        setMessage(`Connectivity test PASSED! ${res.message}`)
+      } else {
+        setError(res?.message || 'Connection test failed.')
+      }
+    } catch (err) {
+      setError('Failed to test connectivity.')
+    } finally {
+      setTesting(false)
+    }
+  }
+
+  const activeProvider = providers.find(p => p.uuid === form.uuid) || providers[0]
+
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-3xl">
+      {/* Live Status Header */}
       <div className="card space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-800 text-base">Gemini & Multi-Provider AI Configuration</h3>
-          <a
-            href="/ai-providers"
-            className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white font-semibold text-xs rounded-xl transition-colors shadow-sm"
-          >
-            <Zap className="w-3.5 h-3.5" />
-            Manage AI Providers
-          </a>
+          <div>
+            <h3 className="font-bold text-gray-900 text-lg">Gemini & AI Provider Management</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Configure API credentials, choose AI models, and test live connectivity.</p>
+          </div>
+          {activeProvider?.status === 'active' || config?.configured ? (
+            <span className="flex items-center gap-1.5 text-green-700 bg-green-100 px-3 py-1 rounded-full text-xs font-bold border border-green-200 shadow-sm">
+              <CheckCircle className="w-4 h-4 text-green-600"/> Live & Connected
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-red-700 bg-red-100 px-3 py-1 rounded-full text-xs font-bold border border-red-200">
+              <XCircle className="w-4 h-4 text-red-600"/> Not Configured
+            </span>
+          )}
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between py-3 border-b border-gray-100">
+        {message && (
+          <div className="p-3 bg-green-50 border border-green-200 text-green-800 text-xs rounded-xl font-medium flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 shrink-0 text-green-600"/>
+            <span>{message}</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl font-medium flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 text-red-600"/>
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Configuration Form */}
+        <form onSubmit={handleSave} className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm font-medium text-gray-700">Status</p>
-              <p className="text-xs text-gray-500">Gemini API connectivity</p>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Provider Name</label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={e => setForm({...form, name: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                placeholder="Google Gemini Production"
+                required
+              />
             </div>
-            {config?.configured
-              ? <span className="flex items-center gap-1 text-green-700 bg-green-100 px-3 py-1 rounded-full text-sm font-medium"><CheckCircle className="w-4 h-4"/>Connected</span>
-              : <span className="flex items-center gap-1 text-red-700 bg-red-100 px-3 py-1 rounded-full text-sm font-medium"><XCircle className="w-4 h-4"/>Not Configured</span>
-            }
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">AI Provider Type</label>
+              <select
+                value={form.provider_type}
+                onChange={e => setForm({...form, provider_type: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none"
+              >
+                <option value="gemini">Google Gemini (Recommended)</option>
+                <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
+                <option value="deepseek">DeepSeek AI</option>
+                <option value="claude">Anthropic Claude</option>
+                <option value="groq">Groq Llama 3</option>
+              </select>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between py-3 border-b border-gray-100">
-            <div>
-              <p className="text-sm font-medium text-gray-700">Active Model</p>
-              <p className="text-xs text-gray-500">Currently assigned model</p>
-            </div>
-            <code className="text-sm bg-gray-100 px-3 py-1 rounded-lg font-mono text-green-800 font-semibold">{config?.model || 'gemini-2.0-flash'}</code>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">
+              AI Model Selection
+            </label>
+            <select
+              value={form.model}
+              onChange={e => setForm({...form, model: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono text-green-900 bg-green-50/50 border-green-200 focus:ring-2 focus:ring-green-500 outline-none font-semibold"
+            >
+              <option value="gemini-3-flash-preview">gemini-3-flash-preview (Gemini 3 Flash — Fast & Multimodal — Recommended)</option>
+              <option value="gemini-3-pro-preview">gemini-3-pro-preview (Gemini 3 Pro — Advanced Weather & Advisory)</option>
+              <option value="gemini-2.5-flash">gemini-2.5-flash (Gemini 2.5 Flash)</option>
+              <option value="gemini-2.0-flash">gemini-2.0-flash (Gemini 2.0 Flash)</option>
+              <option value="gpt-4o">gpt-4o (OpenAI)</option>
+              <option value="gpt-4o-mini">gpt-4o-mini (OpenAI)</option>
+            </select>
+            <p className="text-[11px] text-gray-500 mt-1">
+              Gemini 3 series powers disease diagnostics, Mkulima Bot Q&A, and market ranking in Kiswahili and English.
+            </p>
           </div>
 
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="text-sm font-medium text-gray-700">API Key</p>
-              <p className="text-xs text-gray-500">Encrypted in DB or server fallback</p>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">
+              API Key (AES-256 Encrypted at Rest)
+            </label>
+            <div className="relative">
+              <input
+                type={showKey ? "text" : "password"}
+                value={form.api_key}
+                onChange={e => setForm({...form, api_key: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm font-mono pr-10 focus:ring-2 focus:ring-green-500 outline-none"
+                placeholder={activeProvider ? "•••••••••••••••••••••••••••••••• (Leave blank to keep existing key)" : "Paste your AI API Key here (e.g. AIzaSy...)"}
+                required={!activeProvider}
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey(!showKey)}
+                className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+              >
+                <Eye className="w-4 h-4" />
+              </button>
             </div>
-            <code className="text-sm bg-gray-100 px-3 py-1 rounded-lg font-mono text-gray-600">{config?.api_key_preview || 'Configured'}</code>
+            {activeProvider?.masked_key && (
+              <p className="text-[11px] text-gray-500 mt-1 font-mono">
+                Currently stored key: <span className="font-semibold text-gray-700">{activeProvider.masked_key}</span>
+              </p>
+            )}
           </div>
-        </div>
+
+          <div className="flex items-center gap-6 pt-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.is_default}
+                onChange={e => setForm({...form, is_default: e.target.checked})}
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+              />
+              <span className="text-xs font-medium text-gray-700">Set as Primary Default AI Provider</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.status === 'active'}
+                onChange={e => setForm({...form, status: e.target.checked ? 'active' : 'inactive'})}
+                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+              />
+              <span className="text-xs font-medium text-gray-700">Active Provider</span>
+            </label>
+          </div>
+
+          <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded-xl shadow-md transition-all disabled:opacity-50"
+            >
+              <Zap className="w-4 h-4" />
+              {saving ? 'Encrypting & Saving…' : 'Save & Encrypt API Key'}
+            </button>
+
+            {form.uuid && (
+              <button
+                type="button"
+                onClick={handleTest}
+                disabled={testing}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold text-xs rounded-xl transition-all disabled:opacity-50"
+              >
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                {testing ? 'Testing Connectivity…' : 'Test Live API Connection'}
+              </button>
+            )}
+          </div>
+        </form>
       </div>
 
       <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-5 text-sm">
         <div className="flex gap-3 items-start">
           <div className="w-8 h-8 rounded-xl bg-green-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-            <Zap className="w-4 h-4" />
+            <Brain className="w-4 h-4" />
           </div>
           <div>
-            <p className="font-bold text-green-900 mb-1">Dynamic AI Provider System Enabled!</p>
-            <p className="text-xs text-green-800 leading-relaxed mb-3">
-              You no longer need to SSH into the server or edit <code>.env</code> files to change API keys or upgrade Gemini models. You can add, update, test credentials, and switch models (e.g. <code>gemini-2.0-flash</code>, <code>gemini-2.5-flash</code>) directly from the Admin Dashboard.
+            <p className="font-bold text-green-900 mb-1">Zero-Downtime Key Management Enabled</p>
+            <p className="text-xs text-green-800 leading-relaxed">
+              API credentials are encrypted in your database using AES-256-CBC and decrypted securely in memory only when calling the Gemini API. You do not need to SSH into the server or restart PHP-FPM when changing keys or models.
             </p>
-            <a
-              href="/ai-providers"
-              className="inline-flex items-center gap-1.5 font-bold text-xs text-green-700 hover:text-green-900 hover:underline"
-            >
-              Open AI Provider Management & Routing Portal →
-            </a>
           </div>
         </div>
       </div>
