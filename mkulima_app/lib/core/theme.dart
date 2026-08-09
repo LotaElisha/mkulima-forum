@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 class MkColors {
   MkColors._();
 
-  static const Color primary = Color(0xFF2E7D32); // Kilimo green
-  static const Color primaryDark = Color(0xFF1B5E20);
-  static const Color accent = Color(0xFFF9A825); // Harvest amber
+  static const Color primary = Color(0xFF165A2A); // Forest green
+  static const Color primaryDark = Color(0xFF0C3619); // Deep Forest green
+  static const Color leafGreen = Color(0xFF4C9B27); // Vivid leaf green
+  static const Color accent = Color(0xFFF5A623); // Sun gold
   static const Color danger = Color(0xFFC62828);
-  static const Color surface = Color(0xFFF6F8F6);
+  static const Color surface = Color(0xFFFAF8F2); // Organic cream
 }
 
 class MkRadii {

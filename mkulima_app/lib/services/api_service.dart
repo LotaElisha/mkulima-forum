@@ -69,9 +69,9 @@ class ApiService {
         'phone': phone,
         'code': code,
         'purpose': purpose,
-        'name': ?name,
-        'country_code': ?countryCode,
-        'role': ?role,
+        if (name != null) 'name': name,
+        if (countryCode != null) 'country_code': countryCode,
+        if (role != null) 'role': role,
       },
     );
     return response.data;
@@ -92,8 +92,8 @@ class ApiService {
       final response = await _dio.get(
         '/marketplace/products',
         queryParameters: {
-          'category_id': ?categoryId,
-          'search': ?search,
+          if (categoryId != null) 'category_id': categoryId,
+          if (search != null) 'search': search,
           'page': page,
         },
       );

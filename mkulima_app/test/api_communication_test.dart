@@ -31,9 +31,9 @@ void main() {
       expect(weather, isNotNull);
       expect(weather['available'], isTrue);
       expect(weather['location'], equals('Mbeya'));
-      expect(weather['report'], isNotNull);
-      expect(weather['report']['temp'], isNotNull);
-      expect(weather['report']['condition'], isNotNull);
+      expect(weather['current'], isNotNull);
+      expect(weather['current']['temperature'], isNotNull);
+      expect(weather['current']['description'], isNotNull);
     });
 
     test('Public Marketplace Products list endpoint', () async {

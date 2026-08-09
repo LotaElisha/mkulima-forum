@@ -34,12 +34,8 @@ mixin _$Order {
   String? get deliveryAddress => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
-  /// Serializes this Order to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Order
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $OrderCopyWith<Order> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -72,8 +68,6 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Order
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -157,8 +151,6 @@ class __$$OrderImplCopyWithImpl<$Res>
       _$OrderImpl _value, $Res Function(_$OrderImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Order
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -289,7 +281,7 @@ class _$OrderImpl implements _Order {
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -303,9 +295,7 @@ class _$OrderImpl implements _Order {
       deliveryAddress,
       createdAt);
 
-  /// Create a copy of Order
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$OrderImplCopyWith<_$OrderImpl> get copyWith =>
@@ -359,11 +349,8 @@ abstract class _Order implements Order {
   String? get deliveryAddress;
   @override
   DateTime? get createdAt;
-
-  /// Create a copy of Order
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$OrderImplCopyWith<_$OrderImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -382,12 +369,8 @@ mixin _$OrderItem {
   @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
   double get subtotal => throw _privateConstructorUsedError;
 
-  /// Serializes this OrderItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of OrderItem
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $OrderItemCopyWith<OrderItem> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -416,8 +399,6 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of OrderItem
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -472,8 +453,6 @@ class __$$OrderItemImplCopyWithImpl<$Res>
       _$OrderItemImpl _value, $Res Function(_$OrderItemImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of OrderItem
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -550,14 +529,12 @@ class _$OrderItemImpl implements _OrderItem {
                 other.subtotal == subtotal));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, productId, quantity, unitPrice, subtotal);
 
-  /// Create a copy of OrderItem
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$OrderItemImplCopyWith<_$OrderItemImpl> get copyWith =>
@@ -595,11 +572,8 @@ abstract class _OrderItem implements OrderItem {
   @override
   @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
   double get subtotal;
-
-  /// Create a copy of OrderItem
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$OrderItemImplCopyWith<_$OrderItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
