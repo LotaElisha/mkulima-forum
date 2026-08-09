@@ -543,7 +543,7 @@
         <button type="button" onclick="openPitchModal(event)" class="btn btn-gold" data-i18n="btn_open_deck">
           👁️ Tazama Online
         </button>
-        <a href="{{ $settings['pitch_deck_url'] }}" target="_blank" class="btn btn-glass" data-i18n="btn_download_deck">
+        <a href="{{ $settings['pitch_deck_url'] ?? '/docs/Mkulima_Forum_Pitch_Deck.pdf' }}" target="_blank" class="btn btn-glass" data-i18n="btn_download_deck">
           ⬇️ Pakua PDF
         </a>
       </div>
@@ -743,7 +743,7 @@
       <div>
         <h4 class="foot-title" data-i18n="foot_q_title">Viungo vya Haraka</h4>
         <ul class="foot-links">
-          <li><a href="{{ $settings['pitch_deck_url'] }}" target="_blank" data-i18n="foot_link_pitch">📊 Pitch Deck (PDF)</a></li>
+          <li><a href="{{ $settings['pitch_deck_url'] ?? '/docs/Mkulima_Forum_Pitch_Deck.pdf' }}" target="_blank" data-i18n="foot_link_pitch">📊 Pitch Deck (PDF)</a></li>
           <li><a href="/app/mkulima-forum.apk">Pakua App (APK)</a></li>
           <li><a href="/admin/login">Admin Dashboard</a></li>
           <li><a href="/api/health">API Health</a></li>
@@ -763,13 +763,13 @@
     <div class="modal-header">
       <h3>📊 Mkulima Forum — Google Africa Applied AI Lab Pitch Deck</h3>
       <div style="display:flex; gap:10px; align-items:center;">
-        <a href="{{ $settings['pitch_deck_url'] }}" target="_blank" class="btn btn-gold" style="padding:6px 14px; font-size:0.8rem;">
+        <a href="{{ $settings['pitch_deck_url'] ?? '/docs/Mkulima_Forum_Pitch_Deck.pdf' }}" target="_blank" class="btn btn-gold" style="padding:6px 14px; font-size:0.8rem;">
           ⬇️ Download PDF
         </a>
         <button type="button" class="close-btn" onclick="closePitchModal()">×</button>
       </div>
     </div>
-    <iframe src="{{ $settings['pitch_deck_url'] }}#toolbar=1" style="width:100%; height:100%; border:none;" title="Pitch Deck PDF"></iframe>
+    <iframe src="{{ $settings['pitch_deck_url'] ?? '/docs/Mkulima_Forum_Pitch_Deck.pdf' }}#toolbar=1" style="width:100%; height:100%; border:none;" title="Pitch Deck PDF"></iframe>
   </div>
 </div>
 
