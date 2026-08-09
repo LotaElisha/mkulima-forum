@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Services\AI\Secrets\SecretManagerServiceInterface;
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use App\Traits\BelongsToTenant;
 
 class AiProvider extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'uuid',
@@ -82,12 +83,12 @@ class AiProvider extends Model
 
     public function getMaskedApiKeyAttribute(): ?string
     {
-        if (!$this->credential) {
+        if (! $this->credential) {
             return null;
         }
 
         try {
-            $secretManager = app(\App\Services\AI\Secrets\SecretManagerServiceInterface::class);
+            $secretManager = app(SecretManagerServiceInterface::class);
             $plainKey = $secretManager->getSecret($this->id);
             if (empty($plainKey)) {
                 return null;
@@ -100,7 +101,8 @@ class AiProvider extends Model
 
             $prefix = substr($plainKey, 0, 4);
             $suffix = substr($plainKey, -3);
-            return $prefix . '••••••••' . $suffix;
+
+            return $prefix.'••••••••'.$suffix;
         } catch (\Throwable $e) {
             return '••••••••';
         }

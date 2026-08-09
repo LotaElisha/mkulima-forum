@@ -7,6 +7,7 @@ use App\Models\ForumThread;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ReportModerationTest extends TestCase
@@ -14,7 +15,9 @@ class ReportModerationTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $farmer;
+
     protected ForumThread $thread;
 
     protected function setUp(): void
@@ -27,13 +30,13 @@ class ReportModerationTest extends TestCase
         $author = User::factory()->create(['role' => 'farmer', 'tenant_id' => 1]);
         $category = ForumCategory::create([
             'tenant_id' => 1,
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'name' => 'Kilimo cha Mahindi',
             'slug' => 'kilimo-cha-mahindi',
         ]);
         $this->thread = ForumThread::create([
             'tenant_id' => 1,
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'forum_category_id' => $category->id,
             'user_id' => $author->id,
             'title' => 'Dawa ya miujiza inaponya kila ugonjwa',

@@ -124,14 +124,15 @@ class PaymentController extends Controller
         $userId = $request->user()->id;
 
         $escrows = Escrow::where(function ($q) use ($userId) {
-                $q->where('buyer_id', $userId)->orWhere('seller_id', $userId);
-            })
+            $q->where('buyer_id', $userId)->orWhere('seller_id', $userId);
+        })
             ->with('order')
             ->latest()
             ->paginate(20);
 
         $escrows->getCollection()->transform(function ($escrow) use ($userId) {
             $escrow->setAttribute('direction', $escrow->buyer_id === $userId ? 'buying' : 'selling');
+
             return $escrow;
         });
 

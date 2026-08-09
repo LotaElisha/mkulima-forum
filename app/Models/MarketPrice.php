@@ -54,7 +54,7 @@ class MarketPrice extends Model
             ->orderByDesc('price_date')
             ->first();
 
-        if (!$previous) {
+        if (! $previous) {
             return 'stable';
         }
 

@@ -20,9 +20,7 @@ use Illuminate\Support\Str;
  */
 class MkulimaBotController extends Controller
 {
-    public function __construct(private readonly MkulimaBotService $bot)
-    {
-    }
+    public function __construct(private readonly MkulimaBotService $bot) {}
 
     public function chat(Request $request): JsonResponse
     {
@@ -35,13 +33,13 @@ class MkulimaBotController extends Controller
             'region' => ['nullable', 'string', 'max:64'],
         ]);
 
-        if (!$this->bot->isConfigured()) {
+        if (! $this->bot->isConfigured()) {
             return response()->json([
                 'message' => 'Mkulima Bot haipatikani kwa sasa. Tafadhali jaribu tena baadaye.',
             ], 503);
         }
 
-        if (!empty($validated['conversation_uuid'])) {
+        if (! empty($validated['conversation_uuid'])) {
             $conversation = BotConversation::where('uuid', $validated['conversation_uuid'])
                 ->where('user_id', $user->id)
                 ->firstOrFail();
@@ -56,7 +54,7 @@ class MkulimaBotController extends Controller
 
         // Optional weather grounding — best effort, never blocks the chat.
         $weather = null;
-        if (!empty($validated['region'])) {
+        if (! empty($validated['region'])) {
             try {
                 $weather = app(WeatherService::class)->getCurrentWeather($validated['region']);
             } catch (\Exception) {

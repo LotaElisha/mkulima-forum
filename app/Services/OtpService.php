@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\OtpCode;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class OtpService
 {
@@ -21,7 +20,7 @@ class OtpService
         ]);
 
         // Rate limit: max 3 OTPs per phone per hour
-        $key = 'otp_rate_limit:' . $phone;
+        $key = 'otp_rate_limit:'.$phone;
         $attempts = Cache::increment($key);
         if ($attempts === 1) {
             Cache::put($key, 1, now()->addHour());
@@ -43,17 +42,19 @@ class OtpService
             ->whereNull('used_at')
             ->first();
 
-        if (!$otp) {
+        if (! $otp) {
             return false;
         }
 
         $otp->update(['used_at' => now()]);
+
         return true;
     }
 
     public function isRateLimited(string $phone): bool
     {
-        $attempts = Cache::get('otp_rate_limit:' . $phone, 0);
+        $attempts = Cache::get('otp_rate_limit:'.$phone, 0);
+
         return $attempts >= 3;
     }
 
@@ -62,6 +63,7 @@ class OtpService
         // Africa's Talking integration placeholder
         // TODO: Implement actual SMS sending
         \Log::info("SMS to {$phone}: {$message}");
+
         return true;
     }
 }

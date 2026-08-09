@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class HrController extends Controller
 {
@@ -24,8 +23,8 @@ class HrController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('phone', 'ilike', "%{$search}%")
-                  ->orWhere('email', 'ilike', "%{$search}%");
+                    ->orWhere('phone', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%");
             });
         }
 
@@ -107,8 +106,8 @@ class HrController extends Controller
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'unique:users,email,' . $staff->id],
-            'phone' => ['sometimes', 'string', 'regex:/^255[0-9]{9}$/', 'unique:users,phone,' . $staff->id],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$staff->id],
+            'phone' => ['sometimes', 'string', 'regex:/^255[0-9]{9}$/', 'unique:users,phone,'.$staff->id],
             'role' => ['sometimes', 'string', 'in:admin,agronomist,veterinary,logistics,support'],
             'status' => ['sometimes', 'string', 'in:active,suspended,terminated'],
             'department' => ['nullable', 'string', 'max:100'],

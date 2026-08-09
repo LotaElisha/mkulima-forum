@@ -3,15 +3,21 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\DiseaseScan;
+use App\Models\Escrow;
+use App\Models\ForumThread;
+use App\Models\LandingSetting;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Escrow;
-use App\Models\DiseaseScan;
-use App\Models\ForumThread;
+use App\Models\User;
+use App\Services\Payments\EscrowService;
+use App\Support\Roles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
@@ -90,15 +96,15 @@ class AdminController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('phone', 'ilike', "%{$search}%")
-                  ->orWhere('email', 'ilike', "%{$search}%");
+                    ->orWhere('phone', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%");
             });
         }
 
         $users = $query->paginate(50);
 
         return response()->json([
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
@@ -108,9 +114,9 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'phone' => 'sometimes|string|regex:/^255[0-9]{9}$/|unique:users,phone,' . $user->id,
-            'role' => 'sometimes|string|' . \App\Support\Roles::rule(),
+            'email' => 'sometimes|email|unique:users,email,'.$user->id,
+            'phone' => 'sometimes|string|regex:/^255[0-9]{9}$/|unique:users,phone,'.$user->id,
+            'role' => 'sometimes|string|'.Roles::rule(),
             'kyc_status' => 'sometimes|string|in:pending,verified,rejected,not_submitted',
             'status' => 'sometimes|string|in:active,suspended,terminated',
             'preferred_language' => 'sometimes|string|in:sw,en,lg,rw,fr',
@@ -135,14 +141,14 @@ class AdminController extends Controller
             'email' => 'nullable|email|unique:users',
             'phone' => 'required|string|regex:/^255[0-9]{9}$/|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|string|' . \App\Support\Roles::rule(),
+            'role' => 'required|string|'.Roles::rule(),
             'tenant_id' => 'required|exists:tenants,id',
             'kyc_status' => 'string|in:pending,verified,rejected,not_submitted',
             'status' => 'string|in:active,suspended',
         ]);
 
         $validated['password'] = bcrypt($validated['password']);
-        $validated['uuid'] = \Illuminate\Support\Str::uuid();
+        $validated['uuid'] = Str::uuid();
         $validated['kyc_status'] = $validated['kyc_status'] ?? 'not_submitted';
         $validated['status'] = $validated['status'] ?? 'active';
 
@@ -158,7 +164,7 @@ class AdminController extends Controller
     public function deleteUser(string $uuid): JsonResponse
     {
         $user = User::where('uuid', $uuid)->firstOrFail();
-        
+
         // Prevent deleting self
         if ($user->id === auth()->id()) {
             return response()->json(['message' => 'Cannot delete your own account'], 403);
@@ -183,7 +189,7 @@ class AdminController extends Controller
         $orders = $query->paginate(50);
 
         return response()->json([
-            'orders' => $orders
+            'orders' => $orders,
         ]);
     }
 
@@ -194,7 +200,7 @@ class AdminController extends Controller
             ->firstOrFail();
 
         return response()->json([
-            'order' => $order
+            'order' => $order,
         ]);
     }
 
@@ -213,13 +219,13 @@ class AdminController extends Controller
         $order->update($validated);
 
         // Update timestamps based on status
-        if ($request->input('status') === 'paid' && !$order->paid_at) {
+        if ($request->input('status') === 'paid' && ! $order->paid_at) {
             $order->update(['paid_at' => now()]);
         }
-        if ($request->input('status') === 'shipped' && !$order->shipped_at) {
+        if ($request->input('status') === 'shipped' && ! $order->shipped_at) {
             $order->update(['shipped_at' => now()]);
         }
-        if ($request->input('status') === 'delivered' && !$order->delivered_at) {
+        if ($request->input('status') === 'delivered' && ! $order->delivered_at) {
             $order->update(['delivered_at' => now()]);
         }
 
@@ -251,7 +257,7 @@ class AdminController extends Controller
         $escrows = $query->paginate(50);
 
         return response()->json([
-            'escrows' => $escrows
+            'escrows' => $escrows,
         ]);
     }
 
@@ -259,7 +265,7 @@ class AdminController extends Controller
     {
         $escrow = Escrow::where('uuid', $uuid)->firstOrFail();
 
-        $service = new \App\Services\Payments\EscrowService();
+        $service = new EscrowService;
         $result = $service->releaseFunds($escrow);
 
         return response()->json($result);
@@ -269,7 +275,7 @@ class AdminController extends Controller
     {
         $escrow = Escrow::where('uuid', $uuid)->firstOrFail();
 
-        $service = new \App\Services\Payments\EscrowService();
+        $service = new EscrowService;
         $result = $service->refundBuyer($escrow, $request->input('reason', 'Admin initiated refund'));
 
         return response()->json($result);
@@ -283,7 +289,7 @@ class AdminController extends Controller
             ->paginate(20);
 
         return response()->json([
-            'kyc' => $users
+            'kyc' => $users,
         ]);
     }
 
@@ -349,7 +355,8 @@ class AdminController extends Controller
 
     public function getLandingSettings(): JsonResponse
     {
-        $settings = \App\Models\LandingSetting::pluck('value', 'key')->toArray();
+        $settings = LandingSetting::pluck('value', 'key')->toArray();
+
         return response()->json($settings);
     }
 
@@ -361,7 +368,7 @@ class AdminController extends Controller
         ]);
 
         foreach ($validated['settings'] as $key => $value) {
-            \App\Models\LandingSetting::updateOrCreate(
+            LandingSetting::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]
             );
@@ -369,7 +376,7 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => 'Landing page settings updated successfully',
-            'settings' => \App\Models\LandingSetting::pluck('value', 'key')->toArray()
+            'settings' => LandingSetting::pluck('value', 'key')->toArray(),
         ]);
     }
 
@@ -379,16 +386,16 @@ class AdminController extends Controller
             'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
         ]);
 
-        $oldPath = \App\Models\LandingSetting::where('key', 'logo_path')->value('value');
+        $oldPath = LandingSetting::where('key', 'logo_path')->value('value');
 
         $path = $request->file('logo')->store('branding', 'public');
-        $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        $url = Storage::disk('public')->url($path);
 
-        \App\Models\LandingSetting::updateOrCreate(['key' => 'logo_path'], ['value' => $path]);
-        \App\Models\LandingSetting::updateOrCreate(['key' => 'logo_url'], ['value' => $url]);
+        LandingSetting::updateOrCreate(['key' => 'logo_path'], ['value' => $path]);
+        LandingSetting::updateOrCreate(['key' => 'logo_url'], ['value' => $url]);
 
-        if ($oldPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+        if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+            Storage::disk('public')->delete($oldPath);
         }
 
         return response()->json([
@@ -399,14 +406,14 @@ class AdminController extends Controller
 
     public function deleteLandingLogo(): JsonResponse
     {
-        $oldPath = \App\Models\LandingSetting::where('key', 'logo_path')->value('value');
+        $oldPath = LandingSetting::where('key', 'logo_path')->value('value');
 
-        if ($oldPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+        if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+            Storage::disk('public')->delete($oldPath);
         }
 
-        \App\Models\LandingSetting::where('key', 'logo_path')->delete();
-        \App\Models\LandingSetting::where('key', 'logo_url')->delete();
+        LandingSetting::where('key', 'logo_path')->delete();
+        LandingSetting::where('key', 'logo_url')->delete();
 
         return response()->json(['message' => 'Logo removed successfully']);
     }
@@ -422,36 +429,37 @@ class AdminController extends Controller
         $fileKey = "{$key}_url";
         $pathKey = "{$key}_path";
 
-        $oldPath = \App\Models\LandingSetting::where('key', $pathKey)->value('value');
+        $oldPath = LandingSetting::where('key', $pathKey)->value('value');
 
         $path = $request->file('media')->store('branding', 'public');
-        $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        $url = Storage::disk('public')->url($path);
 
-        \App\Models\LandingSetting::updateOrCreate(['key' => $pathKey], ['value' => $path]);
-        \App\Models\LandingSetting::updateOrCreate(['key' => $fileKey], ['value' => $url]);
+        LandingSetting::updateOrCreate(['key' => $pathKey], ['value' => $path]);
+        LandingSetting::updateOrCreate(['key' => $fileKey], ['value' => $url]);
 
         if ($key === 'logo' || $key === 'banner') {
-            \App\Models\LandingSetting::updateOrCreate(['key' => 'banner_url'], ['value' => $url]);
-            \App\Models\LandingSetting::updateOrCreate(['key' => 'logo_url'], ['value' => $url]);
+            LandingSetting::updateOrCreate(['key' => 'banner_url'], ['value' => $url]);
+            LandingSetting::updateOrCreate(['key' => 'logo_url'], ['value' => $url]);
         }
         if ($key === 'emblem') {
-            \App\Models\LandingSetting::updateOrCreate(['key' => 'emblem_url'], ['value' => $url]);
+            LandingSetting::updateOrCreate(['key' => 'emblem_url'], ['value' => $url]);
         }
 
-        if ($oldPath && \Illuminate\Support\Facades\Storage::disk('public')->exists($oldPath)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldPath);
+        if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+            Storage::disk('public')->delete($oldPath);
         }
 
         return response()->json([
-            'message' => ucfirst($key) . ' media asset uploaded successfully',
+            'message' => ucfirst($key).' media asset uploaded successfully',
             'url' => $url,
-            'settings' => \App\Models\LandingSetting::pluck('value', 'key')->toArray(),
+            'settings' => LandingSetting::pluck('value', 'key')->toArray(),
         ]);
     }
 
     public function getPermissions(): JsonResponse
     {
-        $permissions = \Spatie\Permission\Models\Permission::pluck('name');
+        $permissions = Permission::pluck('name');
+
         return response()->json($permissions);
     }
 

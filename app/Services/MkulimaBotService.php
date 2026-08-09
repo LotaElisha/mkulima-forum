@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\BotConversation;
 use App\Models\KbDocument;
-use Illuminate\Support\Facades\Http;
+use App\Services\AI\AIService;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -25,8 +25,9 @@ class MkulimaBotService
     public function isConfigured(): bool
     {
         try {
-            $aiService = app(\App\Services\AI\AIService::class);
+            $aiService = app(AIService::class);
             $provider = $aiService->getProviderForFeature('farmer_chat');
+
             return true;
         } catch (\Throwable $e) {
             return (bool) config('services.gemini.api_key');
@@ -42,7 +43,7 @@ class MkulimaBotService
         ?string $region = null,
         ?array $weather = null,
     ): ?array {
-        if (!$this->isConfigured()) {
+        if (! $this->isConfigured()) {
             return null;
         }
 
@@ -59,7 +60,7 @@ class MkulimaBotService
         $messages[] = ['role' => 'user', 'content' => $userMessage];
 
         try {
-            $aiService = app(\App\Services\AI\AIService::class);
+            $aiService = app(AIService::class);
             $aiResponse = $aiService->generateText(
                 'farmer_chat',
                 $messages,
@@ -81,6 +82,7 @@ class MkulimaBotService
             ];
         } catch (\Exception $e) {
             Log::error('Mkulima Bot AI query failed: '.$e->getMessage());
+
             return null;
         }
     }
@@ -101,7 +103,7 @@ class MkulimaBotService
             ->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->orWhereRaw('LOWER(title) LIKE ?', ["%{$term}%"])
-                      ->orWhereRaw('LOWER(content) LIKE ?', ["%{$term}%"]);
+                        ->orWhereRaw('LOWER(content) LIKE ?', ["%{$term}%"]);
                 }
             })
             ->orderByDesc('published_at')
@@ -119,19 +121,19 @@ class MkulimaBotService
             default => 'English',
         };
 
-        $prompt = "You are Mkulima Bot, the friendly AI farm advisor inside the MkulimaForum app, "
+        $prompt = 'You are Mkulima Bot, the friendly AI farm advisor inside the MkulimaForum app, '
             ."serving East African smallholder farmers. Reply in {$langName}. "
-            ."Be practical, concise and actionable: quantities per acre, local crop names, "
-            ."costs in TZS where relevant. Recommend consulting a verified agronomist "
-            ."(bookable in the app under Huduma) for diagnoses you are unsure about. "
-            ."Never invent prices, weather or regulations you do not know.";
+            .'Be practical, concise and actionable: quantities per acre, local crop names, '
+            .'costs in TZS where relevant. Recommend consulting a verified agronomist '
+            .'(bookable in the app under Huduma) for diagnoses you are unsure about. '
+            .'Never invent prices, weather or regulations you do not know.';
 
         if ($region) {
             $prompt .= "\n\nThe farmer is in the {$region} region.";
         }
 
-        if ($weather && !empty($weather['temperature'])) {
-            $stale = !empty($weather['is_stale']) ? ' (cached, may be outdated)' : '';
+        if ($weather && ! empty($weather['temperature'])) {
+            $stale = ! empty($weather['is_stale']) ? ' (cached, may be outdated)' : '';
             $prompt .= "\nCurrent weather{$stale}: {$weather['temperature']}°C, "
                 .($weather['condition'] ?? 'unknown').', humidity '
                 .($weather['humidity'] ?? '?').'%.';

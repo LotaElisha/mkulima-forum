@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Product;
+use App\Models\Escrow;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Escrow;
+use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +50,7 @@ class MarketplaceController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('description', 'ilike', "%{$search}%");
+                    ->orWhere('description', 'ilike', "%{$search}%");
             });
         }
 
@@ -111,7 +111,7 @@ class MarketplaceController extends Controller
     {
         $user = $request->user();
 
-        if (!$user->isAgrodealer()) {
+        if (! $user->isAgrodealer()) {
             return response()->json([
                 'message' => 'Only verified agrodealers can list products.',
             ], 403);
@@ -215,7 +215,7 @@ class MarketplaceController extends Controller
             $orderItems = [];
 
             foreach ($validated['items'] as $item) {
-                $product = Product::where('uuid', $item['product_uuid'])->active()-\u003einStock()-\u003efirstOrFail();
+                $product = Product::where('uuid', $item['product_uuid'])->active() - \u003einStock() - \u003efirstOrFail();
 
                 if ($product->stock_quantity < $item['quantity']) {
                     throw new \Exception("Insufficient stock for {$product->name}");
@@ -271,7 +271,7 @@ class MarketplaceController extends Controller
             Escrow::create([
                 'tenant_id' => $user->tenant_id,
                 'order_id' => $order->id,
-                'reference' => 'ESC-' . strtoupper(Str::random(10)),
+                'reference' => 'ESC-'.strtoupper(Str::random(10)),
                 'status' => 'HELD',
                 'amount' => $total,
                 'currency' => $order->currency,
@@ -327,7 +327,7 @@ class MarketplaceController extends Controller
             ->where('uuid', $uuid)
             ->where(function ($q) use ($user) {
                 $q->where('buyer_id', $user->id)
-                  ->orWhere('seller_id', $user->id);
+                    ->orWhere('seller_id', $user->id);
             })
             ->firstOrFail();
 

@@ -29,7 +29,7 @@ return new class extends Migration
                 'source', 'payment_method', 'payment_status',
                 'vat_amount', 'vat_rate', 'discount',
                 'location', 'processed_by',
-                'suspended_at', 'suspension_reason'
+                'suspended_at', 'suspension_reason',
             ]);
         });
     }

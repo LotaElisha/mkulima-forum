@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\DiseaseScan;
+use App\Services\AI\AIService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class DiseaseScannerController extends Controller
@@ -32,7 +32,7 @@ class DiseaseScannerController extends Controller
         // see REDESIGN.md. We do not pretend to run local inference.
         $finalResult = $this->runGeminiInference($fullPath, $validated['crop_type'] ?? null, $user?->id);
 
-        if (!$finalResult) {
+        if (! $finalResult) {
             // Do not record a fake "completed" scan — be honest that analysis failed.
             DiseaseScan::create([
                 'tenant_id' => $user?->tenant_id ?? 1,
@@ -134,13 +134,13 @@ class DiseaseScannerController extends Controller
     private function runGeminiInference(string $imagePath, ?string $cropType, ?int $userId = null): ?array
     {
         try {
-            $prompt = "Analyze this plant image and identify any disease. ";
+            $prompt = 'Analyze this plant image and identify any disease. ';
             if ($cropType) {
                 $prompt .= "The crop is {$cropType}. ";
             }
             $prompt .= "Provide: 1) Disease name (or 'Healthy' if no disease), 2) Confidence 0-1, 3) Brief description, 4) Treatment recommendation, 5) Affected plant areas. Return as JSON with keys: disease_name, confidence, description, treatment, affected_areas (array).";
 
-            $aiService = app(\App\Services\AI\AIService::class);
+            $aiService = app(AIService::class);
             $aiResponse = $aiService->analyzeImage('plant_diagnosis', $imagePath, $prompt, ['require_json' => true], $userId);
 
             $result = $aiResponse->structuredData;
@@ -151,12 +151,12 @@ class DiseaseScannerController extends Controller
                     'description' => $result['description'] ?? null,
                     'treatment' => $result['treatment'] ?? null,
                     'affected_areas' => $result['affected_areas'] ?? null,
-                    'source' => $aiResponse->provider . '_cloud',
+                    'source' => $aiResponse->provider.'_cloud',
                     'raw_response' => $result,
                 ];
             }
         } catch (\Exception $e) {
-            \Log::error('AI plant diagnosis inference failed: ' . $e->getMessage());
+            \Log::error('AI plant diagnosis inference failed: '.$e->getMessage());
         }
 
         return null;

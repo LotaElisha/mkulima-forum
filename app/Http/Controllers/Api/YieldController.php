@@ -28,7 +28,7 @@ class YieldController extends Controller
     public function estimate(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'crop_type' => 'required|string|in:' . implode(',', array_keys(self::REFERENCE)),
+            'crop_type' => 'required|string|in:'.implode(',', array_keys(self::REFERENCE)),
             'farm_size_acres' => 'required|numeric|min:0.1|max:10000',
         ]);
 
@@ -66,8 +66,8 @@ class YieldController extends Controller
             ],
             'method' => 'reference_table',
             'disclaimer' => 'Haya ni makadirio ya wastani wa kanda, si utabiri wa shamba lako. '
-                . 'Mavuno halisi hutegemea mbegu, udongo, hali ya hewa na utunzaji. '
-                . 'Kwa ushauri wa shamba lako, wasiliana na mtaalamu wa kilimo.',
+                .'Mavuno halisi hutegemea mbegu, udongo, hali ya hewa na utunzaji. '
+                .'Kwa ushauri wa shamba lako, wasiliana na mtaalamu wa kilimo.',
         ]);
     }
 
@@ -84,7 +84,7 @@ class YieldController extends Controller
         // AI image analysis.
         return response()->json([
             'message' => 'Uchambuzi wa picha kwa makadirio ya mavuno bado haujawashwa. '
-                . 'Tumia "Kagua Ugonjwa" kwa uchambuzi wa magonjwa ya mimea.',
+                .'Tumia "Kagua Ugonjwa" kwa uchambuzi wa magonjwa ya mimea.',
             'available' => false,
         ], 501);
     }

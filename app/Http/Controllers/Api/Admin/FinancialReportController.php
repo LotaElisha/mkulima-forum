@@ -75,6 +75,7 @@ class FinancialReportController extends Controller
             ->groupBy('product_id')
             ->map(function ($items) {
                 $first = $items->first();
+
                 return [
                     'product_id' => $first->product_id,
                     'product_name' => $first->product?->name ?? 'Unknown',

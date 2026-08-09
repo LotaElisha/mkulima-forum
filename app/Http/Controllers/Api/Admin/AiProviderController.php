@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 class AiProviderController extends Controller
 {
     protected SecretManagerServiceInterface $secretManager;
+
     protected AIService $aiService;
 
     public function __construct(SecretManagerServiceInterface $secretManager, AIService $aiService)
@@ -67,7 +68,7 @@ class AiProviderController extends Controller
 
         DB::beginTransaction();
         try {
-            if (!empty($validated['is_default'])) {
+            if (! empty($validated['is_default'])) {
                 AiProvider::withoutGlobalScopes()->update(['is_default' => false]);
             }
 
@@ -100,7 +101,8 @@ class AiProviderController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Failed to create AI provider: ' . $e->getMessage());
+            Log::error('Failed to create AI provider: '.$e->getMessage());
+
             return response()->json(['message' => 'Failed to save AI provider configuration.'], 500);
         }
     }
@@ -148,7 +150,7 @@ class AiProviderController extends Controller
 
         DB::beginTransaction();
         try {
-            if (!empty($validated['is_default'])) {
+            if (! empty($validated['is_default'])) {
                 AiProvider::withoutGlobalScopes()
                     ->where('id', '!=', $provider->id)
                     ->update(['is_default' => false]);
@@ -173,7 +175,7 @@ class AiProviderController extends Controller
 
             $provider->update($updateData);
 
-            if (!empty($validated['api_key'])) {
+            if (! empty($validated['api_key'])) {
                 $this->secretManager->storeSecret($provider->id, $validated['api_key']);
             }
 
@@ -186,7 +188,8 @@ class AiProviderController extends Controller
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Failed to update AI provider: ' . $e->getMessage());
+            Log::error('Failed to update AI provider: '.$e->getMessage());
+
             return response()->json(['message' => 'Failed to update AI provider configuration.'], 500);
         }
     }

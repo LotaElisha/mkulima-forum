@@ -14,6 +14,7 @@ class WalletTest extends TestCase
     use RefreshDatabase;
 
     private User $sender;
+
     private User $recipient;
 
     protected function setUp(): void

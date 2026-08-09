@@ -26,7 +26,7 @@ class PosController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('description', 'ilike', "%{$search}%");
+                    ->orWhere('description', 'ilike', "%{$search}%");
             });
         }
 
@@ -136,7 +136,7 @@ class PosController extends Controller
                 'items' => $validated['items'],
                 'subtotal' => $subtotal,
                 'vat' => $vatAmount,
-                'vat_rate' => $vatRate . '%',
+                'vat_rate' => $vatRate.'%',
                 'discount' => $discount,
                 'total' => $total,
                 'payment_method' => $validated['payment_method'],
@@ -171,7 +171,7 @@ class PosController extends Controller
                 }),
                 'subtotal' => $order->subtotal,
                 'vat' => $order->vat_amount,
-                'vat_rate' => $order->vat_rate . '%',
+                'vat_rate' => $order->vat_rate.'%',
                 'discount' => $order->discount,
                 'total' => $order->total,
                 'payment_method' => $order->payment_method,

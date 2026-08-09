@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -45,7 +47,7 @@ class AdminProfileController extends Controller
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'unique:users,email,' . $user->id],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$user->id],
             'phone' => ['sometimes', 'string', 'regex:/^255[0-9]{9}$/'],
             'preferred_language' => ['sometimes', 'string', 'in:sw,en,lg,rw,fr'],
         ]);
@@ -76,7 +78,7 @@ class AdminProfileController extends Controller
 
         $user = $request->user();
 
-        if (!Hash::check($request->input('current_password'), $user->password)) {
+        if (! Hash::check($request->input('current_password'), $user->password)) {
             throw ValidationException::withMessages([
                 'current_password' => ['The current password is incorrect.'],
             ]);
@@ -127,7 +129,7 @@ class AdminProfileController extends Controller
         $activities = [];
 
         // Recent orders managed
-        $recentOrders = \App\Models\Order::where('updated_at', '>=', now()->subDays(30))
+        $recentOrders = Order::where('updated_at', '>=', now()->subDays(30))
             ->orderBy('updated_at', 'desc')
             ->limit(20)
             ->get(['uuid', 'status', 'updated_at']);
@@ -141,7 +143,7 @@ class AdminProfileController extends Controller
         }
 
         // Recent user registrations
-        $recentUsers = \App\Models\User::where('created_at', '>=', now()->subDays(30))
+        $recentUsers = User::where('created_at', '>=', now()->subDays(30))
             ->orderBy('created_at', 'desc')
             ->limit(20)
             ->get(['name', 'role', 'created_at']);

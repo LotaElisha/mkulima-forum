@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Models\WalletTransaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class WalletController extends Controller
 {
@@ -18,7 +17,7 @@ class WalletController extends Controller
         $wallet = Wallet::firstOrCreate(
             ['user_id' => $user->id],
             [
-                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'uuid' => (string) Str::uuid(),
                 'balance' => 0,
                 'currency' => 'TZS',
                 'status' => 'active',
@@ -37,7 +36,7 @@ class WalletController extends Controller
         $user = $request->user();
         $wallet = Wallet::where('user_id', $user->id)->first();
 
-        if (!$wallet) {
+        if (! $wallet) {
             return response()->json(['transactions' => []]);
         }
 
@@ -68,7 +67,7 @@ class WalletController extends Controller
         $wallet = Wallet::firstOrCreate(
             ['user_id' => $user->id],
             [
-                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'uuid' => (string) Str::uuid(),
                 'balance' => 0,
                 'currency' => 'TZS',
                 'status' => 'active',
@@ -86,7 +85,7 @@ class WalletController extends Controller
 
         $transaction = $wallet->deposit(
             $request->input('amount'),
-            'Deposit via ' . strtoupper($request->input('provider')),
+            'Deposit via '.strtoupper($request->input('provider')),
             [
                 'phone' => $request->input('phone'),
                 'provider' => $request->input('provider'),
@@ -121,14 +120,14 @@ class WalletController extends Controller
 
         $transaction = $wallet?->withdraw(
             $request->input('amount'),
-            'Withdrawal via ' . strtoupper($request->input('provider')),
+            'Withdrawal via '.strtoupper($request->input('provider')),
             [
                 'phone' => $request->input('phone'),
                 'provider' => $request->input('provider'),
             ]
         );
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json(['message' => 'Insufficient balance'], 422);
         }
 
@@ -150,14 +149,14 @@ class WalletController extends Controller
         $user = $request->user();
         $senderWallet = Wallet::where('user_id', $user->id)->first();
 
-        if (!$senderWallet || $senderWallet->balance < $request->input('amount')) {
+        if (! $senderWallet || $senderWallet->balance < $request->input('amount')) {
             return response()->json([
                 'message' => 'Insufficient balance',
             ], 422);
         }
 
         $recipient = User::where('phone', $request->input('recipient_phone'))->first();
-        if (!$recipient) {
+        if (! $recipient) {
             return response()->json([
                 'message' => 'Recipient not found',
             ], 404);
@@ -172,7 +171,7 @@ class WalletController extends Controller
         $recipientWallet = Wallet::firstOrCreate(
             ['user_id' => $recipient->id],
             [
-                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'uuid' => (string) Str::uuid(),
                 'balance' => 0,
                 'currency' => 'TZS',
                 'status' => 'active',
@@ -185,7 +184,7 @@ class WalletController extends Controller
             $request->input('description')
         );
 
-        if (!$transaction) {
+        if (! $transaction) {
             return response()->json([
                 'message' => 'Insufficient balance',
             ], 422);

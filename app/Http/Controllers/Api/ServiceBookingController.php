@@ -33,7 +33,7 @@ class ServiceBookingController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('business_name', 'ilike', "%{$search}%")
-                  ->orWhere('bio', 'ilike', "%{$search}%");
+                    ->orWhere('bio', 'ilike', "%{$search}%");
             });
         }
 
@@ -194,7 +194,7 @@ class ServiceBookingController extends Controller
         $isProvider = $booking->provider->user_id === $user->id;
         $isFarmer = $booking->farmer_id === $user->id;
 
-        if (!$isProvider && !$isFarmer) {
+        if (! $isProvider && ! $isFarmer) {
             return response()->json(['message' => 'Not authorized.'], 403);
         }
 
@@ -208,11 +208,11 @@ class ServiceBookingController extends Controller
             ? ['confirmed', 'in_progress', 'completed', 'no_show', 'cancelled']
             : ['cancelled'];
 
-        if (!in_array($validated['status'], $allowed)) {
+        if (! in_array($validated['status'], $allowed)) {
             return response()->json(['message' => 'Transition not allowed for your role.'], 422);
         }
 
-        if ($isFarmer && !in_array($booking->status, ['pending', 'confirmed'])) {
+        if ($isFarmer && ! in_array($booking->status, ['pending', 'confirmed'])) {
             return response()->json(['message' => 'Booking can no longer be cancelled.'], 422);
         }
 

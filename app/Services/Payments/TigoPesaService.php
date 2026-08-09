@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\Log;
 class TigoPesaService
 {
     protected string $apiKey;
+
     protected string $apiSecret;
+
     protected string $merchantId;
+
     protected bool $sandbox;
+
     protected string $baseUrl;
 
     public function __construct()
@@ -40,9 +44,11 @@ class TigoPesaService
             }
 
             Log::error('Tigo Pesa token error', ['response' => $response->body()]);
+
             return null;
         } catch (\Exception $e) {
             Log::error('Tigo Pesa token exception', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -54,7 +60,7 @@ class TigoPesaService
     {
         $token = $this->getAccessToken();
 
-        if (!$token) {
+        if (! $token) {
             return [
                 'success' => false,
                 'message' => 'Failed to get access token',
@@ -83,6 +89,7 @@ class TigoPesaService
             }
 
             Log::error('Tigo Pesa push error', ['response' => $response->body()]);
+
             return [
                 'success' => false,
                 'message' => 'Push payment failed',
@@ -90,6 +97,7 @@ class TigoPesaService
             ];
         } catch (\Exception $e) {
             Log::error('Tigo Pesa push exception', ['error' => $e->getMessage()]);
+
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -104,7 +112,7 @@ class TigoPesaService
     {
         $token = $this->getAccessToken();
 
-        if (!$token) {
+        if (! $token) {
             return [
                 'success' => false,
                 'message' => 'Failed to get access token',
@@ -135,7 +143,7 @@ class TigoPesaService
         $phone = preg_replace('/[^0-9]/', '', $phone);
 
         if (str_starts_with($phone, '0')) {
-            $phone = '255' . substr($phone, 1);
+            $phone = '255'.substr($phone, 1);
         }
 
         return $phone;

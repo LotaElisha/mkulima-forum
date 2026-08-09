@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class CategoryProductSeeder extends Seeder
@@ -13,7 +13,7 @@ class CategoryProductSeeder extends Seeder
     public function run(): void
     {
         $seller = User::where('role', 'agrodealer')->first();
-        if (!$seller) {
+        if (! $seller) {
             $seller = User::factory()->create([
                 'name' => 'Mkulima Agrovet',
                 'email' => 'agrovet@demo.mkulima',
@@ -81,12 +81,12 @@ class CategoryProductSeeder extends Seeder
                         'unit' => $prod['unit'],
                         'status' => 'active',
                         'tenant_id' => 1,
-                        'description' => 'High quality ' . $prod['name'] . ' for Tanzanian farmers.',
+                        'description' => 'High quality '.$prod['name'].' for Tanzanian farmers.',
                     ]
                 );
             }
         }
 
-        echo "Seeded " . Category::count() . " categories and " . Product::count() . " products\n";
+        echo 'Seeded '.Category::count().' categories and '.Product::count()." products\n";
     }
 }

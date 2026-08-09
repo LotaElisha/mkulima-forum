@@ -16,7 +16,7 @@ class SellerController extends Controller
     {
         $user = $request->user();
 
-        if (!in_array($user->role, self::SELLER_ROLES, true)) {
+        if (! in_array($user->role, self::SELLER_ROLES, true)) {
             return response()->json([
                 'message' => 'Access denied. Only sellers can access this endpoint.',
             ], 403);

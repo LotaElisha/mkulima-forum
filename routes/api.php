@@ -1,22 +1,38 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\MarketplaceController;
-use App\Http\Controllers\Api\ForumController;
-use App\Http\Controllers\Api\DiseaseScannerController;
-use App\Http\Controllers\Api\AgronomistController;
-use App\Http\Controllers\Api\Payments\PaymentController;
+use App\Http\Controllers\Admin\FeatureController;
 use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\AdminProfileController;
+use App\Http\Controllers\Api\Admin\AiManagementController;
+use App\Http\Controllers\Api\Admin\AiProviderController;
 use App\Http\Controllers\Api\Admin\CatalogController;
 use App\Http\Controllers\Api\Admin\FinancialReportController;
 use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
 use App\Http\Controllers\Api\Admin\VendorController;
-use App\Http\Controllers\Api\Admin\AiManagementController;
-use App\Http\Controllers\Api\Admin\AiProviderController;
+use App\Http\Controllers\Api\AgronomistController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DiseaseScannerController;
+use App\Http\Controllers\Api\DroneController;
+use App\Http\Controllers\Api\ForumController;
+use App\Http\Controllers\Api\InputVerificationController;
+use App\Http\Controllers\Api\IoTController;
+use App\Http\Controllers\Api\IvrController;
+use App\Http\Controllers\Api\LogisticsController;
+use App\Http\Controllers\Api\MarketplaceController;
+use App\Http\Controllers\Api\MarketPriceController;
+use App\Http\Controllers\Api\MkulimaBotController;
+use App\Http\Controllers\Api\Payments\PaymentController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\ServiceBookingController;
+use App\Http\Controllers\Api\SmsController;
+use App\Http\Controllers\Api\WalletController;
+use App\Http\Controllers\Api\WarehouseController;
+use App\Http\Controllers\Api\WeatherController;
+use App\Http\Controllers\Api\YieldController;
 use App\Http\Middleware\AdminMiddleware;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,10 +158,10 @@ Route::prefix('agronomist')->middleware('auth:sanctum')->group(function () {
 */
 
 Route::prefix('bot')->middleware('auth:sanctum')->group(function () {
-    Route::post('/chat', [\App\Http\Controllers\Api\MkulimaBotController::class, 'chat']);
-    Route::get('/conversations', [\App\Http\Controllers\Api\MkulimaBotController::class, 'conversations']);
-    Route::get('/conversations/{uuid}', [\App\Http\Controllers\Api\MkulimaBotController::class, 'show']);
-    Route::delete('/conversations/{uuid}', [\App\Http\Controllers\Api\MkulimaBotController::class, 'destroy']);
+    Route::post('/chat', [MkulimaBotController::class, 'chat']);
+    Route::get('/conversations', [MkulimaBotController::class, 'conversations']);
+    Route::get('/conversations/{uuid}', [MkulimaBotController::class, 'show']);
+    Route::delete('/conversations/{uuid}', [MkulimaBotController::class, 'destroy']);
 });
 
 /*
@@ -156,17 +172,17 @@ Route::prefix('bot')->middleware('auth:sanctum')->group(function () {
 
 // Public - browse provider directory
 Route::prefix('services')->group(function () {
-    Route::get('/providers', [\App\Http\Controllers\Api\ServiceBookingController::class, 'providers']);
-    Route::get('/providers/{uuid}', [\App\Http\Controllers\Api\ServiceBookingController::class, 'provider']);
+    Route::get('/providers', [ServiceBookingController::class, 'providers']);
+    Route::get('/providers/{uuid}', [ServiceBookingController::class, 'provider']);
 });
 
 // Protected - register & book
 Route::prefix('services')->middleware('auth:sanctum')->group(function () {
-    Route::post('/providers', [\App\Http\Controllers\Api\ServiceBookingController::class, 'registerProvider']);
-    Route::get('/bookings', [\App\Http\Controllers\Api\ServiceBookingController::class, 'bookings']);
-    Route::post('/bookings', [\App\Http\Controllers\Api\ServiceBookingController::class, 'createBooking']);
-    Route::put('/bookings/{uuid}', [\App\Http\Controllers\Api\ServiceBookingController::class, 'updateBooking']);
-    Route::post('/bookings/{uuid}/rate', [\App\Http\Controllers\Api\ServiceBookingController::class, 'rateBooking']);
+    Route::post('/providers', [ServiceBookingController::class, 'registerProvider']);
+    Route::get('/bookings', [ServiceBookingController::class, 'bookings']);
+    Route::post('/bookings', [ServiceBookingController::class, 'createBooking']);
+    Route::put('/bookings/{uuid}', [ServiceBookingController::class, 'updateBooking']);
+    Route::post('/bookings/{uuid}/rate', [ServiceBookingController::class, 'rateBooking']);
 });
 
 /*
@@ -176,26 +192,26 @@ Route::prefix('services')->middleware('auth:sanctum')->group(function () {
 */
 
 // Public directories
-Route::get('/logistics/transporters', [\App\Http\Controllers\Api\LogisticsController::class, 'transporters']);
-Route::get('/warehouses', [\App\Http\Controllers\Api\WarehouseController::class, 'index']);
-Route::get('/warehouses/{uuid}', [\App\Http\Controllers\Api\WarehouseController::class, 'show'])
+Route::get('/logistics/transporters', [LogisticsController::class, 'transporters']);
+Route::get('/warehouses', [WarehouseController::class, 'index']);
+Route::get('/warehouses/{uuid}', [WarehouseController::class, 'show'])
     ->where('uuid', '[0-9a-fA-F-]{36}');
 
 // Protected
 Route::prefix('logistics')->middleware('auth:sanctum')->group(function () {
-    Route::post('/transporters', [\App\Http\Controllers\Api\LogisticsController::class, 'registerTransporter']);
-    Route::get('/freight', [\App\Http\Controllers\Api\LogisticsController::class, 'freight']);
-    Route::post('/freight', [\App\Http\Controllers\Api\LogisticsController::class, 'createFreight']);
-    Route::post('/freight/{uuid}/quote', [\App\Http\Controllers\Api\LogisticsController::class, 'quoteFreight']);
-    Route::put('/freight/{uuid}', [\App\Http\Controllers\Api\LogisticsController::class, 'updateFreight']);
-    Route::post('/freight/{uuid}/rate', [\App\Http\Controllers\Api\LogisticsController::class, 'rateFreight']);
+    Route::post('/transporters', [LogisticsController::class, 'registerTransporter']);
+    Route::get('/freight', [LogisticsController::class, 'freight']);
+    Route::post('/freight', [LogisticsController::class, 'createFreight']);
+    Route::post('/freight/{uuid}/quote', [LogisticsController::class, 'quoteFreight']);
+    Route::put('/freight/{uuid}', [LogisticsController::class, 'updateFreight']);
+    Route::post('/freight/{uuid}/rate', [LogisticsController::class, 'rateFreight']);
 });
 
 Route::prefix('warehouses')->middleware('auth:sanctum')->group(function () {
-    Route::post('/', [\App\Http\Controllers\Api\WarehouseController::class, 'store']);
-    Route::get('/bookings', [\App\Http\Controllers\Api\WarehouseController::class, 'bookings']);
-    Route::post('/bookings', [\App\Http\Controllers\Api\WarehouseController::class, 'createBooking']);
-    Route::put('/bookings/{uuid}', [\App\Http\Controllers\Api\WarehouseController::class, 'updateBooking']);
+    Route::post('/', [WarehouseController::class, 'store']);
+    Route::get('/bookings', [WarehouseController::class, 'bookings']);
+    Route::post('/bookings', [WarehouseController::class, 'createBooking']);
+    Route::put('/bookings/{uuid}', [WarehouseController::class, 'updateBooking']);
 });
 
 /*
@@ -325,23 +341,20 @@ Route::prefix('admin')
         Route::get('/financial-reports/daily', [FinancialReportController::class, 'dailyReport']);
 
         // Feature Flags Management
-        Route::get('/features', [\App\Http\Controllers\Admin\FeatureController::class, 'index']);
-        Route::post('/features/{key}/toggle', [\App\Http\Controllers\Admin\FeatureController::class, 'toggle']);
-        Route::put('/features/{key}', [\App\Http\Controllers\Admin\FeatureController::class, 'update']);
-        Route::get('/features/category/{category}', [\App\Http\Controllers\Admin\FeatureController::class, 'byCategory']);
+        Route::get('/features', [FeatureController::class, 'index']);
+        Route::post('/features/{key}/toggle', [FeatureController::class, 'toggle']);
+        Route::put('/features/{key}', [FeatureController::class, 'update']);
+        Route::get('/features/category/{category}', [FeatureController::class, 'byCategory']);
     });
 
-
 // Notifications API
-require __DIR__ . '/api_notifications.php';
-
+require __DIR__.'/api_notifications.php';
 
 // Seller API
-require __DIR__ . '/api_seller.php';
-
+require __DIR__.'/api_seller.php';
 
 // KYC API
-require __DIR__ . '/api_kyc.php';
+require __DIR__.'/api_kyc.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -349,10 +362,10 @@ require __DIR__ . '/api_kyc.php';
 |--------------------------------------------------------------------------
 */
 Route::prefix('weather')->group(function () {
-    Route::get('/current', [\App\Http\Controllers\Api\WeatherController::class, 'current']);
-    Route::get('/forecast', [\App\Http\Controllers\Api\WeatherController::class, 'forecast']);
-    Route::get('/advisory', [\App\Http\Controllers\Api\WeatherController::class, 'advisory']);
-    Route::get('/report', [\App\Http\Controllers\Api\WeatherController::class, 'fullReport']);
+    Route::get('/current', [WeatherController::class, 'current']);
+    Route::get('/forecast', [WeatherController::class, 'forecast']);
+    Route::get('/advisory', [WeatherController::class, 'advisory']);
+    Route::get('/report', [WeatherController::class, 'fullReport']);
 });
 
 /*
@@ -361,7 +374,7 @@ Route::prefix('weather')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/search', [\App\Http\Controllers\Api\SearchController::class, 'search'])
+Route::get('/search', [SearchController::class, 'search'])
     ->middleware('throttle:30,1');
 
 /*
@@ -372,16 +385,16 @@ Route::get('/search', [\App\Http\Controllers\Api\SearchController::class, 'searc
 
 Route::prefix('inputs')->group(function () {
     // Public: registry lookup, confirmed alerts, hand-check checklist
-    Route::get('/verify', [\App\Http\Controllers\Api\InputVerificationController::class, 'verify'])
+    Route::get('/verify', [InputVerificationController::class, 'verify'])
         ->middleware('throttle:30,1');
-    Route::get('/alerts', [\App\Http\Controllers\Api\InputVerificationController::class, 'alerts']);
-    Route::get('/checklist', [\App\Http\Controllers\Api\InputVerificationController::class, 'checklist']);
+    Route::get('/alerts', [InputVerificationController::class, 'alerts']);
+    Route::get('/checklist', [InputVerificationController::class, 'checklist']);
 
     // Auth: label photo check (Gemini) + community counterfeit report
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/check-label', [\App\Http\Controllers\Api\InputVerificationController::class, 'checkLabel'])
+        Route::post('/check-label', [InputVerificationController::class, 'checkLabel'])
             ->middleware('throttle:10,1');
-        Route::post('/report', [\App\Http\Controllers\Api\InputVerificationController::class, 'report'])
+        Route::post('/report', [InputVerificationController::class, 'report'])
             ->middleware('throttle:10,60');
     });
 });
@@ -390,12 +403,12 @@ Route::prefix('inputs')->group(function () {
 Route::prefix('admin')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
     ->group(function () {
-        Route::get('/inputs', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryIndex']);
-        Route::post('/inputs', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryStore']);
-        Route::put('/inputs/{uuid}', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryUpdate']);
-        Route::delete('/inputs/{uuid}', [\App\Http\Controllers\Api\InputVerificationController::class, 'registryDestroy']);
-        Route::get('/input-alerts', [\App\Http\Controllers\Api\InputVerificationController::class, 'alertQueue']);
-        Route::post('/input-alerts/{uuid}/review', [\App\Http\Controllers\Api\InputVerificationController::class, 'reviewAlert']);
+        Route::get('/inputs', [InputVerificationController::class, 'registryIndex']);
+        Route::post('/inputs', [InputVerificationController::class, 'registryStore']);
+        Route::put('/inputs/{uuid}', [InputVerificationController::class, 'registryUpdate']);
+        Route::delete('/inputs/{uuid}', [InputVerificationController::class, 'registryDestroy']);
+        Route::get('/input-alerts', [InputVerificationController::class, 'alertQueue']);
+        Route::post('/input-alerts/{uuid}/review', [InputVerificationController::class, 'reviewAlert']);
     });
 
 /*
@@ -405,16 +418,16 @@ Route::prefix('admin')
 */
 
 // Any authenticated user can report content (throttled against abuse)
-Route::post('/reports', [\App\Http\Controllers\Api\ReportController::class, 'store'])
+Route::post('/reports', [ReportController::class, 'store'])
     ->middleware(['auth:sanctum', 'throttle:10,60']);
 
 // Admin moderation queue
 Route::prefix('admin/reports')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
     ->group(function () {
-        Route::get('/', [\App\Http\Controllers\Api\ReportController::class, 'index']);
-        Route::post('/{uuid}/resolve', [\App\Http\Controllers\Api\ReportController::class, 'resolve']);
-        Route::post('/{uuid}/dismiss', [\App\Http\Controllers\Api\ReportController::class, 'dismiss']);
+        Route::get('/', [ReportController::class, 'index']);
+        Route::post('/{uuid}/resolve', [ReportController::class, 'resolve']);
+        Route::post('/{uuid}/dismiss', [ReportController::class, 'dismiss']);
     });
 
 /*
@@ -425,17 +438,17 @@ Route::prefix('admin/reports')
 
 // Public price board
 Route::prefix('market-prices')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Api\MarketPriceController::class, 'index']);
-    Route::get('/filters', [\App\Http\Controllers\Api\MarketPriceController::class, 'filters']);
+    Route::get('/', [MarketPriceController::class, 'index']);
+    Route::get('/filters', [MarketPriceController::class, 'filters']);
 });
 
 // Admin price management
 Route::prefix('admin/market-prices')
     ->middleware(['auth:sanctum', AdminMiddleware::class])
     ->group(function () {
-        Route::post('/', [\App\Http\Controllers\Api\MarketPriceController::class, 'store']);
-        Route::put('/{uuid}', [\App\Http\Controllers\Api\MarketPriceController::class, 'update']);
-        Route::delete('/{uuid}', [\App\Http\Controllers\Api\MarketPriceController::class, 'destroy']);
+        Route::post('/', [MarketPriceController::class, 'store']);
+        Route::put('/{uuid}', [MarketPriceController::class, 'update']);
+        Route::delete('/{uuid}', [MarketPriceController::class, 'destroy']);
     });
 
 /*
@@ -445,13 +458,13 @@ Route::prefix('admin/market-prices')
 */
 Route::prefix('sms')->middleware('auth:sanctum')->group(function () {
     // Sending arbitrary SMS is an admin-only capability (spam prevention).
-    Route::post('/send', [\App\Http\Controllers\Api\SmsController::class, 'send'])
+    Route::post('/send', [SmsController::class, 'send'])
         ->middleware(AdminMiddleware::class);
-    Route::get('/history', [\App\Http\Controllers\Api\SmsController::class, 'getHistory']);
+    Route::get('/history', [SmsController::class, 'getHistory']);
 });
 
-Route::post('/sms/callback', [\App\Http\Controllers\Api\SmsController::class, 'callback']);
-Route::post('/sms/receive', [\App\Http\Controllers\Api\SmsController::class, 'receive']);
+Route::post('/sms/callback', [SmsController::class, 'callback']);
+Route::post('/sms/receive', [SmsController::class, 'receive']);
 
 /*
 |--------------------------------------------------------------------------
@@ -459,13 +472,13 @@ Route::post('/sms/receive', [\App\Http\Controllers\Api\SmsController::class, 're
 |--------------------------------------------------------------------------
 */
 Route::prefix('wallet')->middleware('auth:sanctum')->group(function () {
-    Route::get('/balance', [\App\Http\Controllers\Api\WalletController::class, 'getBalance']);
-    Route::get('/transactions', [\App\Http\Controllers\Api\WalletController::class, 'getTransactions']);
-    Route::post('/deposit', [\App\Http\Controllers\Api\WalletController::class, 'deposit']);
-    Route::post('/withdraw', [\App\Http\Controllers\Api\WalletController::class, 'withdraw']);
-    Route::post('/transfer', [\App\Http\Controllers\Api\WalletController::class, 'transfer']);
-    Route::get('/history', [\App\Http\Controllers\Api\WalletController::class, 'getTransactions']);
-    Route::get('/stats', [\App\Http\Controllers\Api\WalletController::class, 'getBalance']);
+    Route::get('/balance', [WalletController::class, 'getBalance']);
+    Route::get('/transactions', [WalletController::class, 'getTransactions']);
+    Route::post('/deposit', [WalletController::class, 'deposit']);
+    Route::post('/withdraw', [WalletController::class, 'withdraw']);
+    Route::post('/transfer', [WalletController::class, 'transfer']);
+    Route::get('/history', [WalletController::class, 'getTransactions']);
+    Route::get('/stats', [WalletController::class, 'getBalance']);
 });
 
 /*
@@ -474,32 +487,32 @@ Route::prefix('wallet')->middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('ivr')->group(function () {
-    Route::post('/incoming', [\App\Http\Controllers\Api\IvrController::class, 'handleIncoming']);
-    Route::post('/callback', [\App\Http\Controllers\Api\IvrController::class, 'handleCallback']);
+    Route::post('/incoming', [IvrController::class, 'handleIncoming']);
+    Route::post('/callback', [IvrController::class, 'handleCallback']);
 });
 
 // Public feature status
-Route::get('/features/status', [App\Http\Controllers\Admin\FeatureController::class, 'publicStatus']);
-Route::get('/features/check/{key}', [App\Http\Controllers\Admin\FeatureController::class, 'check']);
+Route::get('/features/status', [FeatureController::class, 'publicStatus']);
+Route::get('/features/check/{key}', [FeatureController::class, 'check']);
 
 // Drone APIs
-Route::get('/drone/services', [App\Http\Controllers\Api\DroneController::class, 'services']);
+Route::get('/drone/services', [DroneController::class, 'services']);
 Route::middleware('auth:sanctum')->prefix('drone')->group(function () {
-    Route::post('/book', [App\Http\Controllers\Api\DroneController::class, 'book']);
-    Route::get('/bookings', [App\Http\Controllers\Api\DroneController::class, 'myBookings']);
+    Route::post('/book', [DroneController::class, 'book']);
+    Route::get('/bookings', [DroneController::class, 'myBookings']);
 });
 
 // IoT APIs
-Route::get('/iot/sensors', [App\Http\Controllers\Api\IoTController::class, 'sensors']);
+Route::get('/iot/sensors', [IoTController::class, 'sensors']);
 Route::middleware('auth:sanctum')->prefix('iot')->group(function () {
-    Route::get('/my-sensors', [App\Http\Controllers\Api\IoTController::class, 'mySensors']);
-    Route::get('/readings/{sensorId}', [App\Http\Controllers\Api\IoTController::class, 'readings']);
-    Route::post('/readings', [App\Http\Controllers\Api\IoTController::class, 'storeReading']);
+    Route::get('/my-sensors', [IoTController::class, 'mySensors']);
+    Route::get('/readings/{sensorId}', [IoTController::class, 'readings']);
+    Route::post('/readings', [IoTController::class, 'storeReading']);
 });
 
 // Yield Estimation APIs
 Route::middleware('auth:sanctum')->prefix('yield')->group(function () {
-    Route::post('/estimate', [App\Http\Controllers\Api\YieldController::class, 'estimate']);
-    Route::post('/analyze-photo', [App\Http\Controllers\Api\YieldController::class, 'analyzePhoto']);
-    Route::get('/history', [App\Http\Controllers\Api\YieldController::class, 'history']);
+    Route::post('/estimate', [YieldController::class, 'estimate']);
+    Route::post('/analyze-photo', [YieldController::class, 'analyzePhoto']);
+    Route::get('/history', [YieldController::class, 'history']);
 });

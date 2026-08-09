@@ -6,6 +6,7 @@ use App\Models\FeatureFlag;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Testing\File;
 use Tests\TestCase;
 
 /**
@@ -19,6 +20,7 @@ class HonestEndpointsTest extends TestCase
     use RefreshDatabase;
 
     protected User $farmer;
+
     protected User $admin;
 
     protected function setUp(): void
@@ -45,7 +47,7 @@ class HonestEndpointsTest extends TestCase
             'preferred_date' => now()->addDays(3)->toDateString(),
             'contact_phone' => '255712000001',
         ])->assertCreated()
-          ->assertJsonPath('booking.total_cost', 60000);
+            ->assertJsonPath('booking.total_cost', 60000);
 
         $this->actingAs($this->farmer)->getJson('/api/drone/bookings')
             ->assertOk()
@@ -90,7 +92,7 @@ class HonestEndpointsTest extends TestCase
 
     public function test_yield_photo_analysis_is_honest_not_fabricated(): void
     {
-        $file = \Illuminate\Http\Testing\File::image('shamba.jpg');
+        $file = File::image('shamba.jpg');
 
         $this->actingAs($this->farmer)->postJson('/api/yield/analyze-photo', [
             'photo' => $file,

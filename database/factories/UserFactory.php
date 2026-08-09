@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Support\Roles;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -19,10 +20,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         $faker = \Faker\Factory::create();
+
         return [
             'tenant_id' => 1,
             'name' => $faker->name(),
-            'phone' => '2557' . $faker->unique()->numerify('########'),
+            'phone' => '2557'.$faker->unique()->numerify('########'),
             'email' => $faker->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
             'role' => Roles::FARMER,

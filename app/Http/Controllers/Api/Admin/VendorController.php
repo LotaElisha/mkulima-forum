@@ -23,8 +23,8 @@ class VendorController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('phone', 'ilike', "%{$search}%")
-                  ->orWhere('email', 'ilike', "%{$search}%");
+                    ->orWhere('phone', 'ilike', "%{$search}%")
+                    ->orWhere('email', 'ilike', "%{$search}%");
             });
         }
 
@@ -78,8 +78,8 @@ class VendorController extends Controller
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'unique:users,email,' . $vendor->id],
-            'phone' => ['sometimes', 'string', 'regex:/^255[0-9]{9}$/', 'unique:users,phone,' . $vendor->id],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$vendor->id],
+            'phone' => ['sometimes', 'string', 'regex:/^255[0-9]{9}$/', 'unique:users,phone,'.$vendor->id],
             'status' => ['sometimes', 'string', 'in:active,suspended,terminated'],
             'store_name' => ['nullable', 'string', 'max:255'],
             'store_location' => ['nullable', 'string'],
@@ -161,6 +161,7 @@ class VendorController extends Controller
             'avg_rating' => $vendor->products()->avg('rating') ?? 0,
         ]);
     }
+
     /**
      * Delete vendor permanently
      */

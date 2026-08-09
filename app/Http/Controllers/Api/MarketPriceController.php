@@ -28,22 +28,22 @@ class MarketPriceController extends Controller
 
         $query = MarketPrice::query();
 
-        if (!empty($validated['commodity'])) {
-            $query->where('commodity', 'like', '%' . $validated['commodity'] . '%');
+        if (! empty($validated['commodity'])) {
+            $query->where('commodity', 'like', '%'.$validated['commodity'].'%');
         }
-        if (!empty($validated['region'])) {
-            $query->where('region', 'like', '%' . $validated['region'] . '%');
+        if (! empty($validated['region'])) {
+            $query->where('region', 'like', '%'.$validated['region'].'%');
         }
-        if (!empty($validated['market'])) {
-            $query->where('market', 'like', '%' . $validated['market'] . '%');
+        if (! empty($validated['market'])) {
+            $query->where('market', 'like', '%'.$validated['market'].'%');
         }
-        if (!empty($validated['unit'])) {
+        if (! empty($validated['unit'])) {
             $query->where('unit', $validated['unit']);
         }
-        if (!empty($validated['date_from'])) {
+        if (! empty($validated['date_from'])) {
             $query->whereDate('price_date', '>=', $validated['date_from']);
         }
-        if (!empty($validated['date_to'])) {
+        if (! empty($validated['date_to'])) {
             $query->whereDate('price_date', '<=', $validated['date_to']);
         }
 

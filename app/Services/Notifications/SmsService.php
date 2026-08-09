@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 class SmsService
 {
     protected string $username;
+
     protected string $apiKey;
+
     protected string $baseUrl;
 
     public function __construct()
@@ -23,8 +25,9 @@ class SmsService
      */
     public function send(string $phone, string $message, string $sender = 'MkulimaForum'): array
     {
-        if (!$this->username || !$this->apiKey) {
+        if (! $this->username || ! $this->apiKey) {
             Log::warning('Africa\'s Talking not configured');
+
             return ['success' => false, 'message' => 'SMS service not configured'];
         }
 
@@ -46,6 +49,7 @@ class SmsService
 
             if ($response->successful() && isset($result['SMSMessageData']['Recipients'])) {
                 $recipient = $result['SMSMessageData']['Recipients'][0];
+
                 return [
                     'success' => true,
                     'message_id' => $recipient['messageId'] ?? null,
@@ -55,12 +59,14 @@ class SmsService
             }
 
             Log::error('SMS send failed', ['response' => $result]);
+
             return [
                 'success' => false,
                 'message' => $result['SMSMessageData']['Message'] ?? 'Failed to send SMS',
             ];
         } catch (\Exception $e) {
             Log::error('SMS exception', ['error' => $e->getMessage()]);
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -107,11 +113,11 @@ class SmsService
         $phone = preg_replace('/[^0-9]/', '', $phone);
 
         if (str_starts_with($phone, '0')) {
-            $phone = '255' . substr($phone, 1);
+            $phone = '255'.substr($phone, 1);
         }
 
-        if (!str_starts_with($phone, '+')) {
-            $phone = '+' . $phone;
+        if (! str_starts_with($phone, '+')) {
+            $phone = '+'.$phone;
         }
 
         return $phone;

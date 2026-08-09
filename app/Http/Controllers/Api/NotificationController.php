@@ -66,8 +66,8 @@ class NotificationController extends Controller
         $notifications = [];
 
         $orders = Order::where(function ($q) use ($user) {
-                $q->where('buyer_id', $user->id)->orWhere('seller_id', $user->id);
-            })
+            $q->where('buyer_id', $user->id)->orWhere('seller_id', $user->id);
+        })
             ->orderByDesc('created_at')
             ->take(15)
             ->get();
@@ -75,9 +75,9 @@ class NotificationController extends Controller
         foreach ($orders as $order) {
             $isBuyer = $order->buyer_id === $user->id;
             $notifications[] = [
-                'id' => 'order_' . $order->id . '_' . $order->status,
-                'title' => $isBuyer ? 'Oda Yako: ' . ucfirst($order->status) : 'Oda Mpya: ' . ucfirst($order->status),
-                'message' => 'Oda #' . substr($order->uuid, 0, 8) . ' — ' . $order->status,
+                'id' => 'order_'.$order->id.'_'.$order->status,
+                'title' => $isBuyer ? 'Oda Yako: '.ucfirst($order->status) : 'Oda Mpya: '.ucfirst($order->status),
+                'message' => 'Oda #'.substr($order->uuid, 0, 8).' — '.$order->status,
                 'type' => 'order',
                 'read' => false, // resolved against notification_reads by caller
                 'created_at' => $order->updated_at->toIso8601String(),
@@ -87,7 +87,7 @@ class NotificationController extends Controller
 
         if ($user->created_at->diffInDays(now()) < 7) {
             $notifications[] = [
-                'id' => 'welcome_' . $user->id,
+                'id' => 'welcome_'.$user->id,
                 'title' => 'Karibu Mkulima Forum!',
                 'message' => 'Asante kwa kujiunga. Anza kununua au kuuza bidhaa za kilimo.',
                 'type' => 'system',

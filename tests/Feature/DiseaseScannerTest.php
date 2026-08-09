@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\DiseaseScan;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -24,6 +24,7 @@ class ConfigureAiProvider extends Command
 
         if (empty($key)) {
             $this->error('API key cannot be empty.');
+
             return Command::FAILURE;
         }
 
@@ -55,14 +56,15 @@ class ConfigureAiProvider extends Command
 
             $aiService->clearCache();
 
-            $maskedKey = substr($key, 0, 6) . '••••••••' . substr($key, -4);
+            $maskedKey = substr($key, 0, 6).'••••••••'.substr($key, -4);
             $this->info("Successfully configured and encrypted {$name} ({$model}).");
             $this->info("Masked Key: {$maskedKey}");
 
             return Command::SUCCESS;
         } catch (\Throwable $e) {
             DB::rollBack();
-            $this->error('Failed to configure AI provider: ' . $e->getMessage());
+            $this->error('Failed to configure AI provider: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

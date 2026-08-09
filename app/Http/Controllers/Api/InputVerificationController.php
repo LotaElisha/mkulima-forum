@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\CounterfeitAlert;
 use App\Models\RegisteredInput;
+use App\Services\AI\AIService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -34,10 +34,10 @@ class InputVerificationController extends Controller
         $query = trim($validated['q']);
 
         $matches = RegisteredInput::where(function ($w) use ($query) {
-                $w->where('name', 'like', "%{$query}%")
-                    ->orWhere('registration_number', 'like', "%{$query}%")
-                    ->orWhere('manufacturer', 'like', "%{$query}%");
-            })
+            $w->where('name', 'like', "%{$query}%")
+                ->orWhere('registration_number', 'like', "%{$query}%")
+                ->orWhere('manufacturer', 'like', "%{$query}%");
+        })
             ->limit(10)
             ->get()
             ->map(fn ($i) => $this->presentInput($i));
@@ -75,7 +75,7 @@ class InputVerificationController extends Controller
         ]);
 
         $apiKey = config('services.gemini.api_key');
-        if (!$apiKey) {
+        if (! $apiKey) {
             return response()->json([
                 'message' => 'Huduma ya kusoma lebo haipatikani kwa sasa. Tumia utafutaji wa orodha badala yake.',
                 'available' => false,
@@ -84,7 +84,7 @@ class InputVerificationController extends Controller
 
         $extraction = $this->extractLabel($request->file('image')->getRealPath());
 
-        if (!$extraction) {
+        if (! $extraction) {
             return response()->json([
                 'message' => 'Imeshindikana kusoma lebo. Hakikisha picha ni ya karibu na yenye mwanga wa kutosha, kisha jaribu tena.',
                 'available' => true,
@@ -95,11 +95,11 @@ class InputVerificationController extends Controller
         // Cross-reference the registry by registration number first (strong
         // signal), then by product name.
         $match = null;
-        if (!empty($extraction['registration_number'])) {
+        if (! empty($extraction['registration_number'])) {
             $match = RegisteredInput::where('registration_number', $extraction['registration_number'])->first();
         }
-        if (!$match && !empty($extraction['product_name'])) {
-            $match = RegisteredInput::where('name', 'like', '%' . $extraction['product_name'] . '%')->first();
+        if (! $match && ! empty($extraction['product_name'])) {
+            $match = RegisteredInput::where('name', 'like', '%'.$extraction['product_name'].'%')->first();
         }
 
         $registryCount = RegisteredInput::count();
@@ -164,7 +164,7 @@ class InputVerificationController extends Controller
                 ['key' => 'receipt', 'text' => 'Muuzaji anatoa risiti yenye jina la duka?', 'weight' => 'low'],
             ],
             'advice' => 'Ukikosa majibu ya "Ndiyo" kwenye vipengele vya uzito wa juu (high), '
-                . 'usinunue — ripoti kwenye app na uwasiliane na afisa ugani au TPRI.',
+                .'usinunue — ripoti kwenye app na uwasiliane na afisa ugani au TPRI.',
             'version' => 1,
         ]);
     }
@@ -177,7 +177,7 @@ class InputVerificationController extends Controller
     {
         $validated = $request->validate([
             'product_name' => ['required', 'string', 'max:255'],
-            'product_type' => ['nullable', 'string', 'in:' . implode(',', RegisteredInput::TYPES)],
+            'product_type' => ['nullable', 'string', 'in:'.implode(',', RegisteredInput::TYPES)],
             'registration_number' => ['nullable', 'string', 'max:64'],
             'batch_number' => ['nullable', 'string', 'max:64'],
             'dealer_name' => ['nullable', 'string', 'max:255'],
@@ -226,11 +226,11 @@ class InputVerificationController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', 'in:' . implode(',', RegisteredInput::TYPES)],
+            'type' => ['required', 'string', 'in:'.implode(',', RegisteredInput::TYPES)],
             'registration_number' => ['nullable', 'string', 'max:64'],
             'manufacturer' => ['nullable', 'string', 'max:255'],
             'distributor' => ['nullable', 'string', 'max:255'],
-            'status' => ['nullable', 'string', 'in:' . implode(',', RegisteredInput::STATUSES)],
+            'status' => ['nullable', 'string', 'in:'.implode(',', RegisteredInput::STATUSES)],
             'source' => ['required', 'string', 'max:128'],
             'source_date' => ['nullable', 'date'],
         ]);
@@ -249,11 +249,11 @@ class InputVerificationController extends Controller
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
-            'type' => ['sometimes', 'string', 'in:' . implode(',', RegisteredInput::TYPES)],
+            'type' => ['sometimes', 'string', 'in:'.implode(',', RegisteredInput::TYPES)],
             'registration_number' => ['sometimes', 'nullable', 'string', 'max:64'],
             'manufacturer' => ['sometimes', 'nullable', 'string', 'max:255'],
             'distributor' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'status' => ['sometimes', 'string', 'in:' . implode(',', RegisteredInput::STATUSES)],
+            'status' => ['sometimes', 'string', 'in:'.implode(',', RegisteredInput::STATUSES)],
             'source' => ['sometimes', 'string', 'max:128'],
             'source_date' => ['sometimes', 'nullable', 'date'],
         ]);
@@ -327,22 +327,22 @@ class InputVerificationController extends Controller
     {
         try {
             $prompt = 'This is a photo of an agricultural input label (pesticide, herbicide, '
-                . 'fungicide, fertilizer or veterinary product) sold in Tanzania. Extract ONLY '
-                . 'what is actually visible on the label — never guess or invent values. '
-                . 'Return JSON with keys: product_name (string|null), registration_number '
-                . '(string|null — TPRI or TFRA registration number if printed), manufacturer '
-                . '(string|null), label_warnings (array of strings — any visible quality '
-                . 'problems: blurry printing, spelling errors, missing expiry date, '
-                . 'tampered seal). If a field is not readable, use null.';
+                .'fungicide, fertilizer or veterinary product) sold in Tanzania. Extract ONLY '
+                .'what is actually visible on the label — never guess or invent values. '
+                .'Return JSON with keys: product_name (string|null), registration_number '
+                .'(string|null — TPRI or TFRA registration number if printed), manufacturer '
+                .'(string|null), label_warnings (array of strings — any visible quality '
+                .'problems: blurry printing, spelling errors, missing expiry date, '
+                .'tampered seal). If a field is not readable, use null.';
 
-            $aiService = app(\App\Services\AI\AIService::class);
+            $aiService = app(AIService::class);
             $aiResponse = $aiService->analyzeImage('input_label_check', $imagePath, $prompt, ['require_json' => true], auth()->id());
 
             if (is_array($aiResponse->structuredData)) {
                 return $aiResponse->structuredData;
             }
         } catch (\Exception $e) {
-            Log::error('Label extraction failed: ' . $e->getMessage());
+            Log::error('Label extraction failed: '.$e->getMessage());
         }
 
         return null;
@@ -382,35 +382,35 @@ class InputVerificationController extends Controller
     {
         if ($alerts->isNotEmpty()) {
             return 'TAHADHARI: Kuna ripoti zilizothibitishwa za bidhaa feki zinazofanana na hii. '
-                . 'Kagua kwa makini sana kabla ya kununua.';
+                .'Kagua kwa makini sana kabla ya kununua.';
         }
         if ($matches->contains(fn ($m) => $m['status'] === 'banned')) {
             return 'ONYO: Bidhaa hii IMEPIGWA MARUFUKU. Usinunue wala kutumia — ripoti muuzaji.';
         }
         if ($matches->isNotEmpty()) {
             return 'Bidhaa imepatikana kwenye orodha ya usajili. Kumbuka: bidhaa feki huiga majina '
-                . 'halali — hakikisha pia kifungashio, muhuri na tarehe ya matumizi (tumia orodha ya ukaguzi).';
+                .'halali — hakikisha pia kifungashio, muhuri na tarehe ya matumizi (tumia orodha ya ukaguzi).';
         }
         if ($registryCount === 0) {
             return 'Orodha ya usajili bado inajazwa na wataalamu wetu. Hakiki moja kwa moja na TPRI '
-                . '(tpri.go.tz) au afisa ugani wa eneo lako.';
+                .'(tpri.go.tz) au afisa ugani wa eneo lako.';
         }
 
         return 'Bidhaa HAIKUPATIKANA kwenye orodha ya usajili — hii ni dalili ya hatari. '
-            . 'Usinunue kabla ya kuhakiki na TPRI au afisa ugani. Ukiiona ikiuzwa, ripoti hapa.';
+            .'Usinunue kabla ya kuhakiki na TPRI au afisa ugani. Ukiiona ikiuzwa, ripoti hapa.';
     }
 
     protected function labelGuidance(string $verdict, ?RegisteredInput $match): string
     {
         return match ($verdict) {
-            'banned' => 'ONYO KALI: Bidhaa hii IMEPIGWA MARUFUKU (' . ($match?->source ?? '') . '). Usinunue wala kutumia. Ripoti muuzaji kwa mamlaka.',
+            'banned' => 'ONYO KALI: Bidhaa hii IMEPIGWA MARUFUKU ('.($match?->source ?? '').'). Usinunue wala kutumia. Ripoti muuzaji kwa mamlaka.',
             'withdrawn' => 'TAHADHARI: Usajili wa bidhaa hii UMEONDOLEWA. Usinunue kabla ya kuhakiki na TPRI.',
             'found_registered' => 'Lebo inalingana na bidhaa iliyosajiliwa. Kumbuka: bidhaa feki huiga lebo halali — '
-                . 'hakikisha pia muhuri wa kifungashio, tarehe ya matumizi na bei (tumia orodha ya ukaguzi).',
+                .'hakikisha pia muhuri wa kifungashio, tarehe ya matumizi na bei (tumia orodha ya ukaguzi).',
             'registry_empty' => 'Tumesoma lebo, lakini orodha yetu ya usajili bado inajazwa. Hakiki namba ya usajili '
-                . 'moja kwa moja na TPRI (tpri.go.tz) au afisa ugani.',
+                .'moja kwa moja na TPRI (tpri.go.tz) au afisa ugani.',
             default => 'DALILI YA HATARI: Maelezo ya lebo HAYAKUPATIKANA kwenye orodha ya usajili. '
-                . 'Usinunue kabla ya kuhakiki na TPRI au afisa ugani — na ripoti bidhaa hii hapa ili kulinda wengine.',
+                .'Usinunue kabla ya kuhakiki na TPRI au afisa ugani — na ripoti bidhaa hii hapa ili kulinda wengine.',
         };
     }
 }

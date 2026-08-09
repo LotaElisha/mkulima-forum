@@ -24,7 +24,8 @@ class EncryptedDatabaseSecretManager implements SecretManagerServiceInterface
 
             return true;
         } catch (\Throwable $e) {
-            Log::error("Failed to store secret for provider ID {$providerId}: " . $e->getMessage());
+            Log::error("Failed to store secret for provider ID {$providerId}: ".$e->getMessage());
+
             return false;
         }
     }
@@ -33,13 +34,14 @@ class EncryptedDatabaseSecretManager implements SecretManagerServiceInterface
     {
         try {
             $credential = AiProviderCredential::where('ai_provider_id', $providerId)->first();
-            if (!$credential || empty($credential->encrypted_api_key)) {
+            if (! $credential || empty($credential->encrypted_api_key)) {
                 return null;
             }
 
             return Crypt::decryptString($credential->encrypted_api_key);
         } catch (\Throwable $e) {
-            Log::error("Failed to decrypt secret for provider ID {$providerId}: " . $e->getMessage());
+            Log::error("Failed to decrypt secret for provider ID {$providerId}: ".$e->getMessage());
+
             return null;
         }
     }
@@ -48,9 +50,11 @@ class EncryptedDatabaseSecretManager implements SecretManagerServiceInterface
     {
         try {
             AiProviderCredential::where('ai_provider_id', $providerId)->delete();
+
             return true;
         } catch (\Throwable $e) {
-            Log::error("Failed to delete secret for provider ID {$providerId}: " . $e->getMessage());
+            Log::error("Failed to delete secret for provider ID {$providerId}: ".$e->getMessage());
+
             return false;
         }
     }

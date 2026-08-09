@@ -17,6 +17,7 @@ class ForumAndServicesTest extends TestCase
     use RefreshDatabase;
 
     private Tenant $tenant;
+
     private User $farmer;
 
     protected function setUp(): void

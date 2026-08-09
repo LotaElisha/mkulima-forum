@@ -196,7 +196,7 @@ class WarehouseController extends Controller
             $isOperator = $warehouse->operator_id === $user->id;
             $isFarmer = $booking->farmer_id === $user->id;
 
-            if (!$isOperator && !$isFarmer) {
+            if (! $isOperator && ! $isFarmer) {
                 return response()->json(['message' => 'Not authorized.'], 403);
             }
 
@@ -213,7 +213,7 @@ class WarehouseController extends Controller
             if ($rule['role'] !== $actorRole) {
                 return response()->json(['message' => 'Transition not allowed for your role.'], 422);
             }
-            if (!in_array($booking->status, $rule['from'])) {
+            if (! in_array($booking->status, $rule['from'])) {
                 return response()->json(['message' => "Cannot move from {$booking->status} to {$validated['status']}."], 422);
             }
 

@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Escrow;
 use App\Models\EscrowLedger;
 use App\Models\Order;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Payments\EscrowService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class EscrowFlowTest extends TestCase
@@ -41,7 +41,7 @@ class EscrowFlowTest extends TestCase
             'tenant_id' => $tenant->id,
             'buyer_id' => $buyer->id,
             'seller_id' => $seller->id,
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'status' => 'pending',
             'subtotal' => 50000,
             'delivery_fee' => 5000,

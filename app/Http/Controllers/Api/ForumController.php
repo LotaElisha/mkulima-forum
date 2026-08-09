@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\ForumCategory;
-use App\Models\ForumThread;
 use App\Models\ForumReply;
+use App\Models\ForumThread;
 use App\Models\ForumVote;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ForumController extends Controller
 {
@@ -41,9 +40,9 @@ class ForumController extends Controller
     public function threads(Request $request): JsonResponse
     {
         $query = ForumThread::with([
-                'user:id,uuid,name,avatar,is_verified_expert,expert_title',
-                'category:id,name,slug',
-            ])
+            'user:id,uuid,name,avatar,is_verified_expert,expert_title',
+            'category:id,name,slug',
+        ])
             ->where('status', 'active');
 
         if ($request->filled('region')) {
@@ -60,7 +59,7 @@ class ForumController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'ilike', "%{$search}%")
-                  ->orWhere('body', 'ilike', "%{$search}%");
+                    ->orWhere('body', 'ilike', "%{$search}%");
             });
         }
 
@@ -128,9 +127,9 @@ class ForumController extends Controller
             'category:id,name,slug',
             'replies' => function ($q) {
                 $q->where('status', 'active')
-                  ->with(['user:id,uuid,name,avatar,role'])
-                  ->orderBy('created_at', 'asc');
-            }
+                    ->with(['user:id,uuid,name,avatar,role'])
+                    ->orderBy('created_at', 'asc');
+            },
         ])
             ->where('uuid', $uuid)
             ->where('status', 'active')
@@ -223,7 +222,7 @@ class ForumController extends Controller
             || $user->is_verified_expert
             || $user->hasRole('admin');
 
-        if (!$canMark) {
+        if (! $canMark) {
             return response()->json(['message' => 'Not authorized.'], 403);
         }
 

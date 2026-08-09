@@ -1,14 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 use App\Models\LandingSetting;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     $settings = [];
     try {
         $settings = LandingSetting::pluck('value', 'key')->toArray();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         // Fallback for when migrations haven't run yet
     }
 

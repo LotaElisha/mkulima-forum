@@ -8,10 +8,15 @@ use Illuminate\Support\Facades\Log;
 class MpesaService
 {
     protected string $consumerKey;
+
     protected string $consumerSecret;
+
     protected string $passkey;
+
     protected string $shortcode;
+
     protected bool $sandbox;
+
     protected string $baseUrl;
 
     public function __construct()
@@ -33,9 +38,9 @@ class MpesaService
     {
         try {
             $credentials = base64_encode("{$this->consumerKey}:{$this->consumerSecret}");
-            
+
             $response = Http::withHeaders([
-                'Authorization' => 'Basic ' . $credentials,
+                'Authorization' => 'Basic '.$credentials,
             ])->get("{$this->baseUrl}/oauth/v1/generate?grant_type=client_credentials");
 
             if ($response->successful()) {
@@ -43,9 +48,11 @@ class MpesaService
             }
 
             Log::error('M-Pesa token error', ['response' => $response->body()]);
+
             return null;
         } catch (\Exception $e) {
             Log::error('M-Pesa token exception', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -56,8 +63,8 @@ class MpesaService
     public function stkPush(string $phone, float $amount, string $reference, string $description): array
     {
         $token = $this->getAccessToken();
-        
-        if (!$token) {
+
+        if (! $token) {
             return [
                 'success' => false,
                 'message' => 'Failed to get access token',
@@ -66,7 +73,7 @@ class MpesaService
 
         $timestamp = now()->format('YmdHis');
         $password = base64_encode("{$this->shortcode}{$this->passkey}{$timestamp}");
-        
+
         // Format phone number
         $phone = $this->formatPhone($phone);
 
@@ -79,7 +86,7 @@ class MpesaService
             'PartyA' => $phone,
             'PartyB' => $this->shortcode,
             'PhoneNumber' => $phone,
-            'CallBackURL' => config('app.url') . '/api/payments/mpesa/callback',
+            'CallBackURL' => config('app.url').'/api/payments/mpesa/callback',
             'AccountReference' => $reference,
             'TransactionDesc' => $description,
         ];
@@ -90,6 +97,7 @@ class MpesaService
 
             if ($response->successful()) {
                 $data = $response->json();
+
                 return [
                     'success' => true,
                     'checkout_request_id' => $data['CheckoutRequestID'] ?? null,
@@ -100,6 +108,7 @@ class MpesaService
             }
 
             Log::error('M-Pesa STK push error', ['response' => $response->body()]);
+
             return [
                 'success' => false,
                 'message' => 'STK push failed',
@@ -107,6 +116,7 @@ class MpesaService
             ];
         } catch (\Exception $e) {
             Log::error('M-Pesa STK push exception', ['error' => $e->getMessage()]);
+
             return [
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -120,8 +130,8 @@ class MpesaService
     public function queryTransaction(string $checkoutRequestId): array
     {
         $token = $this->getAccessToken();
-        
-        if (!$token) {
+
+        if (! $token) {
             return [
                 'success' => false,
                 'message' => 'Failed to get access token',
@@ -160,15 +170,15 @@ class MpesaService
     protected function formatPhone(string $phone): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
-        
+
         if (str_starts_with($phone, '0')) {
-            $phone = '254' . substr($phone, 1);
+            $phone = '254'.substr($phone, 1);
         }
-        
+
         if (str_starts_with($phone, '+')) {
             $phone = substr($phone, 1);
         }
-        
+
         return $phone;
     }
 

@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Log;
 class GeminiProvider implements AIProviderInterface
 {
     protected string $apiKey;
+
     protected string $model;
+
     protected string $baseUrl;
+
     protected float $temperature;
+
     protected int $maxTokens;
+
     protected int $timeout;
 
     public function __construct(array $config)
@@ -48,13 +53,13 @@ class GeminiProvider implements AIProviderInterface
             ],
         ];
 
-        if (!empty($options['enable_grounding']) || !empty($options['google_search'])) {
+        if (! empty($options['enable_grounding']) || ! empty($options['google_search'])) {
             $payload['tools'] = [
-                ['googleSearch' => new \stdClass()],
+                ['googleSearch' => new \stdClass],
             ];
         }
 
-        if (!empty($options['system_instruction'])) {
+        if (! empty($options['system_instruction'])) {
             $payload['system_instruction'] = [
                 'parts' => [['text' => $options['system_instruction']]],
             ];
@@ -68,8 +73,8 @@ class GeminiProvider implements AIProviderInterface
 
         $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
 
-        if (!$response->successful()) {
-            $errorMsg = "Gemini API error ({$response->status()}): " . $response->body();
+        if (! $response->successful()) {
+            $errorMsg = "Gemini API error ({$response->status()}): ".$response->body();
             Log::error($errorMsg);
             throw new \RuntimeException("Gemini API call failed with status {$response->status()}");
         }
@@ -107,7 +112,7 @@ class GeminiProvider implements AIProviderInterface
             ],
         ];
 
-        if (!empty($options['system_instruction'])) {
+        if (! empty($options['system_instruction'])) {
             $payload['system_instruction'] = [
                 'parts' => [['text' => $options['system_instruction']]],
             ];
@@ -121,7 +126,7 @@ class GeminiProvider implements AIProviderInterface
 
         $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \RuntimeException("Gemini API call failed with status {$response->status()}");
         }
 
@@ -148,7 +153,7 @@ class GeminiProvider implements AIProviderInterface
         $startTime = microtime(true);
         $model = $options['model'] ?? $this->model;
 
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             throw new \InvalidArgumentException("Image file not found at path: {$imagePath}");
         }
 
@@ -171,7 +176,7 @@ class GeminiProvider implements AIProviderInterface
             ],
         ];
 
-        if (!empty($options['require_json'])) {
+        if (! empty($options['require_json'])) {
             $payload['generationConfig'] = ['response_mime_type' => 'application/json'];
         }
 
@@ -183,7 +188,7 @@ class GeminiProvider implements AIProviderInterface
 
         $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \RuntimeException("Gemini Vision API call failed with status {$response->status()}");
         }
 
@@ -255,10 +260,11 @@ class GeminiProvider implements AIProviderInterface
             ];
         } catch (\Throwable $e) {
             $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
+
             return [
                 'success' => false,
                 'latency_ms' => $latencyMs,
-                'message' => 'Connection Failed: ' . $e->getMessage(),
+                'message' => 'Connection Failed: '.$e->getMessage(),
                 'model' => $this->model,
             ];
         }
@@ -299,10 +305,10 @@ class GeminiProvider implements AIProviderInterface
                     }
                 }
 
-                return !empty($fetchedModels) ? $fetchedModels : $defaultModels;
+                return ! empty($fetchedModels) ? $fetchedModels : $defaultModels;
             }
         } catch (\Throwable $e) {
-            Log::warning('Gemini getModels failed: ' . $e->getMessage());
+            Log::warning('Gemini getModels failed: '.$e->getMessage());
         }
 
         return $defaultModels;
@@ -323,6 +329,7 @@ class GeminiProvider implements AIProviderInterface
                 'parts' => [['text' => $msg['content'] ?? '']],
             ];
         }
+
         return $formatted;
     }
 }

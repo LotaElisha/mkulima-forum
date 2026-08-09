@@ -15,8 +15,11 @@ class LogisticsWarehouseTest extends TestCase
     use RefreshDatabase;
 
     private Tenant $tenant;
+
     private User $farmer;
+
     private User $driver;
+
     private User $operator;
 
     protected function setUp(): void

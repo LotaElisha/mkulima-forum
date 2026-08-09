@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class WalletService
@@ -29,6 +28,7 @@ class WalletService
     public function getBalance(int $userId): array
     {
         $wallet = $this->getOrCreateWallet($userId);
+
         return [
             'wallet_id' => $wallet->uuid,
             'balance' => (float) $wallet->balance,
@@ -133,7 +133,7 @@ class WalletService
                 return ['success' => false, 'message' => 'Insufficient balance'];
             }
 
-            $reference = 'TRF-' . strtoupper(Str::random(8));
+            $reference = 'TRF-'.strtoupper(Str::random(8));
 
             // Debit sender
             $fromBalanceBefore = (float) $fromWallet->balance;
@@ -150,7 +150,7 @@ class WalletService
                 'balance_after' => $fromWallet->balance,
                 'status' => 'completed',
                 'reference' => $reference,
-                'description' => $description ?? 'Transfer to user ' . $toUserId,
+                'description' => $description ?? 'Transfer to user '.$toUserId,
                 'metadata' => ['to_user_id' => $toUserId],
             ]);
 
@@ -169,7 +169,7 @@ class WalletService
                 'balance_after' => $toWallet->balance,
                 'status' => 'completed',
                 'reference' => $reference,
-                'description' => $description ?? 'Transfer from user ' . $fromUserId,
+                'description' => $description ?? 'Transfer from user '.$fromUserId,
                 'metadata' => ['from_user_id' => $fromUserId],
             ]);
 

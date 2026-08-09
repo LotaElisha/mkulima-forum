@@ -34,10 +34,10 @@ class FeatureController extends Controller
     public function toggle(Request $request, string $key): JsonResponse
     {
         $feature = FeatureFlag::where('key', $key)->firstOrFail();
-        $feature->update(['enabled' => !$feature->enabled]);
+        $feature->update(['enabled' => ! $feature->enabled]);
 
         return response()->json([
-            'message' => "Feature '{$feature->name}' is now " . ($feature->enabled ? 'enabled' : 'disabled'),
+            'message' => "Feature '{$feature->name}' is now ".($feature->enabled ? 'enabled' : 'disabled'),
             'feature' => [
                 'key' => $feature->key,
                 'enabled' => $feature->enabled,
@@ -51,7 +51,7 @@ class FeatureController extends Controller
     public function update(Request $request, string $key): JsonResponse
     {
         $feature = FeatureFlag::where('key', $key)->firstOrFail();
-        
+
         $validated = $request->validate([
             'enabled' => 'sometimes|boolean',
             'settings' => 'sometimes|array',

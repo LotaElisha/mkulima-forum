@@ -33,6 +33,7 @@ class AIService
         try {
             $response = $provider->generateText($messages, $options);
             $this->logUsage($provider, $featureKey, $response, $userId, 'success');
+
             return $response;
         } catch (\Throwable $e) {
             $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
@@ -52,6 +53,7 @@ class AIService
         try {
             $response = $provider->generateStructuredData($messages, $schema, $options);
             $this->logUsage($provider, $featureKey, $response, $userId, 'success');
+
             return $response;
         } catch (\Throwable $e) {
             $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
@@ -71,6 +73,7 @@ class AIService
         try {
             $response = $provider->analyzeImage($imagePath, $prompt, $options);
             $this->logUsage($provider, $featureKey, $response, $userId, 'success');
+
             return $response;
         } catch (\Throwable $e) {
             $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
@@ -86,7 +89,7 @@ class AIService
     {
         $cacheKey = "ai_feature_route_{$tenantId}_{$featureKey}";
 
-        $providerId = Cache::remember($cacheKey, 300, function () use ($featureKey, $tenantId) {
+        $providerId = Cache::remember($cacheKey, 300, function () use ($featureKey) {
             $route = AiFeatureRoute::where('feature_key', $featureKey)
                 ->where('is_active', true)
                 ->first();
@@ -111,7 +114,7 @@ class AIService
     {
         $cacheKey = "ai_default_provider_{$tenantId}";
 
-        $providerId = Cache::remember($cacheKey, 300, function () use ($tenantId) {
+        $providerId = Cache::remember($cacheKey, 300, function () {
             return AiProvider::withoutGlobalScopes()
                 ->where('status', 'active')
                 ->where('is_default', true)
@@ -193,7 +196,7 @@ class AIService
     public function clearCache(int $tenantId = 1): void
     {
         Cache::forget("ai_default_provider_{$tenantId}");
-        
+
         $features = ['farmer_chat', 'plant_diagnosis', 'input_label_check', 'agronomist_kb', 'market_analysis', 'document_analysis'];
         foreach ($features as $f) {
             Cache::forget("ai_feature_route_{$tenantId}_{$f}");
@@ -229,7 +232,7 @@ class AIService
                 'status' => 'success',
             ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed to log AI usage: ' . $e->getMessage());
+            Log::warning('Failed to log AI usage: '.$e->getMessage());
         }
     }
 
@@ -250,7 +253,7 @@ class AIService
                 'error_type' => substr($errorMessage, 0, 250),
             ]);
         } catch (\Throwable $e) {
-            Log::warning('Failed to log AI error usage: ' . $e->getMessage());
+            Log::warning('Failed to log AI error usage: '.$e->getMessage());
         }
     }
 }

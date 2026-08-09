@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Http;
 class OpenAIProvider implements AIProviderInterface
 {
     protected string $apiKey;
+
     protected string $model;
+
     protected string $baseUrl;
 
     public function __construct(array $config)
@@ -37,7 +39,7 @@ class OpenAIProvider implements AIProviderInterface
 
         $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             throw new \RuntimeException("OpenAI API call failed with status {$response->status()}");
         }
 
@@ -90,6 +92,7 @@ class OpenAIProvider implements AIProviderInterface
             }
             $response = Http::withToken($this->apiKey)->get("{$this->baseUrl}/models");
             $latencyMs = (int) round((microtime(true) - $startTime) * 1000);
+
             return [
                 'success' => $response->successful(),
                 'latency_ms' => $latencyMs,

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -52,7 +53,7 @@ class User extends Authenticatable
         parent::boot();
         static::creating(function ($user) {
             if (empty($user->uuid)) {
-                $user->uuid = (string) \Illuminate\Support\Str::uuid();
+                $user->uuid = (string) Str::uuid();
             }
         });
     }
@@ -95,6 +96,7 @@ class User extends Authenticatable
         if ($this->isAdmin()) {
             return true;
         }
+
         return parent::can($abilities, $arguments);
     }
 

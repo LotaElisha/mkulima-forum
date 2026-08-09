@@ -14,9 +14,7 @@ use Illuminate\Http\Request;
  */
 class WeatherController extends Controller
 {
-    public function __construct(protected WeatherService $weather)
-    {
-    }
+    public function __construct(protected WeatherService $weather) {}
 
     public function current(Request $request): JsonResponse
     {
@@ -35,7 +33,7 @@ class WeatherController extends Controller
 
         return response()->json([
             'forecast' => $forecast,
-            'available' => !empty($forecast),
+            'available' => ! empty($forecast),
         ]);
     }
 

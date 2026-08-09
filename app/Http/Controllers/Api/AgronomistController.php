@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\KbDocument;
+use App\Services\AI\AIService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class AgronomistController extends Controller
 {
@@ -67,14 +67,14 @@ class AgronomistController extends Controller
             ->where('is_verified', true)
             ->where(function ($q) use ($validated) {
                 $q->where('title', 'ilike', "%{$validated['query']}%")
-                  ->orWhere('content', 'ilike', "%{$validated['query']}%");
+                    ->orWhere('content', 'ilike', "%{$validated['query']}%");
             });
 
-        if (!empty($validated['category'])) {
+        if (! empty($validated['category'])) {
             $query->where('category', $validated['category']);
         }
 
-        if (!empty($validated['source'])) {
+        if (! empty($validated['source'])) {
             $query->where('source', $validated['source']);
         }
 
@@ -101,7 +101,7 @@ class AgronomistController extends Controller
             ->where('is_verified', true)
             ->first();
 
-        if (!$doc) {
+        if (! $doc) {
             return response()->json([
                 'message' => 'Document not found',
             ], 404);
@@ -129,7 +129,7 @@ class AgronomistController extends Controller
             ->where('is_verified', true)
             ->where(function ($q) use ($question) {
                 $q->where('title', 'ilike', "%{$question}%")
-                  ->orWhere('content', 'ilike', "%{$question}%");
+                    ->orWhere('content', 'ilike', "%{$question}%");
             })
             ->where('language', $language)
             ->orderBy('published_at', 'desc')
@@ -142,11 +142,12 @@ class AgronomistController extends Controller
      */
     private function buildContext($docs): string
     {
-        $context = "";
+        $context = '';
         foreach ($docs as $doc) {
             $context .= "Source: {$doc->title}\n";
-            $context .= substr($doc->content, 0, 500) . "\n\n";
+            $context .= substr($doc->content, 0, 500)."\n\n";
         }
+
         return $context;
     }
 
@@ -168,7 +169,7 @@ class AgronomistController extends Controller
         $prompt = "Context:\n{$context}\n\nQuestion: {$question}";
 
         try {
-            $aiService = app(\App\Services\AI\AIService::class);
+            $aiService = app(AIService::class);
             $aiResponse = $aiService->generateText(
                 'agronomist_kb',
                 [['role' => 'user', 'content' => $prompt]],
@@ -176,14 +177,14 @@ class AgronomistController extends Controller
                 auth()->id()
             );
 
-            if (!empty($aiResponse->text)) {
+            if (! empty($aiResponse->text)) {
                 return [
                     'text' => $aiResponse->text,
                     'confidence' => 'high',
                 ];
             }
         } catch (\Exception $e) {
-            \Log::error('AI agronomist query failed: ' . $e->getMessage());
+            \Log::error('AI agronomist query failed: '.$e->getMessage());
         }
 
         return [

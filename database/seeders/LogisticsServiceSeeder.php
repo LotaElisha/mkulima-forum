@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\ServiceProvider;
-use App\Models\Warehouse;
 use App\Models\Transporter;
 use App\Models\User;
+use App\Models\Warehouse;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class LogisticsServiceSeeder extends Seeder
@@ -109,11 +109,11 @@ class LogisticsServiceSeeder extends Seeder
 
         foreach ($providers as $i => $p) {
             $user = User::firstOrCreate(
-                ['email' => 'services' . ($i + 1) . '@demo.mkulima'],
+                ['email' => 'services'.($i + 1).'@demo.mkulima'],
                 [
                     'tenant_id' => $tenantId,
-                    'name' => $p['business_name'] . ' Account',
-                    'phone' => '2557130002' . str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT),
+                    'name' => $p['business_name'].' Account',
+                    'phone' => '2557130002'.str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT),
                     'role' => 'agronomist',
                     'kyc_status' => 'verified',
                     'status' => 'active',
@@ -126,7 +126,7 @@ class LogisticsServiceSeeder extends Seeder
                 array_merge($p, [
                     'uuid' => (string) Str::uuid(),
                     'user_id' => $user->id,
-                    'license_number' => 'LIC-' . strtoupper(Str::random(8)),
+                    'license_number' => 'LIC-'.strtoupper(Str::random(8)),
                     'verification_status' => 'verified',
                     'availability' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
                     'rating' => 4.5,
@@ -181,11 +181,11 @@ class LogisticsServiceSeeder extends Seeder
 
         foreach ($warehouses as $i => $w) {
             $user = User::firstOrCreate(
-                ['email' => 'warehouse' . ($i + 1) . '@demo.mkulima'],
+                ['email' => 'warehouse'.($i + 1).'@demo.mkulima'],
                 [
                     'tenant_id' => $tenantId,
-                    'name' => $w['name'] . ' Operator',
-                    'phone' => '2557130003' . str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT),
+                    'name' => $w['name'].' Operator',
+                    'phone' => '2557130003'.str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT),
                     'role' => 'warehouse',
                     'kyc_status' => 'verified',
                     'status' => 'active',
@@ -249,11 +249,11 @@ class LogisticsServiceSeeder extends Seeder
 
         foreach ($transporters as $i => $t) {
             $user = User::firstOrCreate(
-                ['email' => 'transport' . ($i + 1) . '@demo.mkulima'],
+                ['email' => 'transport'.($i + 1).'@demo.mkulima'],
                 [
                     'tenant_id' => $tenantId,
-                    'name' => $t['plate_number'] . ' Driver',
-                    'phone' => '2557130004' . str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT),
+                    'name' => $t['plate_number'].' Driver',
+                    'phone' => '2557130004'.str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT),
                     'role' => 'driver',
                     'kyc_status' => 'verified',
                     'status' => 'active',
@@ -272,6 +272,6 @@ class LogisticsServiceSeeder extends Seeder
             );
         }
 
-        echo "Seeded " . ServiceProvider::count() . " service providers, " . Warehouse::count() . " warehouses, " . Transporter::count() . " transporters\n";
+        echo 'Seeded '.ServiceProvider::count().' service providers, '.Warehouse::count().' warehouses, '.Transporter::count()." transporters\n";
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Wallet extends Model
@@ -44,7 +45,7 @@ class Wallet extends Model
         return $this->hasMany(WalletTransaction::class);
     }
 
-    public function deposit(float $amount, string $description = null, array $metadata = []): WalletTransaction
+    public function deposit(float $amount, ?string $description = null, array $metadata = []): WalletTransaction
     {
         $this->balance += $amount;
         $this->save();
@@ -61,7 +62,7 @@ class Wallet extends Model
         ]);
     }
 
-    public function withdraw(float $amount, string $description = null, array $metadata = []): ?WalletTransaction
+    public function withdraw(float $amount, ?string $description = null, array $metadata = []): ?WalletTransaction
     {
         if ($this->balance < $amount) {
             return null;
@@ -82,13 +83,13 @@ class Wallet extends Model
         ]);
     }
 
-    public function transferTo(Wallet $recipient, float $amount, string $description = null): ?WalletTransaction
+    public function transferTo(Wallet $recipient, float $amount, ?string $description = null): ?WalletTransaction
     {
         if ($recipient->id === $this->id) {
             return null;
         }
 
-        return \Illuminate\Support\Facades\DB::transaction(function () use ($recipient, $amount, $description) {
+        return DB::transaction(function () use ($recipient, $amount, $description) {
             // Re-read both wallets under row locks (deadlock-safe: lock in id order)
             $first = $this->id < $recipient->id ? $this : $recipient;
             $second = $this->id < $recipient->id ? $recipient : $this;
@@ -121,7 +122,7 @@ class Wallet extends Model
             'amount' => -$amount,
             'balance_before' => $this->balance + $amount,
             'balance_after' => $this->balance,
-            'description' => $description ?? 'Transfer to ' . $recipient->user->name,
+            'description' => $description ?? 'Transfer to '.$recipient->user->name,
             'metadata' => ['recipient_wallet_id' => $recipient->id],
         ]);
 
@@ -133,7 +134,7 @@ class Wallet extends Model
             'amount' => $amount,
             'balance_before' => $recipient->balance - $amount,
             'balance_after' => $recipient->balance,
-            'description' => $description ?? 'Transfer from ' . $this->user->name,
+            'description' => $description ?? 'Transfer from '.$this->user->name,
             'metadata' => ['sender_wallet_id' => $this->id],
         ]);
     }

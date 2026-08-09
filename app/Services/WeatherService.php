@@ -3,15 +3,20 @@
 namespace App\Services;
 
 use App\Models\WeatherCache;
+use App\Services\AI\AIService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class WeatherService
 {
     protected ?string $openWeatherApiKey;
+
     protected bool $useOpenMeteo;
+
     protected string $openWeatherUrl = 'https://api.openweathermap.org/data/2.5';
+
     protected string $openMeteoUrl = 'https://api.open-meteo.com/v1';
+
     protected string $geocodingUrl = 'https://geocoding-api.open-meteo.com/v1';
 
     public function __construct()
@@ -28,7 +33,7 @@ class WeatherService
         }
 
         try {
-            if ($this->openWeatherApiKey && !$this->useOpenMeteo) {
+            if ($this->openWeatherApiKey && ! $this->useOpenMeteo) {
                 $result = $this->fetchOpenWeatherCurrent($location);
             } else {
                 $result = $this->fetchOpenMeteoCurrent($location);
@@ -36,15 +41,17 @@ class WeatherService
 
             if ($result) {
                 $this->cacheWeather($location, $result, null, null);
+
                 return $result;
             }
         } catch (\Exception $e) {
-            Log::error('Weather API error: ' . $e->getMessage());
+            Log::error('Weather API error: '.$e->getMessage());
         }
 
         $stale = $this->getStaleWeather($location);
         if ($stale) {
             $stale['is_stale'] = true;
+
             return $stale;
         }
 
@@ -68,7 +75,7 @@ class WeatherService
         }
 
         try {
-            if ($this->openWeatherApiKey && !$this->useOpenMeteo) {
+            if ($this->openWeatherApiKey && ! $this->useOpenMeteo) {
                 $forecast = $this->fetchOpenWeatherForecast($location);
             } else {
                 $forecast = $this->fetchOpenMeteoForecast($location);
@@ -76,10 +83,11 @@ class WeatherService
 
             if ($forecast !== null) {
                 $this->cacheWeather($location, null, $forecast, null);
+
                 return $forecast;
             }
         } catch (\Exception $e) {
-            Log::error('Forecast API error: ' . $e->getMessage());
+            Log::error('Forecast API error: '.$e->getMessage());
         }
 
         $staleCache = WeatherCache::where('location', $location)->first();
@@ -88,6 +96,7 @@ class WeatherService
             foreach ($forecast as &$day) {
                 $day['is_stale'] = true;
             }
+
             return $forecast;
         }
 
@@ -97,8 +106,9 @@ class WeatherService
     protected function fetchOpenMeteoCurrent(string $location): ?array
     {
         $coords = $this->geocode($location);
-        if (!$coords) {
+        if (! $coords) {
             Log::warning("Geocoding failed for {$location}");
+
             return null;
         }
 
@@ -110,13 +120,13 @@ class WeatherService
             'forecast_days' => 1,
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
         $data = $response->json();
         $current = $data['current'] ?? null;
-        if (!$current) {
+        if (! $current) {
             return null;
         }
 
@@ -144,7 +154,7 @@ class WeatherService
     protected function fetchOpenMeteoForecast(string $location): ?array
     {
         $coords = $this->geocode($location);
-        if (!$coords) {
+        if (! $coords) {
             return null;
         }
 
@@ -156,13 +166,13 @@ class WeatherService
             'forecast_days' => 6,
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
         $data = $response->json();
         $daily = $data['daily'] ?? null;
-        if (!$daily) {
+        if (! $daily) {
             return null;
         }
 
@@ -195,16 +205,17 @@ class WeatherService
             'format' => 'json',
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
         $results = $response->json('results');
-        if (empty($results) || !is_array($results)) {
+        if (empty($results) || ! is_array($results)) {
             return null;
         }
 
         $first = $results[0];
+
         return [
             'name' => $first['name'] ?? $location,
             'lat' => $first['latitude'] ?? null,
@@ -221,11 +232,12 @@ class WeatherService
             'units' => 'metric',
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
         $data = $response->json();
+
         return [
             'location' => $data['name'] ?? $location,
             'lat' => $data['coord']['lat'] ?? null,
@@ -255,7 +267,7 @@ class WeatherService
             'cnt' => 40,
         ]);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             return null;
         }
 
@@ -264,7 +276,7 @@ class WeatherService
 
         foreach ($data['list'] ?? [] as $item) {
             $date = date('Y-m-d', $item['dt']);
-            if (!isset($daily[$date])) {
+            if (! isset($daily[$date])) {
                 $daily[$date] = [
                     'date' => $date,
                     'day_name' => date('l', $item['dt']),
@@ -324,7 +336,7 @@ class WeatherService
         $location = $weather['location'] ?? 'Tanzania';
 
         try {
-            $aiService = app(\App\Services\AI\AIService::class);
+            $aiService = app(AIService::class);
             $prompt = "Provide a JSON array of localized agricultural advisories for a farmer in {$location} with current weather {$temp}°C, humidity {$humidity}%, {$desc}. Search live regional micro-climate forecasts. Each item must have: category (string), title (string), message (string in Swahili), priority ('high'|'medium'|'low'), icon ('water_drop'|'wb_sunny'|'bug_report'|'agriculture'). Return ONLY valid JSON array.";
 
             $aiResponse = $aiService->generateText(
@@ -337,7 +349,7 @@ class WeatherService
                 ]
             );
 
-            if (!empty($aiResponse->text)) {
+            if (! empty($aiResponse->text)) {
                 $cleanJson = preg_replace('/```json\s*|\s*```/', '', trim($aiResponse->text));
                 $parsed = json_decode($cleanJson, true);
                 if (is_array($parsed) && count($parsed) > 0) {
@@ -345,7 +357,7 @@ class WeatherService
                 }
             }
         } catch (\Throwable $e) {
-            Log::info('Gemini 3 Pro Weather Advisory fallback: ' . $e->getMessage());
+            Log::info('Gemini 3 Pro Weather Advisory fallback: '.$e->getMessage());
         }
 
         $advisories = [];
@@ -437,19 +449,26 @@ class WeatherService
     {
         try {
             $cache = WeatherCache::firstOrNew(['location' => $location]);
-            if ($current) $cache->current_data = $current;
-            if ($forecast) $cache->forecast_data = $forecast;
-            if ($advisory) $cache->advisory_data = $advisory;
+            if ($current) {
+                $cache->current_data = $current;
+            }
+            if ($forecast) {
+                $cache->forecast_data = $forecast;
+            }
+            if ($advisory) {
+                $cache->advisory_data = $advisory;
+            }
             $cache->expires_at = now()->addMinutes(30);
             $cache->save();
         } catch (\Exception $e) {
-            Log::warning('Weather cache write failed: ' . $e->getMessage());
+            Log::warning('Weather cache write failed: '.$e->getMessage());
         }
     }
 
     protected function getStaleWeather(string $location): ?array
     {
         $cache = WeatherCache::where('location', $location)->first();
+
         return ($cache && $cache->current_data) ? $cache->current_data : null;
     }
 }

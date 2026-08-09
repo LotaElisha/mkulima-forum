@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToTenant;
+use Illuminate\Support\Str;
 
 class KbDocument extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $table = 'kb_documents';
 
@@ -36,7 +37,7 @@ class KbDocument extends Model
         parent::boot();
         static::creating(function ($doc) {
             if (empty($doc->uuid)) {
-                $doc->uuid = (string) \Illuminate\Support\Str::uuid();
+                $doc->uuid = (string) Str::uuid();
             }
         });
     }

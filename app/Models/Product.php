@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToTenant;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
 class Product extends Model
 {
-    use HasFactory, BelongsToTenant, Searchable;
+    use BelongsToTenant, HasFactory, Searchable;
 
     protected $fillable = [
         'tenant_id',
@@ -44,10 +45,10 @@ class Product extends Model
         parent::boot();
         static::creating(function ($product) {
             if (empty($product->uuid)) {
-                $product->uuid = (string) \Illuminate\Support\Str::uuid();
+                $product->uuid = (string) Str::uuid();
             }
             if (empty($product->slug)) {
-                $product->slug = \Illuminate\Support\Str::slug($product->name) . '-' . uniqid();
+                $product->slug = Str::slug($product->name).'-'.uniqid();
             }
         });
     }

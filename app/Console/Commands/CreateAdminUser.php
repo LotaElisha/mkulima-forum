@@ -33,7 +33,7 @@ class CreateAdminUser extends Command
                 'tenant_id' => 1,
                 'name' => $name,
                 'email' => $email,
-                'phone' => '255' . rand(700000000, 799999999),
+                'phone' => '255'.rand(700000000, 799999999),
                 'password' => Hash::make($password),
                 'role' => Roles::ADMIN,
                 'status' => 'active',

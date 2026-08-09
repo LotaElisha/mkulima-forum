@@ -23,7 +23,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn([
                 'store_name', 'store_location', 'business_license',
-                'store_description', 'suspended_at', 'suspension_reason'
+                'store_description', 'suspended_at', 'suspension_reason',
             ]);
         });
     }

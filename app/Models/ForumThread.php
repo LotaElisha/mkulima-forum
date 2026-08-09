@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToTenant;
+use Illuminate\Support\Str;
 
 class ForumThread extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -44,7 +45,7 @@ class ForumThread extends Model
         parent::boot();
         static::creating(function ($thread) {
             if (empty($thread->uuid)) {
-                $thread->uuid = (string) \Illuminate\Support\Str::uuid();
+                $thread->uuid = (string) Str::uuid();
             }
         });
     }

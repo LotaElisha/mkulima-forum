@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class IvrService
 {
     protected string $baseUrl;
+
     protected string $username;
+
     protected string $apiKey;
 
     public function __construct()
@@ -65,7 +68,7 @@ class IvrService
 
         $text = 'Bei za soko leo. ';
         foreach ($prices as $p) {
-            $text .= $p['crop'] . ' ' . $p['price'] . '. ';
+            $text .= $p['crop'].' '.$p['price'].'. ';
         }
         $text .= 'Rudia kupiga moja. Kurudi nyuma piga nyota. Kuacha piga sufuri.';
 
@@ -83,12 +86,12 @@ class IvrService
         $weather = $weatherService->getCurrentWeather('Dar es Salaam');
         $advisories = $weatherService->getFarmingAdvisory($weather);
 
-        $text = 'Hali ya hewa leo. ' . $weather['location'] . '. ';
-        $text .= 'Joto la digrii ' . $weather['temperature'] . '. ';
-        $text .= $weather['description'] . '. ';
+        $text = 'Hali ya hewa leo. '.$weather['location'].'. ';
+        $text .= 'Joto la digrii '.$weather['temperature'].'. ';
+        $text .= $weather['description'].'. ';
 
-        if (!empty($advisories)) {
-            $text .= 'Ushauri. ' . $advisories[0]['message'] . '. ';
+        if (! empty($advisories)) {
+            $text .= 'Ushauri. '.$advisories[0]['message'].'. ';
         }
 
         $text .= 'Rudia kupiga mbili. Kurudi nyuma piga nyota. Kuacha piga sufuri.';
@@ -149,7 +152,7 @@ class IvrService
         try {
             $xml = $this->buildCallXml($message ?? 'Habari, hii ni simu kutoka Mkulima Forum.');
 
-            $response = \Illuminate\Support\Facades\Http::withHeaders([
+            $response = Http::withHeaders([
                 'apiKey' => $this->apiKey,
                 'Content-Type' => 'application/x-www-form-urlencoded',
             ])->asForm()->post("{$this->baseUrl}/version1/call", [
@@ -170,7 +173,8 @@ class IvrService
                 'error' => $response->body(),
             ];
         } catch (\Exception $e) {
-            Log::error('IVR call failed: ' . $e->getMessage());
+            Log::error('IVR call failed: '.$e->getMessage());
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -181,20 +185,21 @@ class IvrService
     protected function buildCallXml(string $text): string
     {
         return '<?xml version="1.0" encoding="UTF-8"?>'
-            . '<Response>'
-            . '<Say voice="female" language="sw">' . htmlspecialchars($text) . '</Say>'
-            . '</Response>';
+            .'<Response>'
+            .'<Say voice="female" language="sw">'.htmlspecialchars($text).'</Say>'
+            .'</Response>';
     }
 
     protected function formatPhone(string $phone): string
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
         if (str_starts_with($phone, '0')) {
-            $phone = '255' . substr($phone, 1);
+            $phone = '255'.substr($phone, 1);
         }
         if (str_starts_with($phone, '7') || str_starts_with($phone, '6')) {
-            $phone = '255' . $phone;
+            $phone = '255'.$phone;
         }
-        return '+' . $phone;
+
+        return '+'.$phone;
     }
 }

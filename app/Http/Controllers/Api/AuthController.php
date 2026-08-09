@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\OtpService;
+use App\Support\Roles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -32,7 +32,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->input('email'))->first();
 
-        if (!$user || !Hash::check($request->input('password'), $user->password)) {
+        if (! $user || ! Hash::check($request->input('password'), $user->password)) {
             return response()->json([
                 'message' => 'Invalid credentials.',
             ], 401);
@@ -61,6 +61,7 @@ class AuthController extends Controller
             ],
         ]);
     }
+
     public function login(Request $request): JsonResponse
     {
         $request->validate([
@@ -70,7 +71,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->input('email'))->first();
 
-        if (!$user || !Hash::check($request->input('password'), $user->password)) {
+        if (! $user || ! Hash::check($request->input('password'), $user->password)) {
             return response()->json([
                 'message' => 'Invalid credentials.',
             ], 401);
@@ -145,7 +146,7 @@ class AuthController extends Controller
             'code' => ['required', 'string', 'size:6'],
             'purpose' => ['nullable', 'string', 'in:login,register,reset'],
             'name' => ['nullable', 'string', 'max:255'],
-            'role' => ['nullable', 'string', \App\Support\Roles::rule(\App\Support\Roles::SELF_REGISTERABLE)],
+            'role' => ['nullable', 'string', Roles::rule(Roles::SELF_REGISTERABLE)],
             'country_code' => ['nullable', 'string', 'size:2'],
         ]);
 
@@ -153,7 +154,7 @@ class AuthController extends Controller
         $code = $request->input('code');
         $purpose = $request->input('purpose', 'login');
 
-        if (!$this->otpService->verify($phone, $code, $purpose)) {
+        if (! $this->otpService->verify($phone, $code, $purpose)) {
             return response()->json([
                 'message' => 'Invalid or expired OTP code.',
             ], 422);
@@ -162,13 +163,13 @@ class AuthController extends Controller
         // Find or create user
         $user = User::where('phone', $phone)->first();
 
-        if (!$user && $purpose === 'login') {
+        if (! $user && $purpose === 'login') {
             return response()->json([
                 'message' => 'User not found. Please register first.',
             ], 404);
         }
 
-        if (!$user && $purpose === 'register') {
+        if (! $user && $purpose === 'register') {
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'country_code' => ['required', 'string', 'size:2'],
@@ -194,7 +195,7 @@ class AuthController extends Controller
             // Assign Spatie role; firstOrCreate guards against an unseeded DB
             // (assignRole throws RoleDoesNotExist otherwise).
             $user->assignRole(
-                \Spatie\Permission\Models\Role::firstOrCreate([
+                Role::firstOrCreate([
                     'name' => $user->role,
                     'guard_name' => 'web',
                 ])
@@ -258,7 +259,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'unique:users,email,' . $user->id],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$user->id],
             'preferred_language' => ['sometimes', 'string', 'in:sw,en,lg,rw,fr'],
             'avatar' => ['sometimes', 'image', 'max:2048'],
         ]);

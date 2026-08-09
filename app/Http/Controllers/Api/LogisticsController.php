@@ -118,7 +118,7 @@ class LogisticsController extends Controller
             $query = FreightRequest::with('requester:id,uuid,name,avatar')
                 ->where(function ($q) use ($transporterIds) {
                     $q->where('status', 'open')
-                      ->orWhereIn('transporter_id', $transporterIds);
+                        ->orWhereIn('transporter_id', $transporterIds);
                 });
         } else {
             $query = FreightRequest::with('transporter.user:id,uuid,name,avatar')
@@ -157,7 +157,7 @@ class LogisticsController extends Controller
             ->where('verification_status', 'verified')
             ->first();
 
-        if (!$transporter) {
+        if (! $transporter) {
             return response()->json(['message' => 'You are not a verified transporter.'], 403);
         }
 
@@ -198,7 +198,7 @@ class LogisticsController extends Controller
         $isRequester = $freight->requester_id === $user->id;
         $isTransporter = $freight->transporter && $freight->transporter->user_id === $user->id;
 
-        if (!$isRequester && !$isTransporter) {
+        if (! $isRequester && ! $isTransporter) {
             return response()->json(['message' => 'Not authorized.'], 403);
         }
 
@@ -215,7 +215,7 @@ class LogisticsController extends Controller
         if ($rule['role'] !== $actorRole) {
             return response()->json(['message' => 'Transition not allowed for your role.'], 422);
         }
-        if (!in_array($freight->status, $rule['from'])) {
+        if (! in_array($freight->status, $rule['from'])) {
             return response()->json(['message' => "Cannot move from {$freight->status} to {$validated['status']}."], 422);
         }
 

@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class CacheWeather extends Command
 {
     protected $signature = 'weather:cache {locations?* : Locations to pre-fetch (default: Dodoma Dar-Es-Salaam Arusha Mwanza Mbeya)}';
+
     protected $description = 'Pre-fetch and cache current weather and forecast for key locations';
 
     public function handle(WeatherService $service): int
@@ -40,7 +41,7 @@ class CacheWeather extends Command
                     $failed++;
                 }
             } catch (\Throwable $e) {
-                $this->error("Failed for {$location}: " . $e->getMessage());
+                $this->error("Failed for {$location}: ".$e->getMessage());
                 $failed++;
             }
 

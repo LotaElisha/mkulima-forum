@@ -16,6 +16,7 @@ class AiProviderManagementTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+
     protected User $farmer;
 
     protected function setUp(): void

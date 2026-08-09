@@ -45,18 +45,18 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         $matrix = [
-            Roles::FARMER     => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
-            Roles::BUYER      => ['orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
+            Roles::FARMER => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
+            Roles::BUYER => ['orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
             Roles::AGRODEALER => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'services.book', 'wallet.use'],
-            Roles::SELLER     => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'wallet.use'],
+            Roles::SELLER => ['products.create', 'products.manage-own', 'orders.view-own', 'forum.post', 'wallet.use'],
             Roles::AGRONOMIST => ['forum.post', 'services.provide', 'wallet.use'],
             Roles::VETERINARY => ['forum.post', 'services.provide', 'wallet.use'],
-            Roles::DRIVER     => ['forum.post', 'wallet.use'],
-            Roles::LOGISTICS  => ['forum.post', 'wallet.use'],
-            Roles::WAREHOUSE  => ['forum.post', 'wallet.use'],
-            Roles::MODERATOR  => ['forum.post', 'forum.moderate', 'threads.moderate', 'replies.moderate'],
+            Roles::DRIVER => ['forum.post', 'wallet.use'],
+            Roles::LOGISTICS => ['forum.post', 'wallet.use'],
+            Roles::WAREHOUSE => ['forum.post', 'wallet.use'],
+            Roles::MODERATOR => ['forum.post', 'forum.moderate', 'threads.moderate', 'replies.moderate'],
             // Admin & Superadmin get EVERY permission (full access)
-            Roles::ADMIN      => $permissions,
+            Roles::ADMIN => $permissions,
             Roles::SUPERADMIN => $permissions,
         ];
 

@@ -32,8 +32,9 @@ class PushNotificationService
     {
         $serverKey = config('services.fcm.server_key');
 
-        if (!$serverKey) {
+        if (! $serverKey) {
             Log::warning('FCM server key not configured');
+
             return ['success' => false, 'message' => 'FCM not configured'];
         }
 
@@ -65,7 +66,7 @@ class PushNotificationService
 
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'key=' . $serverKey,
+                'Authorization' => 'key='.$serverKey,
                 'Content-Type' => 'application/json',
             ])->post('https://fcm.googleapis.com/fcm/send', $payload);
 
@@ -87,6 +88,7 @@ class PushNotificationService
             ];
         } catch (\Exception $e) {
             Log::error('FCM send failed', ['error' => $e->getMessage()]);
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -98,12 +100,12 @@ class PushNotificationService
     {
         $serverKey = config('services.fcm.server_key');
 
-        if (!$serverKey) {
+        if (! $serverKey) {
             return ['success' => false, 'message' => 'FCM not configured'];
         }
 
         $payload = [
-            'to' => '/topics/' . $topic,
+            'to' => '/topics/'.$topic,
             'notification' => [
                 'title' => $title,
                 'body' => $body,
@@ -114,7 +116,7 @@ class PushNotificationService
 
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'key=' . $serverKey,
+                'Authorization' => 'key='.$serverKey,
                 'Content-Type' => 'application/json',
             ])->post('https://fcm.googleapis.com/fcm/send', $payload);
 
@@ -124,6 +126,7 @@ class PushNotificationService
             ];
         } catch (\Exception $e) {
             Log::error('FCM topic send failed', ['error' => $e->getMessage()]);
+
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }

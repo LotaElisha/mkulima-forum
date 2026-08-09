@@ -13,6 +13,7 @@ class WeatherApiTest extends TestCase
 
     protected function fakeOpenWeatherSuccess(): void
     {
+        config(['services.weather.use_open_meteo' => false, 'services.openweather.api_key' => 'test-key']);
         Http::fake([
             'api.openweathermap.org/data/2.5/weather*' => Http::response([
                 'name' => 'Dodoma',
@@ -54,6 +55,7 @@ class WeatherApiTest extends TestCase
 
     public function test_upstream_failure_serves_stale_cache_flagged(): void
     {
+        config(['services.weather.use_open_meteo' => false, 'services.openweather.api_key' => 'test-key']);
         WeatherCache::create([
             'location' => 'Mbeya',
             'lat' => -8.9,
@@ -79,6 +81,7 @@ class WeatherApiTest extends TestCase
 
     public function test_no_data_is_honest_not_fabricated(): void
     {
+        config(['services.weather.use_open_meteo' => false, 'services.openweather.api_key' => 'test-key']);
         Http::fake(['api.openweathermap.org/*' => Http::response(null, 500)]);
 
         $response = $this->getJson('/api/weather/current?location=Kigoma');

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ForumReply;
-use App\Models\ForumThread;
 use App\Models\Product;
 use App\Models\Report;
 use Illuminate\Http\JsonResponse;
@@ -18,9 +16,9 @@ class ReportController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'type' => 'required|string|in:' . implode(',', array_keys(Report::TYPES)),
+            'type' => 'required|string|in:'.implode(',', array_keys(Report::TYPES)),
             'id' => 'required',
-            'reason' => 'required|string|in:' . implode(',', Report::REASONS),
+            'reason' => 'required|string|in:'.implode(',', Report::REASONS),
             'details' => 'nullable|string|max:2000',
         ]);
 
@@ -30,7 +28,7 @@ class ReportController extends Controller
         $target = $modelClass::where('uuid', $validated['id'])->first()
             ?? $modelClass::find($validated['id']);
 
-        if (!$target) {
+        if (! $target) {
             return response()->json(['message' => 'Maudhui hayajapatikana.'], 404);
         }
 
@@ -71,7 +69,7 @@ class ReportController extends Controller
     {
         $request->validate([
             'status' => 'nullable|string|in:pending,resolved,dismissed',
-            'type' => 'nullable|string|in:' . implode(',', array_keys(Report::TYPES)),
+            'type' => 'nullable|string|in:'.implode(',', array_keys(Report::TYPES)),
         ]);
 
         $reports = Report::with('reporter:id,uuid,name,role')
@@ -154,7 +152,7 @@ class ReportController extends Controller
     protected function applyAction(Report $report, string $action): void
     {
         $target = $report->reportable();
-        if (!$target) {
+        if (! $target) {
             return;
         }
 
@@ -168,7 +166,7 @@ class ReportController extends Controller
 
     protected function preview(string $type, $target): ?array
     {
-        if (!$target) {
+        if (! $target) {
             return null;
         }
 

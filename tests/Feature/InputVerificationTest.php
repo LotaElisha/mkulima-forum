@@ -7,6 +7,7 @@ use App\Models\RegisteredInput;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Testing\File;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -15,6 +16,7 @@ class InputVerificationTest extends TestCase
     use RefreshDatabase;
 
     protected User $farmer;
+
     protected User $admin;
 
     protected function setUp(): void
@@ -99,7 +101,7 @@ class InputVerificationTest extends TestCase
             'region' => 'Morogoro',
             'description' => 'Rangi tofauti na ya kawaida, harufu kali isiyo ya kawaida, bei nusu ya soko.',
         ])->assertCreated()
-          ->assertJsonPath('alert.status', 'pending');
+            ->assertJsonPath('alert.status', 'pending');
 
         // Pending report is NOT publicly visible
         $this->getJson('/api/inputs/alerts?region=Morogoro')
@@ -173,7 +175,7 @@ class InputVerificationTest extends TestCase
     {
         config(['services.gemini.api_key' => null]);
 
-        $file = \Illuminate\Http\Testing\File::image('lebo.jpg');
+        $file = File::image('lebo.jpg');
 
         $this->actingAs($this->farmer)
             ->postJson('/api/inputs/check-label', ['image' => $file])
@@ -200,7 +202,7 @@ class InputVerificationTest extends TestCase
             ], 200),
         ]);
 
-        $file = \Illuminate\Http\Testing\File::image('lebo.jpg');
+        $file = File::image('lebo.jpg');
 
         $response = $this->actingAs($this->farmer)
             ->postJson('/api/inputs/check-label', ['image' => $file]);
@@ -231,7 +233,7 @@ class InputVerificationTest extends TestCase
             ], 200),
         ]);
 
-        $file = \Illuminate\Http\Testing\File::image('lebo.jpg');
+        $file = File::image('lebo.jpg');
 
         $response = $this->actingAs($this->farmer)
             ->postJson('/api/inputs/check-label', ['image' => $file]);

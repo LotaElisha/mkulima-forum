@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToTenant;
+use Illuminate\Support\Str;
 
 class DiseaseScan extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'tenant_id',
@@ -36,7 +37,7 @@ class DiseaseScan extends Model
         parent::boot();
         static::creating(function ($scan) {
             if (empty($scan->uuid)) {
-                $scan->uuid = (string) \Illuminate\Support\Str::uuid();
+                $scan->uuid = (string) Str::uuid();
             }
         });
     }

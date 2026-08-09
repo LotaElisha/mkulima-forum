@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\MarketPrice;
 use App\Models\User;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class MarketPriceSeeder extends Seeder
 {
@@ -71,6 +71,6 @@ class MarketPriceSeeder extends Seeder
             );
         }
 
-        echo "Seeded " . MarketPrice::count() . " market prices\n";
+        echo 'Seeded '.MarketPrice::count()." market prices\n";
     }
 }

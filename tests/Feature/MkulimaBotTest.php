@@ -87,6 +87,7 @@ class MkulimaBotTest extends TestCase
         // Second Gemini call must include prior history as multi-turn contents
         Http::assertSent(function ($request) {
             $contents = $request->data()['contents'] ?? [];
+
             return count($contents) >= 3; // first user + first model + new user
         });
     }

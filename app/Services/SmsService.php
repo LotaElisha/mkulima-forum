@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Log;
 class SmsService
 {
     protected string $gateway;
+
     protected string $username;
+
     protected string $apiKey;
+
     protected string $senderId;
 
     public function __construct()
@@ -47,7 +50,7 @@ class SmsService
 
             return $result;
         } catch (\Exception $e) {
-            Log::error('SMS send failed: ' . $e->getMessage());
+            Log::error('SMS send failed: '.$e->getMessage());
             $log->update([
                 'status' => 'failed',
                 'gateway_response' => $e->getMessage(),
@@ -69,11 +72,12 @@ class SmsService
             $userId = is_array($recipient) ? ($recipient['user_id'] ?? null) : null;
             $results[] = $this->send($phone, $message, $type, $userId);
         }
+
         return [
             'success' => true,
             'total' => count($results),
-            'sent' => count(array_filter($results, fn($r) => $r['success'])),
-            'failed' => count(array_filter($results, fn($r) => !$r['success'])),
+            'sent' => count(array_filter($results, fn ($r) => $r['success'])),
+            'failed' => count(array_filter($results, fn ($r) => ! $r['success'])),
             'details' => $results,
         ];
     }
@@ -81,6 +85,7 @@ class SmsService
     public function sendAdvisory(string $phone, string $crop, string $advisory, ?int $userId = null): array
     {
         $message = "MKULIMA FORUM: Ushauri wa {$crop}\n\n{$advisory}\n\nKwa msaada zaidi piga *384#";
+
         return $this->send($phone, $message, 'advisory', $userId);
     }
 
@@ -91,7 +96,7 @@ class SmsService
         $location = $weather['location'] ?? 'your area';
 
         $message = "MKULIMA WEATHER: {$location}\nTemp: {$temp}C, {$desc}\n\n";
-        $message .= "Check app for farming advisory. *384# for IVR.";
+        $message .= 'Check app for farming advisory. *384# for IVR.';
 
         return $this->send($phone, $message, 'alert', $userId);
     }
@@ -110,6 +115,7 @@ class SmsService
 
         if ($response->successful()) {
             $data = $response->json();
+
             return [
                 'success' => true,
                 'message_id' => $data['SMSMessageData']['Recipients'][0]['messageId'] ?? null,
@@ -141,6 +147,7 @@ class SmsService
 
         if ($response->successful()) {
             $data = $response->json();
+
             return [
                 'success' => true,
                 'message_id' => $data['sid'] ?? null,
@@ -159,11 +166,12 @@ class SmsService
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);
         if (str_starts_with($phone, '0')) {
-            $phone = '255' . substr($phone, 1);
+            $phone = '255'.substr($phone, 1);
         }
         if (str_starts_with($phone, '7') || str_starts_with($phone, '6')) {
-            $phone = '255' . $phone;
+            $phone = '255'.$phone;
         }
-        return '+' . $phone;
+
+        return '+'.$phone;
     }
 }

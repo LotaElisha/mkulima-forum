@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('unit', 32);               // e.g. kg, gunia la kg 100, lita
             $table->string('currency', 8)->default('TZS');
             $table->date('price_date');               // date the price was recorded
-            $table->string('source', 128)->nullable();// e.g. Wizara ya Kilimo, soko lenyewe
+            $table->string('source', 128)->nullable(); // e.g. Wizara ya Kilimo, soko lenyewe
             $table->foreignId('recorded_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
 

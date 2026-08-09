@@ -2,10 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Services\OtpService;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -32,7 +36,7 @@ class AuthRbacTest extends TestCase
 
     public function test_otp_registration_creates_user_with_spatie_role(): void
     {
-        $otp = app(\App\Services\OtpService::class)->generate('255712345678', 'register');
+        $otp = app(OtpService::class)->generate('255712345678', 'register');
 
         $this->postJson('/api/auth/otp/verify', [
             'phone' => '255712345678',
@@ -49,7 +53,7 @@ class AuthRbacTest extends TestCase
 
     public function test_staff_roles_cannot_be_self_registered(): void
     {
-        $otp = app(\App\Services\OtpService::class)->generate('255712345679', 'register');
+        $otp = app(OtpService::class)->generate('255712345679', 'register');
 
         $this->postJson('/api/auth/otp/verify', [
             'phone' => '255712345679',
@@ -90,15 +94,15 @@ class AuthRbacTest extends TestCase
         $seller = User::factory()->role('agrodealer')->create();
         $intruder = User::factory()->create();
 
-        $category = \App\Models\Category::create([
+        $category = Category::create([
             'tenant_id' => 1, 'name' => 'Seeds', 'slug' => 'seeds-t', 'is_active' => true,
         ]);
 
-        $product = \App\Models\Product::create([
+        $product = Product::create([
             'tenant_id' => 1,
             'category_id' => $category->id,
             'user_id' => $seller->id,
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'name' => 'Mbegu za Mahindi',
             'slug' => 'mbegu-mahindi',
             'price' => 15000,

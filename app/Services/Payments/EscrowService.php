@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Log;
 class EscrowService
 {
     protected MpesaService $mpesa;
+
     protected TigoPesaService $tigoPesa;
 
     public function __construct()
     {
-        $this->mpesa = new MpesaService();
-        $this->tigoPesa = new TigoPesaService();
+        $this->mpesa = new MpesaService;
+        $this->tigoPesa = new TigoPesaService;
     }
 
     /**
@@ -45,7 +46,7 @@ class EscrowService
                 'entry_type' => 'hold',
                 'amount' => $order->total,
                 'balance_after' => $order->total,
-                'description' => 'Funds held in escrow for order #' . $order->id,
+                'description' => 'Funds held in escrow for order #'.$order->id,
             ]);
 
             return $escrow;
@@ -57,8 +58,8 @@ class EscrowService
      */
     public function initiatePayment(Escrow $escrow, string $phone): array
     {
-        $reference = 'MKF' . $escrow->id . strtoupper(substr(uniqid(), -6));
-        $description = 'Payment for order #' . $escrow->order_id;
+        $reference = 'MKF'.$escrow->id.strtoupper(substr(uniqid(), -6));
+        $description = 'Payment for order #'.$escrow->order_id;
 
         return match ($escrow->payment_method) {
             'mpesa' => $this->mpesa->stkPush(
@@ -121,7 +122,7 @@ class EscrowService
      */
     public function refundBuyer(Escrow $escrow, string $reason): array
     {
-        if (!in_array($escrow->status, ['held', 'pending'])) {
+        if (! in_array($escrow->status, ['held', 'pending'])) {
             return [
                 'success' => false,
                 'message' => 'Escrow cannot be refunded',
@@ -139,7 +140,7 @@ class EscrowService
                 'entry_type' => 'refund',
                 'amount' => -$escrow->amount,
                 'balance_after' => 0,
-                'description' => 'Refund to buyer: ' . $reason,
+                'description' => 'Refund to buyer: '.$reason,
             ]);
 
             $escrow->order->update(['status' => 'refunded']);
@@ -158,8 +159,9 @@ class EscrowService
     {
         $callback = $data['Body']['stkCallback'] ?? null;
 
-        if (!$callback) {
+        if (! $callback) {
             Log::warning('Invalid M-Pesa callback', $data);
+
             return;
         }
 
@@ -170,21 +172,23 @@ class EscrowService
         // Idempotent processing: lock the row and only act on escrows still
         // awaiting payment. Mobile money gateways retry callbacks — a
         // duplicate must not double-post ledger entries or flip status.
-        \Illuminate\Support\Facades\DB::transaction(function () use ($checkoutRequestId, $resultCode, $resultDesc) {
+        DB::transaction(function () use ($checkoutRequestId, $resultCode, $resultDesc) {
             $escrow = Escrow::where('transaction_reference', $checkoutRequestId)
                 ->lockForUpdate()
                 ->first();
 
-            if (!$escrow) {
+            if (! $escrow) {
                 Log::warning('Escrow not found for checkout request', ['checkout_id' => $checkoutRequestId]);
+
                 return;
             }
 
-            if (!in_array($escrow->status, ['pending', 'initiated'])) {
+            if (! in_array($escrow->status, ['pending', 'initiated'])) {
                 Log::info('Duplicate payment callback ignored', [
                     'escrow_id' => $escrow->id,
                     'status' => $escrow->status,
                 ]);
+
                 return;
             }
 
@@ -200,7 +204,7 @@ class EscrowService
                     'entry_type' => 'deposit',
                     'amount' => $escrow->amount,
                     'balance_after' => $escrow->amount,
-                    'description' => 'M-Pesa payment received: ' . $resultDesc,
+                    'description' => 'M-Pesa payment received: '.$resultDesc,
                 ]);
 
                 $escrow->order->update(['status' => 'paid']);

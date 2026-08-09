@@ -11,16 +11,27 @@ namespace App\Support;
 final class Roles
 {
     public const FARMER = 'farmer';
+
     public const BUYER = 'buyer';
+
     public const AGRODEALER = 'agrodealer';
+
     public const SELLER = 'seller';
+
     public const AGRONOMIST = 'agronomist';
+
     public const VETERINARY = 'veterinary';
+
     public const DRIVER = 'driver';
+
     public const LOGISTICS = 'logistics';
+
     public const WAREHOUSE = 'warehouse';
+
     public const MODERATOR = 'moderator';
+
     public const ADMIN = 'admin';
+
     public const SUPERADMIN = 'superadmin';
 
     public const ALL = [
@@ -40,6 +51,6 @@ final class Roles
 
     public static function rule(array $roles = self::ALL): string
     {
-        return 'in:' . implode(',', $roles);
+        return 'in:'.implode(',', $roles);
     }
 }

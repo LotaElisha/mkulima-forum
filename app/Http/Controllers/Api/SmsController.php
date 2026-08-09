@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\MarketPrice;
 use App\Models\SmsLog;
+use App\Services\WeatherService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SmsController extends Controller
 {
@@ -21,7 +24,7 @@ class SmsController extends Controller
 
         // Log the SMS
         $sms = SmsLog::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'user_id' => $user?->id,
             'phone' => $request->input('phone'),
             'message' => $request->input('message'),
@@ -96,11 +99,11 @@ class SmsController extends Controller
         $parts = preg_split('/\s+/', trim($text));
         $commodity = $parts[1] ?? null;
 
-        if (!$commodity) {
-            return "Tumia: BEI [zao], mfano: BEI mahindi";
+        if (! $commodity) {
+            return 'Tumia: BEI [zao], mfano: BEI mahindi';
         }
 
-        $prices = \App\Models\MarketPrice::where('commodity', 'like', "%{$commodity}%")
+        $prices = MarketPrice::where('commodity', 'like', "%{$commodity}%")
             ->whereIn('id', function ($sub) {
                 $sub->selectRaw('max(id)')->from('market_prices')->groupBy('market');
             })
@@ -110,7 +113,7 @@ class SmsController extends Controller
 
         if ($prices->isEmpty()) {
             return "Samahani, hatuna bei za '{$commodity}' kwa sasa. "
-                . "Angalia app: https://mkulimaforum.app";
+                .'Angalia app: https://mkulimaforum.app';
         }
 
         $lines = $prices->map(fn ($p) => sprintf(
@@ -122,7 +125,7 @@ class SmsController extends Controller
         ))->implode("\n");
 
         return "Bei za {$prices->first()->commodity}:\n{$lines}\n"
-            . "App: https://mkulimaforum.app";
+            .'App: https://mkulimaforum.app';
     }
 
     private function handleWeatherQuery(string $phone, string $text): string
@@ -131,7 +134,7 @@ class SmsController extends Controller
         $parts = preg_split('/\s+/', trim($text));
         $location = $parts[1] ?? 'Dar es Salaam';
 
-        $weather = app(\App\Services\WeatherService::class)->getCurrentWeather($location);
+        $weather = app(WeatherService::class)->getCurrentWeather($location);
 
         if (($weather['available'] ?? true) === false) {
             return "Samahani, taarifa za hali ya hewa za {$location} hazipatikani kwa sasa.";
@@ -140,19 +143,19 @@ class SmsController extends Controller
         $stale = ($weather['is_stale'] ?? false) ? ' (taarifa za awali)' : '';
 
         return "Hali ya hewa {$weather['location']}{$stale}:\n"
-            . "Joto: {$weather['temperature']}°C\n"
-            . "Unyevu: {$weather['humidity']}%\n"
-            . "Upepo: {$weather['wind_speed']} m/s\n"
-            . ucfirst($weather['description'] ?? '');
+            ."Joto: {$weather['temperature']}°C\n"
+            ."Unyevu: {$weather['humidity']}%\n"
+            ."Upepo: {$weather['wind_speed']} m/s\n"
+            .ucfirst($weather['description'] ?? '');
     }
 
     private function handleHelpQuery(string $phone): string
     {
         return "MkulimaForum Msaada:\n"
-            . "1. BEI [bidhaa] - Angalia bei\n"
-            . "2. HALI - Hali ya hewa\n"
-            . "3. MSAADA - Msaada huu\n"
-            . "4. PIGA 0714524007\n"
-            . "App: https://mkulimaforum.app";
+            ."1. BEI [bidhaa] - Angalia bei\n"
+            ."2. HALI - Hali ya hewa\n"
+            ."3. MSAADA - Msaada huu\n"
+            ."4. PIGA 0714524007\n"
+            .'App: https://mkulimaforum.app';
     }
 }

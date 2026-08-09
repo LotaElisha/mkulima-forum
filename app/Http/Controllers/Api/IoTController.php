@@ -21,7 +21,7 @@ class IoTController extends Controller
 
     public function mySensors(Request $request): JsonResponse
     {
-        if (!FeatureFlag::isEnabled('iot_sensors')) {
+        if (! FeatureFlag::isEnabled('iot_sensors')) {
             return $this->unavailable();
         }
 
@@ -35,7 +35,7 @@ class IoTController extends Controller
 
     public function readings(Request $request, string $sensorId): JsonResponse
     {
-        if (!FeatureFlag::isEnabled('iot_sensors')) {
+        if (! FeatureFlag::isEnabled('iot_sensors')) {
             return $this->unavailable();
         }
 
@@ -46,7 +46,7 @@ class IoTController extends Controller
 
     public function storeReading(Request $request): JsonResponse
     {
-        if (!FeatureFlag::isEnabled('iot_sensors')) {
+        if (! FeatureFlag::isEnabled('iot_sensors')) {
             return $this->unavailable();
         }
 

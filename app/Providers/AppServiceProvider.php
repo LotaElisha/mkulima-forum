@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\AI\AIService;
+use App\Services\AI\Secrets\EncryptedDatabaseSecretManager;
+use App\Services\AI\Secrets\SecretManagerServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -12,11 +15,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(
-            \App\Services\AI\Secrets\SecretManagerServiceInterface::class,
-            \App\Services\AI\Secrets\EncryptedDatabaseSecretManager::class
+            SecretManagerServiceInterface::class,
+            EncryptedDatabaseSecretManager::class
         );
 
-        $this->app->singleton(\App\Services\AI\AIService::class);
+        $this->app->singleton(AIService::class);
     }
 
     /**

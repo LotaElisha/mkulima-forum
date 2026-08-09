@@ -23,7 +23,7 @@ class CatalogController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'ilike', "%{$search}%")
-                  ->orWhere('description', 'ilike', "%{$search}%");
+                    ->orWhere('description', 'ilike', "%{$search}%");
             });
         }
 
@@ -221,7 +221,7 @@ class CatalogController extends Controller
         $products = Product::whereColumn('stock_quantity', '<=', 'min_stock_level')
             ->orWhere(function ($q) {
                 $q->where('stock_quantity', '<=', 10)
-                  ->whereNull('min_stock_level');
+                    ->whereNull('min_stock_level');
             })
             ->with(['category', 'seller'])
             ->get();

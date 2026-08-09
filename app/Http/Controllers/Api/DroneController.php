@@ -51,7 +51,7 @@ class DroneController extends Controller
 
     public function services(): JsonResponse
     {
-        if (!FeatureFlag::isEnabled('drone_services')) {
+        if (! FeatureFlag::isEnabled('drone_services')) {
             return $this->unavailable();
         }
 
@@ -63,12 +63,12 @@ class DroneController extends Controller
 
     public function book(Request $request): JsonResponse
     {
-        if (!FeatureFlag::isEnabled('drone_services')) {
+        if (! FeatureFlag::isEnabled('drone_services')) {
             return $this->unavailable();
         }
 
         $validated = $request->validate([
-            'service_id' => 'required|string|in:' . implode(',', array_keys(self::SERVICES)),
+            'service_id' => 'required|string|in:'.implode(',', array_keys(self::SERVICES)),
             'farm_location' => 'required|string|max:255',
             'farm_size_acres' => 'required|numeric|min:0.5|max:10000',
             'preferred_date' => 'required|date|after:today',
@@ -99,7 +99,7 @@ class DroneController extends Controller
 
     public function myBookings(Request $request): JsonResponse
     {
-        if (!FeatureFlag::isEnabled('drone_services')) {
+        if (! FeatureFlag::isEnabled('drone_services')) {
             return $this->unavailable();
         }
 

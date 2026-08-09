@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\BelongsToTenant;
+use Illuminate\Support\Str;
 
 class Escrow extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $table = 'escrows';
 
@@ -46,7 +47,7 @@ class Escrow extends Model
     {
         static::creating(function ($escrow) {
             if (empty($escrow->uuid)) {
-                $escrow->uuid = (string) \Illuminate\Support\Str::uuid();
+                $escrow->uuid = (string) Str::uuid();
             }
         });
     }

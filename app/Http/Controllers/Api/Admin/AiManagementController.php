@@ -16,15 +16,15 @@ class AiManagementController extends Controller
 
     public function stats(): JsonResponse
     {
-        $totalScans       = DiseaseScan::count();
-        $successfulScans  = DiseaseScan::where('status', 'completed')->count();
-        $failedScans      = DiseaseScan::where('status', 'failed')->count();
-        $scansThisMonth   = DiseaseScan::whereMonth('created_at', now()->month)
-                                ->whereYear('created_at', now()->year)->count();
+        $totalScans = DiseaseScan::count();
+        $successfulScans = DiseaseScan::where('status', 'completed')->count();
+        $failedScans = DiseaseScan::where('status', 'failed')->count();
+        $scansThisMonth = DiseaseScan::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)->count();
 
         $totalConversations = BotConversation::count();
-        $totalKbDocs        = KbDocument::count();
-        $verifiedKbDocs     = KbDocument::where('is_verified', true)->count();
+        $totalKbDocs = KbDocument::count();
+        $verifiedKbDocs = KbDocument::where('is_verified', true)->count();
 
         $topDiseases = DiseaseScan::where('status', 'completed')
             ->whereNotNull('disease_name')
@@ -36,22 +36,22 @@ class AiManagementController extends Controller
 
         return response()->json([
             'scans' => [
-                'total'        => $totalScans,
-                'successful'   => $successfulScans,
-                'failed'       => $failedScans,
-                'this_month'   => $scansThisMonth,
+                'total' => $totalScans,
+                'successful' => $successfulScans,
+                'failed' => $failedScans,
+                'this_month' => $scansThisMonth,
                 'success_rate' => $totalScans > 0 ? round(($successfulScans / $totalScans) * 100, 1) : 0,
             ],
             'bot' => [
                 'total_conversations' => $totalConversations,
             ],
             'knowledge_base' => [
-                'total'    => $totalKbDocs,
+                'total' => $totalKbDocs,
                 'verified' => $verifiedKbDocs,
             ],
             'top_diseases' => $topDiseases,
             'gemini_model' => config('services.gemini.model', 'gemini-2.0-flash'),
-            'gemini_configured' => !empty(config('services.gemini.api_key')),
+            'gemini_configured' => ! empty(config('services.gemini.api_key')),
         ]);
     }
 
@@ -66,7 +66,7 @@ class AiManagementController extends Controller
             $query->where('status', $request->input('status'));
         }
         if ($request->has('disease')) {
-            $query->where('disease_name', 'like', '%' . $request->input('disease') . '%');
+            $query->where('disease_name', 'like', '%'.$request->input('disease').'%');
         }
         if ($request->has('user_id')) {
             $query->where('user_id', $request->input('user_id'));
@@ -144,7 +144,7 @@ class AiManagementController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
         if ($request->has('verified')) {
@@ -159,23 +159,23 @@ class AiManagementController extends Controller
     public function createKbDocument(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'title'    => ['required', 'string', 'max:255'],
-            'content'  => ['required', 'string'],
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
             'category' => ['required', 'string', 'in:crop_disease,pest_control,soil_health,irrigation,fertilization,market_prices,weather,general'],
             'language' => ['required', 'string', 'in:sw,en,lg,rw,fr'],
-            'source'   => ['nullable', 'string', 'max:255'],
+            'source' => ['nullable', 'string', 'max:255'],
             'is_verified' => ['boolean'],
         ]);
 
-        $validated['tenant_id']    = 1;
-        $validated['uuid']         = Str::uuid();
+        $validated['tenant_id'] = 1;
+        $validated['uuid'] = Str::uuid();
         $validated['published_at'] = now();
-        $validated['is_verified']  = $validated['is_verified'] ?? false;
+        $validated['is_verified'] = $validated['is_verified'] ?? false;
 
         $doc = KbDocument::create($validated);
 
         return response()->json([
-            'message'  => 'Knowledge base document created.',
+            'message' => 'Knowledge base document created.',
             'document' => $doc,
         ], 201);
     }
@@ -185,18 +185,18 @@ class AiManagementController extends Controller
         $doc = KbDocument::where('uuid', $uuid)->firstOrFail();
 
         $validated = $request->validate([
-            'title'       => ['sometimes', 'string', 'max:255'],
-            'content'     => ['sometimes', 'string'],
-            'category'    => ['sometimes', 'string', 'in:crop_disease,pest_control,soil_health,irrigation,fertilization,market_prices,weather,general'],
-            'language'    => ['sometimes', 'string', 'in:sw,en,lg,rw,fr'],
-            'source'      => ['nullable', 'string', 'max:255'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'content' => ['sometimes', 'string'],
+            'category' => ['sometimes', 'string', 'in:crop_disease,pest_control,soil_health,irrigation,fertilization,market_prices,weather,general'],
+            'language' => ['sometimes', 'string', 'in:sw,en,lg,rw,fr'],
+            'source' => ['nullable', 'string', 'max:255'],
             'is_verified' => ['boolean'],
         ]);
 
         $doc->update($validated);
 
         return response()->json([
-            'message'  => 'Document updated successfully.',
+            'message' => 'Document updated successfully.',
             'document' => $doc,
         ]);
     }
@@ -214,15 +214,18 @@ class AiManagementController extends Controller
     public function getAiConfig(): JsonResponse
     {
         return response()->json([
-            'model'           => config('services.gemini.model', 'gemini-2.0-flash'),
-            'configured'      => !empty(config('services.gemini.api_key')),
+            'model' => config('services.gemini.model', 'gemini-2.0-flash'),
+            'configured' => ! empty(config('services.gemini.api_key')),
             'api_key_preview' => $this->maskApiKey(config('services.gemini.api_key')),
         ]);
     }
 
     private function maskApiKey(?string $key): string
     {
-        if (!$key) return 'Not configured';
-        return substr($key, 0, 8) . str_repeat('*', max(0, strlen($key) - 12)) . substr($key, -4);
+        if (! $key) {
+            return 'Not configured';
+        }
+
+        return substr($key, 0, 8).str_repeat('*', max(0, strlen($key) - 12)).substr($key, -4);
     }
 }

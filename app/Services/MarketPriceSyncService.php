@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\MarketPrice;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -10,6 +11,7 @@ use Illuminate\Support\Str;
 class MarketPriceSyncService
 {
     protected string $baseUrl = 'https://ratin.net/ratinapp/api';
+
     protected int $perMarketTimeout = 30;
 
     /**
@@ -20,8 +22,8 @@ class MarketPriceSyncService
     {
         $report = ['created' => 0, 'updated' => 0, 'failed' => 0, 'skipped' => 0];
 
-        $admin = (\App\Models\User::role('admin')->first() ?: null)
-            ?? (\App\Models\User::first() ?: null);
+        $admin = (User::role('admin')->first() ?: null)
+            ?? (User::first() ?: null);
 
         $priceDate = now()->toDateString();
         $rate = config('services.ratin.usd_to_tzs_rate', null);
@@ -52,6 +54,7 @@ class MarketPriceSyncService
         }
 
         Log::info('RATIN market price sync completed', $report);
+
         return $report;
     }
 
@@ -64,11 +67,12 @@ class MarketPriceSyncService
                     'country' => $country,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::warning('RATIN summary API returned non-success', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+
                 return null;
             }
 
@@ -76,6 +80,7 @@ class MarketPriceSyncService
 
             if (empty($data['success']) || empty($data['data']['commodityGroups'])) {
                 Log::warning('RATIN summary API returned unexpected shape', $data);
+
                 return null;
             }
 
@@ -85,9 +90,11 @@ class MarketPriceSyncService
                     $items[] = $item;
                 }
             }
+
             return $items;
         } catch (\Throwable $e) {
-            Log::error('RATIN summary fetch failed: ' . $e->getMessage());
+            Log::error('RATIN summary fetch failed: '.$e->getMessage());
+
             return null;
         }
     }
@@ -96,20 +103,21 @@ class MarketPriceSyncService
         array $item,
         string $priceDate,
         ?float $rate,
-        ?\App\Models\User $admin,
+        ?User $admin,
         array &$report
     ): void {
         $commodity = $item['commodity'] ?? null;
         $country = $item['country'] ?? 'Tanzania';
 
-        if (!$commodity) {
+        if (! $commodity) {
             $report['skipped']++;
+
             return;
         }
 
         foreach (['wholesale', 'retail'] as $priceType) {
             $price = $item['prices'][$priceType] ?? null;
-            if (!$price || !is_numeric($price['countryPrice'] ?? null)) {
+            if (! $price || ! is_numeric($price['countryPrice'] ?? null)) {
                 continue;
             }
 
@@ -149,18 +157,19 @@ class MarketPriceSyncService
                     'days' => $days,
                 ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return null;
             }
 
             $data = $response->json();
-            if (empty($data['success']) || empty($data['data']) || !is_array($data['data'])) {
+            if (empty($data['success']) || empty($data['data']) || ! is_array($data['data'])) {
                 return null;
             }
 
             return $data['data'];
         } catch (\Throwable $e) {
-            Log::warning("RATIN trend fetch failed for {$commodity} @ {$market}: " . $e->getMessage());
+            Log::warning("RATIN trend fetch failed for {$commodity} @ {$market}: ".$e->getMessage());
+
             return null;
         }
     }
@@ -171,14 +180,14 @@ class MarketPriceSyncService
         array $trend,
         string $priceDate,
         ?float $rate,
-        ?\App\Models\User $admin,
+        ?User $admin,
         array &$report
     ): void {
         // Take the latest entry per price_type (most recent date).
         $latest = [];
         foreach (array_reverse($trend) as $row) {
             $type = $row['price_type'] ?? 'Retail';
-            if (!isset($latest[$type])) {
+            if (! isset($latest[$type])) {
                 $latest[$type] = $row;
             }
         }
@@ -222,7 +231,7 @@ class MarketPriceSyncService
         string $unit,
         string $currency,
         string $source,
-        ?\App\Models\User $admin,
+        ?User $admin,
         array &$report
     ): void {
         $record = MarketPrice::updateOrCreate(

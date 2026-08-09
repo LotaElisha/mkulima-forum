@@ -28,6 +28,7 @@ class FeatureFlag extends Model
     public static function isEnabled(string $key): bool
     {
         $feature = self::where('key', $key)->first();
+
         return $feature ? $feature->enabled : false;
     }
 

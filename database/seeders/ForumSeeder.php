@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\ForumCategory;
-use App\Models\ForumThread;
 use App\Models\ForumReply;
+use App\Models\ForumThread;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class ForumSeeder extends Seeder
@@ -14,7 +14,9 @@ class ForumSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        if (!$user) return;
+        if (! $user) {
+            return;
+        }
 
         $categories = [
             ['name' => 'Crop Farming', 'slug' => 'crop-farming', 'description' => 'Discussions about maize, rice, beans, and other crops'],
@@ -80,6 +82,6 @@ class ForumSeeder extends Seeder
             }
         }
 
-        echo "Seeded " . ForumCategory::count() . " forum categories, " . ForumThread::count() . " threads, " . ForumReply::count() . " replies\n";
+        echo 'Seeded '.ForumCategory::count().' forum categories, '.ForumThread::count().' threads, '.ForumReply::count()." replies\n";
     }
 }
