@@ -421,8 +421,8 @@ class AdminController extends Controller
     public function uploadLandingMedia(Request $request): JsonResponse
     {
         $request->validate([
-            'media' => ['required', 'file', 'mimes:png,jpg,jpeg,svg,webp,gif,apk', 'max:51200'],
-            'key' => ['required', 'string', 'in:logo,banner,emblem,hero_bg,app_apk'],
+            'media' => ['required', 'file', 'mimes:png,jpg,jpeg,svg,webp,gif,apk,pdf,pptx', 'max:51200'],
+            'key' => ['required', 'string', 'in:logo,banner,emblem,hero_bg,app_apk,pitch_deck'],
         ]);
 
         $key = $request->input('key');
@@ -443,6 +443,9 @@ class AdminController extends Controller
         }
         if ($key === 'emblem') {
             LandingSetting::updateOrCreate(['key' => 'emblem_url'], ['value' => $url]);
+        }
+        if ($key === 'pitch_deck') {
+            LandingSetting::updateOrCreate(['key' => 'pitch_deck_url'], ['value' => $url]);
         }
 
         if ($oldPath && Storage::disk('public')->exists($oldPath)) {

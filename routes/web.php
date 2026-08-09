@@ -15,6 +15,7 @@ Route::get('/', function () {
         'logo_url' => '/images/brand-banner.png',
         'banner_url' => '/images/brand-banner.png',
         'emblem_url' => '/images/logo-icon.jpg',
+        'pitch_deck_url' => '/docs/Mkulima_Forum_Pitch_Deck.pdf',
         'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
         'hero_title' => 'Jukwaa la Kidigitali la Wakulima wa <span class="gold">Tanzania</span>',
         'hero_tagline' => 'SKANI &bull; TAMBUA &bull; TIBU',

@@ -78,6 +78,7 @@ export default function Settings() {
           sub_vipengele: data.sub_vipengele || '',
         })
         setLogoUrl(data.banner_url || data.logo_url || '/images/brand-banner.png')
+        setDeckUrl(data.pitch_deck_url || '/docs/Mkulima_Forum_Pitch_Deck.pdf')
       }
     } catch (err) {
       console.error('Failed to fetch landing settings:', err)
@@ -123,20 +124,49 @@ export default function Settings() {
     }
   }
 
-  const handleLogoRemove = async () => {
-    if (!confirm('Remove the current logo? The landing page will fall back to the default.')) return
+  // Pitch deck state
+  const [deckUrl, setDeckUrl] = useState('')
+  const [deckFile, setDeckFile] = useState(null)
+  const [deckUploading, setDeckUploading] = useState(false)
+  const [deckMessage, setDeckMessage] = useState('')
+  const pitchDeckInputRef = useRef(null)
+
+  const handleDeckSelect = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setDeckFile(file)
+      setDeckMessage('')
+    }
+  }
+
+  const handleDeckUpload = async () => {
+    if (!deckFile) return
+    setDeckUploading(true)
+    setDeckMessage('')
+
     try {
       const token = localStorage.getItem('admin_token')
-      const res = await fetch('/api/admin/settings/landing/logo', {
-        method: 'DELETE',
+      const formData = new FormData()
+      formData.append('media', deckFile)
+      formData.append('key', 'pitch_deck')
+
+      const res = await fetch('/api/admin/settings/landing/media', {
+        method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       })
+      const data = await res.json()
       if (res.ok) {
-        setLogoUrl('')
-        setLogoMessage('Logo removed.')
+        setDeckUrl(data.url)
+        setDeckFile(null)
+        setDeckMessage('Pitch deck updated successfully!')
+      } else {
+        setDeckMessage(data.message || 'Pitch deck upload failed')
       }
     } catch (err) {
-      setLogoMessage('Network error while removing logo')
+      setDeckMessage('Network error while uploading pitch deck')
+    } finally {
+      setDeckUploading(false)
     }
   }
 
@@ -368,6 +398,62 @@ export default function Settings() {
                       PNG, JPG, WEBP or SVG, up to 2MB. Shown in the landing page header and footer.
                     </p>
                     {logoMessage && <p className="text-xs text-green-700 mt-1">{logoMessage}</p>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Pitch Deck Upload Box */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Investor Pitch Deck Document (PDF / PPTX)
+                </label>
+                <div className="flex items-center gap-4 p-4 bg-emerald-50/60 border border-emerald-200 rounded-lg">
+                  <div className="w-16 h-16 rounded-lg bg-emerald-100 border border-emerald-300 flex items-center justify-center shrink-0 text-emerald-800 font-extrabold text-xs text-center px-1">
+                    PDF
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <input
+                      ref={pitchDeckInputRef}
+                      type="file"
+                      accept=".pdf,.pptx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                      onChange={handleDeckSelect}
+                      className="hidden"
+                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => pitchDeckInputRef.current?.click()}
+                        className="btn-secondary text-sm"
+                      >
+                        Choose File
+                      </button>
+                      {deckFile && (
+                        <button
+                          type="button"
+                          onClick={handleDeckUpload}
+                          disabled={deckUploading}
+                          className="btn-primary text-sm flex items-center gap-1 disabled:opacity-50"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          {deckUploading ? 'Uploading…' : 'Upload Pitch Deck'}
+                        </button>
+                      )}
+                      {deckUrl && (
+                        <a
+                          href={deckUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-semibold text-emerald-700 hover:underline flex items-center gap-1"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          View Active Pitch Deck
+                        </a>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      PDF or PPTX format up to 50MB. Linked on website navigation header, pitch deck modal, and footer.
+                    </p>
+                    {deckMessage && <p className="text-xs text-emerald-800 font-semibold mt-1">{deckMessage}</p>}
                   </div>
                 </div>
               </div>
