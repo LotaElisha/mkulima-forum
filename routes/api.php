@@ -534,4 +534,3 @@ Route::middleware('auth:sanctum')->prefix('farms')->group(function () {
     Route::post('/{uuid}/activities', [FarmController::class, 'storeActivity']);
     Route::delete('/activities/{activityUuid}', [FarmController::class, 'destroyActivity']);
 });
-

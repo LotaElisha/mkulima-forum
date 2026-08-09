@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Farm;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ class FarmManagementTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \App\Models\Tenant::create([
+        Tenant::create([
             'id' => 1,
             'name' => 'Default Tenant',
             'slug' => 'default',
