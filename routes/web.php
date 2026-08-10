@@ -30,12 +30,83 @@ Route::get('/', function () {
         'kicker_vipengele' => 'Vipengele',
         'title_vipengele' => 'Zaidi ya scanner — mfumo kamili wa kilimo',
         'sub_vipengele' => 'Kila kitu mkulima anachohitaji, mahali pamoja, kwa Kiswahili.',
+        'contact_email' => 'hello@mkulimaforum.app',
+        // Impact metrics (empty until launch)
+        'metric_farmers' => null,
+        'metric_regions' => null,
+        'metric_scans'   => null,
+        'metric_queries' => null,
+        'metric_markets' => null,
     ];
 
     $settings = array_merge($defaults, $settings);
 
-    return view('landing', compact('settings'));
+    return view('pages.home', compact('settings'));
 });
 
+// ─── Public Pages ────────────────────────────────────────────────────────────
+// Shared settings resolver used by every public page route
+$publicSettings = function () {
+    $settings = [];
+    try {
+        $settings = LandingSetting::pluck('value', 'key')->toArray();
+    } catch (Exception $e) {}
+
+    return array_merge([
+        'logo_url'       => '/images/brand-banner.png',
+        'banner_url'     => '/images/brand-banner.png',
+        'emblem_url'     => '/images/logo-icon.jpg',
+        'pitch_deck_url' => '/docs/Mkulima_Forum_Pitch_Deck.pdf',
+        'brand_motto'    => 'SHIRIKI • JIFUNZE • ENDELEA',
+        'contact_email'  => 'hello@mkulimaforum.app',
+        'metric_farmers' => null,
+        'metric_regions' => null,
+        'metric_scans'   => null,
+        'metric_queries' => null,
+        'metric_markets' => null,
+    ], $settings);
+};
+
+Route::get('/about', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.about', compact('settings'));
+})->name('about');
+
+Route::get('/solutions', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.solutions', compact('settings'));
+})->name('solutions');
+
+Route::get('/impact', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.impact', compact('settings'));
+})->name('impact');
+
+Route::get('/partners', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.partners', compact('settings'));
+})->name('partners');
+
+Route::get('/stories', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.stories', compact('settings'));
+})->name('stories');
+
+Route::get('/technology', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.technology', compact('settings'));
+})->name('technology');
+
+Route::get('/pitch-deck', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.pitch-deck', compact('settings'));
+})->name('pitch-deck');
+
+Route::get('/contact', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.contact', compact('settings'));
+})->name('contact');
+
+// ─── Auth ────────────────────────────────────────────────────────────────────
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
