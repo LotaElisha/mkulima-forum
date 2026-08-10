@@ -28,13 +28,13 @@ class CommunityClickController extends Controller
         ]);
 
         $channel = null;
-        if (!empty($validated['channel_uuid'])) {
+        if (! empty($validated['channel_uuid'])) {
             $channel = CommunityChannel::where('uuid', $validated['channel_uuid'])->first();
-        } elseif (!empty($validated['channel_id'])) {
+        } elseif (! empty($validated['channel_id'])) {
             $channel = CommunityChannel::find($validated['channel_id']);
         }
 
-        if (!$channel) {
+        if (! $channel) {
             return response()->json(['status' => 'error', 'message' => 'Channel not found'], 404);
         }
 

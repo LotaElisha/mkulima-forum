@@ -8,21 +8,19 @@ use App\Models\Agrodealer;
 use App\Models\CounterfeitReport;
 use App\Models\RegulatedProduct;
 use App\Models\RegulatoryAuthority;
-use App\Models\RegulatoryDataSource;
 use App\Models\VerificationScan;
-
 use App\Services\Verify\AdvisoryService;
 use App\Services\Verify\AgrodealerKycService;
 use App\Services\Verify\EscalationEngine;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AdminVerifyController extends Controller
 {
     protected AdvisoryService $advisoryService;
+
     protected AgrodealerKycService $kycService;
+
     protected EscalationEngine $escalationEngine;
 
     public function __construct(AdvisoryService $advisoryService, AgrodealerKycService $kycService, EscalationEngine $escalationEngine)
@@ -41,7 +39,7 @@ class AdminVerifyController extends Controller
                 'total_products' => RegulatedProduct::count(),
                 'total_reports' => CounterfeitReport::count(),
                 'total_dealers' => Agrodealer::count(),
-                'suspicious_scans' => VerificationScan::whereHas('result', fn($q) => $q->where('status', 'SUSPICIOUS'))->count(),
+                'suspicious_scans' => VerificationScan::whereHas('result', fn ($q) => $q->where('status', 'SUSPICIOUS'))->count(),
                 'verified_dealers' => Agrodealer::whereIn('status', ['MKULIMA_VERIFIED', 'REGULATOR_RECORD_MATCHED'])->count(),
                 'authorities' => RegulatoryAuthority::select(['id', 'acronym', 'name', 'is_active'])->get(),
             ],

@@ -20,7 +20,9 @@ class ConfigSetting extends Model
 
     public function getValueAttribute($val)
     {
-        if (empty($val)) return null;
+        if (empty($val)) {
+            return null;
+        }
 
         if ($this->is_encrypted || $this->type === 'secret') {
             try {

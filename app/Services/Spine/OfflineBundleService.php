@@ -24,7 +24,7 @@ class OfflineBundleService
 
     public function generateBundle(): array
     {
-        $version = '1.0.' . time();
+        $version = '1.0.'.time();
         $generatedAt = now()->toIso8601String();
 
         $payload = [

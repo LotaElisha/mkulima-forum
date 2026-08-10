@@ -16,7 +16,9 @@ class TrackAndTraceService
             ->orWhere('manufacturer_serial', $serialInput)
             ->first();
 
-        if (!$serial) return null;
+        if (! $serial) {
+            return null;
+        }
 
         // Flag duplicate scan if needed
         if ($serial->current_holder_type === 'farmer') {

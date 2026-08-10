@@ -23,7 +23,7 @@ class RiskEngine
         $reasons = [];
 
         // 1. Registry Match Signal
-        if (!$product) {
+        if (! $product) {
             $score += 45;
             $reasons[] = 'Namba au chapa haijapatikana kwenye daftari / Registration number not in registry';
         } else {

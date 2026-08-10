@@ -88,7 +88,7 @@ class InputVerificationTest extends TestCase
             ->assertJsonPath('registry_ready', false)
             ->assertJsonPath('registry_count', 0);
 
-        $this->assertStringContainsString('TPRI', $response->json('guidance'));
+        $this->assertStringContainsString('TPHPA', $response->json('guidance'));
     }
 
     public function test_counterfeit_report_flow_pending_until_admin_confirms(): void

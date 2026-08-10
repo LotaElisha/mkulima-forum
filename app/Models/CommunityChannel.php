@@ -57,10 +57,11 @@ class CommunityChannel extends Model
      */
     public function getClickToChatUrlAttribute(): ?string
     {
-        if ($this->channel_type === 'WHATSAPP_BUSINESS' && !empty($this->phone_number)) {
+        if ($this->channel_type === 'WHATSAPP_BUSINESS' && ! empty($this->phone_number)) {
             $cleanPhone = preg_replace('/[^0-9]/', '', $this->phone_number);
             $greeting = $this->default_greeting['sw'] ?? $this->default_greeting['en'] ?? 'Habari Mkulima Forum, nahitaji msaada...';
-            return "https://wa.me/{$cleanPhone}?text=" . urlencode($greeting);
+
+            return "https://wa.me/{$cleanPhone}?text=".urlencode($greeting);
         }
 
         return $this->url;

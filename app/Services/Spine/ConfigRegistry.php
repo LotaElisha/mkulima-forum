@@ -3,6 +3,7 @@
 namespace App\Services\Spine;
 
 use App\Models\ConfigSetting;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 
 class ConfigRegistry
@@ -16,7 +17,7 @@ class ConfigRegistry
             return ConfigSetting::where('key', $key)->first();
         });
 
-        if (!$setting) {
+        if (! $setting) {
             return $default;
         }
 
@@ -48,7 +49,7 @@ class ConfigRegistry
             $setting->wasRecentlyCreated ? 'created' : 'updated',
             $before,
             ['value' => '***', 'version' => $setting->version],
-            $userId ? \App\Models\User::find($userId) : null
+            $userId ? User::find($userId) : null
         );
 
         return $setting;

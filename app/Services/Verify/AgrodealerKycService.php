@@ -10,6 +10,7 @@ use App\Services\Spine\ChannelBus;
 class AgrodealerKycService
 {
     protected ChannelBus $channelBus;
+
     protected AuditTrail $auditTrail;
 
     public function __construct(ChannelBus $channelBus, AuditTrail $auditTrail)

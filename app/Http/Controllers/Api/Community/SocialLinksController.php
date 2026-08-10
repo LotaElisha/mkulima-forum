@@ -15,7 +15,7 @@ class SocialLinksController extends Controller
      */
     public function socialLinks(Request $request): JsonResponse
     {
-        $cacheKey = 'public_social_links_' . $request->header('Accept-Language', 'sw');
+        $cacheKey = 'public_social_links_'.$request->header('Accept-Language', 'sw');
 
         $data = Cache::remember($cacheKey, 900, function () use ($request) {
             $locale = str_starts_with($request->header('Accept-Language', 'sw'), 'en') ? 'en' : 'sw';

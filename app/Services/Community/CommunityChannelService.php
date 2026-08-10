@@ -11,7 +11,9 @@ use App\Services\Spine\QrService;
 class CommunityChannelService
 {
     protected EventBus $eventBus;
+
     protected QrService $qrService;
+
     protected AuditTrail $auditTrail;
 
     public function __construct(EventBus $eventBus, QrService $qrService, AuditTrail $auditTrail)
@@ -50,7 +52,7 @@ class CommunityChannelService
     public function recordClick(CommunityChannel $channel, string $event = 'join_link_clicked', ?string $anonId = null, ?string $referrer = null): CommunityChannelClick
     {
         $allowedEvents = ['channel_view', 'join_link_clicked', 'whatsapp_contact_clicked', 'social_platform_clicked'];
-        if (!in_array($event, $allowedEvents)) {
+        if (! in_array($event, $allowedEvents)) {
             $event = 'join_link_clicked';
         }
 
@@ -78,6 +80,7 @@ class CommunityChannelService
     public function generateQrCode(CommunityChannel $channel): array
     {
         $targetUrl = $channel->click_to_chat_url ?? $channel->url;
+
         return $this->qrService->generate($targetUrl, 'community', $channel);
     }
 }

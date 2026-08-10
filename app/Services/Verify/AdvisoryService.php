@@ -13,7 +13,9 @@ use App\Services\Spine\TaxonomyService;
 class AdvisoryService
 {
     protected ChannelBus $channelBus;
+
     protected TaxonomyService $taxonomyService;
+
     protected AuditTrail $auditTrail;
 
     public function __construct(ChannelBus $channelBus, TaxonomyService $taxonomyService, AuditTrail $auditTrail)

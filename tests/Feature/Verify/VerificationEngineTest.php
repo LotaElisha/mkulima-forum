@@ -5,9 +5,9 @@ namespace Tests\Feature\Verify;
 use App\Models\ProductCategory;
 use App\Models\RegulatedProduct;
 use App\Models\RegulatoryAuthority;
-
-use App\Services\Verify\RiskEngine;
 use App\Services\Verify\VerificationEngine;
+use Database\Seeders\RegulatoryAuthoritySeeder;
+use Database\Seeders\SpineSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,8 +20,8 @@ class VerificationEngineTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\SpineSeeder::class);
-        $this->seed(\Database\Seeders\RegulatoryAuthoritySeeder::class);
+        $this->seed(SpineSeeder::class);
+        $this->seed(RegulatoryAuthoritySeeder::class);
         $this->engine = app(VerificationEngine::class);
     }
 

@@ -27,7 +27,7 @@ class RegulatoryDataSource extends Model
 
     public function setApiKeyEncryptedAttribute($val)
     {
-        if (!empty($val)) {
+        if (! empty($val)) {
             $this->attributes['api_key_encrypted'] = Crypt::encryptString($val);
         } else {
             $this->attributes['api_key_encrypted'] = null;
@@ -36,7 +36,9 @@ class RegulatoryDataSource extends Model
 
     public function getApiKeyEncryptedAttribute($val)
     {
-        if (empty($val)) return null;
+        if (empty($val)) {
+            return null;
+        }
         try {
             return Crypt::decryptString($val);
         } catch (\Throwable $e) {

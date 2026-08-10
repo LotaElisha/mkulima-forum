@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 class CounterfeitReportService
 {
     protected EventBus $eventBus;
+
     protected AuditTrail $auditTrail;
 
     public function __construct(EventBus $eventBus, AuditTrail $auditTrail)

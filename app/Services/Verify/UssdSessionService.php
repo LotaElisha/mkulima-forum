@@ -35,9 +35,9 @@ class UssdSessionService
 
         $statusText = match ($result['status']) {
             'VERIFIED', 'REGISTERED_SOURCE_CONFIRMED' => "✅ IMETHIBITISHWA: {$result['product']['trade_name']}",
-            'RECALLED', 'SUSPENDED' => "⚠️ IMERUDISHWA SOKONI / SUSPENDED: Usitumie bidhaa hii!",
-            'SUSPICIOUS' => "❌ SHAKA! Inatiliwa shaka. Usinunue wala kutumia.",
-            default => "ℹ️ HAIJAPATIKANA: Namba hii haipo kwenye daftari ya sasa.",
+            'RECALLED', 'SUSPENDED' => '⚠️ IMERUDISHWA SOKONI / SUSPENDED: Usitumie bidhaa hii!',
+            'SUSPICIOUS' => '❌ SHAKA! Inatiliwa shaka. Usinunue wala kutumia.',
+            default => 'ℹ️ HAIJAPATIKANA: Namba hii haipo kwenye daftari ya sasa.',
         };
 
         return "END Mkulima Verify:\n{$statusText}\nSoma zaidi: mkulimaforum.app";

@@ -2,7 +2,6 @@
 
 namespace App\Services\Community;
 
-use App\Models\AnalyticsEvent;
 use App\Models\CommunityChannel;
 use App\Models\CommunityChannelClick;
 use Illuminate\Support\Facades\DB;

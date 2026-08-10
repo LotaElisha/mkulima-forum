@@ -66,7 +66,7 @@ class VerifyProductController extends Controller
         if ($request->filled('q')) {
             $query->where(function ($q) use ($request) {
                 $q->where('trade_name', 'like', "%{$request->q}%")
-                  ->orWhere('active_ingredient', 'like', "%{$request->q}%");
+                    ->orWhere('active_ingredient', 'like', "%{$request->q}%");
             });
         }
 

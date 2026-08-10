@@ -42,13 +42,13 @@ class VerificationEngine
         $batch = $serial ? $serial->batch : null;
 
         // 2. Check Registration Number if not serial match
-        if (!$product) {
+        if (! $product) {
             $product = RegulatedProduct::where('registration_number', $input)
                 ->orWhere('trade_name', 'like', "%{$input}%")->first();
         }
 
         // 3. Check Product Batches
-        if (!$batch && $product) {
+        if (! $batch && $product) {
             $batch = ProductBatch::where('product_id', $product->id)->where('batch_number', $input)->first();
         }
 
@@ -67,7 +67,7 @@ class VerificationEngine
         $provenance = $product ? $product->provenance : 'PLATFORM';
         $confidence = $product ? $product->confidence : 50;
 
-        if (!$product) {
+        if (! $product) {
             $status = 'UNVERIFIED';
             $reasons[] = 'Sio katika daftari ya sasa ya pembejeo / Product not found in current registry';
         } else {
@@ -78,7 +78,7 @@ class VerificationEngine
                 $reasons[] = "BIDHAA IMERUDISHWA SOKONI: {$activeRecall->reason} / PRODUCT RECALLED";
             } elseif ($product->registration_status === 'BANNED' || $product->registration_status === 'WITHDRAWN') {
                 $status = 'SUSPENDED';
-                $reasons[] = "USAJILI UMESIMAMISHWA AU KUZUIWA / Registration suspended or banned";
+                $reasons[] = 'USAJILI UMESIMAMISHWA AU KUZUIWA / Registration suspended or banned';
             } elseif ($score >= 70) {
                 $status = 'SUSPICIOUS';
                 $reasons[] = "INATILIWA SHAKA: Alama za hatari ni {$score}/100 / High risk warning";
@@ -87,10 +87,10 @@ class VerificationEngine
                 $reasons[] = "Imesajiliwa — taarifa kutoka chanzo cha kisheria ({$product->authority?->acronym}) / Registered regulatory record matched";
             } elseif ($product->provenance === 'PLATFORM') {
                 $status = 'VERIFIED';
-                $reasons[] = "Imethibitishwa na Mkulima Forum / Mkulima Verified";
+                $reasons[] = 'Imethibitishwa na Mkulima Forum / Mkulima Verified';
             } else {
                 $status = 'COMMUNITY_SUPPLIER_RECORD';
-                $reasons[] = "Taarifa ya msambazaji kutoka kwenye jamii / Community supplier record matched";
+                $reasons[] = 'Taarifa ya msambazaji kutoka kwenye jamii / Community supplier record matched';
             }
         }
 

@@ -3,6 +3,9 @@
 namespace Tests\Feature\Spine;
 
 use App\Services\Spine\OfflineBundleService;
+use Database\Seeders\CommunityChannelSeeder;
+use Database\Seeders\RegulatoryAuthoritySeeder;
+use Database\Seeders\SpineSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,9 +16,9 @@ class OfflineBundleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\SpineSeeder::class);
-        $this->seed(\Database\Seeders\RegulatoryAuthoritySeeder::class);
-        $this->seed(\Database\Seeders\CommunityChannelSeeder::class);
+        $this->seed(SpineSeeder::class);
+        $this->seed(RegulatoryAuthoritySeeder::class);
+        $this->seed(CommunityChannelSeeder::class);
     }
 
     public function test_offline_bundle_service_generates_valid_signature_and_envelope(): void
@@ -38,7 +41,7 @@ class OfflineBundleTest extends TestCase
             ->assertHeader('ETag')
             ->assertJsonStructure([
                 'status',
-                'data' => ['bundle_version', 'generated_at', 'signature', 'payload']
+                'data' => ['bundle_version', 'generated_at', 'signature', 'payload'],
             ]);
     }
 }

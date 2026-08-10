@@ -16,7 +16,9 @@ class CustomRegulatorAdapter implements RegulatoryProvider
     public function verifyRegistration(string $registrationNumber, RegulatoryDataSource $source): ?array
     {
         $product = RegulatedProduct::where('registration_number', $registrationNumber)->first();
-        if (!$product) return null;
+        if (! $product) {
+            return null;
+        }
 
         return [
             'registration_number' => $product->registration_number,
@@ -29,8 +31,23 @@ class CustomRegulatorAdapter implements RegulatoryProvider
         ];
     }
 
-    public function verifyBatch(string $batchNumber, RegulatoryDataSource $source): ?array { return null; }
-    public function verifyDealer(string $licenceNumber, RegulatoryDataSource $source): ?array { return null; }
-    public function getRecallStatus(string $registrationNumber, RegulatoryDataSource $source): ?array { return null; }
-    public function syncRegistry(RegulatoryDataSource $source): array { return ['status' => 'success', 'imported' => 0]; }
+    public function verifyBatch(string $batchNumber, RegulatoryDataSource $source): ?array
+    {
+        return null;
+    }
+
+    public function verifyDealer(string $licenceNumber, RegulatoryDataSource $source): ?array
+    {
+        return null;
+    }
+
+    public function getRecallStatus(string $registrationNumber, RegulatoryDataSource $source): ?array
+    {
+        return null;
+    }
+
+    public function syncRegistry(RegulatoryDataSource $source): array
+    {
+        return ['status' => 'success', 'imported' => 0];
+    }
 }

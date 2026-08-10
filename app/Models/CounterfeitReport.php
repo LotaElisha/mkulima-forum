@@ -30,7 +30,7 @@ class CounterfeitReport extends Model
                 $report->uuid = (string) Str::uuid();
             }
             if (empty($report->case_number)) {
-                $report->case_number = 'MF-CF-' . date('Y') . '-' . Str::padLeft(mt_rand(1, 999999), 6, '0');
+                $report->case_number = 'MF-CF-'.date('Y').'-'.Str::padLeft(mt_rand(1, 999999), 6, '0');
             }
         });
     }

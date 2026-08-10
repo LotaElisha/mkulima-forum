@@ -7,12 +7,12 @@ use App\Http\Controllers\Api\Admin\AdminProfileController;
 use App\Http\Controllers\Api\Admin\AiManagementController;
 use App\Http\Controllers\Api\Admin\AiProviderController;
 use App\Http\Controllers\Api\Admin\CatalogController;
+use App\Http\Controllers\Api\Admin\Community\AdminCommunityController;
 use App\Http\Controllers\Api\Admin\FinancialReportController;
 use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
 use App\Http\Controllers\Api\Admin\VendorController;
 use App\Http\Controllers\Api\Admin\Verify\AdminVerifyController;
-use App\Http\Controllers\Api\Admin\Community\AdminCommunityController;
 use App\Http\Controllers\Api\AgronomistController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Community\CommunityClickController;
@@ -100,7 +100,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', AdminMiddleware::class])->gr
     Route::delete('/community/channels/{id}', [AdminCommunityController::class, 'destroy']);
     Route::post('/community/channels/{id}/qr', [AdminCommunityController::class, 'generateQr']);
 });
-
 
 /*
 |--------------------------------------------------------------------------

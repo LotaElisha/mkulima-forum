@@ -18,7 +18,7 @@ class CommunityChannelSeeder extends Seeder
                 'url' => 'https://whatsapp.com/channel/0029VaMkulimaForumOfficial',
                 'description' => [
                     'sw' => 'Pata tahadhari za kilimo, bei za masoko, na habari rasmi za Mkulima Forum.',
-                    'en' => 'Receive agricultural alerts, market prices, and official Mkulima Forum announcements.'
+                    'en' => 'Receive agricultural alerts, market prices, and official Mkulima Forum announcements.',
                 ],
                 'icon' => 'radio',
                 'is_official' => true,
@@ -36,7 +36,7 @@ class CommunityChannelSeeder extends Seeder
                 'url' => 'https://chat.whatsapp.com/MkulimaMahindiGroupTZ',
                 'description' => [
                     'sw' => 'Kikundi cha kujadili kilimo cha mahindi, mbinu bora, na masoko.',
-                    'en' => 'Community group for maize farmers to discuss cultivation, pest control, and sales.'
+                    'en' => 'Community group for maize farmers to discuss cultivation, pest control, and sales.',
                 ],
                 'icon' => 'users',
                 'is_official' => false,
@@ -55,11 +55,11 @@ class CommunityChannelSeeder extends Seeder
                 'url' => 'https://wa.me/255700000000',
                 'default_greeting' => [
                     'sw' => 'Habari Mkulima Forum, nahitaji usaidizi kuhusu...',
-                    'en' => 'Hello Mkulima Forum, I need assistance regarding...'
+                    'en' => 'Hello Mkulima Forum, I need assistance regarding...',
                 ],
                 'description' => [
                     'sw' => 'Zungumza na timu yetu moja kwa moja kwa msaada wa haraka.',
-                    'en' => 'Chat directly with our support team for quick assistance.'
+                    'en' => 'Chat directly with our support team for quick assistance.',
                 ],
                 'icon' => 'message-square',
                 'is_official' => true,
@@ -77,7 +77,7 @@ class CommunityChannelSeeder extends Seeder
                 'url' => 'https://youtube.com/@MkulimaForum',
                 'description' => [
                     'sw' => 'Tazama video za mafunzo ya kilimo bora na hadithi za wakulima.',
-                    'en' => 'Watch agricultural tutorials, disease guides, and inspiring farmer stories.'
+                    'en' => 'Watch agricultural tutorials, disease guides, and inspiring farmer stories.',
                 ],
                 'icon' => 'video',
                 'is_official' => true,

@@ -15,7 +15,7 @@ class TaxonomyService
      */
     public function resolve(string $type, int|string $identifier): mixed
     {
-        $cacheKey = "taxonomy:{$type}:" . (is_numeric($identifier) ? "id:{$identifier}" : "str:{$identifier}");
+        $cacheKey = "taxonomy:{$type}:".(is_numeric($identifier) ? "id:{$identifier}" : "str:{$identifier}");
 
         return Cache::remember($cacheKey, 3600, function () use ($type, $identifier) {
             return match ($type) {
@@ -49,12 +49,14 @@ class TaxonomyService
 
     public function getDistricts(?int $regionId = null)
     {
-        $key = 'taxonomy:geo:districts:' . ($regionId ?? 'all');
+        $key = 'taxonomy:geo:districts:'.($regionId ?? 'all');
+
         return Cache::remember($key, 3600, function () use ($regionId) {
             $query = GeoUnit::where('type', 'district');
             if ($regionId) {
                 $query->where('parent_id', $regionId);
             }
+
             return $query->orderBy('name')->get();
         });
     }

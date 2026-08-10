@@ -3,6 +3,8 @@
 namespace Tests\Feature\Community;
 
 use App\Models\CommunityChannel;
+use Database\Seeders\CommunityChannelSeeder;
+use Database\Seeders\SpineSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,8 +15,8 @@ class CommunityChannelApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\SpineSeeder::class);
-        $this->seed(\Database\Seeders\CommunityChannelSeeder::class);
+        $this->seed(SpineSeeder::class);
+        $this->seed(CommunityChannelSeeder::class);
     }
 
     public function test_public_community_links_endpoint_returns_db_backed_channels(): void
@@ -25,8 +27,8 @@ class CommunityChannelApiTest extends TestCase
             ->assertJsonStructure([
                 'status',
                 'data' => [
-                    '*' => ['uuid', 'platform', 'channel_type', 'name', 'slug', 'is_official', 'provenance']
-                ]
+                    '*' => ['uuid', 'platform', 'channel_type', 'name', 'slug', 'is_official', 'provenance'],
+                ],
             ]);
     }
 

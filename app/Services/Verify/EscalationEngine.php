@@ -32,7 +32,7 @@ class EscalationEngine
                 'description' => $report->description,
                 'reported_at' => $report->created_at->toIso8601String(),
             ],
-            'evidence' => $report->evidence->map(fn($e) => [
+            'evidence' => $report->evidence->map(fn ($e) => [
                 'file_path' => $e->file_path,
                 'sha256_hash' => $e->sha256_hash,
                 'type' => $e->evidence_type,
@@ -89,8 +89,8 @@ class EscalationEngine
           <p><span class='label'>Description:</span> {$desc}</p>
           <p><span class='label'>Reported At:</span> {$date}</p>
           <h3>Evidence Items (SHA-256 Verified)</h3>
-          <ul>" . implode('', array_map(fn($e) => "<li>{$e['type']}: {$e['sha256_hash']}</li>", $caseData['evidence'])) . "</ul>
+          <ul>".implode('', array_map(fn ($e) => "<li>{$e['type']}: {$e['sha256_hash']}</li>", $caseData['evidence'])).'</ul>
         </body>
-        </html>";
+        </html>';
     }
 }

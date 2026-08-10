@@ -33,7 +33,7 @@ class ChannelBus
                 $count = $this->dispatchToDriver($message, $driver, $audience);
                 $recipientsCount += $count;
             } catch (\Throwable $e) {
-                Log::error("ChannelBus dispatch error [{$driver}]: " . $e->getMessage());
+                Log::error("ChannelBus dispatch error [{$driver}]: ".$e->getMessage());
                 $message->error_message = $e->getMessage();
             }
         }
@@ -58,10 +58,12 @@ class ChannelBus
             if ($phone) {
                 if ($this->isSuppressed($phone, 'sms')) {
                     Log::info("ChannelBus: Suppressed SMS to {$phone}");
+
                     return 0;
                 }
                 $this->smsService->sendSms($phone, "{$title}: {$body}");
                 $this->recordReceipt($message, $phone, 'sms', 'delivered');
+
                 return 1;
             }
         }
@@ -69,6 +71,7 @@ class ChannelBus
         // Handle in-app banner / push / whatsapp mock adapters
         if (in_app_driver($driver)) {
             $this->recordReceipt($message, $audience['user_id'] ?? null, $driver, 'delivered');
+
             return 1;
         }
 
@@ -95,6 +98,7 @@ class ChannelBus
     }
 }
 
-function in_app_driver(string $driver): bool {
+function in_app_driver(string $driver): bool
+{
     return in_array($driver, ['push', 'whatsapp_business', 'whatsapp_channel_link', 'telegram', 'email', 'in_app_banner', 'ussd_session']);
 }

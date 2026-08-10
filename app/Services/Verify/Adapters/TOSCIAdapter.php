@@ -14,7 +14,7 @@ class TOSCIAdapter implements RegulatoryProvider
             $q->where('acronym', 'TOSCI');
         })->where(function ($q) use ($query) {
             $q->where('trade_name', 'like', "%{$query}%")
-              ->orWhere('registration_number', 'like', "%{$query}%");
+                ->orWhere('registration_number', 'like', "%{$query}%");
         })->get()->toArray();
     }
 
@@ -24,7 +24,9 @@ class TOSCIAdapter implements RegulatoryProvider
             $q->where('acronym', 'TOSCI');
         })->where('registration_number', $registrationNumber)->first();
 
-        if (!$product) return null;
+        if (! $product) {
+            return null;
+        }
 
         return [
             'registration_number' => $product->registration_number,

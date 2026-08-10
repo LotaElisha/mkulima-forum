@@ -14,8 +14,8 @@ class TPHPAAdapter implements RegulatoryProvider
             $q->where('acronym', 'TPHPA');
         })->where(function ($q) use ($query) {
             $q->where('trade_name', 'like', "%{$query}%")
-              ->orWhere('registration_number', 'like', "%{$query}%")
-              ->orWhere('active_ingredient', 'like', "%{$query}%");
+                ->orWhere('registration_number', 'like', "%{$query}%")
+                ->orWhere('active_ingredient', 'like', "%{$query}%");
         })->get()->toArray();
     }
 
@@ -25,7 +25,9 @@ class TPHPAAdapter implements RegulatoryProvider
             $q->where('acronym', 'TPHPA');
         })->where('registration_number', $registrationNumber)->first();
 
-        if (!$product) return null;
+        if (! $product) {
+            return null;
+        }
 
         return [
             'registration_number' => $product->registration_number,

@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 class AdminCommunityController extends Controller
 {
     protected CommunityChannelService $channelService;
+
     protected CommunityAnalyticsService $analyticsService;
 
     public function __construct(CommunityChannelService $channelService, CommunityAnalyticsService $analyticsService)
@@ -39,8 +40,8 @@ class AdminCommunityController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'platform' => 'required|string|in:' . implode(',', CommunityChannel::PLATFORMS),
-            'channel_type' => 'required|string|in:' . implode(',', CommunityChannel::CHANNEL_TYPES),
+            'platform' => 'required|string|in:'.implode(',', CommunityChannel::PLATFORMS),
+            'channel_type' => 'required|string|in:'.implode(',', CommunityChannel::CHANNEL_TYPES),
             'url' => 'nullable|url',
             'phone_number' => 'nullable|string|max:32',
             'description_sw' => 'nullable|string',

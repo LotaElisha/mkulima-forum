@@ -13,7 +13,7 @@ class EventBus
     public function fire(string $event, array $payload = []): AnalyticsEvent
     {
         $provenance = $payload['provenance'] ?? 'PLATFORM';
-        if (!in_array($provenance, AnalyticsEvent::PROVENANCES)) {
+        if (! in_array($provenance, AnalyticsEvent::PROVENANCES)) {
             $provenance = 'PLATFORM';
         }
 
