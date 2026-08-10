@@ -160,7 +160,7 @@
       <div class="phone-shell">
         <div class="phone-screen">
           <div class="phone-screen-hd">
-            <h4>Mkulima Forum AI</h4>
+            <h4 data-i18n="mockup_title">Mkulima Forum AI</h4>
             <p data-i18n="mockup_tagline">SKANI • TAMBUA • TIBU</p>
           </div>
           <div class="scan-area">
@@ -366,7 +366,7 @@ const mkPageTranslations = {
     home_hero_lead:'{{ $settings["hero_lead"] ?? "" }}',
     home_dl_btn:'⬇️ Pakua App ya Mkulima', home_pitch_btn:'📊 Pitch Deck',
     trust_free:'Bure kutumia', trust_lang:'Kiswahili & English', trust_offline:'SMS & USSD Offline', trust_ai:'Gemini 3 AI',
-    mockup_tagline:'SKANI • TAMBUA • TIBU', mockup_result:'Matokeo ya Uchunguzi',
+    mockup_title:'Mkulima Forum AI', mockup_tagline:'SKANI • TAMBUA • TIBU', mockup_result:'Matokeo ya Uchunguzi',
     mockup_disease:'Ugonjwa: Kutu ya Majani (Leaf Rust)', mockup_treatment:'Tiba: Fungicide + Ondoa majani yaliyoathirika',
     how_eyebrow:'{{ $settings["kicker_jinsi"] ?? "Jinsi Inavyofanya Kazi" }}',
     how_title:'{{ $settings["title_jinsi"] ?? "Hatua 3 tu — chini ya dakika moja" }}',
@@ -405,7 +405,7 @@ const mkPageTranslations = {
     home_hero_lead:'AI-powered crop disease diagnosis, agronomy advice in Swahili & English, agri-markets, real-time prices, and offline support via Gemma 2B.',
     home_dl_btn:'⬇️ Download Farmer App', home_pitch_btn:'📊 Pitch Deck',
     trust_free:'Free to use', trust_lang:'Swahili & English', trust_offline:'SMS & USSD Offline', trust_ai:'Gemini 3 AI',
-    mockup_tagline:'SCAN • DIAGNOSE • TREAT', mockup_result:'Diagnosis Result',
+    mockup_title:'Mkulima Forum AI', mockup_tagline:'SCAN • DIAGNOSE • TREAT', mockup_result:'Diagnosis Result',
     mockup_disease:'Disease: Leaf Rust', mockup_treatment:'Treatment: Fungicide + Remove infected leaves',
     how_eyebrow:'HOW IT WORKS', how_title:'3 Simple Steps — Under One Minute',
     how_sub:'No technical expertise required. If you can take a photo, you can use Mkulima Forum.',

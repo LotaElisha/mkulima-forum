@@ -189,9 +189,9 @@
 <div id="pdfModal" onclick="closePDFModal(event)" role="dialog" aria-label="Pitch Deck Viewer" aria-modal="true">
   <div class="pdf-modal-card" onclick="event.stopPropagation()">
     <div class="pdf-modal-header">
-      <h4>📊 MkulimaForum Pitch Deck</h4>
+      <h4 data-i18n="pd_deck_modal_title">📊 MkulimaForum Pitch Deck</h4>
       <div style="display:flex; gap:8px; align-items:center;">
-        <a id="pdfDownloadBtn" href="#" target="_blank" rel="noopener" download class="btn btn-outline btn-sm">⬇️ Download</a>
+        <a id="pdfDownloadBtn" href="#" target="_blank" rel="noopener" download class="btn btn-outline btn-sm" data-i18n="pd_download_btn">⬇️ Download</a>
         <button class="pdf-close-btn" onclick="closePDF()" aria-label="Close PDF viewer">✕</button>
       </div>
     </div>
@@ -243,6 +243,7 @@ const mkPageTranslations = {
     nda_badge:'UWEKEZAJI', nda_title:'Unatafuta Taarifa Zaidi za Uwekezaji?',
     nda_desc:'Tupo tayari kushiriki taarifa zaidi za kifedha, mkakati wa biashara, na maelezo ya kina zaidi kwa wawekezaji wanaovutika.',
     nda_contact_btn:'📬 Wasiliana na Timu', nda_impact_btn:'📊 Angalia Athari →',
+    pd_deck_modal_title:'📊 Pitch Deck ya MkulimaForum', pd_download_btn:'⬇️ Pakua',
   },
   en: {
     pitch_badge:'INVESTOR PRESENTATION', pitch_hero_title:'MkulimaForum — AI Agriculture Platform for East Africa',
@@ -264,6 +265,7 @@ const mkPageTranslations = {
     nda_badge:'INVESTMENT', nda_title:'Looking for More Detailed Investment Information?',
     nda_desc:"We're happy to share detailed financial information, business strategy, and in-depth materials with interested investors. Contact us to schedule a conversation.",
     nda_contact_btn:'📬 Contact the Team', nda_impact_btn:'📊 View Our Impact →',
+    pd_deck_modal_title:'📊 MkulimaForum Pitch Deck', pd_download_btn:'⬇️ Download',
   }
 };
 </script>

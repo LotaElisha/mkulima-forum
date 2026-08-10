@@ -78,9 +78,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     grid.innerHTML = channels.map(c => {
       const targetUrl = c.click_to_chat_url || c.url;
+      const isSw = MK_LANG === 'sw';
       const officialBadge = c.is_official 
-        ? '<span class="official-tag">✓ Official Mkulima Forum</span>' 
+        ? `<span class="official-tag">✓ ${isSw ? 'Rasmi Mkulima Forum' : 'Official Mkulima Forum'}</span>` 
         : '';
+
+      const descText = typeof c.description === 'object' && c.description !== null
+        ? (c.description[MK_LANG] || c.description['sw'] || '')
+        : (c.description || (isSw ? 'Jiunge na wakulima wengine kupata taarifa za kilimo.' : 'Join other farmers to get agricultural updates.'));
+
+      const btnText = c.channel_type === 'WHATSAPP_BUSINESS'
+        ? (isSw ? '📲 Anza Mazungumzo' : '📲 Start Chat')
+        : (isSw ? '🔗 Jiunge Sasa' : '🔗 Join Channel');
 
       return `
         <div class="comm-card fade-up">
@@ -88,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ${officialBadge}
             <div class="comm-card-icon">💬</div>
             <h3 class="comm-card-title">${c.name}</h3>
-            <p class="comm-card-desc">${c.description || 'Jiunge na wakulima wengine kupata taarifa za kilimo.'}</p>
+            <p class="comm-card-desc">${descText}</p>
           </div>
           <div>
             <a 
@@ -99,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               class="btn btn-primary btn-sm" 
               style="width:100%; justify-content:center;"
             >
-              ${c.channel_type === 'WHATSAPP_BUSINESS' ? '📲 Anza Mazungumzo' : '🔗 Jiunge Sasa'}
+              ${btnText}
             </a>
           </div>
         </div>

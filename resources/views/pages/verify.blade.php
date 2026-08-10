@@ -51,6 +51,7 @@
           type="text" 
           required 
           placeholder="Ingiza Namba ya Usajili, Serial Code au Chapa..."
+          data-i18n-ph="v_scan_ph"
           style="flex:1; padding:14px 18px; border:1.5px solid var(--border-light); border-radius:12px; font-size:1rem; outline:none;"
         >
         <button type="submit" class="btn btn-primary btn-lg" id="scan_btn" data-i18n="v_scan_btn">
@@ -147,7 +148,7 @@ const mkPageTranslations = {
   sw: {
     v_hero_badge: 'MKULIMA VERIFY', v_hero_title: 'Changanua. Thibitisha. Linda.',
     v_hero_sub: 'Kinga shamba lako dhidi ya pembejeo feki. Kagua namba za usajili za mbegu (TOSCI), dawa za mimea (TPHPA), mbolea (TFRA), na mawakala waliothibitishwa.',
-    v_scan_box_title: '🔍 Kagua Pembejeo Hapa', v_scan_btn: 'Thibitisha',
+    v_scan_box_title: '🔍 Kagua Pembejeo Hapa', v_scan_btn: 'Thibitisha', v_scan_ph: 'Ingiza Namba ya Usajili, Serial Code au Chapa...',
     v_scan_disclaimer: '* Mathibitisho yote yanatolewa kulingana na data rasmi au za Mkulima Forum.',
     v_feat_eyebrow: 'HUDUMA ZA MKULIMA VERIFY', v_feat_title: 'Kinga Shamba Lako Dhidi ya Hasara',
     vf0_title: 'Ukaguzi wa Mbegu (TOSCI)', vf0_desc: 'Thibitisha aina za mbegu zilizosajiliwa na taasisi ya TOSCI kabla ya kupanda.',
@@ -157,7 +158,7 @@ const mkPageTranslations = {
   en: {
     v_hero_badge: 'MKULIMA VERIFY', v_hero_title: 'Scan. Verify. Protect.',
     v_hero_sub: 'Protect your farm against fake inputs. Verify registration numbers for seeds (TOSCI), pesticides (TPHPA), fertilizers (TFRA), and trusted agrodealers.',
-    v_scan_box_title: '🔍 Verify Agricultural Input', v_scan_btn: 'Verify Now',
+    v_scan_box_title: '🔍 Verify Agricultural Input', v_scan_btn: 'Verify Now', v_scan_ph: 'Enter Registration Number, Serial Code or Brand...',
     v_scan_disclaimer: '* All verifications sourced from regulatory records or Mkulima Forum registry.',
     v_feat_eyebrow: 'MKULIMA VERIFY SERVICES', v_feat_title: 'Protect Your Farm From Crop Loss',
     vf0_title: 'Seed Certification (TOSCI)', vf0_desc: 'Verify certified seed varieties registered by TOSCI before planting.',
