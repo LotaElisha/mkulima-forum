@@ -52,8 +52,8 @@ class OfflineAiService {
         lowerPrompt.contains('pesticide') ||
         lowerPrompt.contains('wadudu')) {
       return isSwahili
-          ? '[Offline Gemma 2B AI] Tumia dawa iliyosajiliwa na TPRI/TFRA. Vaa nguo za kujikinga wakati wa kunyunyizia dawa asubuhi au jioni.'
-          : '[Offline Gemma 2B AI] Use pesticides certified by TPRI/TFRA. Wear protective equipment and spray early morning or late evening.';
+          ? '[Offline Gemma 2B AI] Tumia dawa iliyosajiliwa na TPHPA/TFRA. Vaa nguo za kujikinga wakati wa kunyunyizia dawa asubuhi au jioni.'
+          : '[Offline Gemma 2B AI] Use pesticides certified by TPHPA/TFRA. Wear protective equipment and spray early morning or late evening.';
     }
 
     return isSwahili

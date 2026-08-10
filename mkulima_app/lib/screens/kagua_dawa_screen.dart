@@ -172,7 +172,7 @@ class _RegistrySearchTabState extends State<_RegistrySearchTab>
           controller: _controller,
           onChanged: _onChanged,
           decoration: const InputDecoration(
-            labelText: 'Jina la dawa au namba ya usajili (TPRI/TFRA)',
+            labelText: 'Jina la dawa au namba ya usajili (TPHPA/TFRA)',
             prefixIcon: Icon(Icons.search),
             border: OutlineInputBorder(),
           ),

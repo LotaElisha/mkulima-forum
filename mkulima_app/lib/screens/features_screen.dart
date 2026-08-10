@@ -96,7 +96,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       requiredPlan: 'Free',
       color: Colors.red,
       targetScreen: KaguaDawaScreen(),
-      benefits: ['Orodha ya usajili ya TPRI/TFRA', 'Kagua lebo kwa picha (AI)', 'Tahadhari za dawa feki mkoani kwako'],
+      benefits: ['Orodha ya usajili ya TPHPA/TFRA', 'Kagua lebo kwa picha (AI)', 'Tahadhari za dawa feki mkoani kwako'],
     ),
     const ServiceItem(
       icon: Icons.price_change_outlined,
