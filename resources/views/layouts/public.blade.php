@@ -195,31 +195,31 @@
       transition: all .15s ease; white-space: nowrap;
     }
     .nav-links a:hover, .nav-links a.active { background: var(--leaf-pale); color: var(--forest-dark); }
-    /* More dropdown */
-    .nav-more { position: relative; }
-    .nav-more-trigger {
+    /* Dropdown Navigation */
+    .nav-dropdown-item { position: relative; }
+    .nav-dropdown-trigger {
       display: flex; align-items: center; gap: 5px; padding: 8px 14px;
       font-size: .9rem; font-weight: 600; color: var(--ink-muted);
       border-radius: 8px; cursor: pointer; background: transparent;
-      transition: all .15s ease;
+      transition: all .15s ease; border: none;
     }
-    .nav-more-trigger:hover { background: var(--leaf-pale); color: var(--forest-dark); }
-    .nav-more-trigger svg { width:14px; height:14px; transition: transform .2s ease; }
-    .nav-more:hover .nav-more-trigger svg { transform: rotate(180deg); }
-    .nav-dropdown {
-      position: absolute; top: calc(100% + 8px); right: 0;
+    .nav-dropdown-trigger:hover, .nav-dropdown-item.active .nav-dropdown-trigger { background: var(--leaf-pale); color: var(--forest-dark); }
+    .nav-dropdown-trigger svg { width:14px; height:14px; transition: transform .2s ease; }
+    .nav-dropdown-item:hover .nav-dropdown-trigger svg { transform: rotate(180deg); }
+    .nav-dropdown-menu {
+      position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(-6px);
       background: var(--surface-card); border: 1px solid var(--border-light);
-      border-radius: var(--radius-lg); padding: 8px; min-width: 200px;
+      border-radius: var(--radius-lg); padding: 8px; min-width: 220px;
       box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none;
-      transform: translateY(-6px); transition: all .2s ease;
+      transition: all .2s ease; z-index: 210;
     }
-    .nav-more:hover .nav-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
-    .nav-dropdown a {
+    .nav-dropdown-item:hover .nav-dropdown-menu { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .nav-dropdown-menu a {
       display: flex; align-items: center; gap: 10px; padding: 10px 14px;
       border-radius: 8px; font-size: .88rem; font-weight: 600; color: var(--ink-body);
-      transition: all .15s ease;
+      transition: all .15s ease; white-space: nowrap;
     }
-    .nav-dropdown a:hover { background: var(--leaf-pale); color: var(--forest-dark); }
+    .nav-dropdown-menu a:hover, .nav-dropdown-menu a.active { background: var(--leaf-pale); color: var(--forest-dark); }
     /* Right actions */
     .nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     /* Lang switcher */
@@ -349,28 +349,48 @@
       <img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum">
     </a>
 
-    <!-- Primary nav links -->
+    <!-- Primary nav links (Grouped & Uncongested) -->
     <ul class="nav-links" role="list">
       <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}" data-i18n="nav_home">Home</a></li>
       <li><a href="/verify" class="{{ request()->is('verify') ? 'active' : '' }}">🔍 <span data-i18n="nav_verify">Verify</span></a></li>
-      <li><a href="/community" class="{{ request()->is('community') ? 'active' : '' }}">💬 <span data-i18n="nav_community">Community</span></a></li>
-      <li><a href="/about" class="{{ request()->is('about') ? 'active' : '' }}" data-i18n="nav_about">About</a></li>
-      <li><a href="/solutions" class="{{ request()->is('solutions') ? 'active' : '' }}" data-i18n="nav_solutions">Solutions</a></li>
-      <li><a href="/impact" class="{{ request()->is('impact') ? 'active' : '' }}" data-i18n="nav_impact">Impact</a></li>
-      <li><a href="/partners" class="{{ request()->is('partners') ? 'active' : '' }}" data-i18n="nav_partners">Partners</a></li>
-      <li><a href="/pitch-deck" class="{{ request()->is('pitch-deck') ? 'active' : '' }}" data-i18n="nav_pitchdeck">Pitch Deck</a></li>
 
-      <!-- More dropdown -->
-      <li class="nav-more">
-        <button class="nav-more-trigger" aria-haspopup="true" data-i18n="nav_more">
-          More
+      <!-- Solutions Dropdown -->
+      <li class="nav-dropdown-item {{ request()->is('solutions', 'technology') ? 'active' : '' }}">
+        <button class="nav-dropdown-trigger" aria-haspopup="true">
+          <span data-i18n="nav_solutions_group">Solutions</span>
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
-        <div class="nav-dropdown" role="menu">
-          <a href="/stories" role="menuitem">🌾 <span data-i18n="nav_stories">Farmer Stories</span></a>
-          <a href="/technology" role="menuitem">⚙️ <span data-i18n="nav_tech">Technology</span></a>
-          <a href="/contact" role="menuitem">✉️ <span data-i18n="nav_contact">Contact</span></a>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="/solutions" class="{{ request()->is('solutions') ? 'active' : '' }}" role="menuitem">⚡ <span data-i18n="nav_solutions">All Solutions</span></a>
+          <a href="/technology" class="{{ request()->is('technology') ? 'active' : '' }}" role="menuitem">⚙️ <span data-i18n="nav_tech">Technology & AI</span></a>
           <a href="/api/health" target="_blank" rel="noopener" role="menuitem">🔍 <span data-i18n="nav_api">API Status</span></a>
+        </div>
+      </li>
+
+      <!-- Community Dropdown -->
+      <li class="nav-dropdown-item {{ request()->is('community', 'stories') ? 'active' : '' }}">
+        <button class="nav-dropdown-trigger" aria-haspopup="true">
+          <span data-i18n="nav_community_group">Community</span>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="/community" class="{{ request()->is('community') ? 'active' : '' }}" role="menuitem">💬 <span data-i18n="nav_community">Community Hub</span></a>
+          <a href="/stories" class="{{ request()->is('stories') ? 'active' : '' }}" role="menuitem">🌾 <span data-i18n="nav_stories">Farmer Stories</span></a>
+        </div>
+      </li>
+
+      <!-- Company Dropdown -->
+      <li class="nav-dropdown-item {{ request()->is('about', 'impact', 'partners', 'pitch-deck', 'contact') ? 'active' : '' }}">
+        <button class="nav-dropdown-trigger" aria-haspopup="true">
+          <span data-i18n="nav_company_group">Company</span>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="/about" class="{{ request()->is('about') ? 'active' : '' }}" role="menuitem">🌿 <span data-i18n="nav_about">About Us</span></a>
+          <a href="/impact" class="{{ request()->is('impact') ? 'active' : '' }}" role="menuitem">📊 <span data-i18n="nav_impact">Impact & Reach</span></a>
+          <a href="/partners" class="{{ request()->is('partners') ? 'active' : '' }}" role="menuitem">🤝 <span data-i18n="nav_partners">Partners</span></a>
+          <a href="/pitch-deck" class="{{ request()->is('pitch-deck') ? 'active' : '' }}" role="menuitem">📄 <span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
+          <a href="/contact" class="{{ request()->is('contact') ? 'active' : '' }}" role="menuitem">✉️ <span data-i18n="nav_contact">Contact</span></a>
         </div>
       </li>
     </ul>
@@ -392,7 +412,7 @@
   </div>
 </header>
 
-<!-- Mobile Drawer -->
+<!-- Mobile Drawer (Clean Grouped Mobile Menu) -->
 <nav id="nav-drawer" aria-label="Mobile navigation">
   <div class="drawer-header">
     <a href="/" class="nav-logo"><img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum"></a>
@@ -400,15 +420,26 @@
   </div>
   <div class="drawer-links">
     <a href="/" onclick="toggleDrawer()">🏠 <span data-i18n="nav_home">Home</span></a>
-    <a href="/about" onclick="toggleDrawer()">🌿 <span data-i18n="nav_about">About</span></a>
-    <a href="/solutions" onclick="toggleDrawer()">⚡ <span data-i18n="nav_solutions">Solutions</span></a>
+    <a href="/verify" onclick="toggleDrawer()">🔍 <span data-i18n="nav_verify">Mkulima Verify</span></a>
+    
+    <div class="drawer-divider"></div>
+    <div style="font-size:.72rem; font-weight:800; color:var(--leaf-green); padding:4px 16px; text-transform:uppercase; letter-spacing:.08em;" data-i18n="nav_solutions_group">SOLUTIONS</div>
+    <a href="/solutions" onclick="toggleDrawer()">⚡ <span data-i18n="nav_solutions">All Solutions</span></a>
+    <a href="/technology" onclick="toggleDrawer()">⚙️ <span data-i18n="nav_tech">Technology & AI</span></a>
+
+    <div class="drawer-divider"></div>
+    <div style="font-size:.72rem; font-weight:800; color:var(--leaf-green); padding:4px 16px; text-transform:uppercase; letter-spacing:.08em;" data-i18n="nav_community_group">COMMUNITY</div>
+    <a href="/community" onclick="toggleDrawer()">💬 <span data-i18n="nav_community">Community Hub</span></a>
+    <a href="/stories" onclick="toggleDrawer()">🌾 <span data-i18n="nav_stories">Farmer Stories</span></a>
+
+    <div class="drawer-divider"></div>
+    <div style="font-size:.72rem; font-weight:800; color:var(--leaf-green); padding:4px 16px; text-transform:uppercase; letter-spacing:.08em;" data-i18n="nav_company_group">COMPANY</div>
+    <a href="/about" onclick="toggleDrawer()">🌿 <span data-i18n="nav_about">About Us</span></a>
     <a href="/impact" onclick="toggleDrawer()">📊 <span data-i18n="nav_impact">Impact</span></a>
     <a href="/partners" onclick="toggleDrawer()">🤝 <span data-i18n="nav_partners">Partners</span></a>
     <a href="/pitch-deck" onclick="toggleDrawer()">📄 <span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
-    <div class="drawer-divider"></div>
-    <a href="/stories" onclick="toggleDrawer()">🌾 <span data-i18n="nav_stories">Farmer Stories</span></a>
-    <a href="/technology" onclick="toggleDrawer()">⚙️ <span data-i18n="nav_tech">Technology</span></a>
     <a href="/contact" onclick="toggleDrawer()">✉️ <span data-i18n="nav_contact">Contact</span></a>
+
     <div class="drawer-divider"></div>
     <!-- Lang switcher in drawer -->
     <div style="display:flex; gap:8px; padding: 8px 16px;">
@@ -496,9 +527,10 @@
 // ---- Translation dictionary ----
 const MK_TRANSLATIONS = {
   sw: {
-    nav_home:'Nyumbani', nav_about:'Kuhusu', nav_solutions:'Suluhisho',
+    nav_home:'Nyumbani', nav_verify:'Thibitisha', nav_community:'Jamii', nav_about:'Kuhusu', nav_solutions:'Suluhisho Zote',
+    nav_solutions_group:'Suluhisho', nav_community_group:'Jamii', nav_company_group:'Taasisi',
     nav_impact:'Athari', nav_partners:'Washirika', nav_pitchdeck:'Pitch Deck',
-    nav_more:'Zaidi', nav_stories:'Hadithi za Wakulima', nav_tech:'Teknolojia',
+    nav_more:'Zaidi', nav_stories:'Hadithi za Wakulima', nav_tech:'Teknolojia na AI',
     nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'⬇️ Pakua App',
     foot_tagline:'Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.',
     foot_contact_link:'Wasiliana Nasi →',
@@ -511,9 +543,10 @@ const MK_TRANSLATIONS = {
     foot_motto:'Shiriki. Jifunze. Endelea.',
   },
   en: {
-    nav_home:'Home', nav_about:'About', nav_solutions:'Solutions',
+    nav_home:'Home', nav_verify:'Verify', nav_community:'Community', nav_about:'About', nav_solutions:'All Solutions',
+    nav_solutions_group:'Solutions', nav_community_group:'Community', nav_company_group:'Company',
     nav_impact:'Impact', nav_partners:'Partners', nav_pitchdeck:'Pitch Deck',
-    nav_more:'More', nav_stories:'Farmer Stories', nav_tech:'Technology',
+    nav_more:'More', nav_stories:'Farmer Stories', nav_tech:'Technology & AI',
     nav_contact:'Contact', nav_api:'API Status', nav_download:'⬇️ Download App',
     foot_tagline:'A digital platform connecting farmers, agronomists, markets, and AI technology across Tanzania and East Africa.',
     foot_contact_link:'Contact Us →',
