@@ -22,6 +22,8 @@ import InputSafety from './pages/InputSafety'
 import AiManagement from './pages/AiManagement'
 import AiProviders from './pages/AiProviders'
 import FarmManagement from './pages/FarmManagement'
+import MkulimaVerify from './pages/MkulimaVerify'
+import CommunityHub from './pages/CommunityHub'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthContext, RequireRole } from './components/AuthContext'
 
@@ -85,6 +87,8 @@ function App() {
       }>
         <Route index element={<Dashboard />} />
         <Route path="farms" element={<FarmManagement />} />
+        <Route path="verify" element={<MkulimaVerify />} />
+        <Route path="community-hub" element={<CommunityHub />} />
         <Route path="users" element={<Users />} />
         <Route path="orders" element={<Orders />} />
         <Route path="escrows" element={<Escrows />} />

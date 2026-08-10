@@ -143,7 +143,7 @@
       <h2 data-i18n="s3_title">Soko la Pembejeo na Mazao</h2>
       <p data-i18n="s3_desc">Unganisha wakulima, wauzaji wa pembejeo, wanunuzi, wakusanyaji, na wasambazaji wa pembejeo katika soko moja salama.</p>
       <ul class="sol-cap-list">
-        <li data-i18n="s3_cap1">Wauzaji walioidhinishwa na TFRA/TPRI</li>
+        <li data-i18n="s3_cap1">Wauzaji walioidhinishwa na TFRA/TPHPA</li>
         <li data-i18n="s3_cap2">Pembejeo: dawa, mbegu, mbolea</li>
         <li data-i18n="s3_cap3">Soko la mazao ya wakulima</li>
         <li data-i18n="s3_cap4">Mfumo wa Escrow wa Mkulima</li>
@@ -171,14 +171,14 @@
       <p data-i18n="s4_desc">Saidia wakulima kuthibitisha bidhaa za kilimo na kupunguza mfiduo wa pembejeo feki zinazosababisha hasara kubwa za mazao.</p>
       <ul class="sol-cap-list">
         <li data-i18n="s4_cap1">Angalia lebo za dawa na mbolea</li>
-        <li data-i18n="s4_cap2">Uthibitisho wa rejesta ya TFRA/TPRI</li>
+        <li data-i18n="s4_cap2">Uthibitisho wa rejesta ya TFRA/TPHPA</li>
         <li data-i18n="s4_cap3">Ukaguzi wa QR code ya bidhaa</li>
         <li data-i18n="s4_cap4">Ripoti za jamii za bidhaa za shaka</li>
         <li data-i18n="s4_cap5">Uthibitisho wa wakala wa mauzo</li>
       </ul>
       <div class="sol-tags">
         <span class="tag">TFRA</span>
-        <span class="tag">TPRI</span>
+        <span class="tag">TPHPA</span>
         <span class="tag">Community Reports</span>
       </div>
     </div>
@@ -331,11 +331,11 @@ const mkPageTranslations = {
     s2_cap5:'Maswali ya hali ya hewa na mipango ya msimu',
     s2_visual_title:'Mazungumzo ya AI', s3_title:'Soko la Pembejeo na Mazao',
     s3_desc:'Unganisha wakulima, wauzaji wa pembejeo, wanunuzi, wakusanyaji, na wasambazaji wa pembejeo katika soko moja salama.',
-    s3_cap1:'Wauzaji walioidhinishwa na TFRA/TPRI', s3_cap2:'Pembejeo: dawa, mbegu, mbolea',
+    s3_cap1:'Wauzaji walioidhinishwa na TFRA/TPHPA', s3_cap2:'Pembejeo: dawa, mbegu, mbolea',
     s3_cap3:'Soko la mazao ya wakulima', s3_cap4:'Mfumo wa Escrow wa Mkulima', s3_cap5:'M-Pesa, Tigo Pesa, na malipo mengine',
     s3_visual_title:'Mkulima Escrow', s3_visual_sub:'Malipo yote yanalindwa hadi bidhaa iwasilishwe',
     s4_title:'Kagua Pembejeo za Kilimo', s4_desc:'Saidia wakulima kuthibitisha bidhaa za kilimo na kupunguza mfiduo wa pembejeo feki.',
-    s4_cap1:'Angalia lebo za dawa na mbolea', s4_cap2:'Uthibitisho wa rejesta ya TFRA/TPRI',
+    s4_cap1:'Angalia lebo za dawa na mbolea', s4_cap2:'Uthibitisho wa rejesta ya TFRA/TPHPA',
     s4_cap3:'Ukaguzi wa QR code ya bidhaa', s4_cap4:'Ripoti za jamii za bidhaa za shaka', s4_cap5:'Uthibitisho wa wakala wa mauzo',
     s4_visual_title:'Ulinzi wa Pembejeo', s4_visual_sub:'Funika wakulima dhidi ya bidhaa feki',
     s5_title:'Hali ya Hewa na Ujasiriamali wa Mazao', s5_desc:'Toa hali ya hewa ya eneo maalum na ushauri wa mazao kwa wakati halisi.',
@@ -373,11 +373,11 @@ const mkPageTranslations = {
     s2_cap5:'Weather questions and seasonal planning',
     s2_visual_title:'AI Conversations', s3_title:'Agri-Input & Produce Marketplace',
     s3_desc:'Connect farmers, agro-dealers, buyers, aggregators, and input suppliers in one secure marketplace.',
-    s3_cap1:'TFRA/TPRI verified vendors', s3_cap2:'Inputs: pesticides, seeds, fertilizers',
+    s3_cap1:'TFRA/TPHPA verified vendors', s3_cap2:'Inputs: pesticides, seeds, fertilizers',
     s3_cap3:'Farmer produce marketplace', s3_cap4:'Mkulima Escrow payment protection', s3_cap5:'M-Pesa, Tigo Pesa, and other payment channels',
     s3_visual_title:'Mkulima Escrow', s3_visual_sub:'All payments secured until delivery confirmed',
     s4_title:'Agri-Input Verification', s4_desc:'Help farmers verify agricultural products and reduce exposure to counterfeit inputs causing significant crop losses.',
-    s4_cap1:'Inspect pesticide and fertilizer labels', s4_cap2:'TFRA/TPRI registry cross-reference',
+    s4_cap1:'Inspect pesticide and fertilizer labels', s4_cap2:'TFRA/TPHPA registry cross-reference',
     s4_cap3:'Product QR code scanning', s4_cap4:'Community reports on suspicious products', s4_cap5:'Dealer and distributor verification',
     s4_visual_title:'Input Protection', s4_visual_sub:'Shield farmers from counterfeit products',
     s5_title:'Weather & Crop Intelligence', s5_desc:'Provide location-specific weather and crop advice using Gemini 3 Pro with Google Search Grounding for real-time data.',

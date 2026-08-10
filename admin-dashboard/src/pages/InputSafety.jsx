@@ -480,7 +480,7 @@ export default function InputSafetyPage() {
                     required
                     value={form.source}
                     onChange={(e) => setForm({ ...form, source: e.target.value })}
-                    placeholder="e.g. TPRI Registered Pesticides list 2026 Edition"
+                    placeholder="e.g. TPHPA Registered Pesticides list 2026 Edition"
                     className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>

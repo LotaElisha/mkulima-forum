@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             LandingSettingSeeder::class,
             MarketPriceSeeder::class,
             LogisticsServiceSeeder::class,
+            SpineSeeder::class,
+            RegulatoryAuthoritySeeder::class,
+            CommunityChannelSeeder::class,
         ]);
     }
 }

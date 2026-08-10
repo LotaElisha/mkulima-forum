@@ -588,7 +588,7 @@
         <div>
           <div class="feat-icon">🛡️</div>
           <h3 data-i18n="f3_title">Kagua Dawa &amp; Pembejeo</h3>
-          <p data-i18n="f3_desc">Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPRI/TFRA, na tahadhari za jamii.</p>
+          <p data-i18n="f3_desc">Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPHPA/TFRA, na tahadhari za jamii.</p>
         </div>
         <div>
           <span class="pill-badge">Counterfeit Protection</span>
@@ -815,7 +815,7 @@ const translations = {
     f2_title: "Mkulima Bot AI",
     f2_desc: "Msaidizi wako wa kilimo 24/7 — uliza maswali ya mazao, pembejeo, na tiba kupitia sauti au maandishi.",
     f3_title: "Kagua Dawa & Pembejeo",
-    f3_desc: "Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPRI/TFRA, na tahadhari za jamii.",
+    f3_desc: "Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPHPA/TFRA, na tahadhari za jamii.",
     f4_title: "Soko la Pembejeo & Mazao",
     f4_desc: "Nunua dawa, mbegu na mbolea kutoka kwa wauzaji walioidhinishwa. Malipo yote yanalindwa na Mkulima Escrow.",
     f5_title: "Hali ya Hewa & Ushauri",
@@ -879,7 +879,7 @@ const translations = {
     f2_title: "Mkulima Bot AI",
     f2_desc: "Your 24/7 AI agronomist — ask questions about crops, inputs, and soil treatments via text or voice.",
     f3_title: "Agri-Input Verification",
-    f3_desc: "Verify genuine pesticides & fertilizers by scanning labels, cross-referencing TPRI/TFRA registries, and community alerts.",
+    f3_desc: "Verify genuine pesticides & fertilizers by scanning labels, cross-referencing TPHPA/TFRA registries, and community alerts.",
     f4_title: "Marketplace & Escrow",
     f4_desc: "Buy inputs or sell harvests directly without middlemen. All payments secured by Mkulima Escrow.",
     f5_title: "Weather & Crop Advisory",

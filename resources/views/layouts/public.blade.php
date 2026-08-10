@@ -352,6 +352,8 @@
     <!-- Primary nav links -->
     <ul class="nav-links" role="list">
       <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}" data-i18n="nav_home">Home</a></li>
+      <li><a href="/verify" class="{{ request()->is('verify') ? 'active' : '' }}">🔍 <span data-i18n="nav_verify">Verify</span></a></li>
+      <li><a href="/community" class="{{ request()->is('community') ? 'active' : '' }}">💬 <span data-i18n="nav_community">Community</span></a></li>
       <li><a href="/about" class="{{ request()->is('about') ? 'active' : '' }}" data-i18n="nav_about">About</a></li>
       <li><a href="/solutions" class="{{ request()->is('solutions') ? 'active' : '' }}" data-i18n="nav_solutions">Solutions</a></li>
       <li><a href="/impact" class="{{ request()->is('impact') ? 'active' : '' }}" data-i18n="nav_impact">Impact</a></li>

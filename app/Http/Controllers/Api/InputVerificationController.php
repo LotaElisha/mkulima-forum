@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
  * Design principle: the system NEVER claims certainty it doesn't have.
  * It reports evidence (registry match / mismatch, confirmed local alerts,
  * label extraction) with honest guidance, and always points high-risk
- * cases to TPRI / a registered agrovet.
+ * cases to TPHPA / a registered agrovet.
  */
 class InputVerificationController extends Controller
 {
@@ -154,7 +154,7 @@ class InputVerificationController extends Controller
         return response()->json([
             'title' => 'Kagua Dawa Kabla ya Kununua',
             'items' => [
-                ['key' => 'registration', 'text' => 'Lebo ina namba ya usajili ya TPRI (dawa) au TFRA (mbolea)?', 'weight' => 'high'],
+                ['key' => 'registration', 'text' => 'Lebo ina namba ya usajili ya TPHPA (dawa) au TFRA (mbolea)?', 'weight' => 'high'],
                 ['key' => 'seal', 'text' => 'Kifungashio kimefungwa kiwandani — hakuna dalili ya kufunguliwa au kujazwa upya?', 'weight' => 'high'],
                 ['key' => 'expiry', 'text' => 'Tarehe ya mwisho wa matumizi (expiry) ipo na haijapita?', 'weight' => 'high'],
                 ['key' => 'label_quality', 'text' => 'Maandishi ya lebo ni safi — hakuna makosa ya maandishi wala rangi zilizofifia?', 'weight' => 'medium'],
@@ -164,7 +164,7 @@ class InputVerificationController extends Controller
                 ['key' => 'receipt', 'text' => 'Muuzaji anatoa risiti yenye jina la duka?', 'weight' => 'low'],
             ],
             'advice' => 'Ukikosa majibu ya "Ndiyo" kwenye vipengele vya uzito wa juu (high), '
-                .'usinunue — ripoti kwenye app na uwasiliane na afisa ugani au TPRI.',
+                .'usinunue — ripoti kwenye app na uwasiliane na afisa ugani au TPHPA.',
             'version' => 1,
         ]);
     }
@@ -330,7 +330,7 @@ class InputVerificationController extends Controller
                 .'fungicide, fertilizer or veterinary product) sold in Tanzania. Extract ONLY '
                 .'what is actually visible on the label — never guess or invent values. '
                 .'Return JSON with keys: product_name (string|null), registration_number '
-                .'(string|null — TPRI or TFRA registration number if printed), manufacturer '
+                .'(string|null — TPHPA or TFRA registration number if printed), manufacturer '
                 .'(string|null), label_warnings (array of strings — any visible quality '
                 .'problems: blurry printing, spelling errors, missing expiry date, '
                 .'tampered seal). If a field is not readable, use null.';
@@ -392,25 +392,25 @@ class InputVerificationController extends Controller
                 .'halali — hakikisha pia kifungashio, muhuri na tarehe ya matumizi (tumia orodha ya ukaguzi).';
         }
         if ($registryCount === 0) {
-            return 'Orodha ya usajili bado inajazwa na wataalamu wetu. Hakiki moja kwa moja na TPRI '
+            return 'Orodha ya usajili bado inajazwa na wataalamu wetu. Hakiki moja kwa moja na TPHPA '
                 .'(tpri.go.tz) au afisa ugani wa eneo lako.';
         }
 
         return 'Bidhaa HAIKUPATIKANA kwenye orodha ya usajili — hii ni dalili ya hatari. '
-            .'Usinunue kabla ya kuhakiki na TPRI au afisa ugani. Ukiiona ikiuzwa, ripoti hapa.';
+            .'Usinunue kabla ya kuhakiki na TPHPA au afisa ugani. Ukiiona ikiuzwa, ripoti hapa.';
     }
 
     protected function labelGuidance(string $verdict, ?RegisteredInput $match): string
     {
         return match ($verdict) {
             'banned' => 'ONYO KALI: Bidhaa hii IMEPIGWA MARUFUKU ('.($match?->source ?? '').'). Usinunue wala kutumia. Ripoti muuzaji kwa mamlaka.',
-            'withdrawn' => 'TAHADHARI: Usajili wa bidhaa hii UMEONDOLEWA. Usinunue kabla ya kuhakiki na TPRI.',
+            'withdrawn' => 'TAHADHARI: Usajili wa bidhaa hii UMEONDOLEWA. Usinunue kabla ya kuhakiki na TPHPA.',
             'found_registered' => 'Lebo inalingana na bidhaa iliyosajiliwa. Kumbuka: bidhaa feki huiga lebo halali — '
                 .'hakikisha pia muhuri wa kifungashio, tarehe ya matumizi na bei (tumia orodha ya ukaguzi).',
             'registry_empty' => 'Tumesoma lebo, lakini orodha yetu ya usajili bado inajazwa. Hakiki namba ya usajili '
-                .'moja kwa moja na TPRI (tpri.go.tz) au afisa ugani.',
+                .'moja kwa moja na TPHPA (tpri.go.tz) au afisa ugani.',
             default => 'DALILI YA HATARI: Maelezo ya lebo HAYAKUPATIKANA kwenye orodha ya usajili. '
-                .'Usinunue kabla ya kuhakiki na TPRI au afisa ugani — na ripoti bidhaa hii hapa ili kulinda wengine.',
+                .'Usinunue kabla ya kuhakiki na TPHPA au afisa ugani — na ripoti bidhaa hii hapa ili kulinda wengine.',
         };
     }
 }

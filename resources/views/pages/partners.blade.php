@@ -65,7 +65,7 @@
         ['🤖','Washirika wa Teknolojia','Technology Partners','Miundombinu ya AI, wingu, data, uunganisho, na vifaa.','AI infrastructure, cloud, data, connectivity, and hardware.','Gemini AI / Cloud / IoT / Connectivity','pc0'],
         ['💳','Washirika wa Fedha','Financial Partners','Pesa za simu, benki, FinTech, na fedha za kilimo.','Mobile money, banks, FinTech, and agricultural finance.','M-Pesa / Tigo Pesa / CRDB / Agricultural Finance','pc1'],
         ['🌾','Washirika wa Kilimo','Agricultural Partners','Wauzaji wa pembejeo, wazalishaji, wakusanyaji, wanunuzi wa mazao, na wataalamu.','Agro-dealers, input manufacturers, aggregators, buyers, and agronomists.','Agro-dealers / Input Manufacturers / Buyers','pc2'],
-        ['🏛️','Serikali na Usimamizi','Government & Regulatory','Wizara za kilimo, mamlaka za mitaa, wasimamizi, na huduma za ugani.','Agricultural ministries, local governments, regulators, and extension services.','MAFC / TFRA / TPRI / Local Authorities','pc3'],
+        ['🏛️','Serikali na Usimamizi','Government & Regulatory','Wizara za kilimo, mamlaka za mitaa, wasimamizi, na huduma za ugani.','Agricultural ministries, local governments, regulators, and extension services.','MAFC / TFRA / TPHPA / Local Authorities','pc3'],
         ['🌍','Washirika wa Maendeleo','Development Partners','NGO, misingi ya fedha, na mashirika ya kimataifa ya maendeleo.','NGOs, foundations, and international development agencies.','NGOs / Development Agencies / Foundations','pc4'],
         ['🔬','Utafiti na Elimu','Research & Academia','Vyuo vikuu, taasisi za utafiti wa kilimo, na watafiti wa AI.','Universities, agricultural research institutes, and AI researchers.','SUA / UDSM / Research Institutes','pc5'],
       ] as $cat)

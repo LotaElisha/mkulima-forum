@@ -11,8 +11,12 @@ use App\Http\Controllers\Api\Admin\FinancialReportController;
 use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
 use App\Http\Controllers\Api\Admin\VendorController;
+use App\Http\Controllers\Api\Admin\Verify\AdminVerifyController;
+use App\Http\Controllers\Api\Admin\Community\AdminCommunityController;
 use App\Http\Controllers\Api\AgronomistController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Community\CommunityClickController;
+use App\Http\Controllers\Api\Community\SocialLinksController;
 use App\Http\Controllers\Api\DiseaseScannerController;
 use App\Http\Controllers\Api\DroneController;
 use App\Http\Controllers\Api\FarmController;
@@ -29,6 +33,12 @@ use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\ServiceBookingController;
 use App\Http\Controllers\Api\SmsController;
+use App\Http\Controllers\Api\SyncBundleController;
+use App\Http\Controllers\Api\Verify\AdvisoryController;
+use App\Http\Controllers\Api\Verify\CounterfeitReportController;
+use App\Http\Controllers\Api\Verify\VerifyDealerController;
+use App\Http\Controllers\Api\Verify\VerifyProductController;
+use App\Http\Controllers\Api\Verify\VerifyScanController;
 use App\Http\Controllers\Api\WalletController;
 use App\Http\Controllers\Api\WarehouseController;
 use App\Http\Controllers\Api\WeatherController;
@@ -50,6 +60,47 @@ Route::get('/health', function () {
         'timestamp' => now()->toIso8601String(),
     ]);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Mkulima Verify & Community Hub API (v1) — Part E
+|--------------------------------------------------------------------------
+*/
+Route::prefix('v1')->group(function () {
+    // Verify Endpoints
+    Route::post('/verify/scan', [VerifyScanController::class, 'scan'])->middleware('throttle:30,1');
+    Route::get('/verify/product/{id}', [VerifyProductController::class, 'show']);
+    Route::get('/verify/seed-varieties', [VerifyProductController::class, 'seedVarieties']);
+    Route::get('/verify/pesticides', [VerifyProductController::class, 'pesticides']);
+    Route::get('/verify/dealers/{id}', [VerifyDealerController::class, 'show']);
+    Route::post('/reports/counterfeit', [CounterfeitReportController::class, 'store']);
+    Route::get('/reports/{caseNumber}', [CounterfeitReportController::class, 'show']);
+    Route::get('/advisories', [AdvisoryController::class, 'index']);
+
+    // Community Hub Endpoints (Rule 6 compliant — DB backed)
+    Route::get('/public/social-links', [SocialLinksController::class, 'socialLinks']);
+    Route::get('/public/community-links', [SocialLinksController::class, 'communityLinks']);
+    Route::post('/community/click', [CommunityClickController::class, 'recordClick']);
+
+    // Offline Sync Bundle
+    Route::get('/sync/bundle', [SyncBundleController::class, 'bundle']);
+});
+
+// Admin Verify & Community Management Routes
+Route::prefix('admin')->middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
+    Route::get('/verify/stats', [AdminVerifyController::class, 'stats']);
+    Route::get('/verify/reports', [AdminVerifyController::class, 'reports']);
+    Route::post('/verify/reports/{id}/escalate', [AdminVerifyController::class, 'escalateReport']);
+    Route::post('/verify/advisories', [AdminVerifyController::class, 'storeAdvisory']);
+    Route::put('/verify/dealers/{id}/status', [AdminVerifyController::class, 'updateDealerStatus']);
+
+    Route::get('/community/channels', [AdminCommunityController::class, 'index']);
+    Route::post('/community/channels', [AdminCommunityController::class, 'store']);
+    Route::put('/community/channels/{id}', [AdminCommunityController::class, 'update']);
+    Route::delete('/community/channels/{id}', [AdminCommunityController::class, 'destroy']);
+    Route::post('/community/channels/{id}/qr', [AdminCommunityController::class, 'generateQr']);
+});
+
 
 /*
 |--------------------------------------------------------------------------

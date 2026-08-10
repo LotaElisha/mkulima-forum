@@ -107,6 +107,25 @@ Route::get('/contact', function () use ($publicSettings) {
     return view('pages.contact', compact('settings'));
 })->name('contact');
 
+Route::get('/verify', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.verify', compact('settings'));
+})->name('verify');
+
+Route::get('/community', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    return view('pages.community', compact('settings'));
+})->name('community');
+
+// ─── Short Link Resolver (1.9 / QR Service) ──────────────────────────────────
+Route::get('/c/{slug}', function (string $slug) {
+    $shortLink = \App\Models\ShortLink::where('slug', $slug)->where('is_active', true)->firstOrFail();
+    $shortLink->increment('click_count');
+
+    return redirect()->away($shortLink->target_url);
+});
+
 // ─── Auth ────────────────────────────────────────────────────────────────────
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
+

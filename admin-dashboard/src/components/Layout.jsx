@@ -22,7 +22,9 @@ import {
   ShieldAlert,
   Brain,
   Key,
-  Tractor
+  Tractor,
+  ShieldCheck,
+  Globe
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -37,6 +39,8 @@ export default function Layout() {
 
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: 'Overview' },
+    { to: '/verify', icon: ShieldCheck, label: 'Mkulima Verify' },
+    { to: '/community-hub', icon: Globe, label: 'Community Hub' },
     { to: '/farms', icon: Tractor, label: 'Farms' },
     { to: '/pos', icon: CreditCard, label: 'Field POS' },
     { to: '/catalog', icon: Package, label: 'Catalog' },
