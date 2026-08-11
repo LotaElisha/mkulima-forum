@@ -88,17 +88,17 @@
 
         <div class="cta-buttons">
             <a href="/" class="btn">Fungua Tovuti Kuu</a>
-            <a href="/app/mkulima-forum.apk" class="btn btn-secondary">Pakua Android APK</a>
+            <a href="/download" class="btn btn-secondary">Pakua Android APK</a>
             <a href="/admin/login" class="btn btn-secondary">Admin Portal</a>
         </div>
 
         <div class="features">
             <div class="feature-card">
                 <h3>🌿 AI Plant Scanner</h3>
-                <p>Gemini 3 Flash inatambua magonjwa ya mimea na kutoa tiba sahihi kwa Kiswahili.</p>
+                <p>Mkulima AI inatambua magonjwa ya mimea na kutoa tiba sahihi kwa Kiswahili.</p>
             </div>
             <div class="feature-card">
-                <h3>💬 Mkulima Bot</h3>
+                <h3>💬 Mkulima AI</h3>
                 <p>Ushauri wa kitaalamu wa kilimo kwa njia ya mazungumzo kupitia AI.</p>
             </div>
             <div class="feature-card">

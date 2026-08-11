@@ -11,6 +11,8 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\Payments\EscrowService;
+use App\Services\SmsService;
+use App\Services\Spine\ConfigRegistry;
 use App\Support\Roles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +23,26 @@ use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
+    public function getOtpSettings(ConfigRegistry $config, SmsService $sms): JsonResponse
+    {
+        return response()->json([
+            'enabled' => (bool) $config->get('auth.otp_enabled', ! app()->environment('production')),
+            'gateway_configured' => $sms->isConfigured(),
+        ]);
+    }
+
+    public function updateOtpSettings(Request $request, ConfigRegistry $config, SmsService $sms): JsonResponse
+    {
+        $validated = $request->validate(['enabled' => ['required', 'boolean']]);
+        if ($validated['enabled'] && app()->environment('production') && ! $sms->isConfigured()) {
+            return response()->json(['message' => 'Configure the SMS gateway before enabling OTP.'], 422);
+        }
+
+        $config->set('auth.otp_enabled', $validated['enabled'], $request->user()->id, 'authentication', 'boolean');
+
+        return response()->json(['enabled' => $validated['enabled'], 'gateway_configured' => $sms->isConfigured()]);
+    }
+
     public function dashboard(): JsonResponse
     {
         $stats = [
@@ -362,15 +384,27 @@ class AdminController extends Controller
 
     public function updateLandingSettings(Request $request): JsonResponse
     {
+        $allowedKeys = [
+            'brand_motto', 'hero_title', 'hero_tagline', 'hero_lead',
+            'pillar_1', 'pillar_2', 'pillar_3', 'pillar_4',
+            'kicker_jinsi', 'title_jinsi', 'sub_jinsi',
+            'kicker_vipengele', 'title_vipengele', 'sub_vipengele',
+            'contact_email', 'metric_farmers', 'metric_regions', 'metric_scans',
+            'metric_queries', 'metric_markets',
+        ];
+
         $validated = $request->validate([
             'settings' => 'required|array',
-            'settings.*' => 'nullable|string',
+            'settings.*' => 'nullable|string|max:2000',
         ]);
 
         foreach ($validated['settings'] as $key => $value) {
+            if (! in_array($key, $allowedKeys, true)) {
+                continue;
+            }
             LandingSetting::updateOrCreate(
                 ['key' => $key],
-                ['value' => $value]
+                ['value' => strip_tags((string) $value)]
             );
         }
 

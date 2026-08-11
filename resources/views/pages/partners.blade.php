@@ -41,6 +41,9 @@
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--forest-mid); background:#fff; }
   .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   @media(max-width:640px){ .form-grid-2{ grid-template-columns:1fr; } }
+  .grid-partner-form { display:grid; grid-template-columns:minmax(0,.45fr) minmax(0,.55fr); gap:56px; align-items:start; }
+  .grid-partner-form > * { min-width:0; }
+  @media(max-width:860px){ .grid-partner-form{ grid-template-columns:1fr; } }
 </style>
 @endsection
 
@@ -121,7 +124,7 @@
 {{-- Become a Partner --}}
 <section id="become-partner">
   <div class="wrap">
-    <div style="display:grid; grid-template-columns:0.45fr 0.55fr; gap:56px; align-items:start;">
+    <div class="grid-partner-form">
       <div class="fade-up">
         <span class="eyebrow" data-i18n="bp_eyebrow">ANZA USHIRIKIANO</span>
         <h2 class="section-title" data-i18n="bp_title">Shirikiana na MkulimaForum</h2>
@@ -185,14 +188,13 @@
       </div>
     </div>
 
-    @media(max-width:860px){ .grid-partner-form{ grid-template-columns:1fr; } }
   </div>
 </section>
 
 @endsection
 
 @section('page_scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 async function handlePartnerForm(e) {
   e.preventDefault();
   const result = document.getElementById('pf_result');
@@ -203,7 +205,7 @@ async function handlePartnerForm(e) {
   e.target.reset();
 }
 
-const mkPageTranslations = {
+mkPageTranslations = {
   sw: {
     partners_eyebrow:'WASHIRIKA', partners_title:'Tushirikiane Kubadilisha Kilimo',
     partners_sub:'MkulimaForum imejengwa kushirikiana na mashirika yanayofanya kazi katika kilimo, teknolojia, fedha, utafiti, serikali, na maendeleo.',

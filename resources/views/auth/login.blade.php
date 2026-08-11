@@ -311,7 +311,7 @@
   </div>
 </div>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
   let activeTab = 'email';
 
   function switchTab(tab) {
@@ -366,15 +366,13 @@
     try {
       const res = await fetch('/api/auth/login/email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Client': 'web' },
         body: JSON.stringify({ email, password })
       });
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        localStorage.setItem('user_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+      if (res.ok) {
         showAlert('Kuingia kumefanikiwa! Unahamishiwa kwenye Ukurasa Mkuu...', 'success');
         setTimeout(() => { window.location.href = '/'; }, 1500);
       } else {
@@ -448,15 +446,13 @@
     try {
       const res = await fetch('/api/auth/otp/verify', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Client': 'web' },
         body: JSON.stringify({ phone, code, purpose: 'login' })
       });
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        localStorage.setItem('user_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+      if (res.ok) {
         showAlert('Kuingia kumefanikiwa! Unahamishiwa kwenye Ukurasa Mkuu...', 'success');
         setTimeout(() => { window.location.href = '/'; }, 1500);
       } else {
@@ -469,10 +465,6 @@
     }
   }
 
-  // Redirect if already logged in
-  if (localStorage.getItem('user_token')) {
-    window.location.href = '/';
-  }
 </script>
 
 </body>

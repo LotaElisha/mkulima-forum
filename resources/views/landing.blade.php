@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MkulimaForum — Shiriki. Jifunze. Endelea.</title>
-<meta name="description" content="MkulimaForum: Jukwaa la Kidigitali la Wakulima wa Afrika Mashariki. AI Plant Scanner, Soko la Kilimo, Mkulima Bot, Masoko ya Mazao na Hali ya Hewa.">
+<meta name="description" content="MkulimaForum: Jukwaa la Kidigitali la Wakulima wa Afrika Mashariki. AI Plant Scanner, Soko la Kilimo, Mkulima AI, Masoko ya Mazao na Hali ya Hewa.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -406,7 +406,7 @@
 <header>
   <div class="wrap nav">
     <a href="#" class="brand-logo-container">
-      <img src="{{ $settings['logo_url'] }}" alt="MkulimaForum Logo">
+      <img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum Logo">
     </a>
 
     <nav class="nav-links">
@@ -415,7 +415,7 @@
       <a href="#pitchdeck" onclick="openPitchModal(event)" data-i18n="nav_pitch">📊 Pitch Deck</a>
       <a href="#sms" data-i18n="nav_offline">Bila Intaneti</a>
       <a href="/docs/Mkulima_Forum_Pitch_Deck.pdf" target="_blank" class="btn btn-outline nav-btn" data-i18n="btn_pitch_doc">PDF Deck</a>
-      <a href="/app/mkulima-forum.apk" class="btn btn-gold nav-btn" data-i18n="nav_download">Pakua App</a>
+      <a href="/download" class="btn btn-gold nav-btn" data-i18n="nav_download">Pakua App</a>
 
       <!-- Language Toggle Switcher -->
       <div class="lang-switcher">
@@ -432,25 +432,25 @@
     <div>
       <div class="motto-badge">
         <span class="pulse-dot"></span>
-        <span id="mottoText">{{ $settings['brand_motto'] }}</span>
+        <span id="mottoText">{{ $settings['brand_motto'] ?? 'SHIRIKI • JIFUNZE • ENDELEA' }}</span>
       </div>
 
-      <h1 id="heroTitle">{!! $settings['hero_title'] !!}</h1>
+      <h1 id="heroTitle">{{ strip_tags($settings['hero_title'] ?? 'Jukwaa la Kidigitali la Wakulima wa Tanzania') }}</h1>
       <div style="font-size: 1.1rem; font-weight: 800; color: var(--sun-amber); margin-bottom: 12px; letter-spacing: 0.05em;" id="heroTagline">
-        {!! $settings['hero_tagline'] !!}
+        {{ strip_tags($settings['hero_tagline'] ?? 'SKANI • TAMBUA • TIBU') }}
       </div>
 
-      <p class="lead" id="heroLead">{!! $settings['hero_lead'] !!}</p>
+      <p class="lead" id="heroLead">{{ strip_tags($settings['hero_lead'] ?? 'Ushauri wa kilimo, masoko na teknolojia kwa wakulima wa Tanzania.') }}</p>
 
       <div class="pillars-bar">
-        <span class="pillar-item" id="pillar1">{{ $settings['pillar_1'] }}</span>
-        <span class="pillar-item" id="pillar2">{{ $settings['pillar_2'] }}</span>
-        <span class="pillar-item" id="pillar3">{{ $settings['pillar_3'] }}</span>
-        <span class="pillar-item" id="pillar4">{{ $settings['pillar_4'] }}</span>
+        <span class="pillar-item" id="pillar1">{{ $settings['pillar_1'] ?? '🌱 Shiriki Maarifa' }}</span>
+        <span class="pillar-item" id="pillar2">{{ $settings['pillar_2'] ?? '📖 Jifunze Mbinu Bora' }}</span>
+        <span class="pillar-item" id="pillar3">{{ $settings['pillar_3'] ?? '👥 Jenga Jamii' }}</span>
+        <span class="pillar-item" id="pillar4">{{ $settings['pillar_4'] ?? '📈 Endelea Kukua' }}</span>
       </div>
 
       <div class="hero-ctas">
-        <a href="/app/mkulima-forum.apk" class="btn btn-gold" data-i18n="hero_download_btn">
+        <a href="/download" class="btn btn-gold" data-i18n="hero_download_btn">
           ⬇️ Pakua App ya Mkulima (APK)
         </a>
         <button type="button" onclick="openPitchModal(event)" class="btn btn-glass">
@@ -462,7 +462,7 @@
         <span><b>✓</b> <span data-i18n="trust_free">Bure kutumia</span></span>
         <span><b>✓</b> <span data-i18n="trust_lang">Kiswahili &amp; English</span></span>
         <span><b>✓</b> <span data-i18n="trust_offline">SMS &amp; USSD Offline</span></span>
-        <span><b>✓</b> <span data-i18n="trust_ai">Gemini 3 Powered</span></span>
+        <span><b>✓</b> <span data-i18n="trust_ai">Mkulima AI</span></span>
       </div>
     </div>
 
@@ -471,14 +471,14 @@
       <div class="phone-mockup">
         <div class="screen">
           <div class="screen-header">
-            <h4>Mkulima Forum AI</h4>
+            <h4>Mkulima AI</h4>
             <p data-i18n="mockup_tagline">SKANI • TAMBUA • TIBU</p>
           </div>
 
           <div class="scanner-view">
             <div class="scan-line"></div>
             <div class="scanner-icon">🌿</div>
-            <div class="scanner-tag">Gemini 3 Flash Active</div>
+            <div class="scanner-tag">Mkulima AI Active</div>
           </div>
 
           <div class="scan-result-card">
@@ -495,9 +495,9 @@
 <!-- HOW IT WORKS SECTION -->
 <section id="jinsi">
   <div class="wrap">
-    <span class="section-tag" data-i18n="how_tag">{{ $settings['kicker_jinsi'] }}</span>
-    <h2 class="section-title" data-i18n="how_title">{{ $settings['title_jinsi'] }}</h2>
-    <p class="section-sub" data-i18n="how_sub">{{ $settings['sub_jinsi'] }}</p>
+    <span class="section-tag" data-i18n="how_tag">{{ $settings['kicker_jinsi'] ?? 'Jinsi Inavyofanya Kazi' }}</span>
+    <h2 class="section-title" data-i18n="how_title">{{ $settings['title_jinsi'] ?? 'Hatua 3 tu — chini ya dakika moja' }}</h2>
+    <p class="section-sub" data-i18n="how_sub">{{ $settings['sub_jinsi'] ?? 'Huhitaji ujuzi wowote wa kiufundi.' }}</p>
 
     <div class="steps-grid">
       <div class="step-card">
@@ -511,7 +511,7 @@
         <span class="step-num">02</span>
         <div class="feat-icon">⚡</div>
         <h3 data-i18n="step2_title">2. AI Inatambua Papo Hapo</h3>
-        <p data-i18n="step2_desc">Gemini 3 Flash inachambua picha sekunde chache na kutambua ugonjwa au wadudu.</p>
+        <p data-i18n="step2_desc">Mkulima AI inachambua picha sekunde chache na kutambua ugonjwa au wadudu.</p>
       </div>
 
       <div class="step-card">
@@ -536,7 +536,7 @@
           Google Africa Applied AI Lab Pitch Deck
         </h2>
         <p style="color:rgba(255,255,255,0.9); font-size:0.98rem; max-width:38rem;" data-i18n="pitch_sub">
-          Jifunze zaidi kuhusu mradi wa Mkulima Forum, muundo wa biashara, teknolojia ya Gemini 3 AI, na athari zetu kwa wakulima wadogo wadogo.
+          Jifunze zaidi kuhusu mradi wa Mkulima Forum, muundo wa biashara, teknolojia ya Mkulima AI, na athari zetu kwa wakulima wadogo wadogo.
         </p>
       </div>
       <div style="display:flex; gap:12px; flex-wrap:wrap; shrink:0;">
@@ -554,9 +554,9 @@
 <!-- CORE FEATURES SECTION -->
 <section id="vipengele">
   <div class="wrap">
-    <span class="section-tag" data-i18n="feat_tag">{{ $settings['kicker_vipengele'] }}</span>
-    <h2 class="section-title" data-i18n="feat_title">{{ $settings['title_vipengele'] }}</h2>
-    <p class="section-sub" data-i18n="feat_sub">{{ $settings['sub_vipengele'] }}</p>
+    <span class="section-tag" data-i18n="feat_tag">{{ $settings['kicker_vipengele'] ?? 'Vipengele' }}</span>
+    <h2 class="section-title" data-i18n="feat_title">{{ $settings['title_vipengele'] ?? 'Mfumo kamili wa kilimo' }}</h2>
+    <p class="section-sub" data-i18n="feat_sub">{{ $settings['sub_vipengele'] ?? 'Kila kitu mkulima anachohitaji, mahali pamoja.' }}</p>
 
     <div class="grid-3">
       <!-- Feature 1: Gemini 3 Plant Scanner -->
@@ -564,18 +564,18 @@
         <div>
           <div class="feat-icon" style="background:rgba(255,255,255,0.15); color:#fff;">📷</div>
           <h3 data-i18n="f1_title">AI Plant Scanner</h3>
-          <p data-i18n="f1_desc">Piga picha jani lililoathirika. Gemini 3 Flash inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.</p>
+          <p data-i18n="f1_desc">Piga picha jani lililoathirika. Mkulima AI inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.</p>
         </div>
         <div>
-          <span class="pill-badge">Gemini 3 Flash AI</span>
+          <span class="pill-badge">Mkulima AI</span>
         </div>
       </div>
 
-      <!-- Feature 2: Mkulima Bot -->
+      <!-- Feature 2: Mkulima AI -->
       <div class="feature-card">
         <div>
           <div class="feat-icon">🤖</div>
-          <h3 data-i18n="f2_title">Mkulima Bot AI</h3>
+          <h3 data-i18n="f2_title">Mkulima AI</h3>
           <p data-i18n="f2_desc">Msaidizi wako wa kilimo 24/7 — uliza maswali ya mazao, pembejeo, na tiba kupitia sauti au maandishi.</p>
         </div>
         <div>
@@ -612,19 +612,19 @@
         <div>
           <div class="feat-icon">⛅</div>
           <h3 data-i18n="f5_title">Hali ya Hewa &amp; Ushauri</h3>
-          <p data-i18n="f5_desc">Gemini 3 Pro na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.</p>
+          <p data-i18n="f5_desc">Mkulima AI Weather na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.</p>
         </div>
         <div>
-          <span class="pill-badge">Gemini 3 Pro Grounded</span>
+          <span class="pill-badge">Mkulima AI Weather Grounded</span>
         </div>
       </div>
 
-      <!-- Feature 6: Offline Gemma 2B -->
+      <!-- Feature 6: Offline Mkulima AI Offline -->
       <div class="feature-card">
         <div>
           <div class="feat-icon">📱</div>
-          <h3 data-i18n="f6_title">Offline Mode (Gemma 2B)</h3>
-          <p data-i18n="f6_desc">Huna mtandao shambani? Gemma 2B INT4 quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.</p>
+          <h3 data-i18n="f6_title">Offline Mode (Mkulima AI Offline)</h3>
+          <p data-i18n="f6_desc">Huna mtandao shambani? Mkulima AI Offline quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.</p>
         </div>
         <div>
           <span class="pill-badge">Google AI Edge SDK</span>
@@ -647,7 +647,7 @@
           Hata bila smartphone au mtandao wa intaneti shambani, unaweza kupata bei za masoko, hali ya hewa, na ushauri wa kilimo kwa njia ya SMS na USSD.
         </p>
         <div style="display:flex; gap:12px; font-weight:700; font-size:0.95rem; color:var(--sun-gold);">
-          <span>✓ SMS Gateway</span> &bull; <span>✓ USSD Code</span> &bull; <span>✓ Gemma 2B Offline</span>
+          <span>✓ SMS Gateway</span> &bull; <span>✓ USSD Code</span> &bull; <span>✓ Mkulima AI Offline Offline</span>
         </div>
       </div>
 
@@ -673,10 +673,10 @@
           <span class="motto-badge" style="background:rgba(255,255,255,0.15);" data-i18n="try_badge">JARIBU MTAALAMU WA AI</span>
           <h2 style="font-size:2.2rem; font-weight:800; margin-bottom:14px;" data-i18n="try_heading">Uliza Swali la Kilimo Hapa</h2>
           <p style="color:rgba(255,255,255,0.85); font-size:1rem; margin-bottom:20px;" data-i18n="try_desc">
-            Jaribu uwezo wa <b>Mkulima Bot</b> kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.
+            Jaribu uwezo wa <b>Mkulima AI</b> kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.
           </p>
           <div style="font-size:0.88rem; color:var(--sun-gold);" data-i18n="try_sub">
-            ✓ Inatumia Gemini 3 Flash &bull; Lugha ya Kiswahili &amp; English
+            ✓ Inatumia Mkulima AI &bull; Lugha ya Kiswahili &amp; English
           </div>
         </div>
 
@@ -706,7 +706,7 @@
         MkulimaForum API v1.0.0
       </h3>
       <p style="color:var(--ink-muted); max-width:32rem; margin:0 auto 24px; font-size:0.95rem;">
-        PostgreSQL (pgvector), Redis Cache, Laravel Sanctum Auth, M-Pesa &amp; Tigo Pesa Gateway, Gemini 3 AI Engine.
+        PostgreSQL (pgvector), Redis Cache, Laravel Sanctum Auth, M-Pesa &amp; Tigo Pesa Gateway, Mkulima AI Engine.
       </p>
 
       <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
@@ -726,7 +726,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-brand">
-        <img src="{{ $settings['logo_url'] }}" alt="MkulimaForum" style="height:44px; width:auto;">
+        <img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum" style="height:44px; width:auto;">
         <p data-i18n="foot_desc">Jukwaa kuu la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.</p>
       </div>
 
@@ -734,7 +734,7 @@
         <h4 class="foot-title" data-i18n="foot_f_title">Vipengele</h4>
         <ul class="foot-links">
           <li><a href="#vipengele">AI Plant Scanner</a></li>
-          <li><a href="#vipengele">Mkulima Bot Chat</a></li>
+          <li><a href="#vipengele">Mkulima AI Chat</a></li>
           <li><a href="#vipengele">Soko la Pembejeo</a></li>
           <li><a href="#status">API Endpoints</a></li>
         </ul>
@@ -744,7 +744,7 @@
         <h4 class="foot-title" data-i18n="foot_q_title">Viungo vya Haraka</h4>
         <ul class="foot-links">
           <li><a href="{{ $settings['pitch_deck_url'] ?? '/docs/Mkulima_Forum_Pitch_Deck.pdf' }}" target="_blank" data-i18n="foot_link_pitch">📊 Pitch Deck (PDF)</a></li>
-          <li><a href="/app/mkulima-forum.apk">Pakua App (APK)</a></li>
+          <li><a href="/download">Pakua App (APK)</a></li>
           <li><a href="/admin/login">Admin Dashboard</a></li>
           <li><a href="/api/health">API Health</a></li>
         </ul>
@@ -774,7 +774,7 @@
 </div>
 
 <!-- MULTILINGUAL I18N ENGINE -->
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 const translations = {
   sw: {
     nav_how: "Jinsi Inavyofanya",
@@ -788,40 +788,40 @@ const translations = {
     trust_free: "Bure kutumia",
     trust_lang: "Kiswahili & English",
     trust_offline: "SMS & USSD Offline",
-    trust_ai: "Gemini 3 Powered",
+    trust_ai: "Mkulima AI",
     mockup_tagline: "SKANI • TAMBUA • TIBU",
     mockup_result_title: "Matokeo ya Uchunguzi",
     mockup_disease: "Ugonjwa: Kutu ya Majani (Leaf Rust)",
     mockup_treatment: "Tiba: Fungicide + Ondoa majani yaliyoathirika",
-    how_tag: "{{ $settings['kicker_jinsi'] }}",
-    how_title: "{{ $settings['title_jinsi'] }}",
-    how_sub: "{{ $settings['sub_jinsi'] }}",
+    how_tag: @json($settings['kicker_jinsi'] ?? 'Jinsi Inavyofanya Kazi'),
+    how_title: @json($settings['title_jinsi'] ?? 'Hatua 3 tu — chini ya dakika moja'),
+    how_sub: @json($settings['sub_jinsi'] ?? 'Huhitaji ujuzi wowote wa kiufundi.'),
     step1_title: "1. Piga Picha ya Mmea",
     step1_desc: "Fungua app, bonyeza kitufe cha Kagua Mmea, na upige picha ya jani lililoathirika shambani.",
     step2_title: "2. AI Inatambua Papo Hapo",
-    step2_desc: "Gemini 3 Flash inachambua picha sekunde chache na kutambua ugonjwa au wadudu.",
+    step2_desc: "Mkulima AI inachambua picha sekunde chache na kutambua ugonjwa au wadudu.",
     step3_title: "3. Pata Tiba & Ushauri",
     step3_desc: "Pata maelekezo ya dawa zilizosajiliwa na TFRA, hatua za kinga, na usaidizi wa mtalamu.",
     pitch_badge: "INVESTOR PRESENTATION",
     pitch_heading: "Google Africa Applied AI Lab Pitch Deck",
-    pitch_sub: "Jifunze zaidi kuhusu mradi wa Mkulima Forum, muundo wa biashara, teknolojia ya Gemini 3 AI, na athari zetu kwa wakulima wadogo wadogo.",
+    pitch_sub: "Jifunze zaidi kuhusu mradi wa Mkulima Forum, muundo wa biashara, teknolojia ya Mkulima AI, na athari zetu kwa wakulima wadogo wadogo.",
     btn_open_deck: "👁️ Tazama Online",
     btn_download_deck: "⬇️ Pakua PDF",
-    feat_tag: "{{ $settings['kicker_vipengele'] }}",
-    feat_title: "{{ $settings['title_vipengele'] }}",
-    feat_sub: "{{ $settings['sub_vipengele'] }}",
+    feat_tag: @json($settings['kicker_vipengele'] ?? 'Vipengele'),
+    feat_title: @json($settings['title_vipengele'] ?? 'Mfumo kamili wa kilimo'),
+    feat_sub: @json($settings['sub_vipengele'] ?? 'Kila kitu mkulima anachohitaji, mahali pamoja.'),
     f1_title: "AI Plant Scanner",
-    f1_desc: "Piga picha jani lililoathirika. Gemini 3 Flash inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.",
-    f2_title: "Mkulima Bot AI",
+    f1_desc: "Piga picha jani lililoathirika. Mkulima AI inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.",
+    f2_title: "Mkulima AI",
     f2_desc: "Msaidizi wako wa kilimo 24/7 — uliza maswali ya mazao, pembejeo, na tiba kupitia sauti au maandishi.",
     f3_title: "Kagua Dawa & Pembejeo",
     f3_desc: "Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPHPA/TFRA, na tahadhari za jamii.",
     f4_title: "Soko la Pembejeo & Mazao",
     f4_desc: "Nunua dawa, mbegu na mbolea kutoka kwa wauzaji walioidhinishwa. Malipo yote yanalindwa na Mkulima Escrow.",
     f5_title: "Hali ya Hewa & Ushauri",
-    f5_desc: "Gemini 3 Pro na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.",
-    f6_title: "Offline Mode (Gemma 2B)",
-    f6_desc: "Huna mtandao shambani? Gemma 2B INT4 quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.",
+    f5_desc: "Mkulima AI Weather na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.",
+    f6_title: "Offline Mode (Mkulima AI Offline)",
+    f6_desc: "Huna mtandao shambani? Mkulima AI Offline quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.",
     sms_badge: "HUDUMA BILA INTANETI",
     sms_title: "Inafanya kazi kwenye simu yoyote",
     sms_desc: "Hata bila smartphone au mtandao wa intaneti shambani, unaweza kupata bei za masoko, hali ya hewa, na ushauri wa kilimo kwa njia ya SMS na USSD.",
@@ -829,8 +829,8 @@ const translations = {
     sms_demo_resp: "Jibu: \"Bei ya Mahindi Dodoma leo ni TZS 52,000/Gunia (TFRA Certified Market).\"",
     try_badge: "JARIBU MTAALAMU WA AI",
     try_heading: "Uliza Swali la Kilimo Hapa",
-    try_desc: "Jaribu uwezo wa Mkulima Bot kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.",
-    try_sub: "✓ Inatumia Gemini 3 Flash • Lugha ya Kiswahili & English",
+    try_desc: "Jaribu uwezo wa Mkulima AI kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.",
+    try_sub: "✓ Inatumia Mkulima AI • Lugha ya Kiswahili & English",
     btn_ask_ai: "🚀 Tuma Swali kwa AI",
     btn_api_health: "🔍 Kagua Status ya API (/api/health)",
     btn_admin_portal: "🔐 Admin Dashboard Portal",
@@ -852,7 +852,7 @@ const translations = {
     trust_free: "Free to Use",
     trust_lang: "Swahili & English",
     trust_offline: "SMS & USSD Offline",
-    trust_ai: "Gemini 3 Powered",
+    trust_ai: "Mkulima AI",
     mockup_tagline: "SCAN • DIAGNOSE • TREAT",
     mockup_result_title: "Diagnosis Result",
     mockup_disease: "Disease: Leaf Rust",
@@ -863,29 +863,29 @@ const translations = {
     step1_title: "1. Snap a Plant Photo",
     step1_desc: "Open the app, tap Scan Plant, and snap a picture of an affected crop leaf in your field.",
     step2_title: "2. Instant AI Diagnosis",
-    step2_desc: "Gemini 3 Flash analyzes the photo in seconds to identify crop diseases or pest infestations.",
+    step2_desc: "Mkulima AI analyzes the photo in seconds to identify crop diseases or pest infestations.",
     step3_title: "3. Get Treatments & Advice",
     step3_desc: "Receive actionable treatment steps, TFRA-certified remedies, and expert agronomist guidance.",
     pitch_badge: "INVESTOR PRESENTATION",
     pitch_heading: "Google Africa Applied AI Lab Pitch Deck",
-    pitch_sub: "Learn more about the Mkulima Forum project, business model, Gemini 3 AI technology integration, and impact on East African smallholder farmers.",
+    pitch_sub: "Learn more about the Mkulima Forum project, business model, Mkulima AI technology integration, and impact on East African smallholder farmers.",
     btn_open_deck: "👁️ View Online",
     btn_download_deck: "⬇️ Download PDF",
     feat_tag: "FEATURES",
     feat_title: "More Than a Scanner — Complete Agri Ecosystem",
     feat_sub: "Everything a farmer needs, in one unified platform, available in Swahili & English.",
     f1_title: "AI Plant Scanner",
-    f1_desc: "Snap a photo of an affected leaf. Gemini 3 Flash instantly identifies diseases or pests and recommends accurate treatments.",
-    f2_title: "Mkulima Bot AI",
+    f1_desc: "Snap a photo of an affected leaf. Mkulima AI instantly identifies diseases or pests and recommends accurate treatments.",
+    f2_title: "Mkulima AI",
     f2_desc: "Your 24/7 AI agronomist — ask questions about crops, inputs, and soil treatments via text or voice.",
     f3_title: "Agri-Input Verification",
     f3_desc: "Verify genuine pesticides & fertilizers by scanning labels, cross-referencing TPHPA/TFRA registries, and community alerts.",
     f4_title: "Marketplace & Escrow",
     f4_desc: "Buy inputs or sell harvests directly without middlemen. All payments secured by Mkulima Escrow.",
     f5_title: "Weather & Crop Advisory",
-    f5_desc: "Gemini 3 Pro with Google Search Grounding provides real-time regional micro-climate forecasts and crop planning.",
-    f6_title: "Offline Mode (Gemma 2B)",
-    f6_desc: "No connectivity in remote fields? Quantized Gemma 2B INT4 runs lightweight inference directly on your phone NPU/GPU.",
+    f5_desc: "Mkulima AI Weather with Google Search Grounding provides real-time regional micro-climate forecasts and crop planning.",
+    f6_title: "Offline Mode (Mkulima AI Offline)",
+    f6_desc: "No connectivity in remote fields? Quantized Mkulima AI Offline runs lightweight inference directly on your phone NPU/GPU.",
     sms_badge: "OFFLINE CAPABILITY",
     sms_title: "Works on Any Feature Phone",
     sms_desc: "Even without a smartphone or internet bundle, access market prices, weather alerts, and farming advice via SMS and USSD.",
@@ -893,8 +893,8 @@ const translations = {
     sms_demo_resp: "Reply: \"Maize market price in Dodoma today: TZS 52,000/Bag (TFRA Certified Market).\"",
     try_badge: "TRY AI AGRONOMIST",
     try_heading: "Ask an Agriculture Question",
-    try_desc: "Test Mkulima Bot by asking a question about maize, tomato, rice farming, or fertilizer application.",
-    try_sub: "✓ Powered by Gemini 3 Flash • Swahili & English Support",
+    try_desc: "Test Mkulima AI by asking a question about maize, tomato, rice farming, or fertilizer application.",
+    try_sub: "✓ Powered by Mkulima AI • Swahili & English Support",
     btn_ask_ai: "🚀 Send Question to AI",
     btn_api_health: "🔍 Check API Status (/api/health)",
     btn_admin_portal: "🔐 Admin Dashboard Portal",
@@ -967,7 +967,16 @@ async function handleDemoQuestion(e) {
   const out = document.getElementById('aiAnswerOutput');
   out.style.display = 'block';
   const isSw = currentLang === 'sw';
-  out.innerHTML = `<div style="color:var(--sun-gold)">⏳ ${isSw ? 'Mkulima Bot AI inaandaa majibu...' : 'Mkulima Bot AI is generating response...'}</div>`;
+  const renderAnswer = (heading, answer, loading = false) => {
+    const title = document.createElement(loading ? 'div' : 'strong');
+    title.textContent = heading;
+    if (loading) title.style.color = 'var(--sun-gold)';
+    out.replaceChildren(title);
+    if (!loading) {
+      out.append(document.createElement('br'), document.createElement('br'), document.createTextNode(answer));
+    }
+  };
+  renderAnswer(isSw ? '⏳ Mkulima AI inaandaa majibu...' : '⏳ Mkulima AI is generating response...', '', true);
 
   try {
     const res = await fetch('/api/agronomist/ask', {
@@ -978,12 +987,12 @@ async function handleDemoQuestion(e) {
     const data = await res.json();
 
     if (data.text || data.answer) {
-      out.innerHTML = `<b>🤖 ${isSw ? 'Majibu ya Mkulima Bot AI' : 'Mkulima Bot AI Answer'}:</b><br><br>` + (data.text || data.answer);
+      renderAnswer(isSw ? '🤖 Majibu ya Mkulima AI:' : '🤖 Mkulima AI Answer:', data.text || data.answer);
     } else {
-      out.innerHTML = `<b>🤖 ${isSw ? 'Ushauri wa Kawaida' : 'Agronomy Recommendation'}:</b><br>${isSw ? 'Kuhusu ' + q + ', hakikisha unatumia mbolea iliyosajiliwa na TFRA na kunyunyizia dawa mara tu dalili zinapojitokeza.' : 'Regarding ' + q + ', ensure you apply TFRA-certified fertilizers and spray approved pesticides at first symptom appearance.'}`;
+      renderAnswer(isSw ? '🤖 Ushauri wa Kawaida:' : '🤖 Agronomy Recommendation:', isSw ? 'Kuhusu ' + q + ', hakikisha unatumia mbolea iliyosajiliwa na TFRA na kunyunyizia dawa mara tu dalili zinapojitokeza.' : 'Regarding ' + q + ', ensure you apply TFRA-certified fertilizers and spray approved pesticides at first symptom appearance.');
     }
   } catch (err) {
-    out.innerHTML = `<b>🤖 ${isSw ? 'Ushauri wa Mkulima Bot' : 'Mkulima Bot Advice'}:</b><br>${isSw ? 'Kuhusu ' + q + ', hakikisha unakagua majani asubuhi na mapema na kutumia pembejeo sahihi zilizothibitishwa.' : 'Regarding ' + q + ', inspect leaf surfaces early morning and use certified agricultural inputs.'}`;
+    renderAnswer(isSw ? '🤖 Ushauri wa Mkulima AI:' : '🤖 Mkulima AI Advice:', isSw ? 'Kuhusu ' + q + ', hakikisha unakagua majani asubuhi na mapema na kutumia pembejeo sahihi zilizothibitishwa.' : 'Regarding ' + q + ', inspect leaf surfaces early morning and use certified agricultural inputs.');
   }
 }
 </script>

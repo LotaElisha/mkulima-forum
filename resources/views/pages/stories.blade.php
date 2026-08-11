@@ -28,6 +28,8 @@
   .story-meta p  { font-size:.78rem; color:var(--ink-muted); }
 
   .submit-story-panel { background:linear-gradient(145deg,var(--leaf-pale),#D6EEC8); border-radius:var(--radius-2xl); padding:56px; text-align:center; border:1.5px dashed var(--border-mid); }
+  .story-share-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
+  @media(max-width:760px){ .story-share-grid{ grid-template-columns:1fr; } }
 </style>
 @endsection
 
@@ -103,7 +105,7 @@
 {{-- How to be featured --}}
 <section>
   <div class="wrap">
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;">
+    <div class="story-share-grid">
       <div class="fade-up">
         <span class="eyebrow" data-i18n="format_eyebrow">MUUNDO WA HADITHI</span>
         <h2 class="section-title" data-i18n="format_title">Jinsi Tunavyoandika Hadithi</h2>
@@ -138,7 +140,6 @@
         </div>
       </div>
     </div>
-    @media(max-width:760px){ .grid-2{ grid-template-columns:1fr !important; } }
   </div>
 </section>
 
@@ -148,7 +149,7 @@
     <h2 style="font-size:clamp(1.8rem,4vw,2.4rem); font-weight:900; color:#fff; margin-bottom:14px;" data-i18n="s_cta_title">Kuwa Sehemu ya Safari Yetu</h2>
     <p style="color:rgba(255,255,255,.82); margin-bottom:28px;" data-i18n="s_cta_sub">Pakua app, anza kuitumia, na ushiriki uzoefu wako ili kusaidia wakulima wengine Tanzania.</p>
     <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
-      <a href="/app/mkulima-forum.apk" class="btn btn-gold btn-lg" data-i18n="s_cta_dl">⬇️ Pakua App</a>
+      <a href="/download" class="btn btn-gold btn-lg" data-i18n="s_cta_dl">⬇️ Pakua App</a>
       <a href="/impact" class="btn btn-ghost btn-lg" data-i18n="s_cta_impact">Angalia Athari Zetu →</a>
     </div>
   </div>
@@ -157,14 +158,14 @@
 @endsection
 
 @section('page_scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function filterStories(cat) {
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
   // When stories are loaded from DB, filter here by data-category attribute
 }
 
-const mkPageTranslations = {
+mkPageTranslations = {
   sw: {
     stories_eyebrow:'HADITHI ZA WAKULIMA',
     stories_title:'Wakulima wa Kweli.\nChangamoto za Kweli.\nMaamuzi Bora.',

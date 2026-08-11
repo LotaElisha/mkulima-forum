@@ -13,10 +13,9 @@ export default function EscrowsPage() {
 
   const fetchEscrows = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       let url = '/api/admin/escrows'
       if (filterStatus) url += `?status=${filterStatus}`
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(url, { headers: { } })
       if (res.ok) {
         const data = await res.json()
         setEscrows(data.escrows?.data || [])
@@ -31,10 +30,9 @@ export default function EscrowsPage() {
   const handleRelease = async (uuid) => {
     if (!confirm('Release funds to seller?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/escrows/${uuid}/release`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       const data = await res.json()
       setMessage(data.message || 'Funds released')
@@ -48,12 +46,11 @@ export default function EscrowsPage() {
     const reason = prompt('Refund reason:')
     if (!reason) return
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/escrows/${uuid}/refund`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({ reason })
       })

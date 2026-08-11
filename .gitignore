@@ -1,5 +1,6 @@
 /.phpunit.cache
 /node_modules
+**/node_modules/
 /public/build
 /public/hot
 /public/storage
@@ -25,3 +26,7 @@ yarn-error.log
 .DS_Store
 **/.DS_Store
 /scratch
+/audit-evidence/
+/mkulima_app/.dart_tool/
+/mkulima_app/build/
+/public/app/*-test.apk

@@ -175,15 +175,13 @@ Route::prefix('forum')->middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// Public - AI scan without login
-Route::prefix('scanner')->group(function () {
+// AI scans are authenticated and tightly throttled because each request stores
+// an image and can invoke a paid cloud model.
+Route::prefix('scanner')->middleware(['auth:sanctum', 'throttle:5,1'])->group(function () {
     Route::post('/scan', [DiseaseScannerController::class, 'scan']);
-});
-
-// Protected - history requires login
-Route::prefix('scanner')->middleware('auth:sanctum')->group(function () {
     Route::get('/history', [DiseaseScannerController::class, 'history']);
     Route::get('/scans/{uuid}', [DiseaseScannerController::class, 'show']);
+    Route::get('/scans/{uuid}/image', [DiseaseScannerController::class, 'image']);
 });
 
 /*
@@ -316,6 +314,8 @@ Route::prefix('admin')
         Route::post('/settings/landing/logo', [AdminController::class, 'uploadLandingLogo']);
         Route::delete('/settings/landing/logo', [AdminController::class, 'deleteLandingLogo']);
         Route::post('/settings/landing/media', [AdminController::class, 'uploadLandingMedia']);
+        Route::get('/settings/otp', [AdminController::class, 'getOtpSettings']);
+        Route::put('/settings/otp', [AdminController::class, 'updateOtpSettings']);
 
         // Admin Profile
         Route::get('/profile', [AdminProfileController::class, 'show']);

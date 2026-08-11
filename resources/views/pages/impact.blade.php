@@ -164,8 +164,8 @@
 @endsection
 
 @section('page_scripts')
-<script>
-const mkPageTranslations = {
+<script nonce="{{ $cspNonce ?? '' }}">
+mkPageTranslations = {
   sw: {
     impact_eyebrow:'ATHARI YETU', impact_title:'Teknolojia Inayounda Mabadiliko ya Kweli ya Kilimo',
     impact_sub:'MkulimaForum iliundwa kuunda athari ya moja kwa moja ya kuonekana kwa maisha ya wakulima wadogo wadogo Tanzania na Afrika Mashariki.',

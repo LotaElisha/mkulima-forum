@@ -54,12 +54,11 @@ export default function AiProviders() {
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState(null)
 
-  const token = localStorage.getItem('admin_token')
 
   const fetchProviders = async () => {
     try {
       const res = await fetch('/api/admin/ai/providers', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -74,7 +73,7 @@ export default function AiProviders() {
   const fetchRoutes = async () => {
     try {
       const res = await fetch('/api/admin/ai/providers/routes', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -88,7 +87,7 @@ export default function AiProviders() {
   const fetchStats = async () => {
     try {
       const res = await fetch('/api/admin/ai/providers/usage-stats', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -171,7 +170,7 @@ export default function AiProviders() {
         method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(payload)
       })
@@ -196,7 +195,7 @@ export default function AiProviders() {
     try {
       const res = await fetch(`/api/admin/ai/providers/${uuid}/test`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       const data = await res.json()
       setTestResult(data)
@@ -216,7 +215,7 @@ export default function AiProviders() {
     try {
       const res = await fetch(`/api/admin/ai/providers/${uuid}/set-default`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       const data = await res.json()
       if (res.ok) {
@@ -232,7 +231,7 @@ export default function AiProviders() {
     try {
       const res = await fetch(`/api/admin/ai/providers/${uuid}/toggle`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       const data = await res.json()
       if (res.ok) {
@@ -249,7 +248,7 @@ export default function AiProviders() {
     try {
       const res = await fetch(`/api/admin/ai/providers/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       const data = await res.json()
       if (res.ok) {
@@ -266,7 +265,7 @@ export default function AiProviders() {
     setFetchingModels(true)
     try {
       const res = await fetch(`/api/admin/ai/providers/${uuid}/models`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -284,7 +283,7 @@ export default function AiProviders() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({
           feature_key: featureKey,

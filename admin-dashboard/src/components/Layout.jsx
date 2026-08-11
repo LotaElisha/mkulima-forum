@@ -27,14 +27,14 @@ import {
   Globe
 } from 'lucide-react'
 import { useState } from 'react'
+import { authApi } from '../utils/api'
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_token')
-    navigate('/login')
+  const handleLogout = async () => {
+    try { await authApi.logout() } finally { navigate('/login') }
   }
 
   const navItems = [

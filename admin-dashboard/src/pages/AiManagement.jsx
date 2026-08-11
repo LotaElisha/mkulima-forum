@@ -6,15 +6,14 @@ import {
 } from 'lucide-react'
 
 const API = (path) => `/api/admin${path}`
-const tok = () => localStorage.getItem('admin_token')
-const get = (path) => fetch(API(path), { headers: { Authorization: `Bearer ${tok()}` } }).then(r => r.json())
-const del = (path) => fetch(API(path), { method: 'DELETE', headers: { Authorization: `Bearer ${tok()}` } }).then(r => r.json())
+const get = (path) => fetch(API(path), { headers: { } }).then(r => r.json())
+const del = (path) => fetch(API(path), { method: 'DELETE', headers: { } }).then(r => r.json())
 const post = (path, body) => fetch(API(path), {
-  method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok()}` },
+  method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body)
 }).then(r => r.json())
 const put = (path, body) => fetch(API(path), {
-  method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tok()}` },
+  method: 'PUT', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(body)
 }).then(r => r.json())
 
@@ -307,7 +306,7 @@ function BotLogs() {
                   <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
                     msg.role === 'user' ? 'bg-green-600 text-white rounded-br-sm' : 'bg-gray-100 text-gray-900 rounded-bl-sm'
                   }`}>
-                    <p className="text-xs font-semibold mb-1 opacity-70">{msg.role === 'user' ? 'User' : '🤖 Mkulima Bot'}</p>
+                    <p className="text-xs font-semibold mb-1 opacity-70">{msg.role === 'user' ? 'User' : '🤖 Mkulima AI'}</p>
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
                 </div>
@@ -657,7 +656,7 @@ function AiConfig({ config }) {
               <option value="gpt-4o-mini">gpt-4o-mini (OpenAI)</option>
             </select>
             <p className="text-[11px] text-gray-500 mt-1">
-              Gemini 3 series powers disease diagnostics, Mkulima Bot Q&A, and market ranking in Kiswahili and English.
+              Gemini 3 series powers disease diagnostics, Mkulima AI Q&A, and market ranking in Kiswahili and English.
             </p>
           </div>
 

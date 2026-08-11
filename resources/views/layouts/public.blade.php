@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ $lang ?? 'sw' }}" class="scroll-smooth">
 <head>
+  <script nonce="{{ $cspNonce ?? '' }}">document.documentElement.classList.add('js');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'MkulimaForum | AI-Powered Agriculture Platform for Tanzania')</title>
   <meta name="description" content="@yield('meta_description', 'MkulimaForum is an AI-powered digital agriculture ecosystem connecting Tanzania farmers with knowledge, markets, trusted inputs, weather intelligence, and practical farming support.')">
-  <meta name="theme-color" content="#0C3619">
+  <meta name="theme-color" content="#FFFDF8">
   <link rel="canonical" href="{{ url()->current() }}">
 
   {{-- Open Graph --}}
@@ -24,7 +25,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Material+Symbols+Rounded:opsz,wght,FILL@20..48,400,0&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
   @yield('head_extra')
 
@@ -33,22 +34,22 @@
        DESIGN TOKENS
        ============================================= */
     :root {
-      --forest-dark:   #0C3619;
-      --forest-mid:    #165A2A;
-      --forest-light:  #237A3B;
-      --leaf-green:    #4C9B27;
-      --leaf-bright:   #6BB535;
-      --leaf-pale:     #EFF7E9;
-      --sun-gold:      #F5A623;
-      --sun-amber:     #FFBA36;
-      --cream-bg:      #FAFAF7;
-      --surface-card:  #FFFFFF;
-      --ink-dark:      #0C2314;
-      --ink-body:      #2D3B35;
-      --ink-muted:     #5A7060;
-      --ink-faint:     #8A9E91;
-      --border-light:  #E4EDE0;
-      --border-mid:    #CDD9C9;
+      --forest-dark:   #264F27;
+      --forest-mid:    #356D33;
+      --forest-light:  #477A42;
+      --leaf-green:    #477A42;
+      --leaf-bright:   #67935B;
+      --leaf-pale:     #F3F6EC;
+      --sun-gold:      #EFA91F;
+      --sun-amber:     #F6B83A;
+      --cream-bg:      #FFFDF8;
+      --surface-card:  #FFFEFA;
+      --ink-dark:      #181711;
+      --ink-body:      #4B4942;
+      --ink-muted:     #6F6B61;
+      --ink-faint:     #9C968B;
+      --border-light:  #E9E3D8;
+      --border-mid:    #D7CDBC;
       --radius-2xl:    28px;
       --radius-xl:     20px;
       --radius-lg:     14px;
@@ -102,16 +103,18 @@
       font-family: 'Outfit', sans-serif;
       font-size: .78rem; font-weight: 800;
       letter-spacing: .14em; text-transform: uppercase;
-      color: var(--leaf-green); margin-bottom: 14px;
+      color: var(--forest-light); margin-bottom: 14px;
     }
     .page-title {
+      font-family: 'DM Serif Display', Georgia, serif;
       font-size: clamp(2.2rem, 5vw, 3.6rem);
-      font-weight: 900; line-height: 1.1;
+      font-weight: 400; line-height: 1.05;
       color: var(--ink-dark); margin-bottom: 20px;
     }
     .section-title {
+      font-family: 'DM Serif Display', Georgia, serif;
       font-size: clamp(1.7rem, 3.5vw, 2.5rem);
-      font-weight: 800; line-height: 1.18;
+      font-weight: 400; line-height: 1.14;
       color: var(--ink-dark); margin-bottom: 14px;
     }
     .section-lead {
@@ -131,11 +134,11 @@
       transition: all .22s cubic-bezier(.16,1,.3,1); white-space: nowrap;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .btn-primary   { background: var(--forest-dark); color: #fff; }
-    .btn-primary:hover { background: var(--forest-mid); }
-    .btn-gold      { background: linear-gradient(135deg,var(--sun-gold),var(--sun-amber)); color: var(--forest-dark); }
-    .btn-outline   { background: transparent; color: var(--forest-dark); border: 2px solid var(--forest-mid); }
-    .btn-outline:hover { background: var(--forest-dark); color: #fff; }
+    .btn-primary   { background: var(--ink-dark); color: #fff; }
+    .btn-primary:hover { background: #35322A; }
+    .btn-gold      { background: var(--sun-gold); color: var(--ink-dark); }
+    .btn-outline   { background: transparent; color: var(--ink-dark); border: 1.5px solid var(--ink-dark); }
+    .btn-outline:hover { background: var(--ink-dark); color: #fff; }
     .btn-ghost     { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.25); backdrop-filter: blur(6px); }
     .btn-ghost:hover { background: rgba(255,255,255,.26); }
     .btn-sm        { padding: 9px 18px; font-size: .85rem; }
@@ -170,7 +173,7 @@
     #site-header {
       position: sticky; top: 0; z-index: 200;
       height: var(--nav-h);
-      background: rgba(250,250,247,.96); backdrop-filter: blur(14px) saturate(1.6);
+      background: rgba(255,253,248,.96); backdrop-filter: blur(14px) saturate(1.4);
       border-bottom: 1px solid var(--border-light);
     }
     .nav-wrap {
@@ -213,7 +216,9 @@
       box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none;
       transition: all .2s ease; z-index: 210;
     }
-    .nav-dropdown-item:hover .nav-dropdown-menu { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .nav-dropdown-item:hover .nav-dropdown-menu,
+    .nav-dropdown-item:focus-within .nav-dropdown-menu,
+    .nav-dropdown-item.keyboard-open .nav-dropdown-menu { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
     .nav-dropdown-menu a {
       display: flex; align-items: center; gap: 10px; padding: 10px 14px;
       border-radius: 8px; font-size: .88rem; font-weight: 600; color: var(--ink-body);
@@ -248,9 +253,10 @@
     #nav-drawer {
       position: fixed; inset: 0; z-index: 190; display: flex; flex-direction: column;
       background: var(--surface-card); padding: 0;
-      transform: translateX(100%); transition: transform .3s cubic-bezier(.16,1,.3,1);
+      transform: translateX(0); opacity:0; visibility:hidden; pointer-events:none;
+      transition: opacity .24s ease, visibility .24s ease;
     }
-    #nav-drawer.open { transform: translateX(0); }
+    #nav-drawer.open { transform: translateX(0); opacity:1; visibility:visible; pointer-events:auto; }
     .drawer-header {
       height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
       padding: 0 24px; border-bottom: 1px solid var(--border-light);
@@ -279,8 +285,8 @@
        FOOTER
        ============================================= */
     #site-footer {
-      background: var(--forest-dark); color: rgba(255,255,255,.8);
-      padding: 72px 0 0; border-top: 3px solid var(--forest-mid);
+      background: #24221D; color: rgba(255,255,255,.8);
+      padding: 72px 0 0; border-top: 3px solid var(--sun-gold);
     }
     .foot-grid {
       display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -317,24 +323,71 @@
     .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--leaf-bright); box-shadow: 0 0 8px var(--leaf-bright); animation: mk-pulse 2s infinite; }
     @keyframes mk-pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.5);opacity:.5;} }
     .divider { height: 1px; background: var(--border-light); margin: 48px 0; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 
     /* Page hero (light) */
     .page-hero {
-      background: linear-gradient(160deg, #F4FAF0 0%, var(--cream-bg) 100%);
+      background: #FCF8EF;
       padding: 100px 0 80px; border-bottom: 1px solid var(--border-light);
     }
     /* Dark accent panels */
     .panel-dark {
-      background: linear-gradient(135deg, var(--forest-dark), #0A2A10);
-      color: #fff; border-radius: var(--radius-2xl); padding: 56px;
+      background: #F7F0E3;
+      color: var(--ink-body); border: 1px solid var(--border-light); border-radius: var(--radius-2xl); padding: 56px;
     }
     @media(max-width: 640px) { .panel-dark { padding: 36px 24px; } }
-    .panel-dark h2 { color: #fff; }
-    .panel-dark p  { color: rgba(255,255,255,.82); }
+    .panel-dark h2 { color: var(--ink-dark); font-family:'DM Serif Display',Georgia,serif; font-weight:400; }
+    .panel-dark p  { color: var(--ink-muted); }
+    .panel-dark .badge.dark { background:transparent; border-color:#87A57A; color:var(--forest-mid); }
+    .panel-dark .btn-ghost { background:transparent; color:var(--ink-dark); border:1.5px solid var(--ink-dark); backdrop-filter:none; }
+
+    /* Shared Option 3 editorial theme for legacy public-page sections. */
+    .comm-hero, .verify-hero, .pitch-hero {
+      background: #FCF8EF !important; color: var(--ink-body) !important;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .comm-hero h1, .verify-hero h1, .pitch-hero h1 {
+      color: var(--ink-dark) !important; font-family:'DM Serif Display',Georgia,serif !important;
+      font-weight:400 !important; letter-spacing:-.025em;
+    }
+    .comm-hero p, .verify-hero p, .pitch-hero p { color: var(--ink-muted) !important; }
+    .comm-hero .badge.dark, .verify-hero .badge.dark, .pitch-hero .badge.dark {
+      background:transparent; border-color:#87A57A; color:var(--forest-mid);
+    }
+    .contact-info-card { background:#F7F0E3 !important; color:var(--ink-body) !important; border:1px solid var(--border-light); }
+    .contact-info-card h3 { color:var(--ink-dark) !important; font-family:'DM Serif Display',Georgia,serif; font-weight:400 !important; }
+    .contact-info-card a, .contact-info-card p { color:var(--ink-muted) !important; }
+    .contact-info-card .c-info-icon { background:#FFFDF8; border:1px solid var(--border-light); color:var(--forest-mid); }
+    .contact-info-card .c-info-label { color:var(--forest-mid); }
+    .contact-info-card .c-info-value { color:var(--ink-body); }
+    .contact-info-card .c-divider { background:var(--border-light); }
+    .contact-info-card h4 { color:var(--ink-muted) !important; }
+    .contact-info-card [style*="color:rgba(255,255,255"] { color:var(--ink-muted) !important; }
+    .contact-info-card a { color:#9A6A0C !important; }
+    .pitch-hero .btn-ghost {
+      background:transparent; color:var(--ink-dark); border:1.5px solid var(--ink-dark); backdrop-filter:none;
+    }
+    section[style*="linear-gradient(135deg,#0E4220"],
+    section[style*="linear-gradient(135deg, #0E4220"],
+    div[style*="linear-gradient(145deg,#0C3619"] {
+      background:#F7F0E3 !important; color:var(--ink-body) !important; border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light);
+    }
+    section[style*="linear-gradient(135deg,#0E4220"] h2,
+    section[style*="linear-gradient(135deg, #0E4220"] h2,
+    div[style*="linear-gradient(145deg,#0C3619"] h3 { color:var(--ink-dark) !important; font-family:'DM Serif Display',Georgia,serif; font-weight:400 !important; }
+    section[style*="linear-gradient(135deg,#0E4220"] p,
+    section[style*="linear-gradient(135deg, #0E4220"] p,
+    div[style*="linear-gradient(145deg,#0C3619"] p { color:var(--ink-muted) !important; }
+    section[style*="linear-gradient(135deg,#0E4220"] .btn-ghost,
+    section[style*="linear-gradient(135deg, #0E4220"] .btn-ghost {
+      background:transparent; color:var(--ink-dark); border:1.5px solid var(--ink-dark); backdrop-filter:none;
+    }
 
     /* Fade-up on scroll */
-    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease; }
-    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up { opacity: 1; transform: none; }
+    .js .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease; }
+    .js .fade-up.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .js .fade-up { opacity: 1; transform: none; transition: none; } }
   </style>
 </head>
 <body>
@@ -352,45 +405,45 @@
     <!-- Primary nav links (Grouped & Uncongested) -->
     <ul class="nav-links" role="list">
       <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}" data-i18n="nav_home">Home</a></li>
-      <li><a href="/verify" class="{{ request()->is('verify') ? 'active' : '' }}">🔍 <span data-i18n="nav_verify">Verify</span></a></li>
+      <li><a href="/verify" class="{{ request()->is('verify') ? 'active' : '' }}"><span data-i18n="nav_verify">Verify</span></a></li>
 
       <!-- Solutions Dropdown -->
       <li class="nav-dropdown-item {{ request()->is('solutions', 'technology') ? 'active' : '' }}">
-        <button class="nav-dropdown-trigger" aria-haspopup="true">
+        <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
           <span data-i18n="nav_solutions_group">Solutions</span>
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div class="nav-dropdown-menu" role="menu">
-          <a href="/solutions" class="{{ request()->is('solutions') ? 'active' : '' }}" role="menuitem">⚡ <span data-i18n="nav_solutions">All Solutions</span></a>
-          <a href="/technology" class="{{ request()->is('technology') ? 'active' : '' }}" role="menuitem">⚙️ <span data-i18n="nav_tech">Technology & AI</span></a>
-          <a href="/api/health" target="_blank" rel="noopener" role="menuitem">🔍 <span data-i18n="nav_api">API Status</span></a>
+          <a href="/solutions" class="{{ request()->is('solutions') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_solutions">All Solutions</span></a>
+          <a href="/technology" class="{{ request()->is('technology') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_tech">Technology & AI</span></a>
+          <a href="/api/health" target="_blank" rel="noopener" role="menuitem"><span data-i18n="nav_api">API Status</span></a>
         </div>
       </li>
 
       <!-- Community Dropdown -->
       <li class="nav-dropdown-item {{ request()->is('community', 'stories') ? 'active' : '' }}">
-        <button class="nav-dropdown-trigger" aria-haspopup="true">
+        <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
           <span data-i18n="nav_community_group">Community</span>
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div class="nav-dropdown-menu" role="menu">
-          <a href="/community" class="{{ request()->is('community') ? 'active' : '' }}" role="menuitem">💬 <span data-i18n="nav_community">Community Hub</span></a>
-          <a href="/stories" class="{{ request()->is('stories') ? 'active' : '' }}" role="menuitem">🌾 <span data-i18n="nav_stories">Farmer Stories</span></a>
+          <a href="/community" class="{{ request()->is('community') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_community">Community Hub</span></a>
+          <a href="/stories" class="{{ request()->is('stories') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_stories">Farmer Stories</span></a>
         </div>
       </li>
 
       <!-- Company Dropdown -->
       <li class="nav-dropdown-item {{ request()->is('about', 'impact', 'partners', 'pitch-deck', 'contact') ? 'active' : '' }}">
-        <button class="nav-dropdown-trigger" aria-haspopup="true">
+        <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
           <span data-i18n="nav_company_group">Company</span>
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div class="nav-dropdown-menu" role="menu">
-          <a href="/about" class="{{ request()->is('about') ? 'active' : '' }}" role="menuitem">🌿 <span data-i18n="nav_about">About Us</span></a>
-          <a href="/impact" class="{{ request()->is('impact') ? 'active' : '' }}" role="menuitem">📊 <span data-i18n="nav_impact">Impact & Reach</span></a>
-          <a href="/partners" class="{{ request()->is('partners') ? 'active' : '' }}" role="menuitem">🤝 <span data-i18n="nav_partners">Partners</span></a>
-          <a href="/pitch-deck" class="{{ request()->is('pitch-deck') ? 'active' : '' }}" role="menuitem">📄 <span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
-          <a href="/contact" class="{{ request()->is('contact') ? 'active' : '' }}" role="menuitem">✉️ <span data-i18n="nav_contact">Contact</span></a>
+          <a href="/about" class="{{ request()->is('about') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_about">About Us</span></a>
+          <a href="/impact" class="{{ request()->is('impact') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_impact">Impact & Reach</span></a>
+          <a href="/partners" class="{{ request()->is('partners') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_partners">Partners</span></a>
+          <a href="/pitch-deck" class="{{ request()->is('pitch-deck') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
+          <a href="/contact" class="{{ request()->is('contact') ? 'active' : '' }}" role="menuitem"><span data-i18n="nav_contact">Contact</span></a>
         </div>
       </li>
     </ul>
@@ -399,10 +452,10 @@
     <div class="nav-actions">
       <!-- Language toggle -->
       <div class="lang-pill" role="group" aria-label="Language">
-        <button class="lang-btn active" id="btnSw" onclick="mkSwitchLang('sw')">🇹🇿 SW</button>
-        <button class="lang-btn" id="btnEn" onclick="mkSwitchLang('en')">🇬🇧 EN</button>
+        <button class="lang-btn active" id="btnSw" onclick="mkSwitchLang('sw')">SW</button>
+        <button class="lang-btn" id="btnEn" onclick="mkSwitchLang('en')">EN</button>
       </div>
-      <a href="/app/mkulima-forum.apk" class="btn btn-gold btn-sm" data-i18n="nav_download">⬇️ Pakua App</a>
+      <a href="/download" class="btn btn-gold btn-sm" data-i18n="nav_download">Pakua App</a>
 
       <!-- Hamburger -->
       <button class="hamburger" id="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false" onclick="toggleDrawer()">
@@ -413,42 +466,42 @@
 </header>
 
 <!-- Mobile Drawer (Clean Grouped Mobile Menu) -->
-<nav id="nav-drawer" aria-label="Mobile navigation">
+<nav id="nav-drawer" aria-label="Mobile navigation" aria-hidden="true" inert>
   <div class="drawer-header">
     <a href="/" class="nav-logo"><img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum"></a>
     <button onclick="toggleDrawer()" aria-label="Close menu" style="background:transparent; font-size:24px; color:var(--ink-dark);">✕</button>
   </div>
   <div class="drawer-links">
-    <a href="/" onclick="toggleDrawer()">🏠 <span data-i18n="nav_home">Home</span></a>
-    <a href="/verify" onclick="toggleDrawer()">🔍 <span data-i18n="nav_verify">Mkulima Verify</span></a>
+    <a href="/" onclick="toggleDrawer()"><span data-i18n="nav_home">Home</span></a>
+    <a href="/verify" onclick="toggleDrawer()"><span data-i18n="nav_verify">Mkulima Verify</span></a>
     
     <div class="drawer-divider"></div>
     <div style="font-size:.72rem; font-weight:800; color:var(--leaf-green); padding:4px 16px; text-transform:uppercase; letter-spacing:.08em;" data-i18n="nav_solutions_group">SOLUTIONS</div>
-    <a href="/solutions" onclick="toggleDrawer()">⚡ <span data-i18n="nav_solutions">All Solutions</span></a>
-    <a href="/technology" onclick="toggleDrawer()">⚙️ <span data-i18n="nav_tech">Technology & AI</span></a>
+    <a href="/solutions" onclick="toggleDrawer()"><span data-i18n="nav_solutions">All Solutions</span></a>
+    <a href="/technology" onclick="toggleDrawer()"><span data-i18n="nav_tech">Technology & AI</span></a>
 
     <div class="drawer-divider"></div>
     <div style="font-size:.72rem; font-weight:800; color:var(--leaf-green); padding:4px 16px; text-transform:uppercase; letter-spacing:.08em;" data-i18n="nav_community_group">COMMUNITY</div>
-    <a href="/community" onclick="toggleDrawer()">💬 <span data-i18n="nav_community">Community Hub</span></a>
-    <a href="/stories" onclick="toggleDrawer()">🌾 <span data-i18n="nav_stories">Farmer Stories</span></a>
+    <a href="/community" onclick="toggleDrawer()"><span data-i18n="nav_community">Community Hub</span></a>
+    <a href="/stories" onclick="toggleDrawer()"><span data-i18n="nav_stories">Farmer Stories</span></a>
 
     <div class="drawer-divider"></div>
     <div style="font-size:.72rem; font-weight:800; color:var(--leaf-green); padding:4px 16px; text-transform:uppercase; letter-spacing:.08em;" data-i18n="nav_company_group">COMPANY</div>
-    <a href="/about" onclick="toggleDrawer()">🌿 <span data-i18n="nav_about">About Us</span></a>
-    <a href="/impact" onclick="toggleDrawer()">📊 <span data-i18n="nav_impact">Impact</span></a>
-    <a href="/partners" onclick="toggleDrawer()">🤝 <span data-i18n="nav_partners">Partners</span></a>
-    <a href="/pitch-deck" onclick="toggleDrawer()">📄 <span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
-    <a href="/contact" onclick="toggleDrawer()">✉️ <span data-i18n="nav_contact">Contact</span></a>
+    <a href="/about" onclick="toggleDrawer()"><span data-i18n="nav_about">About Us</span></a>
+    <a href="/impact" onclick="toggleDrawer()"><span data-i18n="nav_impact">Impact</span></a>
+    <a href="/partners" onclick="toggleDrawer()"><span data-i18n="nav_partners">Partners</span></a>
+    <a href="/pitch-deck" onclick="toggleDrawer()"><span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
+    <a href="/contact" onclick="toggleDrawer()"><span data-i18n="nav_contact">Contact</span></a>
 
     <div class="drawer-divider"></div>
     <!-- Lang switcher in drawer -->
     <div style="display:flex; gap:8px; padding: 8px 16px;">
-      <button onclick="mkSwitchLang('sw'); toggleDrawer()" style="flex:1; padding:12px; border-radius:12px; font-weight:800; background:var(--leaf-pale); color:var(--forest-dark); border:2px solid var(--border-mid);" id="drawerBtnSw">🇹🇿 Kiswahili</button>
-      <button onclick="mkSwitchLang('en'); toggleDrawer()" style="flex:1; padding:12px; border-radius:12px; font-weight:800; background:var(--leaf-pale); color:var(--forest-dark); border:2px solid var(--border-mid);" id="drawerBtnEn">🇬🇧 English</button>
+      <button onclick="mkSwitchLang('sw'); toggleDrawer()" style="flex:1; padding:12px; border-radius:12px; font-weight:800; background:var(--leaf-pale); color:var(--forest-dark); border:2px solid var(--border-mid);" id="drawerBtnSw">Kiswahili</button>
+      <button onclick="mkSwitchLang('en'); toggleDrawer()" style="flex:1; padding:12px; border-radius:12px; font-weight:800; background:var(--leaf-pale); color:var(--forest-dark); border:2px solid var(--border-mid);" id="drawerBtnEn">English</button>
     </div>
   </div>
   <div class="drawer-footer">
-    <a href="/app/mkulima-forum.apk" class="btn btn-gold" style="flex:1; justify-content:center;" data-i18n="nav_download">⬇️ Pakua App</a>
+    <a href="/download" class="btn btn-gold" style="flex:1; justify-content:center;" data-i18n="nav_download">Pakua App</a>
   </div>
 </nav>
 
@@ -491,7 +544,7 @@
         <h4 class="foot-col-title" data-i18n="foot_solutions">SULUHISHO</h4>
         <ul class="foot-links">
           <li><a href="/solutions#plant-scanner" data-i18n="foot_scanner">AI Plant Scanner</a></li>
-          <li><a href="/solutions#mkulima-bot" data-i18n="foot_bot">Mkulima Bot</a></li>
+          <li><a href="/solutions#mkulima-bot" data-i18n="foot_bot">Mkulima AI</a></li>
           <li><a href="/solutions#marketplace" data-i18n="foot_market">Soko la Kilimo</a></li>
           <li><a href="/solutions#input-verify" data-i18n="foot_verify">Kagua Pembejeo</a></li>
           <li><a href="/solutions#weather" data-i18n="foot_weather">Hali ya Hewa</a></li>
@@ -503,9 +556,9 @@
       <div>
         <h4 class="foot-col-title" data-i18n="foot_resources">RASILIMALI</h4>
         <ul class="foot-links">
-          <li><a href="/pitch-deck" data-i18n="foot_pitch">📊 Pitch Deck</a></li>
+          <li><a href="/pitch-deck" data-i18n="foot_pitch">Pitch Deck</a></li>
           <li><a href="/technology" data-i18n="foot_tech">Teknolojia</a></li>
-          <li><a href="/app/mkulima-forum.apk" data-i18n="foot_app">Pakua App</a></li>
+          <li><a href="/download" data-i18n="foot_app">Pakua App</a></li>
           <li><a href="/api/health" target="_blank" data-i18n="foot_api">API Status</a></li>
           <li><a href="/privacy" data-i18n="foot_privacy">Faragha</a></li>
           <li><a href="/terms" data-i18n="foot_terms">Masharti</a></li>
@@ -515,7 +568,7 @@
 
     <div class="foot-bottom">
       <span>MkulimaForum &copy; {{ date('Y') }} &bull; <span data-i18n="foot_motto">Shiriki. Jifunze. Endelea.</span></span>
-      <span>Tanzania 🇹🇿 &bull; Built for East African Farmers &bull; Powered by <span style="color:var(--sun-gold);">Google Gemini 3 AI</span></span>
+      <span>Tanzania &bull; Built for East African Farmers &bull; Powered by <span style="color:var(--sun-gold);">Mkulima AI</span></span>
     </div>
   </div>
 </footer>
@@ -523,7 +576,7 @@
 <!-- ============================================================
      GLOBAL SCRIPTS: i18n + Nav
      ============================================================ -->
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 // ---- Translation dictionary ----
 const MK_TRANSLATIONS = {
   sw: {
@@ -531,14 +584,14 @@ const MK_TRANSLATIONS = {
     nav_solutions_group:'Suluhisho', nav_community_group:'Jamii', nav_company_group:'Taasisi',
     nav_impact:'Athari', nav_partners:'Washirika', nav_pitchdeck:'Pitch Deck',
     nav_more:'Zaidi', nav_stories:'Hadithi za Wakulima', nav_tech:'Teknolojia na AI',
-    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'⬇️ Pakua App',
+    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'Pakua App',
     foot_tagline:'Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.',
     foot_contact_link:'Wasiliana Nasi →',
     foot_company:'KAMPUNI', foot_about:'Kuhusu Sisi', foot_impact:'Athari Zetu',
     foot_partners:'Washirika', foot_stories:'Hadithi za Wakulima', foot_contact:'Wasiliana',
-    foot_solutions:'SULUHISHO', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima Bot',
+    foot_solutions:'SULUHISHO', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
     foot_market:'Soko la Kilimo', foot_verify:'Kagua Pembejeo', foot_weather:'Hali ya Hewa', foot_offline:'Offline AI',
-    foot_resources:'RASILIMALI', foot_pitch:'📊 Pitch Deck', foot_tech:'Teknolojia',
+    foot_resources:'RASILIMALI', foot_pitch:'Pitch Deck', foot_tech:'Teknolojia',
     foot_app:'Pakua App', foot_api:'Hali ya API', foot_privacy:'Faragha', foot_terms:'Masharti',
     foot_motto:'Shiriki. Jifunze. Endelea.',
   },
@@ -547,14 +600,14 @@ const MK_TRANSLATIONS = {
     nav_solutions_group:'Solutions', nav_community_group:'Community', nav_company_group:'Company',
     nav_impact:'Impact', nav_partners:'Partners', nav_pitchdeck:'Pitch Deck',
     nav_more:'More', nav_stories:'Farmer Stories', nav_tech:'Technology & AI',
-    nav_contact:'Contact', nav_api:'API Status', nav_download:'⬇️ Download App',
+    nav_contact:'Contact', nav_api:'API Status', nav_download:'Download App',
     foot_tagline:'A digital platform connecting farmers, agronomists, markets, and AI technology across Tanzania and East Africa.',
     foot_contact_link:'Contact Us →',
     foot_company:'COMPANY', foot_about:'About Us', foot_impact:'Our Impact',
     foot_partners:'Partners', foot_stories:'Farmer Stories', foot_contact:'Contact',
-    foot_solutions:'SOLUTIONS', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima Bot',
+    foot_solutions:'SOLUTIONS', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
     foot_market:'Agri Marketplace', foot_verify:'Input Verification', foot_weather:'Weather Intelligence', foot_offline:'Offline AI',
-    foot_resources:'RESOURCES', foot_pitch:'📊 Pitch Deck', foot_tech:'Technology',
+    foot_resources:'RESOURCES', foot_pitch:'Pitch Deck', foot_tech:'Technology',
     foot_app:'Download App', foot_api:'API Status', foot_privacy:'Privacy', foot_terms:'Terms',
     foot_motto:'Share. Learn. Grow.',
   }
@@ -602,11 +655,24 @@ function toggleDrawer() {
   const isOpen = drawer.classList.toggle('open');
   btn.classList.toggle('open', isOpen);
   btn.setAttribute('aria-expanded', isOpen);
+  drawer.setAttribute('aria-hidden', String(!isOpen));
+  drawer.toggleAttribute('inert', !isOpen);
   document.body.style.overflow = isOpen ? 'hidden' : '';
 }
 
 // Close drawer on ESC
 document.addEventListener('keydown', e => { if(e.key==='Escape') { const d=document.getElementById('nav-drawer'); if(d.classList.contains('open')) toggleDrawer(); } });
+
+document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {
+  const item = trigger.closest('.nav-dropdown-item');
+  const setOpen = open => {
+    trigger.setAttribute('aria-expanded', String(open));
+    item.classList.toggle('keyboard-open', open);
+  };
+  trigger.addEventListener('click', () => setOpen(trigger.getAttribute('aria-expanded') !== 'true'));
+  item.addEventListener('focusout', event => { if (!item.contains(event.relatedTarget)) setOpen(false); });
+  trigger.addEventListener('keydown', event => { if (event.key === 'Escape') { setOpen(false); trigger.focus(); } });
+});
 
 // ---- Scroll fade-up ----
 const mkObserver = new IntersectionObserver(entries => {

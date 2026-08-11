@@ -47,6 +47,7 @@
   .g-l { color:#4285F4; }
   .g-i { color:#EA4335; }
   .g-text { color:#1A1A2E; }
+  @media(max-width:760px){ .google-uses-grid{ grid-template-columns:1fr !important; } }
 </style>
 @endsection
 
@@ -68,7 +69,7 @@
     <h2 class="section-title" style="margin-bottom:40px;" data-i18n="stack_title">Teknolojia Inayofanya Kazi Nyuma ya Pazia</h2>
     <div class="tech-stack-grid">
       @foreach([
-        ['🤖','Gemini Cloud AI','Gemini Cloud AI','Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Gemini 3 Flash inashughulikia utambuzi wa haraka wa magonjwa ya mimea, maswali ya Mkulima Bot, na utafutaji wa soko. Gemini 3 Pro inashughulikia ushauri wa hali ya hewa na mazao kwa kutumia Google Search Grounding.','Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima Bot queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.','tc0',['Gemini 3 Flash','Gemini 3 Pro','Google AI Studio']],
+        ['🤖','Gemini Cloud AI','Gemini Cloud AI','Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Gemini 3 Flash inashughulikia utambuzi wa haraka wa magonjwa ya mimea, maswali ya Mkulima AI, na utafutaji wa soko. Gemini 3 Pro inashughulikia ushauri wa hali ya hewa na mazao kwa kutumia Google Search Grounding.','Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima AI queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.','tc0',['Gemini 3 Flash','Gemini 3 Pro','Google AI Studio']],
         ['🧠','Gemma Edge AI','Gemma Edge AI','Gemma 2B (INT4 Quantized) inafanya kazi moja kwa moja kwenye simu za wakulima bila kuhitaji intaneti. Imetumia MediaPipe LLM Inference (Google AI Edge SDK) kufanya uamuzi wa AI ndani ya simu kwenye GPU/NPU ya simu.','Gemma 2B (INT4 Quantized) runs locally on farmer smartphones without requiring internet. Implemented via MediaPipe LLM Inference (Google AI Edge SDK) for on-device inference on mobile GPU/NPU.','tc1',['Gemma 2B INT4','MediaPipe','Google AI Edge SDK']],
         ['👁️','Computer Vision','Computer Vision','Mfumo wa utambuzi wa picha wa AI unaotumia uwezo wa mfano mkubwa wa lugha wa Gemini na uwezo wa kuona wa multimodal kuchambua picha za mazao yaliyoathirika na kutoa matokeo ya utambuzi wa ugonjwa.','AI image recognition system using Gemini\'s multimodal large language model capabilities to analyze crop images and provide accurate disease or pest identification results.','tc2',['Multimodal Vision','Image Analysis','Disease Classification']],
         ['📴','Mfumo wa Offline','Offline Architecture','Mfumo wa usanifu unaounga mkono maeneo ya uunganisho mdogo kupitia SMS (kwa geti la SMS), USSD, maarifa yaliyohifadhiwa kwenye simu, na Gemma 2B inayofanya kazi nje ya mtandao. Wakulima wanapata huduma muhimu hata bila data.','An architecture supporting low-connectivity areas via SMS gateway, USSD shortcodes, device-cached agronomy knowledge, and offline Gemma 2B. Farmers access critical services even without mobile data.','tc3',['SMS Gateway','USSD','Cached Knowledge','Offline-First']],
@@ -112,7 +113,7 @@
 
       <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;" class="google-uses-grid">
         @foreach([
-          ['⚡','Gemini 3 Flash','AI Plant Scanner, Mkulima Bot mazungumzo, Utafutaji wa Soko','Gemini 3 Flash','AI Plant Scanner, Mkulima Bot conversations, Smart Marketplace Search','gc0'],
+          ['⚡','Gemini 3 Flash','AI Plant Scanner, Mkulima AI mazungumzo, Utafutaji wa Soko','Gemini 3 Flash','AI Plant Scanner, Mkulima AI conversations, Smart Marketplace Search','gc0'],
           ['🔍','Gemini 3 Pro + Grounding','Ushauri wa Hali ya Hewa na Mazao ukitumia Google Search Grounding','Gemini 3 Pro + Grounding','Weather & Crop Advisory Engine using real-time Google Search Grounding','gc1'],
           ['🛠️','Google AI Studio','Ubunifu wa kwanza na majaribio ya mfano wa AI ya MkulimaForum','Google AI Studio','Used for initial AI prototype development and model experimentation','gc2'],
         ] as $g)
@@ -123,8 +124,6 @@
         </div>
         @endforeach
       </div>
-
-      @media(max-width:760px){ .google-uses-grid{ grid-template-columns:1fr !important; } }
 
       <p style="text-align:center; font-size:.78rem; color:#666; margin-top:28px; font-style:italic;" data-i18n="google_note">
         Teknolojia za Google zinazotajwa hapa (Gemini, Google AI Studio) zinawakilisha zana tunazotumia katika ujenzi wa mfumo. Hii haikusudiwa kuwakilisha ushirikiano rasmi au uidhinisho wowote na Google.
@@ -209,13 +208,13 @@
 @endsection
 
 @section('page_scripts')
-<script>
-const mkPageTranslations = {
+<script nonce="{{ $cspNonce ?? '' }}">
+mkPageTranslations = {
   sw: {
     tech_eyebrow:'TEKNOLOJIA', tech_title:'AI Iliyojengwa kwa Hali Halisi ya Kilimo',
     tech_sub:'Tunatumia teknolojia za kisasa za ulimwengu na kuzirekebisha kwa hali ya wakulima wa Tanzania na Afrika Mashariki — bila kuacha wale wanaoishi mbali na mtandao.',
     stack_eyebrow:'NGUZO ZA TEKNOLOJIA', stack_title:'Teknolojia Inayofanya Kazi Nyuma ya Pazia',
-    tc0_title:'Gemini Cloud AI', tc0_desc:'Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Flash inashughulikia utambuzi wa haraka wa magonjwa, maswali ya Mkulima Bot, na utafutaji wa soko. Pro inashughulikia ushauri wa hali ya hewa na mazao.',
+    tc0_title:'Gemini Cloud AI', tc0_desc:'Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Flash inashughulikia utambuzi wa haraka wa magonjwa, maswali ya Mkulima AI, na utafutaji wa soko. Pro inashughulikia ushauri wa hali ya hewa na mazao.',
     tc1_title:'Gemma Edge AI', tc1_desc:'Gemma 2B (INT4 Quantized) inafanya kazi moja kwa moja kwenye simu za wakulima bila kuhitaji intaneti kupitia MediaPipe LLM Inference (Google AI Edge SDK).',
     tc2_title:'Computer Vision', tc2_desc:'Mfumo wa utambuzi wa picha wa AI unaotumia uwezo wa multimodal wa Gemini kuchambua picha za mazao yaliyoathirika na kutoa matokeo ya utambuzi wa ugonjwa.',
     tc3_title:'Mfumo wa Offline', tc3_desc:'Mfumo wa usanifu unaounga mkono maeneo ya uunganisho mdogo kupitia SMS, USSD, maarifa yaliyohifadhiwa, na Gemma 2B inayofanya kazi nje ya mtandao.',
@@ -225,7 +224,7 @@ const mkPageTranslations = {
     tc7_title:'App ya Simu', tc7_desc:'App ya MkulimaForum imejengwa kwa Flutter, inayoruhusu kutolewa kwa Android na iOS. Imeboreshwa kwa simu za android za bei ya chini.',
     google_eyebrow:'TEKNOLOJIA YA GOOGLE AI', google_title:'Jinsi Tunavyotumia Gemini AI',
     google_sub:'MkulimaForum inatumia mifano ya Gemini ya Google katika mtiririko mbalimbali wa AI. Toleo la awali la mfumo wetu lilibuniwa kwa kutumia Google AI Studio.',
-    gc0_title:'Gemini 3 Flash', gc0_desc:'AI Plant Scanner, Mkulima Bot mazungumzo, Utafutaji wa Soko',
+    gc0_title:'Gemini 3 Flash', gc0_desc:'AI Plant Scanner, Mkulima AI mazungumzo, Utafutaji wa Soko',
     gc1_title:'Gemini 3 Pro + Grounding', gc1_desc:'Ushauri wa Hali ya Hewa na Mazao ukitumia Google Search Grounding',
     gc2_title:'Google AI Studio', gc2_desc:'Ubunifu wa kwanza na majaribio ya mfano wa AI ya MkulimaForum',
     google_note:'Teknolojia za Google zinazotajwa hapa zinawakilisha zana tunazotumia. Hii haikusudiwa kuwakilisha ushirikiano rasmi au uidhinisho wowote na Google.',
@@ -244,7 +243,7 @@ const mkPageTranslations = {
     tech_eyebrow:'TECHNOLOGY', tech_title:'AI Built for Real Farming Conditions',
     tech_sub:'We apply world-class technology, adapted for the realities of Tanzania and East African farmers — including those in areas with little to no internet connectivity.',
     stack_eyebrow:'TECHNOLOGY STACK', stack_title:'The Technology Working Behind the Scenes',
-    tc0_title:'Gemini Cloud AI', tc0_desc:'Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima Bot queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.',
+    tc0_title:'Gemini Cloud AI', tc0_desc:'Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima AI queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.',
     tc1_title:'Gemma Edge AI', tc1_desc:'Gemma 2B (INT4 Quantized) runs locally on farmer smartphones without requiring internet, implemented via MediaPipe LLM Inference (Google AI Edge SDK) for on-device inference.',
     tc2_title:'Computer Vision', tc2_desc:'AI image recognition using Gemini\'s multimodal capabilities to analyze crop images and provide accurate disease or pest identification with treatment recommendations.',
     tc3_title:'Offline Architecture', tc3_desc:'An architecture supporting low-connectivity areas via SMS gateway, USSD shortcodes, device-cached agronomy knowledge, and offline Gemma 2B inference.',
@@ -254,7 +253,7 @@ const mkPageTranslations = {
     tc7_title:'Mobile App Platform', tc7_desc:'MkulimaForum app built with Flutter for Android and iOS deployment from a single codebase. Optimized for lower-end Android devices common among Tanzanian farmers.',
     google_eyebrow:'GOOGLE AI TECHNOLOGY', google_title:'How We Use Gemini AI',
     google_sub:"MkulimaForum uses Google's Gemini models across several AI-assisted workflows. Early versions of the platform were prototyped using Google AI Studio.",
-    gc0_title:'Gemini 3 Flash', gc0_desc:'AI Plant Scanner, Mkulima Bot conversations, Smart Marketplace Search',
+    gc0_title:'Gemini 3 Flash', gc0_desc:'AI Plant Scanner, Mkulima AI conversations, Smart Marketplace Search',
     gc1_title:'Gemini 3 Pro + Grounding', gc1_desc:'Weather & Crop Advisory Engine using real-time Google Search Grounding',
     gc2_title:'Google AI Studio', gc2_desc:'Used for initial AI prototype development and model experimentation for MkulimaForum',
     google_note:'Google technologies mentioned here represent tools we use in building our system. This is not intended to represent a formal partnership or endorsement by Google.',

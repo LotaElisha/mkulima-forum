@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\AdminTokenCookie;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [SecurityHeaders::class]);
+        $middleware->api(prepend: [AdminTokenCookie::class]);
         // Sanctum stateful middleware removed for API-only usage
         // All API auth is done via Bearer tokens, not cookies.
         // Never redirect unauthenticated API requests to a (nonexistent)

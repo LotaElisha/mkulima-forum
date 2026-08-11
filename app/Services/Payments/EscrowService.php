@@ -168,11 +168,14 @@ class EscrowService
         $checkoutRequestId = $callback['CheckoutRequestID'] ?? null;
         $resultCode = $callback['ResultCode'] ?? null;
         $resultDesc = $callback['ResultDesc'] ?? '';
+        $metadata = collect($callback['CallbackMetadata']['Item'] ?? [])
+            ->filter(fn ($item) => isset($item['Name']))
+            ->mapWithKeys(fn ($item) => [$item['Name'] => $item['Value'] ?? null]);
 
         // Idempotent processing: lock the row and only act on escrows still
         // awaiting payment. Mobile money gateways retry callbacks — a
         // duplicate must not double-post ledger entries or flip status.
-        DB::transaction(function () use ($checkoutRequestId, $resultCode, $resultDesc) {
+        DB::transaction(function () use ($checkoutRequestId, $resultCode, $resultDesc, $metadata) {
             $escrow = Escrow::where('transaction_reference', $checkoutRequestId)
                 ->lockForUpdate()
                 ->first();
@@ -193,10 +196,27 @@ class EscrowService
             }
 
             if ($resultCode === 0) {
+                $paidAmount = $metadata->get('Amount');
+                if (! is_numeric($paidAmount) || abs((float) $paidAmount - (float) $escrow->amount) > 0.01) {
+                    $escrow->update([
+                        'status' => 'failed',
+                        'failure_reason' => 'Payment callback amount was missing or did not match the escrow.',
+                    ]);
+                    Log::warning('M-Pesa callback amount mismatch', [
+                        'escrow_id' => $escrow->id,
+                        'expected' => (float) $escrow->amount,
+                        'received' => $paidAmount,
+                    ]);
+
+                    return;
+                }
+
                 // Payment successful
                 $escrow->update([
                     'status' => 'held',
                     'paid_at' => now(),
+                    'provider_reference' => $metadata->get('MpesaReceiptNumber'),
+                    'metadata' => array_merge($escrow->metadata ?? [], ['callback' => $metadata->all()]),
                 ]);
 
                 EscrowLedger::create([

@@ -41,15 +41,13 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _animationController.forward();
   }
@@ -96,9 +94,9 @@ class _LoginScreenState extends State<LoginScreen>
     );
 
     if (success && mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     }
   }
 
@@ -115,9 +113,9 @@ class _LoginScreenState extends State<LoginScreen>
     final success = await auth.loginWithEmail(email, password);
 
     if (success && mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     }
   }
 
@@ -139,17 +137,7 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              MkColors.primaryDark,
-              MkColors.primary,
-              Color(0xFF4CAF50),
-            ],
-          ),
-        ),
+        decoration: const BoxDecoration(color: MkColors.charcoal),
         child: SafeArea(
           child: SingleChildScrollView(
             child: SizedBox(
@@ -213,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen>
                       position: _slideAnimation,
                       child: Container(
                         decoration: const BoxDecoration(
-                          color: Colors.white,
+                          color: MkColors.surfaceRaised,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(40),
                             topRight: Radius.circular(40),
@@ -227,9 +215,7 @@ class _LoginScreenState extends State<LoginScreen>
                               const SizedBox(height: 8),
                               Text(
                                 'Karibu Tena',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
+                                style: Theme.of(context).textTheme.headlineSmall
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: MkColors.primaryDark,
@@ -268,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     'Email',
                                     Icons.email,
                                     _useEmail,
-                                    const Color(0xFF1565C0),
+                                    MkColors.charcoal,
                                     () => setState(() => _useEmail = true),
                                   ),
                                   _buildGridIcon(
@@ -312,8 +298,10 @@ class _LoginScreenState extends State<LoginScreen>
                                           : Icons.visibility,
                                       color: Colors.grey[500],
                                     ),
-                                    onPressed: () => setState(() =>
-                                        _obscurePassword = !_obscurePassword),
+                                    onPressed: () => setState(
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -327,7 +315,8 @@ class _LoginScreenState extends State<LoginScreen>
                                     child: const Text(
                                       'Umesahau password?',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.w600),
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -361,8 +350,11 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(Icons.error_outline,
-                                          color: Colors.red[700], size: 22),
+                                      Icon(
+                                        Icons.error_outline,
+                                        color: Colors.red[700],
+                                        size: 22,
+                                      ),
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: Text(
@@ -387,16 +379,17 @@ class _LoginScreenState extends State<LoginScreen>
                                   onPressed: auth.isLoading
                                       ? null
                                       : (_useEmail
-                                          ? _loginWithEmail
-                                          : (_otpSent
-                                              ? _verifyOtp
-                                              : _requestOtp)),
+                                            ? _loginWithEmail
+                                            : (_otpSent
+                                                  ? _verifyOtp
+                                                  : _requestOtp)),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: MkColors.primary,
                                     foregroundColor: Colors.white,
                                     elevation: 4,
-                                    shadowColor: MkColors.primary
-                                        .withValues(alpha: 0.4),
+                                    shadowColor: MkColors.primary.withValues(
+                                      alpha: 0.4,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
@@ -414,8 +407,8 @@ class _LoginScreenState extends State<LoginScreen>
                                           _useEmail
                                               ? 'Ingia'
                                               : (_otpSent
-                                                  ? 'Thibitisha'
-                                                  : 'Pata OTP'),
+                                                    ? 'Thibitisha'
+                                                    : 'Pata OTP'),
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -445,8 +438,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         );
                                       },
                                       style: TextButton.styleFrom(
-                                        foregroundColor:
-                                            MkColors.primary,
+                                        foregroundColor: MkColors.primary,
                                       ),
                                       child: const Text(
                                         'Jiunge Hapa',
@@ -556,8 +548,7 @@ class _LoginScreenState extends State<LoginScreen>
         labelText: label,
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-        prefixIcon:
-            Icon(icon, color: MkColors.primary, size: 22),
+        prefixIcon: Icon(icon, color: MkColors.primary, size: 22),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.grey[50],
@@ -571,11 +562,12 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide:
-              const BorderSide(color: MkColors.primary, width: 2),
+          borderSide: const BorderSide(color: MkColors.primary, width: 2),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
     );
   }

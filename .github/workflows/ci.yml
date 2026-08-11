@@ -67,6 +67,9 @@ jobs:
         # Coverage gate re-enabled once the suite grows (see REDESIGN.md Phase 2)
         run: php artisan test
 
+      - name: Audit PHP dependencies
+        run: composer audit --locked
+
   flutter-app:
     runs-on: ubuntu-latest
     defaults:
@@ -83,7 +86,7 @@ jobs:
       - name: Analyze
         run: flutter analyze --no-fatal-infos
       - name: Test
-        run: flutter test || echo "No tests yet"
+        run: flutter test
 
   admin-dashboard:
     runs-on: ubuntu-latest
@@ -101,6 +104,26 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Test
+        run: npm test
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
+
+  public-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+      - run: composer install --no-interaction --prefer-dist
+      - run: npm ci
+      - run: npm audit --omit=dev
+      - run: npm run build
 
   code-quality:
     runs-on: ubuntu-latest

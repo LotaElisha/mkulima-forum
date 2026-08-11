@@ -41,14 +41,13 @@ export default function FeatureFlags() {
   const [toggling, setToggling] = useState(null)
   const [error, setError] = useState(null)
 
-  const token = localStorage.getItem('admin_token')
 
   const fetchFeatures = async () => {
     setLoading(true)
     setError(null)
     try {
       const res = await fetch(`${API_BASE}/admin/features`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (!res.ok) throw new Error('Failed to fetch features')
       const data = await res.json()
@@ -65,7 +64,7 @@ export default function FeatureFlags() {
     try {
       const res = await fetch(`${API_BASE}/admin/features/${key}/toggle`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (!res.ok) throw new Error('Failed to toggle')
       const data = await res.json()

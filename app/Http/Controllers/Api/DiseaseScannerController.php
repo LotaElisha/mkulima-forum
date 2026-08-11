@@ -19,14 +19,14 @@ class DiseaseScannerController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'image' => ['required', 'image', 'max:10240'], // Max 10MB
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'crop_type' => ['nullable', 'string', 'in:maize,beans,rice,cassava,banana,coffee,tea,tomato,onion,potato'],
             'use_cloud' => ['nullable', 'boolean'],
         ]);
 
         // Store image
-        $imagePath = $request->file('image')->store('disease-scans', 'public');
-        $fullPath = Storage::disk('public')->path($imagePath);
+        $imagePath = $request->file('image')->store('disease-scans', 'local');
+        $fullPath = Storage::disk('local')->path($imagePath);
 
         // v1 is cloud-only (Gemini Vision). On-device TF Lite is a Phase 3 feature —
         // see REDESIGN.md. We do not pretend to run local inference.
@@ -43,6 +43,7 @@ class DiseaseScannerController extends Controller
                 'scan_source' => 'gemini_cloud',
                 'status' => 'failed',
             ]);
+            Storage::disk('local')->delete($imagePath);
 
             return response()->json([
                 'message' => 'Uchambuzi wa picha haukufanikiwa kwa sasa. Tafadhali jaribu tena baadaye.',
@@ -75,7 +76,7 @@ class DiseaseScannerController extends Controller
                 'treatment' => $scan->treatment_recommendation,
                 'affected_areas' => $scan->affected_areas,
                 'source' => $scan->scan_source,
-                'image_url' => Storage::disk('public')->url($imagePath),
+                'image_url' => url("/api/scanner/scans/{$scan->uuid}/image"),
                 'created_at' => $scan->created_at,
             ],
         ], 201);
@@ -122,9 +123,23 @@ class DiseaseScannerController extends Controller
                 'treatment' => $scan->treatment_recommendation,
                 'affected_areas' => $scan->affected_areas,
                 'source' => $scan->scan_source,
-                'image_url' => Storage::disk('public')->url($scan->image_path),
+                'image_url' => $scan->image_path ? url("/api/scanner/scans/{$scan->uuid}/image") : null,
                 'created_at' => $scan->created_at,
             ],
+        ]);
+    }
+
+    public function image(Request $request, string $uuid)
+    {
+        $scan = DiseaseScan::where('uuid', $uuid)
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
+        abort_unless($scan->image_path && Storage::disk('local')->exists($scan->image_path), 404);
+
+        return response()->file(Storage::disk('local')->path($scan->image_path), [
+            'Cache-Control' => 'private, max-age=3600',
+            'X-Content-Type-Options' => 'nosniff',
         ]);
     }
 

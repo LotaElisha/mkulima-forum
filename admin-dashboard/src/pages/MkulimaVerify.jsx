@@ -22,10 +22,9 @@ export default function MkulimaVerify() {
   }, []);
 
   const fetchVerifyStats = async () => {
-    const token = localStorage.getItem('admin_token');
     try {
       const res = await fetch('/api/admin/verify/stats', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       });
       if (res.ok) {
         const data = await res.json();
@@ -40,13 +39,12 @@ export default function MkulimaVerify() {
 
   const handleCreateAdvisory = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('admin_token');
     try {
       const res = await fetch('/api/admin/verify/advisories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({
           type: advType,

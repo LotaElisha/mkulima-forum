@@ -67,6 +67,7 @@ class _MkulimaAppState extends State<MkulimaApp> {
         debugShowCheckedModeBanner: false,
         theme: mkLightTheme(),
         darkTheme: mkDarkTheme(),
+        themeMode: ThemeMode.light,
         routerConfig: _router,
       ),
     );

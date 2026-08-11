@@ -4,6 +4,8 @@ import { Save, Bell, Shield, Globe, CreditCard, Layout, Upload, Trash2, Image as
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('general')
   const [saved, setSaved] = useState(false)
+  const [otpSettings, setOtpSettings] = useState({ enabled: false, gateway_configured: false })
+  const [otpMessage, setOtpMessage] = useState('')
 
   const [settings, setSettings] = useState({
     siteName: 'MkulimaForum',
@@ -49,14 +51,34 @@ export default function Settings() {
     if (activeTab === 'landing') {
       fetchLandingSettings()
     }
+    if (activeTab === 'security') {
+      fetch('/api/admin/settings/otp').then((res) => res.json()).then(setOtpSettings).catch(() => {
+        setOtpMessage('Unable to load OTP settings.')
+      })
+    }
   }, [activeTab])
+
+  const updateOtp = async (enabled) => {
+    setOtpMessage('')
+    const res = await fetch('/api/admin/settings/otp', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      setOtpMessage(data.message || 'Unable to update OTP settings.')
+      return
+    }
+    setOtpSettings(data)
+    setOtpMessage(enabled ? 'OTP authentication enabled.' : 'OTP authentication disabled.')
+  }
 
   const fetchLandingSettings = async () => {
     setLandingLoading(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/settings/landing', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -100,12 +122,11 @@ export default function Settings() {
     setLogoUploading(true)
     setLogoMessage('')
     try {
-      const token = localStorage.getItem('admin_token')
       const formData = new FormData()
       formData.append('logo', logoFile)
       const res = await fetch('/api/admin/settings/landing/logo', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { },
         body: formData,
       })
       const data = await res.json()
@@ -145,14 +166,13 @@ export default function Settings() {
     setDeckMessage('')
 
     try {
-      const token = localStorage.getItem('admin_token')
       const formData = new FormData()
       formData.append('media', deckFile)
       formData.append('key', 'pitch_deck')
 
       const res = await fetch('/api/admin/settings/landing/media', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { },
         body: formData,
       })
       const data = await res.json()
@@ -172,12 +192,11 @@ export default function Settings() {
 
   const handleSaveLanding = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/settings/landing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({ settings: landingSettings })
       })
@@ -529,13 +548,13 @@ export default function Settings() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hero Title (HTML supported)
+                  Hero Title
                 </label>
                 <textarea
                   value={landingSettings.hero_title}
                   onChange={(e) => setLandingSettings({...landingSettings, hero_title: e.target.value})}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none"
-                  placeholder="e.g. Daktari wa Mimea<br>Mfukoni <span class='accent'>Mwako</span>"
+                  placeholder="e.g. Daktari wa Mimea Mfukoni Mwako"
                   rows="3"
                 />
               </div>
@@ -555,7 +574,7 @@ export default function Settings() {
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hero Lead Paragraph (HTML supported)
+                  Hero Lead Paragraph
                 </label>
                 <textarea
                   value={landingSettings.hero_lead}
@@ -747,20 +766,22 @@ export default function Settings() {
         <div className="card space-y-6">
           <h3 className="font-medium">Security Settings</h3>
           <div className="space-y-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="font-medium">Two-Factor Authentication</p>
-              <p className="text-sm text-gray-500 mb-3">Require 2FA for admin accounts</p>
-              <button className="btn-secondary text-sm">Configure 2FA</button>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="font-medium">API Keys</p>
-              <p className="text-sm text-gray-500 mb-3">Manage API access keys</p>
-              <button className="btn-secondary text-sm">Manage Keys</button>
-            </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="font-medium">Session Management</p>
-              <p className="text-sm text-gray-500 mb-3">Active sessions: 1</p>
-              <button className="btn-secondary text-sm text-red-600">Revoke All Sessions</button>
+            <div className="p-4 bg-gray-50 rounded-lg flex items-center justify-between gap-4">
+              <div>
+                <p className="font-medium">Farmer OTP authentication</p>
+                <p className="text-sm text-gray-500">Enable phone login and registration through the configured SMS gateway.</p>
+                <p className={`text-xs mt-1 ${otpSettings.gateway_configured ? 'text-green-700' : 'text-amber-700'}`}>
+                  SMS gateway: {otpSettings.gateway_configured ? 'configured' : 'not configured'}
+                </p>
+                {otpMessage && <p role="status" className="text-sm mt-2 text-gray-700">{otpMessage}</p>}
+              </div>
+              <input
+                aria-label="Enable farmer OTP authentication"
+                type="checkbox"
+                checked={otpSettings.enabled}
+                onChange={(event) => updateOtp(event.target.checked)}
+                className="w-5 h-5 text-green-600 rounded focus:ring-green-500"
+              />
             </div>
           </div>
         </div>

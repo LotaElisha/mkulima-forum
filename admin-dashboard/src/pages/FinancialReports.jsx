@@ -12,9 +12,8 @@ export default function FinancialReports() {
 
   const fetchReports = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/financial-reports?period=${period}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const result = await res.json()

@@ -17,13 +17,12 @@ export default function OrdersPage() {
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       let url = '/api/admin/orders'
       const params = new URLSearchParams()
       if (filterStatus) params.append('status', filterStatus)
       if (params.toString()) url += '?' + params.toString()
 
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(url, { headers: { } })
       if (res.ok) {
         const data = await res.json()
         setOrders(data.orders?.data || [])
@@ -37,12 +36,11 @@ export default function OrdersPage() {
 
   const handleUpdate = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/orders/${editingOrder.uuid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(editData)
       })
@@ -63,10 +61,9 @@ export default function OrdersPage() {
   const handleDelete = async (uuid) => {
     if (!confirm('Delete this order permanently?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       await fetch(`/api/admin/orders/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       fetchOrders()
     } catch (err) {

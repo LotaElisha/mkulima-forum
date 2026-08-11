@@ -16,34 +16,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, dynamic>> _pages = [
     {
-      'emoji': '🌾',
+      'icon': Icons.grass_outlined,
       'title': 'Karibu Mkulima Forum',
-      'subtitle': 'Soko la kilimo kwa wote. Nunua na uza bidhaa za kilimo kwa urahisi.',
-      'color': MkColors.primary,
+      'subtitle':
+          'Soko la kilimo kwa wote. Nunua na uza bidhaa za kilimo kwa urahisi.',
+      'color': MkColors.leafGreen,
     },
     {
-      'emoji': '🤖',
-      'title': 'AI Mtaalamu wa Kilimo',
-      'subtitle': 'Uliza maswali yoyote kuhusu kilimo. Pata majibu papo hapo kutoka kwa mtaalamu wa AI.',
-      'color': Color(0xFF1565C0),
+      'icon': Icons.psychology_outlined,
+      'title': 'Mkulima AI',
+      'subtitle':
+          'Uliza maswali yoyote kuhusu kilimo. Pata majibu papo hapo kutoka kwa mtaalamu wa AI.',
+      'color': MkColors.charcoal,
     },
     {
-      'emoji': '📸',
-      'title': 'Disease Scanner',
-      'subtitle': 'Piga picha ya mimea yako iliyougua. Pata utambuzi na matibabu kwa sekunde chache.',
-      'color': Color(0xFF6A1B9A),
+      'icon': Icons.document_scanner_outlined,
+      'title': 'Kichunguzi cha Mimea',
+      'subtitle':
+          'Piga picha ya mimea yako iliyougua. Pata utambuzi na matibabu kwa sekunde chache.',
+      'color': MkColors.accent,
     },
     {
-      'emoji': '💬',
+      'icon': Icons.forum_outlined,
       'title': 'Jukwaa la Mkulima',
-      'subtitle': 'Ungana na wakulima wengine. Shirikiana uzoefu, maswali, na mafanikio.',
-      'color': Color(0xFFE65100),
+      'subtitle':
+          'Ungana na wakulima wengine. Shirikiana uzoefu, maswali, na mafanikio.',
+      'color': MkColors.charcoal,
     },
     {
-      'emoji': '🔒',
+      'icon': Icons.lock_outline,
       'title': 'Malipo Salama',
-      'subtitle': 'Lipa kwa kutumia Escrow. Pesa zinahifadhiwa hadi bidhaa ifike salama.',
-      'color': MkColors.primary,
+      'subtitle':
+          'Lipa kwa kutumia Escrow. Pesa zinahifadhiwa hadi bidhaa ifike salama.',
+      'color': MkColors.leafGreen,
     },
   ];
 
@@ -75,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final page = _pages[_currentPage];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MkColors.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -88,10 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: _skip,
                   child: const Text(
                     'Ruka',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                 ),
               ),
@@ -112,7 +114,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Animated emoji container
+                        // Branded Material icon container
                         Container(
                           width: 200,
                           height: 200,
@@ -128,9 +130,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             shape: BoxShape.circle,
                           ),
                           child: Center(
-                            child: Text(
-                              p['emoji'] as String,
-                              style: const TextStyle(fontSize: 80),
+                            child: Icon(
+                              p['icon'] as IconData,
+                              size: 80,
+                              color: p['color'] as Color,
                             ),
                           ),
                         ),
@@ -140,7 +143,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: MkColors.primaryDark,
+                            color: MkColors.charcoal,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -193,16 +196,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: _nextPage,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: page['color'] as Color,
-                    foregroundColor: Colors.white,
+                    foregroundColor: _currentPage == 2
+                        ? MkColors.charcoal
+                        : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 4,
                   ),
                   child: Text(
-                    _currentPage == _pages.length - 1
-                        ? 'Anza Sasa'
-                        : 'Endelea',
+                    _currentPage == _pages.length - 1 ? 'Anza Sasa' : 'Endelea',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

@@ -1,0 +1,5 @@
+# Copy to key.properties (gitignored) and point storeFile to the protected release keystore.
+storePassword=change-me
+keyPassword=change-me
+keyAlias=upload
+storeFile=/absolute/path/to/mkulimaforum-upload.jks

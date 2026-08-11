@@ -9,14 +9,19 @@ use Illuminate\Support\Facades\Hash;
 
 class CreateAdminUser extends Command
 {
-    protected $signature = 'admin:create {email=admin@mkulima.forum} {password=admin123} {--name=Platform Admin}';
+    protected $signature = 'admin:create {email} {--name=Platform Admin}';
 
     protected $description = 'Create or reset an administrator account for Mkulima Forum Admin Panel';
 
     public function handle(): int
     {
         $email = $this->argument('email');
-        $password = $this->argument('password');
+        $password = $this->secret('Enter a strong administrator password');
+        if (! is_string($password) || strlen($password) < 12) {
+            $this->error('Password must contain at least 12 characters.');
+
+            return Command::FAILURE;
+        }
         $name = $this->option('name');
 
         $user = User::where('email', $email)->first();
@@ -27,7 +32,7 @@ class CreateAdminUser extends Command
                 'role' => Roles::ADMIN,
                 'status' => 'active',
             ]);
-            $this->info("Admin user '{$email}' password has been reset to: '{$password}'");
+            $this->info("Admin user '{$email}' password was reset successfully.");
         } else {
             $user = User::create([
                 'tenant_id' => 1,
@@ -41,7 +46,7 @@ class CreateAdminUser extends Command
                 'phone_verified_at' => now(),
                 'preferred_language' => 'sw',
             ]);
-            $this->info("Admin user '{$email}' created successfully with password: '{$password}'");
+            $this->info("Admin user '{$email}' created successfully.");
         }
 
         return Command::SUCCESS;

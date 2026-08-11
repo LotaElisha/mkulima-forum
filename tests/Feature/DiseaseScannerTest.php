@@ -19,12 +19,12 @@ class DiseaseScannerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake('public');
+        Storage::fake('local');
         Tenant::firstOrCreate(['id' => 1], ['name' => 'Tanzania', 'country_code' => 'tz']);
         $this->farmer = User::factory()->create(['role' => 'farmer', 'tenant_id' => 1]);
     }
 
-    public function test_disease_scan_unauthenticated_does_not_crash(): void
+    public function test_disease_scan_requires_authentication(): void
     {
         config(['services.gemini.api_key' => 'fake-key']);
 
@@ -57,14 +57,7 @@ class DiseaseScannerTest extends TestCase
             'crop_type' => 'maize',
         ]);
 
-        $response->assertCreated()
-            ->assertJsonPath('scan.disease_name', 'Maize Lethal Necrosis')
-            ->assertJsonPath('scan.confidence', 0.92);
-
-        $this->assertDatabaseHas('disease_scans', [
-            'disease_name' => 'Maize Lethal Necrosis',
-            'user_id' => null,
-        ]);
+        $response->assertUnauthorized();
     }
 
     public function test_failed_inference_returns_503_without_500_server_error(): void
@@ -77,7 +70,7 @@ class DiseaseScannerTest extends TestCase
 
         $file = UploadedFile::fake()->image('leaf.jpg', 600, 600);
 
-        $response = $this->postJson('/api/scanner/scan', [
+        $response = $this->actingAs($this->farmer)->postJson('/api/scanner/scan', [
             'image' => $file,
         ]);
 
@@ -86,8 +79,9 @@ class DiseaseScannerTest extends TestCase
 
         $this->assertDatabaseHas('disease_scans', [
             'status' => 'failed',
-            'user_id' => null,
+            'user_id' => $this->farmer->id,
         ]);
+        Storage::disk('local')->assertMissing('disease-scans/'.$file->hashName());
     }
 
     public function test_authenticated_user_disease_scan(): void

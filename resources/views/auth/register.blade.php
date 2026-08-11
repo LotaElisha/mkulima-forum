@@ -293,7 +293,7 @@
   </div>
 </div>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
   function showAlert(msg, type = 'danger') {
     const alertBox = document.getElementById('alert');
     alertBox.textContent = msg;
@@ -382,7 +382,7 @@
     try {
       const res = await fetch('/api/auth/otp/verify', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Auth-Client': 'web' },
         body: JSON.stringify({
           phone,
           code,
@@ -395,9 +395,7 @@
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        localStorage.setItem('user_token', data.token);
-        localStorage.setItem('user_data', JSON.stringify(data.user));
+      if (res.ok) {
         showAlert('Jisajili kumefanikiwa! Unahamishiwa kwenye Ukurasa Mkuu...', 'success');
         setTimeout(() => { window.location.href = '/'; }, 1500);
       } else {
@@ -410,10 +408,6 @@
     }
   }
 
-  // Redirect if already logged in
-  if (localStorage.getItem('user_token')) {
-    window.location.href = '/';
-  }
 </script>
 
 </body>

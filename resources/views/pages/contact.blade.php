@@ -168,8 +168,8 @@
     <h2 class="section-title" style="margin-bottom:32px;" data-i18n="faq_title">Maswali ya Kawaida</h2>
 
     @foreach([
-      ['faq0','Je, MkulimaForum ni bure kuitumia?','Is MkulimaForum free to use?','Ndiyo — sehemu za msingi za mfumo (utambuzi wa magonjwa, Mkulima Bot, jamii, hali ya hewa) zinaweza kutumiwa bila malipo. Huduma za malipo (masoko, pembejeo) zina ada ndogo.','Yes — the core features (plant diagnosis, Mkulima Bot, community, weather) are free to use. Paid services (marketplace, inputs) carry a small fee.'],
-      ['faq1','Je, MkulimaForum inafanya kazi bila intaneti?','Does MkulimaForum work without internet?','Ndiyo. Tumejumuisha Gemma 2B INT4 kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD kwa maeneo ya uunganisho mdogo.','Yes. We have integrated Gemma 2B INT4 for offline AI inference, plus SMS and USSD services for low-connectivity areas.'],
+      ['faq0','Je, MkulimaForum ni bure kuitumia?','Is MkulimaForum free to use?','Ndiyo — sehemu za msingi za mfumo (utambuzi wa magonjwa, Mkulima AI, jamii, hali ya hewa) zinaweza kutumiwa bila malipo. Huduma za malipo (masoko, pembejeo) zina ada ndogo.','Yes — the core features (plant diagnosis, Mkulima AI, community, weather) are free to use. Paid services (marketplace, inputs) carry a small fee.'],
+      ['faq1','Je, MkulimaForum inafanya kazi bila intaneti?','Does MkulimaForum work without internet?','Ndiyo. Tumejumuisha Mkulima AI Offline kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD kwa maeneo ya uunganisho mdogo.','Yes. We have integrated Mkulima AI Offline for offline AI inference, plus SMS and USSD services for low-connectivity areas.'],
       ['faq2','Je, ninawezaje kuwa mshirika?','How can I become a partner?','Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe moja kwa moja kwenye partnerships@mkulimaforum.app.','Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.app.'],
       ['faq3','Je, MkulimaForum inafanya kazi nje ya Tanzania?','Does MkulimaForum work outside Tanzania?','Mfumo wa sasa unazingatia Tanzania. Tunapanga kupanua kwenda Kenya, Uganda, na nchi nyingine za Afrika Mashariki kulingana na mahitaji ya soko.','The current platform focuses on Tanzania. We plan to expand to Kenya, Uganda, and other East African markets based on traction and market need.'],
       ['faq4','Ni aina gani ya data ya kibinafsi mnayokusanya?','What personal data do you collect?','Tunakusanya taarifa za akaunti ya msingi (jina, nambari ya simu au barua pepe). Hatuzidishi au kuuza data za kibinafsi za wakulima kwa watu wengine.','We collect basic account information (name, phone number or email). We do not share or sell personal farmer data to third parties.'],
@@ -188,7 +188,7 @@
 @endsection
 
 @section('page_scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function toggleFaq(id) {
   const el = document.getElementById(id);
   el.classList.toggle('open');
@@ -213,7 +213,7 @@ async function handleContactForm(e) {
   e.target.reset();
 }
 
-const mkPageTranslations = {
+mkPageTranslations = {
   sw: {
     contact_eyebrow:'WASILIANA NASI', contact_title:'Tutakaribisha Kushikana Nawe',
     contact_sub:'Iwe ni ushirikiano, uwekezaji, msaada kwa wakulima, maswali ya vyombo vya habari, au maswali ya kiufundi — tuko hapa.',
@@ -235,7 +235,7 @@ const mkPageTranslations = {
     cf_submit:'✉️ Tuma Ujumbe',
     faq_eyebrow:'MASWALI YANAYOULIZWA MARA KWA MARA', faq_title:'Maswali ya Kawaida',
     faq0_q:'Je, MkulimaForum ni bure kuitumia?', faq0_a:'Ndiyo — sehemu za msingi za mfumo zinaweza kutumiwa bila malipo. Huduma za masoko na pembejeo zina ada ndogo.',
-    faq1_q:'Je, MkulimaForum inafanya kazi bila intaneti?', faq1_a:'Ndiyo. Tumejumuisha Gemma 2B INT4 kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD.',
+    faq1_q:'Je, MkulimaForum inafanya kazi bila intaneti?', faq1_a:'Ndiyo. Tumejumuisha Mkulima AI Offline kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD.',
     faq2_q:'Je, ninawezaje kuwa mshirika?', faq2_a:'Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe kwenye partnerships@mkulimaforum.app.',
     faq3_q:'Je, MkulimaForum inafanya kazi nje ya Tanzania?', faq3_a:'Mfumo wa sasa unazingatia Tanzania. Tunapanga kupanua kwenda Kenya, Uganda, na nchi nyingine za Afrika Mashariki.',
     faq4_q:'Ni aina gani ya data ya kibinafsi mnayokusanya?', faq4_a:'Tunakusanya taarifa za akaunti ya msingi tu. Hatuzidishi au kuuza data za kibinafsi za wakulima kwa watu wengine.',
@@ -260,8 +260,8 @@ const mkPageTranslations = {
     cf_message:'Your Message', cf_msg_ph:'Write your message here...',
     cf_submit:'✉️ Send Message',
     faq_eyebrow:'FREQUENTLY ASKED QUESTIONS', faq_title:'Common Questions',
-    faq0_q:'Is MkulimaForum free to use?', faq0_a:'Yes — core features (plant diagnosis, Mkulima Bot, community, weather) are free. Paid services (marketplace, inputs) carry a small fee.',
-    faq1_q:'Does MkulimaForum work without internet?', faq1_a:'Yes. We have integrated Gemma 2B INT4 for offline AI inference, plus SMS and USSD services for low-connectivity areas.',
+    faq0_q:'Is MkulimaForum free to use?', faq0_a:'Yes — core features (plant diagnosis, Mkulima AI, community, weather) are free. Paid services (marketplace, inputs) carry a small fee.',
+    faq1_q:'Does MkulimaForum work without internet?', faq1_a:'Yes. We have integrated Mkulima AI Offline for offline AI inference, plus SMS and USSD services for low-connectivity areas.',
     faq2_q:'How can I become a partner?', faq2_a:'Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.app.',
     faq3_q:'Does MkulimaForum work outside Tanzania?', faq3_a:'The current platform focuses on Tanzania. We plan to expand to Kenya, Uganda, and other East African markets based on traction.',
     faq4_q:'What personal data do you collect?', faq4_a:'We collect basic account information only. We do not share or sell personal farmer data to third parties.',

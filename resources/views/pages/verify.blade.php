@@ -22,6 +22,13 @@
   .provenance-platform { background:#E8F0FE; color:#1A73E8; }
   .provenance-ai { background:#FFEFE7; color:#D93025; }
   .provenance-community { background:#FEF7E0; color:#B06000; }
+  .verify-feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  @media(max-width:620px){
+    .scan-box-wrap { padding:26px 20px; margin:-32px 16px 48px; }
+    .scan-box-wrap form > div { flex-direction:column; }
+    .scan-box-wrap input, .scan-box-wrap button { width:100% !important; }
+    .verify-feature-grid { grid-template-columns:1fr; }
+  }
 </style>
 @endsection
 
@@ -43,24 +50,27 @@
 {{-- Scan Input Box --}}
 <div class="wrap">
   <div class="scan-box-wrap fade-up">
-    <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink-dark); margin-bottom:16px;" data-i18n="v_scan_box_title">🔍 Kagua Pembejeo Hapa</h3>
+    <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink-dark); margin-bottom:16px;" data-i18n="v_scan_box_title">Kagua Pembejeo Hapa</h3>
     <form onsubmit="handleVerifyScan(event)" style="display:flex; flex-direction:column; gap:14px;">
       <div style="display:flex; gap:10px;">
+        <label for="scan_input" class="sr-only">Namba ya usajili, serial code au chapa</label>
         <input 
           id="scan_input"
           type="text" 
           required 
           placeholder="Ingiza Namba ya Usajili, Serial Code au Chapa..."
           data-i18n-ph="v_scan_ph"
+          aria-describedby="scan_help scan_error"
           style="flex:1; padding:14px 18px; border:1.5px solid var(--border-light); border-radius:12px; font-size:1rem; outline:none;"
         >
         <button type="submit" class="btn btn-primary btn-lg" id="scan_btn" data-i18n="v_scan_btn">
           Thibitisha
         </button>
       </div>
-      <p style="font-size:.78rem; color:var(--ink-muted); text-align:left;" data-i18n="v_scan_disclaimer">
+      <p id="scan_help" style="font-size:.78rem; color:var(--ink-muted); text-align:left;" data-i18n="v_scan_disclaimer">
         * Mathibitisho yote yanatolewa kulingana na data rasmi au za Mkulima Forum. Data za AI zinaonyeshwa kwa alama za wazi za ushuhuda (Rule 5).
       </p>
+      <p id="scan_error" role="alert" aria-live="polite" style="display:none; color:#9B1C1C; text-align:left;"></p>
     </form>
 
     {{-- Scan Result Container --}}
@@ -84,14 +94,22 @@
       <h2 class="section-title" data-i18n="v_feat_title">Kinga Shamba Lako Dhidi ya Hasara</h2>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:28px;">
+    <div class="verify-feature-grid">
       @foreach([
-        ['🌱','Ukaguzi wa Mbegu (TOSCI)','Seed Verification','Thibitisha aina za mbegu zilizosajiliwa na taasisi ya TOSCI kabla ya kupanda.','Verify certified seed varieties registered by TOSCI before planting.','vf0'],
-        ['🧪','Ukaguzi wa Dawa (TPHPA)','Pesticide Verification','Kagua dawa za kuua wadudu na magugu zilizoidhinishwa na mamlaka ya TPHPA.','Check crop protection products approved by TPHPA regulatory agency.','vf1'],
-        ['🏪','Mawakala Waliothibitishwa','Agrodealer KYC','Tafuta maduka ya pembejeo yenye leseni halali za kisheria (Mkulima Verified).','Locate agro-dealers with matched licences and Mkulima Verified trust badges.','vf2'],
+        ['seed','Ukaguzi wa Mbegu (TOSCI)','Seed Verification','Thibitisha aina za mbegu zilizosajiliwa na taasisi ya TOSCI kabla ya kupanda.','Verify certified seed varieties registered by TOSCI before planting.','vf0'],
+        ['input','Ukaguzi wa Dawa (TPHPA)','Pesticide Verification','Kagua dawa za kuua wadudu na magugu zilizoidhinishwa na mamlaka ya TPHPA.','Check crop protection products approved by TPHPA regulatory agency.','vf1'],
+        ['dealer','Mawakala Waliothibitishwa','Agrodealer KYC','Tafuta maduka ya pembejeo yenye leseni halali za kisheria (Mkulima Verified).','Locate agro-dealers with matched licences and Mkulima Verified trust badges.','vf2'],
       ] as $feat)
       <div style="background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:32px;">
-        <div style="font-size:2.8rem; margin-bottom:16px;">{{ $feat[0] }}</div>
+        <div style="width:48px; height:48px; margin-bottom:16px; color:var(--forest-light);" aria-hidden="true">
+          @if($feat[0] === 'seed')
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22V10"/><path d="M12 13C7 13 4 10 4 5c5 0 8 3 8 8Z"/><path d="M12 17c5 0 8-3 8-8-5 0-8 3-8 8Z"/></svg>
+          @elseif($feat[0] === 'input')
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/></svg>
+          @else
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10h18"/><path d="M5 10v10h14V10"/><path d="m4 10 2-6h12l2 6"/><path d="M9 20v-6h6v6"/></svg>
+          @endif
+        </div>
         <h3 style="font-size:1.2rem; font-weight:800; color:var(--ink-dark); margin-bottom:8px;" data-i18n="{{ $feat[5] }}_title">{{ $feat[1] }}</h3>
         <p style="font-size:.9rem; color:var(--ink-muted); line-height:1.7;" data-i18n="{{ $feat[5] }}_desc">{{ $feat[3] }}</p>
       </div>
@@ -103,12 +121,15 @@
 @endsection
 
 @section('page_scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 async function handleVerifyScan(e) {
   e.preventDefault();
   const input = document.getElementById('scan_input').value;
   const btn = document.getElementById('scan_btn');
   const resBox = document.getElementById('scan_result_box');
+  const errorBox = document.getElementById('scan_error');
+  errorBox.style.display = 'none';
+  errorBox.textContent = '';
 
   btn.disabled = true;
   btn.textContent = '⏳ Inathibitisha...';
@@ -120,6 +141,7 @@ async function handleVerifyScan(e) {
       body: JSON.stringify({ input, scan_method: 'manual' })
     });
     const json = await res.json();
+    if (!res.ok || !json.data) throw new Error(json.message || 'Verification failed');
     const data = json.data;
 
     resBox.style.display = 'block';
@@ -133,22 +155,28 @@ async function handleVerifyScan(e) {
     prov.textContent = 'Source: ' + data.provenance;
     prov.className = 'provenance-tag provenance-' + data.provenance.toLowerCase();
 
-    document.getElementById('res_reasons').innerHTML = data.reasons.map(r => `• ${r}`).join('<br>');
+    const reasons = document.getElementById('res_reasons');
+    reasons.replaceChildren(...data.reasons.flatMap((reason, index) => {
+      const nodes = [document.createTextNode(`• ${reason}`)];
+      if (index < data.reasons.length - 1) nodes.push(document.createElement('br'));
+      return nodes;
+    }));
     document.getElementById('res_action').textContent = data.recommended_action[MK_LANG] || data.recommended_action['sw'];
 
   } catch (err) {
-    alert('Error performing verification scan.');
+    errorBox.textContent = err.message || 'Imeshindikana kuthibitisha. Tafadhali jaribu tena.';
+    errorBox.style.display = 'block';
   } finally {
     btn.disabled = false;
     btn.textContent = 'Thibitisha';
   }
 }
 
-const mkPageTranslations = {
+mkPageTranslations = {
   sw: {
     v_hero_badge: 'MKULIMA VERIFY', v_hero_title: 'Changanua. Thibitisha. Linda.',
     v_hero_sub: 'Kinga shamba lako dhidi ya pembejeo feki. Kagua namba za usajili za mbegu (TOSCI), dawa za mimea (TPHPA), mbolea (TFRA), na mawakala waliothibitishwa.',
-    v_scan_box_title: '🔍 Kagua Pembejeo Hapa', v_scan_btn: 'Thibitisha', v_scan_ph: 'Ingiza Namba ya Usajili, Serial Code au Chapa...',
+    v_scan_box_title: 'Kagua Pembejeo Hapa', v_scan_btn: 'Thibitisha', v_scan_ph: 'Ingiza Namba ya Usajili, Serial Code au Chapa...',
     v_scan_disclaimer: '* Mathibitisho yote yanatolewa kulingana na data rasmi au za Mkulima Forum.',
     v_feat_eyebrow: 'HUDUMA ZA MKULIMA VERIFY', v_feat_title: 'Kinga Shamba Lako Dhidi ya Hasara',
     vf0_title: 'Ukaguzi wa Mbegu (TOSCI)', vf0_desc: 'Thibitisha aina za mbegu zilizosajiliwa na taasisi ya TOSCI kabla ya kupanda.',
@@ -158,7 +186,7 @@ const mkPageTranslations = {
   en: {
     v_hero_badge: 'MKULIMA VERIFY', v_hero_title: 'Scan. Verify. Protect.',
     v_hero_sub: 'Protect your farm against fake inputs. Verify registration numbers for seeds (TOSCI), pesticides (TPHPA), fertilizers (TFRA), and trusted agrodealers.',
-    v_scan_box_title: '🔍 Verify Agricultural Input', v_scan_btn: 'Verify Now', v_scan_ph: 'Enter Registration Number, Serial Code or Brand...',
+    v_scan_box_title: 'Verify Agricultural Input', v_scan_btn: 'Verify Now', v_scan_ph: 'Enter Registration Number, Serial Code or Brand...',
     v_scan_disclaimer: '* All verifications sourced from regulatory records or Mkulima Forum registry.',
     v_feat_eyebrow: 'MKULIMA VERIFY SERVICES', v_feat_title: 'Protect Your Farm From Crop Loss',
     vf0_title: 'Seed Certification (TOSCI)', vf0_desc: 'Verify certified seed varieties registered by TOSCI before planting.',

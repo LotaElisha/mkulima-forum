@@ -68,6 +68,11 @@
   .highlight-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
   .highlight-card h3 { font-size:1rem; font-weight:800; color:var(--ink-dark); margin:12px 0 8px; }
   .highlight-card p  { font-size:.85rem; color:var(--ink-muted); }
+  .investment-panel { display:grid; grid-template-columns:1.2fr .8fr; gap:40px; align-items:center; }
+  @media(max-width:760px){
+    .investment-panel { grid-template-columns:1fr; }
+    .investment-panel > div:last-child { justify-content:flex-start !important; }
+  }
 </style>
 @endsection
 
@@ -117,7 +122,7 @@
         ['🌍','Tatizo na Fursa','The problem and East Africa market opportunity','pd0'],
         ['🎯','Dhamira na Maono','Our mission, vision, and approach','pd1'],
         ['⚡','Suluhisho la MkulimaForum','Platform walkthrough and all 8 solutions','pd2'],
-        ['🤖','Mkakati wa Teknolojia','AI stack: Gemini 3, Gemma 2B, offline architecture','pd3'],
+        ['🤖','Mkakati wa Teknolojia','AI stack: Gemini 3, Mkulima AI Offline, offline architecture','pd3'],
         ['💰','Muundo wa Biashara','Revenue model and monetization strategy','pd4'],
         ['📈','Fursa ya Soko','Market size and expansion roadmap','pd5'],
         ['🗓️','Ramani ya Barabara','Development milestones and go-to-market plan','pd6'],
@@ -171,7 +176,7 @@
 {{-- Request NDA --}}
 <section>
   <div class="wrap">
-    <div class="panel-dark" style="display:grid; grid-template-columns:1.2fr 0.8fr; gap:40px; align-items:center;">
+    <div class="panel-dark investment-panel">
       <div>
         <span class="badge dark" style="margin-bottom:16px;" data-i18n="nda_badge">UWEKEZAJI</span>
         <h2 data-i18n="nda_title">Unatafuta Taarifa Zaidi za Uwekezaji?</h2>
@@ -202,7 +207,7 @@
 @endsection
 
 @section('page_scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 function openPDF(url) {
   const modal = document.getElementById('pdfModal');
   const frame = document.getElementById('pdfFrame');
@@ -222,7 +227,7 @@ function closePDF() {
 function closePDFModal(e) { if(e.target === document.getElementById('pdfModal')) closePDF(); }
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closePDF(); });
 
-const mkPageTranslations = {
+mkPageTranslations = {
   sw: {
     pitch_badge:'INVESTOR PRESENTATION', pitch_hero_title:'MkulimaForum — AI Agriculture Platform for East Africa',
     pitch_hero_sub:'Tazama muhtasari kamili wa mradi wetu, fursa ya soko, muundo wa biashara, teknolojia ya AI, na athari tunazolenga.',
@@ -231,7 +236,7 @@ const mkPageTranslations = {
     pd0_title:'Tatizo na Fursa', pd0_desc:'Tatizo na fursa ya soko ya Afrika Mashariki',
     pd1_title:'Dhamira na Maono', pd1_desc:'Dhamira yetu, maono, na mkakati',
     pd2_title:'Suluhisho la MkulimaForum', pd2_desc:'Mtiririko wa jukwaa na suluhisho zote 8',
-    pd3_title:'Mkakati wa Teknolojia', pd3_desc:'Mfumo wa AI: Gemini 3, Gemma 2B, muundo wa offline',
+    pd3_title:'Mkakati wa Teknolojia', pd3_desc:'Mfumo wa AI: Gemini 3, Mkulima AI Offline, muundo wa offline',
     pd4_title:'Muundo wa Biashara', pd4_desc:'Mfano wa mapato na mkakati wa kutengeneza pesa',
     pd5_title:'Fursa ya Soko', pd5_desc:'Ukubwa wa soko na ramani ya upanuzi',
     pd6_title:'Ramani ya Barabara', pd6_desc:'Hatua za maendeleo na mpango wa kwenda sokoni',
@@ -253,7 +258,7 @@ const mkPageTranslations = {
     pd0_title:'Problem & Opportunity', pd0_desc:'The problem and East Africa market opportunity',
     pd1_title:'Mission & Vision', pd1_desc:'Our mission, vision, and strategic approach',
     pd2_title:'MkulimaForum Solution', pd2_desc:'Platform walkthrough and all 8 solutions',
-    pd3_title:'Technology Strategy', pd3_desc:'AI stack: Gemini 3, Gemma 2B, offline architecture',
+    pd3_title:'Technology Strategy', pd3_desc:'AI stack: Gemini 3, Mkulima AI Offline, offline architecture',
     pd4_title:'Business Model', pd4_desc:'Revenue model and monetization strategy',
     pd5_title:'Market Opportunity', pd5_desc:'Market size and expansion roadmap',
     pd6_title:'Roadmap', pd6_desc:'Development milestones and go-to-market plan',

@@ -149,7 +149,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.psychology_outlined,
                 label: 'Mkulima AI',
-                color: Colors.blue,
+                color: MkColors.charcoal,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const MkulimaBotScreen()),
                 ),
@@ -157,7 +157,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.verified_user_outlined,
                 label: 'Kagua Dawa',
-                color: MkColors.danger,
+                color: MkColors.leafGreen,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const KaguaDawaScreen()),
                 ),
@@ -165,7 +165,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.forum_outlined,
                 label: 'Jukwaa',
-                color: Colors.teal,
+                color: MkColors.charcoal,
                 onTap: () => widget.onSwitchTab != null
                     ? widget.onSwitchTab!(2)
                     : Navigator.of(context).push(
@@ -175,7 +175,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.price_change_outlined,
                 label: 'Bei za Masoko',
-                color: Colors.deepOrange,
+                color: MkColors.accent,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const MarketPricesScreen()),
                 ),
@@ -183,7 +183,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.wb_sunny_outlined,
                 label: 'Hali ya Hewa',
-                color: Colors.orange,
+                color: MkColors.accent,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const WeatherScreen()),
                 ),
@@ -191,7 +191,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.grid_view_outlined,
                 label: 'Huduma Zote',
-                color: Colors.indigo,
+                color: MkColors.charcoal,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => Scaffold(
@@ -290,11 +290,7 @@ class _ScannerHero extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [MkColors.primary, MkColors.primaryDark],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: MkColors.charcoal,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -311,7 +307,7 @@ class _ScannerHero extends StatelessWidget {
                 child: const Icon(
                   Icons.center_focus_strong,
                   size: 32,
-                  color: MkColors.primaryDark,
+                  color: MkColors.charcoal,
                 ),
               ),
               const SizedBox(width: 12),
@@ -359,7 +355,7 @@ class _ScannerHero extends StatelessWidget {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: MkColors.accent,
-                foregroundColor: MkColors.primaryDark,
+                foregroundColor: MkColors.charcoal,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -389,7 +385,7 @@ class _WeatherStrip extends StatelessWidget {
     return Card(
       child: ListTile(
         dense: true,
-        leading: Icon(icon, color: Colors.blue[700]),
+        leading: Icon(icon, color: MkColors.accent),
         title: Text(
           '${weather['location'] ?? ''} · ${weather['temperature']}°C',
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),

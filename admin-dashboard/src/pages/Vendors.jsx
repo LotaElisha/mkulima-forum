@@ -60,14 +60,13 @@ export default function Vendors() {
   const fetchVendors = async () => {
     setLoading(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const params = new URLSearchParams()
       if (search)       params.append('search', search)
       if (filterStatus) params.append('status', filterStatus)
       if (filterKyc)    params.append('kyc_status', filterKyc)
       if (filterRole)   params.append('role', filterRole)
       const res = await fetch(`/api/admin/vendors?${params}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -89,12 +88,10 @@ export default function Vendors() {
     e.preventDefault()
     setCreating(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/vendors', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(createForm),
       })
@@ -142,12 +139,11 @@ export default function Vendors() {
   const handleUpdate = async () => {
     setSaving(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/vendors/${editVendor.uuid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(editForm)
       })
@@ -168,10 +164,9 @@ export default function Vendors() {
   const handleSuspend = async (uuid) => {
     if (!confirm('Are you sure you want to suspend this vendor? All their products will be deactivated.')) return
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/vendors/${uuid}/suspend`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         notify('Vendor suspended and products deactivated')
@@ -184,10 +179,9 @@ export default function Vendors() {
 
   const handleReactivate = async (uuid) => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/vendors/${uuid}/reactivate`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         notify('Vendor reactivated')
@@ -201,10 +195,9 @@ export default function Vendors() {
   const handleDelete = async (uuid) => {
     if (!confirm('PERMANENT ACTION: Delete this vendor and their products completely?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/vendors/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         notify('Vendor deleted permanently')
@@ -218,9 +211,8 @@ export default function Vendors() {
   const openView = async (vendor) => {
     setViewVendor(vendor)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/vendors/${vendor.uuid}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()

@@ -61,7 +61,7 @@
 @endsection
 
 @section('page_scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const res = await fetch('/api/v1/public/community-links', {
@@ -76,8 +76,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    })[ch]);
+    const safeExternalUrl = (value) => {
+      try {
+        const parsed = new URL(String(value), window.location.origin);
+        return ['https:', 'http:'].includes(parsed.protocol) ? parsed.href : '#';
+      } catch (_) { return '#'; }
+    };
+
     grid.innerHTML = channels.map(c => {
-      const targetUrl = c.click_to_chat_url || c.url;
+      const targetUrl = safeExternalUrl(c.click_to_chat_url || c.url);
       const isSw = MK_LANG === 'sw';
       const officialBadge = c.is_official 
         ? `<span class="official-tag">✓ ${isSw ? 'Rasmi Mkulima Forum' : 'Official Mkulima Forum'}</span>` 
@@ -96,15 +106,16 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div>
             ${officialBadge}
             <div class="comm-card-icon">💬</div>
-            <h3 class="comm-card-title">${c.name}</h3>
-            <p class="comm-card-desc">${descText}</p>
+            <h3 class="comm-card-title">${escapeHtml(c.name)}</h3>
+            <p class="comm-card-desc">${escapeHtml(descText)}</p>
           </div>
           <div>
             <a 
               href="${targetUrl}" 
               target="_blank" 
               rel="noopener"
-              onclick="trackCommunityClick('${c.uuid}', '${c.channel_type}')"
+              data-channel-uuid="${escapeHtml(c.uuid)}"
+              data-channel-type="${escapeHtml(c.channel_type)}"
               class="btn btn-primary btn-sm" 
               style="width:100%; justify-content:center;"
             >
@@ -114,6 +125,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       `;
     }).join('');
+
+    grid.querySelectorAll('[data-channel-uuid]').forEach(link => {
+      link.addEventListener('click', () => trackCommunityClick(
+        link.dataset.channelUuid,
+        link.dataset.channelType
+      ));
+    });
 
   } catch (e) {
     console.error(e);
@@ -133,7 +151,7 @@ async function trackCommunityClick(uuid, type) {
   } catch(e){}
 }
 
-const mkPageTranslations = {
+mkPageTranslations = {
   sw: {
     c_hero_badge: 'JAMII YA MKULIMA FORUM', c_hero_title: 'Jiunge na Mtandao wa Wakulima Tanzania',
     c_hero_sub: 'Pata taarifa za masoko, tahadhari za kilimo, na ushauri wa kitaalamu kupitia WhatsApp Channels, vikundi vya WhatsApp, Telegram, na mitandao ya kijamii.',
