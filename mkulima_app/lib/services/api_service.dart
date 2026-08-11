@@ -204,7 +204,7 @@ class ApiService {
     return response.data['documents'] ?? response.data['data'] ?? [];
   }
 
-  // Mkulima Bot Chat APIs
+  // Mkulima AI chat APIs
   Future<Map<String, dynamic>> botChat({
     required String message,
     String? conversationUuid,

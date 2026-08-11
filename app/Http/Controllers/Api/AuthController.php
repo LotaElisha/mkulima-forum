@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\OtpService;
+use App\Services\SmsService;
+use App\Services\Spine\ConfigRegistry;
 use App\Support\Roles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,9 +17,15 @@ class AuthController extends Controller
 {
     protected OtpService $otpService;
 
-    public function __construct(OtpService $otpService)
+    protected SmsService $smsService;
+
+    protected ConfigRegistry $configRegistry;
+
+    public function __construct(OtpService $otpService, SmsService $smsService, ConfigRegistry $configRegistry)
     {
         $this->otpService = $otpService;
+        $this->smsService = $smsService;
+        $this->configRegistry = $configRegistry;
     }
 
     /**
@@ -45,6 +53,13 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('mobile-app', ['*'])->plainTextToken;
+
+        if ($request->header('X-Auth-Client') === 'web') {
+            return response()->json([
+                'message' => 'Login successful.',
+                'user' => $this->userPayload($user),
+            ])->cookie('user_token', $token, 480, '/api', null, app()->environment('production'), true, false, 'Lax');
+        }
 
         return response()->json([
             'message' => 'Login successful.',
@@ -83,11 +98,14 @@ class AuthController extends Controller
             ], 403);
         }
 
+        if (! in_array($user->role, [Roles::ADMIN, Roles::SUPERADMIN], true)) {
+            return response()->json(['message' => 'Administrator access required.'], 403);
+        }
+
         $token = $user->createToken('admin-dashboard', ['*'])->plainTextToken;
 
-        return response()->json([
+        $response = response()->json([
             'message' => 'Login successful.',
-            'token' => $token,
             'token_type' => 'Bearer',
             'user' => [
                 'uuid' => $user->uuid,
@@ -96,6 +114,18 @@ class AuthController extends Controller
                 'role' => $user->role,
             ],
         ]);
+
+        return $response->cookie(
+            'admin_token',
+            $token,
+            480,
+            '/api',
+            null,
+            app()->environment('production'),
+            true,
+            false,
+            'Strict'
+        );
     }
 
     /**
@@ -111,16 +141,36 @@ class AuthController extends Controller
         $phone = $request->input('phone');
         $purpose = $request->input('purpose', 'login');
 
+        if (! $this->otpEnabled()) {
+            return response()->json(['message' => 'OTP authentication is disabled.'], 503);
+        }
+
         if ($this->otpService->isRateLimited($phone)) {
             return response()->json([
                 'message' => 'Too many OTP requests. Please try again later.',
             ], 429);
         }
 
+        if (app()->environment('production') && ! $this->smsService->isConfigured()) {
+            return response()->json([
+                'message' => 'OTP delivery is temporarily unavailable.',
+            ], 503);
+        }
+
         $result = $this->otpService->generate($phone, $purpose);
 
-        // TODO: wire real SMS delivery (SmsService) before launch.
-        // $this->otpService->sendSms($phone, "Your MkulimaForum code: {$result['code']}");
+        if (! app()->environment('local', 'testing')) {
+            $delivery = $this->smsService->send(
+                $phone,
+                "MkulimaForum verification code: {$result['code']}. It expires in 10 minutes.",
+                'otp'
+            );
+            if (! ($delivery['success'] ?? false)) {
+                return response()->json([
+                    'message' => 'OTP delivery failed. Please try again later.',
+                ], 503);
+            }
+        }
 
         $response = [
             'message' => $result['message'],
@@ -153,6 +203,14 @@ class AuthController extends Controller
         $phone = $request->input('phone');
         $code = $request->input('code');
         $purpose = $request->input('purpose', 'login');
+
+        if (! $this->otpEnabled()) {
+            return response()->json(['message' => 'OTP authentication is disabled.'], 503);
+        }
+
+        if ($this->otpService->isVerificationLimited($phone, $purpose)) {
+            return response()->json(['message' => 'Too many invalid OTP attempts. Try again later.'], 429);
+        }
 
         if (! $this->otpService->verify($phone, $code, $purpose)) {
             return response()->json([
@@ -211,6 +269,13 @@ class AuthController extends Controller
 
         $token = $user->createToken('mobile-app', ['*'])->plainTextToken;
 
+        if ($request->header('X-Auth-Client') === 'web') {
+            return response()->json([
+                'message' => 'Authentication successful.',
+                'user' => $this->userPayload($user),
+            ])->cookie('user_token', $token, 480, '/api', null, app()->environment('production'), true, false, 'Lax');
+        }
+
         return response()->json([
             'message' => 'Authentication successful.',
             'token' => $token,
@@ -226,6 +291,24 @@ class AuthController extends Controller
                 'preferred_language' => $user->preferred_language,
             ],
         ]);
+    }
+
+    private function otpEnabled(): bool
+    {
+        return (bool) $this->configRegistry->get('auth.otp_enabled', ! app()->environment('production'));
+    }
+
+    private function userPayload(User $user): array
+    {
+        return [
+            'uuid' => $user->uuid,
+            'name' => $user->name,
+            'phone' => $user->phone,
+            'email' => $user->email,
+            'role' => $user->role,
+            'kyc_status' => $user->kyc_status,
+            'preferred_language' => $user->preferred_language,
+        ];
     }
 
     /**
@@ -293,7 +376,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Logged out successfully.',
-        ]);
+        ])->withoutCookie('admin_token', '/api')->withoutCookie('user_token', '/api');
     }
 
     /**
@@ -305,6 +388,6 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Logged out from all devices.',
-        ]);
+        ])->withoutCookie('admin_token', '/api')->withoutCookie('user_token', '/api');
     }
 }

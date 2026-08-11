@@ -39,6 +39,7 @@ return [
         'passkey' => env('MPESA_PASSKEY'),
         'shortcode' => env('MPESA_SHORTCODE'),
         'env' => env('MPESA_ENV', 'sandbox'),
+        'callback_secret' => env('MPESA_CALLBACK_SECRET'),
     ],
 
     'openweather' => [

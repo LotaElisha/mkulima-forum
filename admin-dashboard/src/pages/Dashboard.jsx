@@ -19,9 +19,8 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/dashboard', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -119,24 +118,7 @@ export default function Dashboard() {
             <Activity className="w-5 h-5 text-green-600" />
             <h2 className="text-lg font-semibold">Recent Activity</h2>
           </div>
-          <div className="space-y-4">
-            {[
-              { action: 'New user registered', detail: 'John Doe - +255712345678', time: '2 min ago' },
-              { action: 'Order placed', detail: 'Order #1234 - TSh 45,000', time: '5 min ago' },
-              { action: 'KYC submitted', detail: 'Jane Smith - ID verified', time: '12 min ago' },
-              { action: 'Escrow released', detail: 'Order #1230 - TSh 30,000', time: '1 hour ago' },
-              { action: 'Product listed', detail: 'Organic Fertilizer - 50kg', time: '2 hours ago' }
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0">
-                <div className="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{item.action}</p>
-                  <p className="text-sm text-gray-500">{item.detail}</p>
-                </div>
-                <span className="text-xs text-gray-400">{item.time}</span>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm text-gray-600">No audited activity events are available yet.</p>
         </div>
 
         <div className="card">

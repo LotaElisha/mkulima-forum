@@ -86,7 +86,7 @@ class MpesaService
             'PartyA' => $phone,
             'PartyB' => $this->shortcode,
             'PhoneNumber' => $phone,
-            'CallBackURL' => config('app.url').'/api/payments/mpesa/callback',
+            'CallBackURL' => $this->callbackUrl(),
             'AccountReference' => $reference,
             'TransactionDesc' => $description,
         ];
@@ -185,10 +185,22 @@ class MpesaService
     /**
      * Verify M-Pesa callback
      */
-    public function verifyCallback(array $data): bool
+    public function verifyCallbackSecret(?string $provided): bool
     {
-        // In production, verify the callback using the passkey
-        // For now, check basic structure
-        return isset($data['Body']['stkCallback']);
+        $expected = (string) config('services.mpesa.callback_secret', '');
+
+        if ($expected === '') {
+            return ! app()->environment('production');
+        }
+
+        return is_string($provided) && hash_equals($expected, $provided);
+    }
+
+    protected function callbackUrl(): string
+    {
+        $url = rtrim((string) config('app.url'), '/').'/api/payments/mpesa/callback';
+        $secret = (string) config('services.mpesa.callback_secret', '');
+
+        return $secret === '' ? $url : $url.'?token='.rawurlencode($secret);
     }
 }

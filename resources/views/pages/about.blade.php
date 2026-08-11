@@ -230,8 +230,8 @@
 @endsection
 
 @section('page_scripts')
-<script>
-const mkPageTranslations = {
+<script nonce="{{ $cspNonce ?? '' }}">
+mkPageTranslations = {
   sw: {
     about_eyebrow:'KUHUSU MKULIMAFORUM',
     about_hero_title:'Teknolojia Inayojengwa Kumzunguka Mkulima',

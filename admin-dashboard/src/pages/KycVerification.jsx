@@ -13,9 +13,8 @@ export default function KycVerificationPage() {
 
   const fetchKyc = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/kyc/pending', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -30,10 +29,9 @@ export default function KycVerificationPage() {
 
   const handleApprove = async (uuid) => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/kyc/${uuid}/verify`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       const data = await res.json()
       setMessage(data.message || 'KYC approved')
@@ -47,12 +45,11 @@ export default function KycVerificationPage() {
     const reason = prompt('Rejection reason:')
     if (!reason) return
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/kyc/${uuid}/reject`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({ reason })
       })

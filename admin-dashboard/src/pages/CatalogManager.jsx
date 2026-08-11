@@ -18,9 +18,8 @@ export default function CatalogManager() {
 
   const fetchProducts = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/catalog/products', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -35,9 +34,8 @@ export default function CatalogManager() {
 
   const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/catalog/categories', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -63,12 +61,11 @@ export default function CatalogManager() {
   const handleBulkDelete = async () => {
     if (!confirm(`Delete ${selected.length} products?`)) return
     try {
-      const token = localStorage.getItem('admin_token')
       await fetch('/api/admin/catalog/products/bulk-delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({ uuids: selected })
       })
@@ -82,10 +79,9 @@ export default function CatalogManager() {
   const handleDelete = async (uuid) => {
     if (!confirm('Delete this product?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       await fetch(`/api/admin/catalog/products/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       fetchProducts()
     } catch (err) {

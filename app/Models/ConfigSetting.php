@@ -20,7 +20,7 @@ class ConfigSetting extends Model
 
     public function getValueAttribute($val)
     {
-        if (empty($val)) {
+        if ($val === null || $val === '') {
             return null;
         }
 

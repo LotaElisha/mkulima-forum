@@ -27,9 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   void _openScanner() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const ScannerPage()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ScannerPage()));
   }
 
   @override
@@ -53,8 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(titles[_currentIndex]),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: MkColors.surface,
+        foregroundColor: MkColors.charcoal,
         elevation: 0,
         actions: [
           // Flagship: AI Plant Scanner — always visible, brand accent color.
@@ -67,8 +67,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: MkColors.accent,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.center_focus_strong,
-                  size: 20, color: MkColors.primaryDark),
+              child: const Icon(
+                Icons.center_focus_strong,
+                size: 20,
+                color: MkColors.charcoal,
+              ),
             ),
           ),
           if (_currentIndex == 1)
@@ -124,8 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!auth.isAuthenticated)
             TextButton(
               onPressed: () => LoginModal.show(context),
-              child: const Text(MkStrings.navLogin,
-                  style: TextStyle(color: Colors.white)),
+              child: const Text(
+                MkStrings.navLogin,
+                style: TextStyle(color: MkColors.charcoal),
+              ),
             ),
         ],
       ),
@@ -139,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: _openScanner,
           tooltip: MkStrings.scannerTooltip,
           backgroundColor: MkColors.accent,
-          foregroundColor: MkColors.primaryDark,
+          foregroundColor: MkColors.charcoal,
           shape: const CircleBorder(),
           elevation: 4,
           child: const Icon(Icons.center_focus_strong, size: 32),
@@ -150,8 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
-        color: Colors.white,
-        elevation: 8,
+        color: MkColors.surfaceRaised,
+        elevation: 0,
         padding: EdgeInsets.zero,
         child: SizedBox(
           height: 62,
@@ -181,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: MkColors.primaryDark,
+                      color: MkColors.charcoal,
                     ),
                   ),
                 ),
@@ -225,7 +230,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? MkColors.primary : Colors.grey[600];
+    final color = selected ? MkColors.charcoal : MkColors.muted;
 
     return Expanded(
       child: InkWell(

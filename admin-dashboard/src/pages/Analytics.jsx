@@ -29,9 +29,8 @@ export default function Analytics() {
 
   const fetchAnalytics = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/analytics?period=${period}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()

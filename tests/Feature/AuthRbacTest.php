@@ -7,8 +7,11 @@ use App\Models\Product;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\OtpService;
+use App\Services\Spine\ConfigRegistry;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -22,15 +25,16 @@ class AuthRbacTest extends TestCase
         parent::setUp();
         $this->seed(RolesAndPermissionsSeeder::class);
         Tenant::create(['name' => 'Tanzania', 'country_code' => 'tz', 'currency' => 'TZS']);
+        Cache::flush();
     }
 
-    public function test_otp_code_is_not_leaked_outside_debug(): void
+    public function test_unconfigured_production_otp_fails_closed_without_leaking_code(): void
     {
         config(['app.debug' => false]);
         $this->app['env'] = 'production';
 
         $this->postJson('/api/auth/otp/request', ['phone' => '255712345678'])
-            ->assertOk()
+            ->assertStatus(503)
             ->assertJsonMissingPath('dev_code');
     }
 
@@ -49,6 +53,51 @@ class AuthRbacTest extends TestCase
 
         $user = User::where('phone', '255712345678')->first();
         $this->assertTrue($user->hasRole('agrodealer'));
+    }
+
+    public function test_admin_can_disable_and_enable_otp_from_backend(): void
+    {
+        $admin = User::factory()->role('admin')->create();
+        Sanctum::actingAs($admin);
+
+        $this->putJson('/api/admin/settings/otp', ['enabled' => false])
+            ->assertOk()->assertJsonPath('enabled', false);
+        $this->postJson('/api/auth/otp/request', ['phone' => '255712345670'])
+            ->assertStatus(503)->assertJsonPath('message', 'OTP authentication is disabled.');
+
+        $this->putJson('/api/admin/settings/otp', ['enabled' => true])
+            ->assertOk()->assertJsonPath('enabled', true);
+        $this->getJson('/api/admin/settings/otp')->assertOk()->assertJsonPath('enabled', true);
+    }
+
+    public function test_otp_verification_locks_after_five_invalid_codes(): void
+    {
+        app(ConfigRegistry::class)->set('auth.otp_enabled', true, null, 'authentication', 'boolean');
+        app(OtpService::class)->generate('255712345671', 'login');
+
+        foreach (range(1, 5) as $attempt) {
+            $this->postJson('/api/auth/otp/verify', [
+                'phone' => '255712345671', 'code' => '000000', 'purpose' => 'login',
+            ])->assertStatus(422);
+        }
+
+        $this->postJson('/api/auth/otp/verify', [
+            'phone' => '255712345671', 'code' => '000000', 'purpose' => 'login',
+        ])->assertStatus(429);
+    }
+
+    public function test_farmer_web_login_uses_http_only_cookie_without_exposing_token(): void
+    {
+        $farmer = User::factory()->create([
+            'email' => 'farmer-web@example.test',
+            'password' => Hash::make('correct-horse-battery-staple'),
+            'status' => 'active',
+        ]);
+
+        $this->withHeader('X-Auth-Client', 'web')->postJson('/api/auth/login/email', [
+            'email' => $farmer->email,
+            'password' => 'correct-horse-battery-staple',
+        ])->assertOk()->assertCookie('user_token')->assertJsonMissingPath('token');
     }
 
     public function test_staff_roles_cannot_be_self_registered(): void
@@ -71,6 +120,24 @@ class AuthRbacTest extends TestCase
         Sanctum::actingAs($farmer);
 
         $this->getJson('/api/admin/dashboard')->assertForbidden();
+    }
+
+    public function test_admin_login_uses_http_only_cookie_and_does_not_expose_token(): void
+    {
+        $admin = User::factory()->role('admin')->create([
+            'email' => 'secure-admin@example.com',
+            'password' => Hash::make('correct-horse-battery-staple'),
+            'status' => 'active',
+        ]);
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $admin->email,
+            'password' => 'correct-horse-battery-staple',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonMissingPath('token')
+            ->assertCookie('admin_token');
     }
 
     public function test_admin_routes_allow_admins(): void

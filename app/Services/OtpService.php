@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\OtpCode;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 
 class OtpService
 {
@@ -13,7 +14,7 @@ class OtpService
 
         OtpCode::create([
             'phone' => $phone,
-            'code' => $code,
+            'code' => Hash::make($code),
             'purpose' => $purpose,
             'expires_at' => now()->addMinutes(10),
             'ip_address' => request()->ip(),
@@ -35,20 +36,37 @@ class OtpService
 
     public function verify(string $phone, string $code, string $purpose = 'login'): bool
     {
+        $attemptKey = "otp_verify_attempts:{$purpose}:{$phone}";
+        if ((int) Cache::get($attemptKey, 0) >= 5) {
+            return false;
+        }
+
         $otp = OtpCode::where('phone', $phone)
-            ->where('code', $code)
             ->where('purpose', $purpose)
             ->where('expires_at', '>', now())
             ->whereNull('used_at')
-            ->first();
+            ->latest('id')
+            ->get()
+            ->first(fn (OtpCode $candidate) => Hash::check($code, $candidate->code));
 
         if (! $otp) {
+            $attempts = Cache::increment($attemptKey);
+            if ($attempts === 1) {
+                Cache::put($attemptKey, 1, now()->addMinutes(15));
+            }
+
             return false;
         }
 
         $otp->update(['used_at' => now()]);
+        Cache::forget($attemptKey);
 
         return true;
+    }
+
+    public function isVerificationLimited(string $phone, string $purpose = 'login'): bool
+    {
+        return (int) Cache::get("otp_verify_attempts:{$purpose}:{$phone}", 0) >= 5;
     }
 
     public function isRateLimited(string $phone): bool
@@ -56,14 +74,5 @@ class OtpService
         $attempts = Cache::get('otp_rate_limit:'.$phone, 0);
 
         return $attempts >= 3;
-    }
-
-    public function sendSms(string $phone, string $message): bool
-    {
-        // Africa's Talking integration placeholder
-        // TODO: Implement actual SMS sending
-        \Log::info("SMS to {$phone}: {$message}");
-
-        return true;
     }
 }

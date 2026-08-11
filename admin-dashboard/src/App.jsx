@@ -1,49 +1,42 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Users from './pages/Users'
-import Orders from './pages/Orders'
-import Escrows from './pages/Escrows'
-import KycVerification from './pages/KycVerification'
-import Analytics from './pages/Analytics'
-import Settings from './pages/Settings'
-import AdminProfile from './pages/AdminProfile'
-import HrManagement from './pages/HrManagement'
-import PosTerminal from './pages/PosTerminal'
-import CatalogManager from './pages/CatalogManager'
-import Vendors from './pages/Vendors'
-import FinancialReports from './pages/FinancialReports'
-import FeatureFlags from './pages/FeatureFlags'
-import Moderation from './pages/Moderation'
-import MarketPrices from './pages/MarketPrices'
-import InputSafety from './pages/InputSafety'
-import AiManagement from './pages/AiManagement'
-import AiProviders from './pages/AiProviders'
-import FarmManagement from './pages/FarmManagement'
-import MkulimaVerify from './pages/MkulimaVerify'
-import CommunityHub from './pages/CommunityHub'
 import ErrorBoundary from './components/ErrorBoundary'
 import { AuthContext, RequireRole } from './components/AuthContext'
 
-function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('admin_token')
-  const [isAuth, setIsAuth] = useState(!!token)
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Users = lazy(() => import('./pages/Users'))
+const Orders = lazy(() => import('./pages/Orders'))
+const Escrows = lazy(() => import('./pages/Escrows'))
+const KycVerification = lazy(() => import('./pages/KycVerification'))
+const Analytics = lazy(() => import('./pages/Analytics'))
+const Settings = lazy(() => import('./pages/Settings'))
+const AdminProfile = lazy(() => import('./pages/AdminProfile'))
+const HrManagement = lazy(() => import('./pages/HrManagement'))
+const PosTerminal = lazy(() => import('./pages/PosTerminal'))
+const CatalogManager = lazy(() => import('./pages/CatalogManager'))
+const Vendors = lazy(() => import('./pages/Vendors'))
+const FinancialReports = lazy(() => import('./pages/FinancialReports'))
+const FeatureFlags = lazy(() => import('./pages/FeatureFlags'))
+const Moderation = lazy(() => import('./pages/Moderation'))
+const MarketPrices = lazy(() => import('./pages/MarketPrices'))
+const InputSafety = lazy(() => import('./pages/InputSafety'))
+const AiManagement = lazy(() => import('./pages/AiManagement'))
+const AiProviders = lazy(() => import('./pages/AiProviders'))
+const FarmManagement = lazy(() => import('./pages/FarmManagement'))
+const MkulimaVerify = lazy(() => import('./pages/MkulimaVerify'))
+const CommunityHub = lazy(() => import('./pages/CommunityHub'))
+
+export function ProtectedRoute({ children }) {
+  const [isAuth, setIsAuth] = useState(false)
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const verify = async () => {
-      if (!token) {
-        setIsAuth(false)
-        setLoading(false)
-        return
-      }
       try {
-        const res = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        const res = await fetch('/api/auth/me')
         if (res.ok) {
           const data = await res.json()
           const ok = data.user?.role === 'admin' || data.user?.role === 'superadmin'
@@ -51,7 +44,6 @@ function ProtectedRoute({ children }) {
           setUser(ok ? data.user : null)
         } else {
           setIsAuth(false)
-          localStorage.removeItem('admin_token')
         }
       } catch {
         setIsAuth(false)
@@ -59,7 +51,7 @@ function ProtectedRoute({ children }) {
       setLoading(false)
     }
     verify()
-  }, [token])
+  }, [])
 
   if (loading) {
     return (
@@ -76,6 +68,7 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600" /></div>}>
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/" element={
@@ -117,6 +110,7 @@ function App() {
         } />
       </Route>
     </Routes>
+    </Suspense>
   )
 }
 

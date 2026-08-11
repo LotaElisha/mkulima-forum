@@ -129,14 +129,22 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   List<dynamic> get _filteredProducts {
     return _products.where((product) {
       // Handle both Product objects and Map data
-      final name = product is Product ? product.name : product['name']?.toString() ?? '';
-      final description = product is Product ? product.description : product['description']?.toString() ?? '';
-      final category = product is Product ? product.categoryId : product['category']?.toString() ?? '';
-      
-      final matchesSearch = _searchQuery.isEmpty ||
+      final name = product is Product
+          ? product.name
+          : product['name']?.toString() ?? '';
+      final description = product is Product
+          ? product.description
+          : product['description']?.toString() ?? '';
+      final category = product is Product
+          ? product.categoryId
+          : product['category']?.toString() ?? '';
+
+      final matchesSearch =
+          _searchQuery.isEmpty ||
           name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           description.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCategory = _selectedCategory == null ||
+      final matchesCategory =
+          _selectedCategory == null ||
           _selectedCategory == 'All' ||
           category == _selectedCategory;
       return matchesSearch && matchesCategory;
@@ -150,11 +158,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         // Hero section with weather and slider
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [MkColors.primary, MkColors.primaryDark],
-            ),
-          ),
+          decoration: const BoxDecoration(color: MkColors.charcoal),
           child: Column(
             children: [
               // Promotional Slider with floating Weather overlay
@@ -168,14 +172,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       right: 8,
                       child: GestureDetector(
                         onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const WeatherScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const WeatherScreen(),
+                          ),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(14),
                           child: BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.black.withValues(alpha: 0.35),
                                 borderRadius: BorderRadius.circular(14),
@@ -187,7 +196,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    _getWeatherIcon(_weather!['description']?.toString()),
+                                    _getWeatherIcon(
+                                      _weather!['description']?.toString(),
+                                    ),
                                     color: Colors.white,
                                     size: 18,
                                   ),
@@ -221,10 +232,15 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: MkStrings.searchProducts,
-                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                    hintStyle: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                    ),
                     prefixIcon: const Icon(Icons.search, color: Colors.white70),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -237,7 +253,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                   itemCount: _categories.length,
                   itemBuilder: (context, index) {
                     final category = _categories[index];
-                    final isSelected = _selectedCategory == category ||
+                    final isSelected =
+                        _selectedCategory == category ||
                         (category == 'All' && _selectedCategory == null);
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
@@ -247,7 +264,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                         onSelected: (selected) {
                           setState(() {
                             _selectedCategory = selected ? category : null;
-                            if (_selectedCategory == 'All') _selectedCategory = null;
+                            if (_selectedCategory == 'All') {
+                              _selectedCategory = null;
+                            }
                           });
                         },
                         backgroundColor: Colors.white.withValues(alpha: 0.2),
@@ -269,10 +288,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-                  ? _buildErrorView()
-                  : _filteredProducts.isEmpty
-                      ? _buildEmptyView()
-                      : _buildProductGrid(),
+              ? _buildErrorView()
+              : _filteredProducts.isEmpty
+              ? _buildEmptyView()
+              : _buildProductGrid(),
         ),
       ],
     );
@@ -366,7 +385,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                       color: Colors.black.withValues(alpha: 0.15),
                       blurRadius: 6,
                       offset: const Offset(0, 3),
-                    )
+                    ),
                   ],
                 ),
                 padding: const EdgeInsets.all(16),
@@ -422,7 +441,9 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               width: _currentSliderIndex == index ? 16 : 6,
               height: 6,
               decoration: BoxDecoration(
-                color: _currentSliderIndex == index ? Colors.white : Colors.white54,
+                color: _currentSliderIndex == index
+                    ? Colors.white
+                    : Colors.white54,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -435,19 +456,19 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   LinearGradient _getSliderGradient(String type) {
     if (type == 'orange') {
       return const LinearGradient(
-        colors: [MkColors.accent, Color(0xFFE65100)],
+        colors: [MkColors.accent, Color(0xFFC88616)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
     } else if (type == 'blue') {
       return const LinearGradient(
-        colors: [Color(0xFF0288D1), Color(0xFF0A4F8F)],
+        colors: [MkColors.charcoal, Color(0xFF4A4740)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
     } else {
       return const LinearGradient(
-        colors: [Color(0xFF81C784), MkColors.primary],
+        colors: [MkColors.leafGreen, Color(0xFF315B28)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
@@ -464,4 +485,3 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     }
   }
 }
-

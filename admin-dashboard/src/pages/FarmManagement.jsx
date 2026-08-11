@@ -47,13 +47,12 @@ export default function FarmManagement() {
   const fetchFarms = async () => {
     setLoading(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const params = new URLSearchParams()
       if (search) params.append('search', search)
       if (statusFilter) params.append('status', statusFilter)
 
       const res = await fetch(`/api/admin/farms?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { },
       })
       if (res.ok) {
         const data = await res.json()
@@ -76,12 +75,10 @@ export default function FarmManagement() {
     e.preventDefault()
     setCreating(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/farms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...createForm,
@@ -118,12 +115,10 @@ export default function FarmManagement() {
     if (!activeFarm) return
     setLoggingActivity(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/farms/${activeFarm.uuid}/activities`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(activityForm),
       })

@@ -10,19 +10,10 @@ const api = axios.create({
   }
 })
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('admin_token')
       window.location.href = '/admin/login'
     }
     return Promise.reject(error)
@@ -31,7 +22,8 @@ api.interceptors.response.use(
 
 export const authApi = {
   login: (email, password) => api.post('/auth/login', { email, password }),
-  me: () => api.get('/auth/me')
+  me: () => api.get('/auth/me'),
+  logout: () => api.post('/auth/logout')
 }
 
 export const dashboardApi = {

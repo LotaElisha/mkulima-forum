@@ -41,12 +41,10 @@ export default function MarketPricesPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/market-prices', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...form,
@@ -71,10 +69,9 @@ export default function MarketPricesPage() {
   const handleDelete = async (uuid) => {
     if (!confirm('Delete this price record?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/market-prices/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { },
       })
       const data = await res.json()
       setMessage(data.message || 'Deleted')

@@ -18,8 +18,8 @@ Route::get('/', function () {
         'emblem_url' => '/images/logo-icon.jpg',
         'pitch_deck_url' => '/docs/Mkulima_Forum_Pitch_Deck.pdf',
         'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
-        'hero_title' => 'Jukwaa la Kidigitali la Wakulima wa <span class="gold">Tanzania</span>',
-        'hero_tagline' => 'SKANI &bull; TAMBUA &bull; TIBU',
+        'hero_title' => 'Jukwaa la Kidigitali la Wakulima wa Tanzania',
+        'hero_tagline' => 'SKANI • TAMBUA • TIBU',
         'hero_lead' => 'Utambuzi wa magonjwa ya mimea kwa <b>Gemini 3 Flash AI</b>, ushauri wa kilimo kwa Kiswahili, masoko ya mazao, bei za masoko kwa wakati halisi, na usaidizi wa offline kupitia <b>Gemma 2B</b>.',
         'pillar_1' => '🌱 Shiriki Maarifa',
         'pillar_2' => '📖 Jifunze Mbinu Bora',
@@ -129,6 +129,24 @@ Route::get('/community', function () use ($publicSettings) {
     return view('pages.community', compact('settings'));
 })->name('community');
 
+Route::get('/privacy', function () use ($publicSettings) {
+    $settings = $publicSettings();
+
+    return view('pages.privacy', compact('settings'));
+})->name('privacy');
+
+Route::get('/terms', function () use ($publicSettings) {
+    $settings = $publicSettings();
+
+    return view('pages.terms', compact('settings'));
+})->name('terms');
+
+Route::get('/download', function () use ($publicSettings) {
+    $settings = $publicSettings();
+
+    return view('pages.download', compact('settings'));
+})->name('download');
+
 // ─── Short Link Resolver (1.9 / QR Service) ──────────────────────────────────
 Route::get('/c/{slug}', function (string $slug) {
     $shortLink = ShortLink::where('slug', $slug)->where('is_active', true)->firstOrFail();
@@ -140,3 +158,9 @@ Route::get('/c/{slug}', function (string $slug) {
 // ─── Auth ────────────────────────────────────────────────────────────────────
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
+
+// React admin SPA deep-link fallback. Static assets are served directly from
+// public/admin; application routes must all return the same entry document.
+Route::get('/admin/{path?}', fn () => response()->file(public_path('admin/index.html')))
+    ->where('path', '.*')
+    ->name('admin.spa');

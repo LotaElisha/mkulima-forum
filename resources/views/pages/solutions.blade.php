@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('title', 'MkulimaForum Solutions | AI, Markets & Digital Farming Tools')
-@section('meta_description', 'Explore MkulimaForum\'s complete agricultural solution ecosystem: AI Plant Scanner, Mkulima Bot, Agri Marketplace, Input Verification, Weather Intelligence, Offline AI, and more.')
+@section('meta_description', 'Explore MkulimaForum\'s complete agricultural solution ecosystem: AI Plant Scanner, Mkulima AI, Agri Marketplace, Input Verification, Weather Intelligence, Offline AI, and more.')
 @section('og_title', 'MkulimaForum Solutions | Complete Agri Digital Ecosystem')
 @section('og_description', 'One platform. Eight agricultural solutions designed for East African smallholder farmers.')
 
@@ -61,7 +61,7 @@
         </div>
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:12px; padding:20px; background:var(--surface-card); border-radius:var(--radius-2xl); border:1px solid var(--border-light);">
-        @foreach(['📷 Plant Scanner','🤖 Mkulima Bot','🛒 Soko','🛡️ Kagua','⛅ Hali ya Hewa','📱 Offline AI','👥 Jamii','📈 Masoko'] as $chip)
+        @foreach(['📷 Plant Scanner','🤖 Mkulima AI','🛒 Soko','🛡️ Kagua','⛅ Hali ya Hewa','📱 Offline AI','👥 Jamii','📈 Masoko'] as $chip)
         <span class="tag" style="font-size:.85rem; padding:8px 14px;">{{ $chip }}</span>
         @endforeach
       </div>
@@ -88,14 +88,14 @@
         <li data-i18n="s1_cap4">Historia ya skanning na mwelekeo wa magonjwa</li>
       </ul>
       <div class="sol-tags">
-        <span class="tag">Gemini 3 Flash AI</span>
+        <span class="tag">Mkulima AI</span>
         <span class="tag">Computer Vision</span>
         <span class="tag">Agronomy KB</span>
       </div>
     </div>
     <div class="sol-visual fade-up">
       <div class="sol-icon">📷</div>
-      <h4 data-i18n="s1_visual_title">Gemini 3 Flash Vision</h4>
+      <h4 data-i18n="s1_visual_title">Mkulima AI Vision</h4>
       <p data-i18n="s1_visual_sub">Inachambua picha ya mmea kwa muda wa sekunde 1–3</p>
       <div style="margin-top:20px; background:rgba(255,255,255,.8); border-radius:12px; padding:14px; width:100%; border:1px solid var(--border-light);">
         <div style="font-size:.72rem; font-weight:700; color:var(--forest-mid); margin-bottom:6px;">⚡ MATOKEO YA AI</div>
@@ -105,12 +105,12 @@
     </div>
   </div>
 
-  {{-- Solution 02: Mkulima Bot --}}
+  {{-- Solution 02: Mkulima AI --}}
   <div class="solution-row reverse" id="mkulima-bot">
     <div class="sol-info fade-up">
       <div class="sol-number">02</div>
       <div class="card-icon">🤖</div>
-      <h2 data-i18n="s2_title">Mkulima Bot AI</h2>
+      <h2 data-i18n="s2_title">Mkulima AI</h2>
       <p data-i18n="s2_desc">Msaidizi wako wa kilimo wa AI 24/7 unaounga mkono Kiswahili na Kiingereza. Uliza maswali yoyote ya kilimo kupitia mazungumzo ya maandishi au sauti.</p>
       <ul class="sol-cap-list">
         <li data-i18n="s2_cap1">Maswali ya mazao na mbinu bora za kilimo</li>
@@ -120,7 +120,7 @@
         <li data-i18n="s2_cap5">Maswali ya hali ya hewa na mipango ya msimu</li>
       </ul>
       <div class="sol-tags">
-        <span class="tag">Gemini 3 Flash AI</span>
+        <span class="tag">Mkulima AI</span>
         <span class="tag">Swahili + English</span>
         <span class="tag">Virtual Agronomist</span>
       </div>
@@ -195,7 +195,7 @@
       <div class="sol-number">05</div>
       <div class="card-icon">⛅</div>
       <h2 data-i18n="s5_title">Hali ya Hewa na Ujasiriamali wa Mazao</h2>
-      <p data-i18n="s5_desc">Toa hali ya hewa ya eneo maalum na ushauri wa mazao unaotumia Gemini 3 Pro pamoja na Google Search Grounding kwa data ya hewa ya wakati halisi.</p>
+      <p data-i18n="s5_desc">Toa hali ya hewa ya eneo maalum na ushauri wa mazao unaotumia Mkulima AI Weather pamoja na Google Search Grounding kwa data ya hewa ya wakati halisi.</p>
       <ul class="sol-cap-list">
         <li data-i18n="s5_cap1">Tahadhari za hali ya hewa kwa mkoa wako</li>
         <li data-i18n="s5_cap2">Mapendekezo ya kupanda mazao kwa msimu</li>
@@ -203,14 +203,14 @@
         <li data-i18n="s5_cap4">Taarifa za mwanzo wa mvua</li>
       </ul>
       <div class="sol-tags">
-        <span class="tag">Gemini 3 Pro</span>
+        <span class="tag">Mkulima AI Weather</span>
         <span class="tag">Google Search Grounding</span>
         <span class="tag">Real-time Data</span>
       </div>
     </div>
     <div class="sol-visual fade-up" style="background:linear-gradient(145deg,#EEF4FF,#D8E8FF);">
       <div class="sol-icon">⛅</div>
-      <h4 data-i18n="s5_visual_title">Gemini 3 Pro Grounded</h4>
+      <h4 data-i18n="s5_visual_title">Mkulima AI Weather Grounded</h4>
       <p data-i18n="s5_visual_sub">Utabiri wa wakati halisi kwa Google Search</p>
     </div>
   </div>
@@ -226,10 +226,10 @@
         <li data-i18n="s6_cap1">Huduma ya SMS — uliza maswali bila data</li>
         <li data-i18n="s6_cap2">Msimbo wa USSD wa huduma mbalimbali</li>
         <li data-i18n="s6_cap3">Maarifa yaliyohifadhiwa kwenye simu</li>
-        <li data-i18n="s6_cap4">Gemma 2B INT4 — AI ndani ya simu bila intaneti</li>
+        <li data-i18n="s6_cap4">Mkulima AI Offline — AI ndani ya simu bila intaneti</li>
       </ul>
       <div class="sol-tags">
-        <span class="tag">Gemma 2B INT4</span>
+        <span class="tag">Mkulima AI Offline</span>
         <span class="tag">Google AI Edge SDK</span>
         <span class="tag">SMS Gateway</span>
         <span class="tag">USSD</span>
@@ -305,7 +305,7 @@
     <h2 style="font-size:clamp(1.8rem,4vw,2.6rem); font-weight:900; color:#fff; margin-bottom:16px;" data-i18n="sol_cta_title">Anza Kutumia Mfumo Wetu</h2>
     <p style="color:rgba(255,255,255,.82); margin-bottom:32px;" data-i18n="sol_cta_sub">Pakua app ya MkulimaForum au wasiliana nasi kwa ushirikiano wa kibiashara au teknolojia.</p>
     <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
-      <a href="/app/mkulima-forum.apk" class="btn btn-gold btn-lg" data-i18n="sol_dl_btn">⬇️ Pakua App</a>
+      <a href="/download" class="btn btn-gold btn-lg" data-i18n="sol_dl_btn">⬇️ Pakua App</a>
       <a href="/contact" class="btn btn-ghost btn-lg" data-i18n="sol_contact_btn">Wasiliana Nasi →</a>
     </div>
   </div>
@@ -314,8 +314,8 @@
 @endsection
 
 @section('page_scripts')
-<script>
-const mkPageTranslations = {
+<script nonce="{{ $cspNonce ?? '' }}">
+mkPageTranslations = {
   sw: {
     sol_eyebrow:'MOJA. NANE. KAMILI.',
     sol_title:'Jukwaa Moja. Suluhisho Nane za Kilimo.',
@@ -324,8 +324,8 @@ const mkPageTranslations = {
     s1_title:'AI Plant Scanner', s1_desc:'Wakulima wanapiga picha ya mazao yaliyoathirika na kupata utambuzi wa ugonjwa au wadudu kwa msaada wa AI, pamoja na mapendekezo ya matibabu.',
     s1_cap1:'Utambuzi wa ugonjwa wa mazao kwa sekunde', s1_cap2:'Mapendekezo ya dawa za TFRA zilizothibitishwa',
     s1_cap3:'Ushauri wa kuzuia na hatua za dharura', s1_cap4:'Historia ya skanning na mwelekeo wa magonjwa',
-    s1_visual_title:'Gemini 3 Flash Vision', s1_visual_sub:'Inachambua picha ya mmea kwa muda wa sekunde 1–3',
-    s2_title:'Mkulima Bot AI', s2_desc:'Msaidizi wako wa kilimo wa AI 24/7 unaounga mkono Kiswahili na Kiingereza.',
+    s1_visual_title:'Mkulima AI Vision', s1_visual_sub:'Inachambua picha ya mmea kwa muda wa sekunde 1–3',
+    s2_title:'Mkulima AI', s2_desc:'Msaidizi wako wa kilimo wa AI 24/7 unaounga mkono Kiswahili na Kiingereza.',
     s2_cap1:'Maswali ya mazao na mbinu bora za kilimo', s2_cap2:'Udhibiti wa wadudu na magonjwa',
     s2_cap3:'Usimamizi wa udongo na mbolea', s2_cap4:'Taarifa za masoko na bei za mazao',
     s2_cap5:'Maswali ya hali ya hewa na mipango ya msimu',
@@ -341,10 +341,10 @@ const mkPageTranslations = {
     s5_title:'Hali ya Hewa na Ujasiriamali wa Mazao', s5_desc:'Toa hali ya hewa ya eneo maalum na ushauri wa mazao kwa wakati halisi.',
     s5_cap1:'Tahadhari za hali ya hewa kwa mkoa wako', s5_cap2:'Mapendekezo ya kupanda mazao kwa msimu',
     s5_cap3:'Mipango ya hatari ya kilimo', s5_cap4:'Taarifa za mwanzo wa mvua',
-    s5_visual_title:'Gemini 3 Pro Grounded', s5_visual_sub:'Utabiri wa wakati halisi kwa Google Search',
+    s5_visual_title:'Mkulima AI Weather Grounded', s5_visual_sub:'Utabiri wa wakati halisi kwa Google Search',
     s6_title:'Akili ya Kilimo Bila Intaneti', s6_desc:'Unga mkono maeneo ya uunganisho mdogo kupitia SMS, USSD, na AI inayofanya kazi kwenye simu.',
     s6_cap1:'Huduma ya SMS — uliza maswali bila data', s6_cap2:'Msimbo wa USSD wa huduma mbalimbali',
-    s6_cap3:'Maarifa yaliyohifadhiwa kwenye simu', s6_cap4:'Gemma 2B INT4 — AI ndani ya simu bila intaneti',
+    s6_cap3:'Maarifa yaliyohifadhiwa kwenye simu', s6_cap4:'Mkulima AI Offline — AI ndani ya simu bila intaneti',
     s6_visual_title:'Offline-First Architecture', s6_visual_sub:'Inafanya kazi hata bila intaneti kabisa',
     s7_title:'Jamii ya Wakulima', s7_desc:'Mfumo wa kushiriki maarifa unaounganisha wakulima, wataalamu, na vikundi vya kikanda.',
     s7_cap1:'Maswali na majibu kati ya wakulima na wataalamu', s7_cap2:'Vikundi vya kilimo vya mazao maalum',
@@ -366,8 +366,8 @@ const mkPageTranslations = {
     s1_title:'AI Plant Scanner', s1_desc:'Farmers photograph affected crops and receive AI-assisted disease or pest identification with actionable treatment recommendations.',
     s1_cap1:'Crop disease identification within seconds', s1_cap2:'TFRA-certified treatment recommendations',
     s1_cap3:'Prevention advice and emergency response steps', s1_cap4:'Scan history and disease trend tracking',
-    s1_visual_title:'Gemini 3 Flash Vision', s1_visual_sub:'Analyzes crop photo within 1–3 seconds',
-    s2_title:'Mkulima Bot AI', s2_desc:'Your 24/7 AI agronomy assistant supporting Swahili and English conversations.',
+    s1_visual_title:'Mkulima AI Vision', s1_visual_sub:'Analyzes crop photo within 1–3 seconds',
+    s2_title:'Mkulima AI', s2_desc:'Your 24/7 AI agronomy assistant supporting Swahili and English conversations.',
     s2_cap1:'Crop management and best practice questions', s2_cap2:'Pest and disease management',
     s2_cap3:'Soil management and fertilizer guidance', s2_cap4:'Market information and crop prices',
     s2_cap5:'Weather questions and seasonal planning',
@@ -380,13 +380,13 @@ const mkPageTranslations = {
     s4_cap1:'Inspect pesticide and fertilizer labels', s4_cap2:'TFRA/TPHPA registry cross-reference',
     s4_cap3:'Product QR code scanning', s4_cap4:'Community reports on suspicious products', s4_cap5:'Dealer and distributor verification',
     s4_visual_title:'Input Protection', s4_visual_sub:'Shield farmers from counterfeit products',
-    s5_title:'Weather & Crop Intelligence', s5_desc:'Provide location-specific weather and crop advice using Gemini 3 Pro with Google Search Grounding for real-time data.',
+    s5_title:'Weather & Crop Intelligence', s5_desc:'Provide location-specific weather and crop advice using Mkulima AI Weather with Google Search Grounding for real-time data.',
     s5_cap1:'Regional weather alerts for your area', s5_cap2:'Seasonal crop planting recommendations',
     s5_cap3:'Agricultural risk planning', s5_cap4:'Rain onset and dry spell alerts',
-    s5_visual_title:'Gemini 3 Pro Grounded', s5_visual_sub:'Real-time data via Google Search grounding',
+    s5_visual_title:'Mkulima AI Weather Grounded', s5_visual_sub:'Real-time data via Google Search grounding',
     s6_title:'Offline Farming Intelligence', s6_desc:'Support low-connectivity areas through SMS, USSD, cached knowledge, and on-device AI inference.',
     s6_cap1:'SMS service — ask questions without mobile data', s6_cap2:'USSD shortcodes for multiple services',
-    s6_cap3:'Cached agronomy knowledge stored on device', s6_cap4:'Gemma 2B INT4 — on-device AI without internet',
+    s6_cap3:'Cached agronomy knowledge stored on device', s6_cap4:'Mkulima AI Offline — on-device AI without internet',
     s6_visual_title:'Offline-First Architecture', s6_visual_sub:'Fully functional even without connectivity',
     s7_title:'Farmer Community', s7_desc:'A knowledge-sharing ecosystem connecting farmers, agronomists, and regional agricultural groups.',
     s7_cap1:'Q&A between farmers and agronomists', s7_cap2:'Crop-specific community groups',

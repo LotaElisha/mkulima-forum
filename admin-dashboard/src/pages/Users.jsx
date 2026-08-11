@@ -28,14 +28,13 @@ export default function UsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       let url = '/api/admin/users'
       const params = new URLSearchParams()
       if (search) params.append('search', search)
       if (filterRole) params.append('role', filterRole)
       if (params.toString()) url += '?' + params.toString()
 
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(url, { headers: { } })
       if (res.ok) {
         const data = await res.json()
         setUsers(data.users?.data || [])
@@ -49,12 +48,11 @@ export default function UsersPage() {
 
   const handleCreate = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(formData)
       })
@@ -74,12 +72,11 @@ export default function UsersPage() {
 
   const handleUpdate = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/users/${editingUser.uuid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(formData)
       })
@@ -100,10 +97,9 @@ export default function UsersPage() {
   const handleDelete = async (uuid) => {
     if (!confirm('Delete this user permanently?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       await fetch(`/api/admin/users/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       fetchUsers()
     } catch (err) {
@@ -131,12 +127,11 @@ export default function UsersPage() {
     setShowPermissionsModal(true)
 
     try {
-      const token = localStorage.getItem('admin_token')
 
       // Fetch all permissions if not already loaded
       if (allPermissions.length === 0) {
         const pRes = await fetch('/api/admin/permissions', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { }
         })
         if (pRes.ok) {
           const pData = await pRes.json()
@@ -146,7 +141,7 @@ export default function UsersPage() {
 
       // Fetch this user's direct permissions
       const uRes = await fetch(`/api/admin/users/${user.uuid}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (uRes.ok) {
         const uData = await uRes.json()
@@ -168,12 +163,11 @@ export default function UsersPage() {
   const handleSavePermissions = async () => {
     setSavingPermissions(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/users/${permissionsUser.uuid}/permissions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({ permissions: userPermissions })
       })

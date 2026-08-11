@@ -15,9 +15,8 @@ export default function AdminProfile() {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/profile', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -38,12 +37,11 @@ export default function AdminProfile() {
 
   const handleUpdate = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(formData)
       })
@@ -59,12 +57,11 @@ export default function AdminProfile() {
 
   const handleChangePassword = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/profile/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify(passwordData)
       })

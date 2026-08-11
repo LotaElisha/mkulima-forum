@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Escrow;
 use App\Models\Order;
 use App\Services\Payments\EscrowService;
+use App\Services\Payments\MpesaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
@@ -26,7 +28,7 @@ class PaymentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'order_id' => ['required', 'integer', 'exists:orders,id'],
-            'payment_method' => ['required', 'string', 'in:mpesa,tigopesa,cash'],
+            'payment_method' => ['required', 'string', 'in:mpesa,tigopesa'],
             'phone' => ['required', 'string', 'min:10'],
         ]);
 
@@ -41,8 +43,33 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // Create escrow
-        $escrow = $this->escrowService->createEscrow($order, $request->input('payment_method'));
+        if ($order->status !== 'pending') {
+            return response()->json(['message' => 'This order is not awaiting payment.'], 409);
+        }
+
+        $lockedResult = Cache::lock("payment-initiation:order:{$order->id}", 30)->get(function () use ($order, $request) {
+            $existing = Escrow::where('order_id', $order->id)
+                ->whereIn('status', ['pending', 'held', 'released', 'disputed'])
+                ->latest('id')
+                ->first();
+
+            return [
+                'escrow' => $existing ?: $this->escrowService->createEscrow($order, $request->input('payment_method')),
+                'created' => ! $existing,
+            ];
+        });
+
+        if (! $lockedResult) {
+            return response()->json(['message' => 'Payment initiation is already in progress.'], 409);
+        }
+
+        $escrow = $lockedResult['escrow'];
+        if (! $lockedResult['created']) {
+            return response()->json([
+                'message' => 'A payment attempt already exists for this order.',
+                'escrow' => $escrow,
+            ], 409);
+        }
 
         // Initiate payment
         $result = $this->escrowService->initiatePayment($escrow, $request->input('phone'));
@@ -58,6 +85,11 @@ class PaymentController extends Controller
                 'payment' => $result,
             ]);
         }
+
+        $escrow->update([
+            'status' => 'failed',
+            'failure_reason' => $result['message'] ?? 'Provider initiation failed',
+        ]);
 
         return response()->json([
             'message' => 'Payment initiation failed',
@@ -142,8 +174,13 @@ class PaymentController extends Controller
     /**
      * M-Pesa callback webhook
      */
-    public function mpesaCallback(Request $request): JsonResponse
+    public function mpesaCallback(Request $request, MpesaService $mpesa): JsonResponse
     {
+        $providedSecret = $request->header('X-Mkulima-Webhook-Secret') ?? $request->query('token');
+        if (! $mpesa->verifyCallbackSecret($providedSecret)) {
+            return response()->json(['ResultCode' => 1, 'ResultDesc' => 'Unauthorized'], 401);
+        }
+
         $this->escrowService->handleMpesaCallback($request->all());
 
         return response()->json(['ResultCode' => 0, 'ResultDesc' => 'Accepted']);

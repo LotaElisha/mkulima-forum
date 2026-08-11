@@ -22,12 +22,12 @@ class ScannerPage extends StatelessWidget {
             Text(MkStrings.scannerBrand, style: TextStyle(fontSize: 17)),
             Text(
               MkStrings.scannerTagline,
-              style: TextStyle(fontSize: 11, color: Colors.white70),
+              style: TextStyle(fontSize: 11, color: MkColors.muted),
             ),
           ],
         ),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: MkColors.surface,
+        foregroundColor: MkColors.charcoal,
       ),
       body: const ScannerScreen(),
     );
@@ -197,11 +197,26 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       ],
                     ),
                     const Divider(),
-                    _buildResultRow('Ugonjwa', _result!['disease_name'] ?? 'Haijulikani'),
-                    _buildResultRow('Uthibitisho', '${((_result!['confidence'] ?? 0) * 100).toStringAsFixed(1)}%'),
-                    _buildResultRow('Dalili', _result!['symptoms'] ?? 'Hakuna maelezo'),
-                    _buildResultRow('Tiba', _result!['treatment'] ?? 'Hakuna maelezo'),
-                    _buildResultRow('Kinga', _result!['prevention'] ?? 'Hakuna maelezo'),
+                    _buildResultRow(
+                      'Ugonjwa',
+                      _result!['disease_name'] ?? 'Haijulikani',
+                    ),
+                    _buildResultRow(
+                      'Uthibitisho',
+                      '${((_result!['confidence'] ?? 0) * 100).toStringAsFixed(1)}%',
+                    ),
+                    _buildResultRow(
+                      'Dalili',
+                      _result!['symptoms'] ?? 'Hakuna maelezo',
+                    ),
+                    _buildResultRow(
+                      'Tiba',
+                      _result!['treatment'] ?? 'Hakuna maelezo',
+                    ),
+                    _buildResultRow(
+                      'Kinga',
+                      _result!['prevention'] ?? 'Hakuna maelezo',
+                    ),
                   ],
                 ),
               ),
@@ -225,9 +240,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );

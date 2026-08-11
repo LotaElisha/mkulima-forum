@@ -20,9 +20,8 @@ export default function HrManagement() {
 
   const fetchStaff = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/hr/staff', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -37,9 +36,8 @@ export default function HrManagement() {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/hr/statistics', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       if (res.ok) {
         const data = await res.json()
@@ -52,12 +50,11 @@ export default function HrManagement() {
 
   const handleCreate = async () => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/admin/hr/staff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({...newStaff, tenant_id: 1})
       })
@@ -79,10 +76,9 @@ export default function HrManagement() {
   const handleDelete = async (uuid) => {
     if (!confirm('Terminate this staff member?')) return
     try {
-      const token = localStorage.getItem('admin_token')
       await fetch(`/api/admin/hr/staff/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       })
       fetchStaff()
       fetchStats()

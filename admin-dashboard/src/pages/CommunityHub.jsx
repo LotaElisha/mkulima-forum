@@ -28,10 +28,9 @@ export default function CommunityHub() {
   }, []);
 
   const fetchChannels = async () => {
-    const token = localStorage.getItem('admin_token');
     try {
       const res = await fetch('/api/admin/community/channels', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       });
       if (res.ok) {
         const data = await res.json();
@@ -47,7 +46,6 @@ export default function CommunityHub() {
 
   const handleSaveChannel = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('admin_token');
     const endpoint = editingChannel
       ? `/api/admin/community/channels/${editingChannel.id}`
       : '/api/admin/community/channels';
@@ -58,7 +56,7 @@ export default function CommunityHub() {
         method,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+
         },
         body: JSON.stringify({
           name,
@@ -86,11 +84,10 @@ export default function CommunityHub() {
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this channel?')) return;
-    const token = localStorage.getItem('admin_token');
     try {
       await fetch(`/api/admin/community/channels/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { }
       });
       fetchChannels();
     } catch (e) {

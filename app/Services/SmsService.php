@@ -19,13 +19,17 @@ class SmsService
     public function __construct()
     {
         $this->gateway = config('services.sms.gateway', 'africastalking');
-        $this->username = config('services.africastalking.username', env('AFRICASTALKING_USERNAME', 'sandbox'));
-        $this->apiKey = config('services.africastalking.api_key', env('AFRICASTALKING_API_KEY', ''));
+        $this->username = (string) (config('services.africastalking.username') ?? '');
+        $this->apiKey = (string) (config('services.africastalking.api_key') ?? '');
         $this->senderId = config('services.sms.sender_id', 'MKULIMA');
     }
 
     public function send(string $phone, string $message, string $type = 'alert', ?int $userId = null): array
     {
+        if (! $this->isConfigured()) {
+            return ['success' => false, 'message' => 'SMS gateway is not configured'];
+        }
+
         $log = SmsLog::create([
             'user_id' => $userId,
             'phone' => $this->formatPhone($phone),
@@ -62,6 +66,17 @@ class SmsService
                 'error' => $e->getMessage(),
             ];
         }
+    }
+
+    public function isConfigured(): bool
+    {
+        if ($this->gateway === 'africastalking') {
+            return $this->username !== '' && $this->apiKey !== '';
+        }
+
+        return (string) config('services.twilio.sid', '') !== ''
+            && (string) config('services.twilio.token', '') !== ''
+            && (string) config('services.twilio.from', '') !== '';
     }
 
     public function sendBulk(array $recipients, string $message, string $type = 'alert'): array

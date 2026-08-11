@@ -26,10 +26,9 @@ export default function ModerationPage() {
   const fetchReports = useCallback(async () => {
     setLoading(true)
     try {
-      const token = localStorage.getItem('admin_token')
       let url = '/api/admin/reports'
       if (filterStatus) url += `?status=${filterStatus}`
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      const res = await fetch(url, { headers: { } })
       if (res.ok) {
         const data = await res.json()
         setReports(data.data || [])
@@ -47,12 +46,10 @@ export default function ModerationPage() {
 
   const act = async (uuid, endpoint, body) => {
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/admin/reports/${uuid}/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(body),
       })

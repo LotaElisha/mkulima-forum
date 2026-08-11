@@ -51,7 +51,6 @@ export default function InputSafetyPage() {
   // Fullscreen photo modal
   const [activePhoto, setActivePhoto] = useState(null)
 
-  const token = () => localStorage.getItem('admin_token')
 
   const notify = (text, type = 'success') => {
     setMessage({ text, type })
@@ -62,7 +61,7 @@ export default function InputSafetyPage() {
     setLoading(true)
     try {
       const res = await fetch(`/api/admin/input-alerts?status=${alertStatus}`, {
-        headers: { Authorization: `Bearer ${token()}` },
+        headers: { },
       })
       if (res.ok) setAlerts((await res.json()).data || [])
     } catch {
@@ -77,7 +76,7 @@ export default function InputSafetyPage() {
     try {
       const q = registryQuery ? `?q=${encodeURIComponent(registryQuery)}` : ''
       const res = await fetch(`/api/admin/inputs${q}`, {
-        headers: { Authorization: `Bearer ${token()}` },
+        headers: { },
       })
       if (res.ok) setRegistry((await res.json()).data || [])
     } catch {
@@ -101,7 +100,7 @@ export default function InputSafetyPage() {
     try {
       const res = await fetch(`/api/admin/input-alerts/${uuid}/review`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ decision, notes }),
       })
       const data = await res.json()
@@ -124,7 +123,7 @@ export default function InputSafetyPage() {
       const method = editInput ? 'PUT' : 'POST'
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
       const data = await res.json()
@@ -164,7 +163,7 @@ export default function InputSafetyPage() {
     try {
       const res = await fetch(`/api/admin/inputs/${uuid}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token()}` },
+        headers: { },
       })
       if (res.ok) {
         notify('Registry entry removed')
@@ -200,7 +199,7 @@ export default function InputSafetyPage() {
       
       const res = await fetch('/api/inputs/check-label', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token()}` },
+        headers: { },
         body: formData
       })
       const data = await res.json()
