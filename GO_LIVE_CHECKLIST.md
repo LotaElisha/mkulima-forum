@@ -1,6 +1,18 @@
 # Mkulima Forum — Go-Live Checklist
 
-Last verified: 22 August 2026, against `agent/publish-current-platform`.
+Last verified: 22 August 2026, against `master` (merge commit `db2e7438`).
+
+## Run this first
+
+```bash
+php artisan mkulima:preflight
+```
+
+It checks every blocking item below against the live environment and exits
+non-zero if anything is wrong, so it can gate a deploy script. Written because
+the expensive failures here are silent: mail with no password does not error,
+it just never sends, and the first person to notice is a farmer who cannot
+recover their account.
 
 `[x]` items were completed and verified during the pre-launch audit.
 `[ ]` items need a credential, a decision, or access to infrastructure.
@@ -11,20 +23,23 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 
 ## Blocks launch
 
-- [ ] **Set `MAIL_PASSWORD` and the rest of the SMTP block in `.env.production`.**
-      It is currently empty. Password reset and email verification are now on the critical
-      path, so registration without working mail produces accounts nobody can recover.
-      Verify with a real end-to-end send, not just a config check.
-- [ ] **Confirm `APP_URL` is the production host.** Every verification and reset link is
-      built from it. Wrong value = every emailed link points at the wrong server.
+Merged to `master` as `db2e7438` — the branch your runbook deploys from.
+
+- [ ] **Set `MAIL_PASSWORD` in `.env.production`.** Still empty — this is the one
+      remaining item that will break a launch. Gmail SMTP needs an app password, not the
+      account password. `mkulima:preflight` fails on it. Verify with a real end-to-end send.
+- [ ] **Set `DB_PASSWORD` in `.env.production`.** Also empty.
+- [x] **`APP_URL` confirmed** as `https://mkulimaforum.app` — matches the Nginx domains in
+      `DEPLOYMENT_RUNBOOK.md`. The Flutter client defaulted to `mkulimaforum.com`, a host the
+      server does not serve; fixed in `17fcd29a`.
 - [ ] **Run the new migration** — `2026_08_22_000001_create_password_reset_and_email_change_tables`.
       Without it, every password-reset request throws.
 - [ ] **Start the queue worker** under supervisor (`php artisan queue:work`).
       Verification and reset mail is queued; with no worker, nothing sends.
-- [ ] **Set `SMS_WEBHOOK_SECRET` and `IVR_WEBHOOK_SECRET`**, and configure the matching
-      value at Africa's Talking / the IVR provider as an `X-Webhook-Signature` header.
-      Without them these endpoints refuse all traffic in production — the safe failure,
-      but it will present as an outage if the gateway is live.
+- [x] **`SMS_WEBHOOK_SECRET` and `IVR_WEBHOOK_SECRET` generated** and written to
+      `.env.production` (backup taken first). **You still need to set the same values at
+      Africa's Talking / the IVR provider**, sent as the `X-Webhook-Signature` header.
+- [x] `SHORT_LINK_ALLOWED_HOSTS`, `SANCTUM_TOKEN_EXPIRATION` and `SMS_PROVIDER` set.
 - [x] Password reset, email verification, password change, and proof-of-ownership email change
 - [x] Upload validation hardened across all seven upload paths
 - [x] Webhook signature verification and per-IP throttling
@@ -36,7 +51,7 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 
 - [ ] Production database provisioned, credentials in `.env.production`
       (currently configured as PostgreSQL on `127.0.0.1:5433`)
-- [ ] `php artisan migrate --force` run against production
+- [ ] `php artisan migrate --force` run against production (`mkulima:preflight` verifies)
 - [ ] Seeders run: `TenantSeeder`, `RolesAndPermissionsSeeder`, `SpineSeeder`,
       `RegulatoryAuthoritySeeder`, `FeatureFlagSeeder`
 - [ ] `ADMIN_EMAIL` and a 12+ character `ADMIN_PASSWORD` set before `AdminUserSeeder`
@@ -118,9 +133,11 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 
 ## Mobile app
 
-- [ ] **`flutter analyze` and `flutter build apk`** on the design branch.
-      The theme and navigation changes were made without a Dart toolchain available;
-      every edited file was checked for balanced delimiters, but nothing was compiled.
+- [ ] **`flutter analyze && flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api`**
+      Nothing Dart was compiled — every route to a toolchain was blocked from the audit
+      environment (storage.googleapis.com, dl.google.com, pub.dev and the GitHub archive all
+      refused). Static checks pass: every `MkColors` token resolves, no unused local imports,
+      all delimiters balanced. That is not a build.
 - [ ] Screenshot the rebuilt screens and review
 - [ ] Signed release build with a production keystore (the current APK is signed with a
       test key and the download page says so)
