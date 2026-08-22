@@ -16,8 +16,6 @@ import 'sms_screen.dart';
 import 'ivr_screen.dart';
 import 'mkulima_bot_screen.dart';
 import 'scanner_screen.dart';
-import 'drone_screen.dart';
-import 'iot_screen.dart';
 import 'yield_screen.dart';
 import 'escrow_screen.dart';
 
@@ -127,19 +125,33 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildSectionTitle('Teknolojia Kuu'),
+            // Drone and IoT front backend endpoints that answer 503 by design
+            // — there is no drone operator network or device fleet yet. They
+            // are labelled and explained rather than opening on an error, so
+            // the menu stops promising something the platform cannot do.
             _buildMenuItem(
               icon: Icons.flight_takeoff,
               title: 'Huduma za Drone',
               subtitle: 'Puliza, piga picha, fuatilia',
               color: Colors.indigo,
-              onTap: () => _navigate(context, const DroneScreen()),
+              badge: 'Inakuja',
+              onTap: () => _showComingSoon(
+                context,
+                'Huduma za Drone',
+                'Tunajenga mtandao wa waendeshaji drone. Utapata taarifa mara huduma itakapoanza katika eneo lako.',
+              ),
             ),
             _buildMenuItem(
               icon: Icons.sensors,
               title: 'Vifaa vya IoT',
               subtitle: 'Fuatilia udongo na hali ya hewa',
               color: Colors.blue,
-              onTap: () => _navigate(context, const IoTScreen()),
+              badge: 'Inakuja',
+              onTap: () => _showComingSoon(
+                context,
+                'Vifaa vya IoT',
+                'Sensors za udongo bado hazijaanza kutumika. Tutakujulisha zitakapopatikana.',
+              ),
             ),
             _buildMenuItem(
               icon: Icons.calculate,
@@ -378,12 +390,19 @@ class ProfileScreen extends StatelessWidget {
             ? Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  // Was hardcoded red, which reads as an error or an unread
+                  // count rather than "not available yet".
+                  color: MkColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: MkColors.border),
                 ),
                 child: Text(
                   badge,
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                  style: const TextStyle(
+                    color: MkColors.muted,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               )
             : const Icon(Icons.chevron_right, color: MkColors.muted),
@@ -394,5 +413,66 @@ class ProfileScreen extends StatelessWidget {
 
   void _navigate(BuildContext context, Widget screen) {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+  }
+
+  /// Says plainly that a feature is not live yet.
+  ///
+  /// Better than opening a screen that will fail: the farmer learns what the
+  /// feature is and that it is coming, instead of meeting an error and
+  /// concluding the app is broken.
+  void _showComingSoon(BuildContext context, String title, String explanation) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 24,
+          bottom: MediaQuery.of(sheetContext).padding.bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MkColors.leafPale,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.schedule_outlined,
+                    color: MkColors.primary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: MkColors.ink,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              explanation,
+              style: const TextStyle(color: MkColors.muted, height: 1.5),
+            ),
+            const SizedBox(height: 22),
+            FilledButton(
+              onPressed: () => Navigator.of(sheetContext).pop(),
+              child: const Text('Nimeelewa'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

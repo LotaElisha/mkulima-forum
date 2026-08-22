@@ -136,21 +136,52 @@ scanner and disease scanner had they been served through the web middleware.
 *Fixed* — HSTS on HTTPS responses only, `X-Frame-Options: SAMEORIGIN`, camera re-permitted
 for same-origin.
 
-### P2 — improve after launch
+### P2 — addressed in the follow-up pass
 
-- **Public data disclosure.** `GET /api/v1/reports/{caseNumber}` returns a counterfeit
-  report's description and location with no authentication. Reporter identity is correctly
-  withheld, but case numbers may be enumerable. Consider requiring the report UUID rather
-  than the human-readable case number.
-- **Open redirect.** `GET /c/{slug}` performs `redirect()->away($shortLink->target_url)`.
-  The target is admin-controlled, so exploitation requires an admin account, but the
-  platform's own short-link domain becomes a redirector for phishing. Consider a host allowlist.
+**S12 · Hardcoded default password for vendor accounts** — found while hardening mass
+assignment. `VendorController::store` did `$password = $validated['password'] ?? 'password123'`,
+so every agrodealer or supplier onboarded without an explicit password shared one guessable
+credential. These accounts hold marketplace listings and KYC records.
+*Fixed* — a vendor with no password supplied now gets a random 40-character one nobody can
+guess, and is sent a password-reset link so they can set their own. No administrator ever
+knows a vendor's credential.
+
+**S13 · Mass-assignment privilege surface** — `User::$fillable` included `role`, `status`,
+`is_active`, `is_verified_expert`, `kyc_status`, both verification timestamps and
+`password`. Nothing exploited it (every controller validated a whitelist first) but one
+future `$user->update($request->all())` would have been privilege escalation, account
+unbanning and verification bypass in a single line.
+*Fixed* — all eight moved out of `$fillable`. Legitimate writes go through
+`User::provision()` at creation or `User::setPrivileged()` afterwards, at fourteen audited
+call sites. Five regression tests assert that mass assignment of each cannot stick.
+
+**S14 · Open redirect on short links** — `GET /c/{slug}` did
+`redirect()->away($shortLink->target_url)` with no restriction. The target is
+admin-authored, so this is not a hole an outsider can open — but it made
+`mkulimaforum.com/c/...` a redirector that lends the platform's own domain to a phishing
+link, and one compromised admin account was enough.
+*Fixed* — host allowlist (`SHORT_LINK_ALLOWED_HOSTS`, subdomains included). Anything else
+renders an interstitial naming the destination, with the safe action as the primary button.
+A test covers the lookalike case (`notmkulimaforum.com` must not pass a suffix match).
+
+**S15 · Counterfeit report enumeration** — `GET /api/v1/reports/{caseNumber}` accepted the
+human-readable case number (`MF-2026-000123`), which is sequential enough to walk. Anyone
+could enumerate every report on the platform with its description and district. A farmer
+reporting a fake pesticide in a small village should not have that readable by the dealer
+they reported.
+*Fixed* — UUID only. The UUID is returned to the reporter at submission, so they keep
+access; staff read reports through the authenticated admin endpoints.
+
+### P2 — still open
+
 - **Weather endpoints** are public and each cache miss spends an OpenWeather call.
-  Throttled to 60/min in this pass; a longer cache TTL would be better.
-- **Mass assignment surface.** `User::$fillable` includes `role`, `status`, `is_active`,
-  `is_verified_expert` and `email_verified_at`. No controller currently passes
-  `$request->all()` to it, so nothing is exploitable today — but one careless line would
-  make it privilege escalation. Recommend moving to `$guarded` with explicit assignment.
+  Throttled to 60/min; a longer cache TTL would be better.
+- **Strict model attributes.** `Model::preventSilentlyDiscardingAttributes()` is wired into
+  `AppServiceProvider` behind `STRICT_MODELS=true`, off by default. Switching it on today
+  throws in around forty existing tests whose fixtures pass columns that were never
+  fillable (`Tenant::create([...'id', 'slug', 'domain'])` and similar). That is pre-existing
+  debt, harmless in itself; once the fixtures are cleaned, flip the default to
+  `! $this->app->isProduction()`.
 
 ### P3 — future
 
@@ -199,10 +230,31 @@ The schema already supported one account holding both identities: `email` and `p
 both nullable and unique on one `users` row, with separate `email_verified_at` and
 `phone_verified_at`. `pending_email` and `pending_email_requested_at` were added.
 
-**Still open:** OTP registration keys on phone alone, so someone who signs up by email in
-January and by phone in March gets **two accounts**. Linking logic — match on a verified
-identity before creating a new row — is not written. This gets more expensive the longer
-the platform runs.
+**Built in the follow-up pass.** `App\Services\Auth\AccountIdentityService` and four
+endpoints under `/api/auth/` now keep one person to one account:
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/auth/identities` | GET | Every way into this account, and whether each can be removed |
+| `/api/auth/phone/link/request` | POST | Send a code to a number the signed-in user wants to attach |
+| `/api/auth/phone/link/confirm` | POST | Verify and attach it |
+| `/api/auth/phone/link` | DELETE | Detach, password-gated |
+
+The rules, in order:
+
+1. If the number is already on an account, that is the account.
+2. If someone is signed in and the number is unclaimed, it attaches to the account they are
+   already using. This is what actually prevents duplicates — `/api/auth/otp/verify` now
+   reads the sanctum guard explicitly, so a signed-in caller verifying a free number
+   extends their existing account rather than starting a second one.
+3. If the number belongs to a **different** account, refuse and say so.
+   **Never merge automatically** — merging moves farm records and wallet balances between
+   accounts, and must not be triggerable by a stranger who happens to control a handset.
+4. Only when nothing matches and nobody is signed in do we create.
+
+Unlinking requires the account password and refuses when the identity is the only way in,
+so nobody can lock themselves out of their own farm records. Ten tests cover this,
+including the exact duplicate scenario above.
 
 ---
 
@@ -347,9 +399,9 @@ can drop `unsafe-inline`; per-page design work on the deep marketing pages;
 
 ## 7. Tests
 
-`php artisan test` — **134 passing, 2 skipped, 0 failing** (was 110 passing).
+`php artisan test` — **155 passing, 2 skipped, 0 failing** (was 110 passing).
 
-24 new tests across two files, each pinning a specific hole so a future refactor that
+45 new tests across three files, each pinning a specific hole so a future refactor that
 reopens one fails here rather than in production:
 
 `tests/Feature/PasswordAndEmailVerificationTest.php`
@@ -379,6 +431,29 @@ reopens one fails here rather than in production:
 - The SMS gateway can be swapped by configuration alone
 - An unknown gateway falls back to the log driver instead of failing
 - Every provider satisfies the contract
+- A role cannot be mass-assigned
+- A suspended account cannot reactivate itself by mass assignment
+- Verification timestamps cannot be mass-assigned
+- KYC status cannot be mass-assigned
+- The sanctioned path still sets privileged attributes
+- A short link to an allowed host redirects
+- A subdomain of an allowed host redirects
+- A short link elsewhere shows an interstitial instead of redirecting
+- A lookalike host does not pass the allowlist
+- A report cannot be looked up by its case number
+- The reporter can still look up their own report by UUID
+
+`tests/Feature/AccountIdentityLinkingTest.php`
+- A signed-in user verifying a free number does not create a second account
+- An anonymous registration still creates an account
+- A number belonging to someone else is refused, not merged
+- A user can link a phone number to their account
+- Linking a number that belongs to another account is refused before any SMS is sent
+- A wrong code does not link the number
+- Unlinking requires the current password
+- A user can unlink a phone when an email login remains
+- The last way into an account cannot be removed
+- The identities endpoint describes every way in
 
 Manual and automated verification also covered: all 13 public routes returning 200; the
 full responsive sweep; JavaScript console errors on every page (one was found and fixed —
@@ -401,8 +476,12 @@ without a toolchain — **run `flutter analyze` and `flutter build` before shipp
 **Flutter findings not fixed:**
 - **Push notifications do not work.** `firebase_messaging` is commented out of
   `pubspec.yaml` while the backend has a complete `PushNotificationService`.
-- **Reachable dead ends.** `iot_screen.dart` and `drone_screen.dart` front endpoints that
-  return 503 by design. They should be gated behind the existing feature flags.
+- ~~**Reachable dead ends.**~~ **Handled.** `iot_screen` and `drone_screen` front endpoints
+  that answer 503 by design. Both entry points (profile menu and features screen) now carry
+  an "Inakuja" label and open a short explanation sheet instead of a screen that fails.
+  The entries stay because they describe the roadmap; they just no longer promise something
+  the platform cannot do. The red badge on those menu rows — which read as an error or an
+  unread count — is now a neutral chip.
 
 **Also not covered:** the React admin dashboard (source reviewed, not rebuilt); per-page
 design work on `/technology`, `/partners`, `/impact` and `/stories`, which received the
@@ -487,8 +566,12 @@ mkulima_app/lib/widgets/mk_product_tile.dart                     modified
 5. **New migration must run** before the new endpoints are hit.
 6. **No error tracking and no backups configured.** Launching without an error tracker
    means learning about failures from users.
-7. **~500 MB of APKs in the public web root** on shared hosting.
-8. **Flutter changes are unverified.** Build and smoke-test before shipping an APK.
+7. ~~500 MB of APKs in the public web root~~ — **resolved.** The two stale test builds
+   (343 MB) were moved to `_to_delete/stale-apks/`; one current APK remains and the
+   download page reads it from disk.
+8. ~~15,503 `node_modules` files tracked in git~~ — **resolved.** `git rm -r --cached`
+   run; `.gitignore` already covered the path.
+9. **Flutter changes are unverified.** Build and smoke-test before shipping an APK.
 
 ---
 

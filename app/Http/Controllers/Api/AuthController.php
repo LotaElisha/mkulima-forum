@@ -98,7 +98,11 @@ class AuthController extends Controller
         ]);
 
         $user = DB::transaction(function () use ($validated) {
-            $user = User::create([
+            // provision(), not create(): role, status and password are no
+            // longer mass-assignable. The role here is user-selected but
+            // validated against Roles::SELF_REGISTERABLE above, so it can
+            // never be 'admin'.
+            $user = User::provision([
                 'tenant_id' => $this->tenantId($validated['country_code'] ?? 'tz'),
                 'name' => $validated['name'],
                 'email' => strtolower($validated['email']),
@@ -148,10 +152,11 @@ class AuthController extends Controller
 
             $user = User::where('email', $email)->first();
             if (! $user) {
-                $user = User::create([
+                $user = User::provision([
                     'tenant_id' => $this->tenantId($validated['country_code'] ?? 'tz'),
                     'name' => $validated['name'] ?? $identity['name'] ?? Str::before($email, '@'),
                     'email' => $email,
+                    // The provider already proved this address.
                     'email_verified_at' => now(),
                     'avatar' => $identity['avatar'],
                     'role' => $validated['role'] ?? Roles::FARMER,
@@ -328,8 +333,24 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // Find or create user
-        $user = User::where('phone', $phone)->first();
+        // Duplicate-account prevention.
+        //
+        // If this request carries a valid token the caller has already told us
+        // who they are, so an unclaimed number attaches to THAT account rather
+        // than starting a second one. A number belonging to somebody else is
+        // refused, never merged: merging moves farm records and wallet
+        // balances between accounts, and must not be triggerable by a stranger
+        // who happens to control a handset.
+        // Explicitly the sanctum guard: this route sits outside auth:sanctum,
+        // so the default guard would not resolve a bearer token here.
+        $currentUser = $request->user('sanctum');
+        $owner = User::where('phone', $phone)->first();
+
+        if ($owner && $currentUser && $owner->id !== $currentUser->id) {
+            return response()->json(['message' => __('auth_flows.phone_taken')], 422);
+        }
+
+        $user = $owner ?? $currentUser;
 
         if (! $user && $purpose === 'login') {
             return response()->json([
@@ -343,11 +364,12 @@ class AuthController extends Controller
                 'country_code' => ['required', 'string', 'size:2'],
             ]);
 
-            $user = User::create([
+            $user = User::provision([
                 'tenant_id' => $this->tenantId((string) $request->input('country_code', 'tz')),
                 'phone' => $phone,
                 'name' => $request->input('name'),
                 'role' => $request->input('role', 'farmer'),
+                'status' => 'active',
                 'phone_verified_at' => now(),
                 'preferred_language' => 'sw',
             ]);
@@ -363,7 +385,10 @@ class AuthController extends Controller
         }
 
         if ($user) {
-            $user->update([
+            // 'phone' is included because $user may be the signed-in account
+            // that did not have this number until a moment ago.
+            $user->setPrivileged([
+                'phone' => $phone,
                 'phone_verified_at' => now(),
                 'last_active_at' => now(),
             ]);

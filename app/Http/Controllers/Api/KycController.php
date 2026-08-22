@@ -42,7 +42,7 @@ class KycController extends Controller
             'district' => 'required|string|max:100',
         ]);
 
-        $user->update([
+        $user->setPrivileged([
             'kyc_status' => 'pending',
             'kyc_documents' => json_encode($validated),
             'kyc_submitted_at' => now(),

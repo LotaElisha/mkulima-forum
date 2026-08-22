@@ -8,6 +8,7 @@ use App\Services\Verify\CounterfeitReportService;
 use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CounterfeitReportController extends Controller
 {
@@ -53,11 +54,31 @@ class CounterfeitReportController extends Controller
         ], 201);
     }
 
+    /**
+     * Look up one report.
+     *
+     * Accepts the UUID only. It used to accept the human-readable case number
+     * too (MF-2026-000123 and similar), which is sequential enough to walk:
+     * anyone could enumerate every counterfeit report on the platform along
+     * with its description and the district it came from. A farmer reporting a
+     * fake pesticide in a small village should not have that readable by the
+     * dealer they reported.
+     *
+     * The UUID is returned to the reporter at submission time, so the person
+     * who filed it keeps their access. Staff read reports through the
+     * authenticated admin endpoints.
+     */
     public function show(string $caseNumber): JsonResponse
     {
+        if (! Str::isUuid($caseNumber)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('auth_flows.report_lookup_uuid'),
+            ], 404);
+        }
+
         $report = CounterfeitReport::with(['evidence', 'geoUnit'])
-            ->where('case_number', $caseNumber)
-            ->orWhere('uuid', $caseNumber)
+            ->where('uuid', $caseNumber)
             ->firstOrFail();
 
         return response()->json([

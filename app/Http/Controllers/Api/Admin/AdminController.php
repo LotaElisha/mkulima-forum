@@ -149,7 +149,9 @@ class AdminController extends Controller
             $user->syncRoles([$validated['role']]);
         }
 
-        $user->update($validated);
+        // Admin-authored and whitelist-validated, but role/kyc_status/status
+        // are privileged, so this goes through the explicit path.
+        $user->setPrivileged($validated);
 
         return response()->json([
             'message' => 'User updated successfully',
@@ -175,7 +177,10 @@ class AdminController extends Controller
         $validated['kyc_status'] = $validated['kyc_status'] ?? 'not_submitted';
         $validated['status'] = $validated['status'] ?? 'active';
 
-        $user = User::create($validated);
+        // Admin-authored, and every key here came through the validate()
+        // whitelist directly above — but role/status/kyc_status/password are no
+        // longer mass-assignable, so the privileged path is explicit.
+        $user = User::provision($validated);
         $user->assignRole($validated['role']);
 
         return response()->json([
@@ -319,7 +324,7 @@ class AdminController extends Controller
     public function verifyKyc(Request $request, string $uuid): JsonResponse
     {
         $user = User::where('uuid', $uuid)->firstOrFail();
-        $user->update(['kyc_status' => 'verified']);
+        $user->setPrivileged(['kyc_status' => 'verified']);
 
         return response()->json([
             'message' => 'KYC verified',
@@ -330,7 +335,7 @@ class AdminController extends Controller
     public function rejectKyc(Request $request, string $uuid): JsonResponse
     {
         $user = User::where('uuid', $uuid)->firstOrFail();
-        $user->update([
+        $user->setPrivileged([
             'kyc_status' => 'rejected',
             'kyc_rejection_reason' => $request->input('reason'),
         ]);

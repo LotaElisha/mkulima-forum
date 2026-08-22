@@ -38,7 +38,7 @@ class PasswordAndEmailVerificationTest extends TestCase
 
     private function farmer(array $overrides = []): User
     {
-        return User::create(array_merge([
+        return User::provision(array_merge([
             'tenant_id' => $this->tenant()->id,
             'name' => 'Neema Mushi',
             'email' => 'neema@example.com',

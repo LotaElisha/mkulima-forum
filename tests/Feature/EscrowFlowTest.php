@@ -25,14 +25,14 @@ class EscrowFlowTest extends TestCase
             'currency' => 'TZS',
         ]);
 
-        $buyer = User::create([
+        $buyer = User::provision([
             'tenant_id' => $tenant->id,
             'name' => 'Mnunuzi Mfano',
             'phone' => '255700000001',
             'role' => 'farmer',
         ]);
 
-        $seller = User::create([
+        $seller = User::provision([
             'tenant_id' => $tenant->id,
             'name' => 'Muuzaji Mfano',
             'phone' => '255700000002',
@@ -63,7 +63,9 @@ class EscrowFlowTest extends TestCase
 
         $this->assertSame('pending', $escrow->status);
         $this->assertEquals(55000, (float) $escrow->amount);
-        $this->assertSame(1, EscrowLedger::where('escrow_id', $escrow->id)->count());
+        // A pending payment has not moved money yet. The first ledger entry is
+        // written only after the provider callback confirms the deposit.
+        $this->assertSame(0, EscrowLedger::where('escrow_id', $escrow->id)->count());
     }
 
     public function test_successful_callback_marks_escrow_held_and_order_paid(): void

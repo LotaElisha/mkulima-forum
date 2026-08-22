@@ -74,6 +74,21 @@ return [
         'webhook_secret' => env('SMS_WEBHOOK_SECRET'),
     ],
 
+    /*
+     |------------------------------------------------------------------
+     | Short links (/c/{slug})
+     |------------------------------------------------------------------
+     | Hosts a short link may redirect straight to. Subdomains of a listed
+     | host are included. Anything else shows a "you are leaving" page first,
+     | so the platform's domain cannot be borrowed for a phishing redirect.
+     */
+    'short_links' => [
+        'allowed_hosts' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('SHORT_LINK_ALLOWED_HOSTS', 'mkulimaforum.com,wa.me,youtube.com,youtu.be,facebook.com,instagram.com,x.com,twitter.com,linkedin.com,tiktok.com'))
+        ))),
+    ],
+
     'ivr' => [
         'webhook_secret' => env('IVR_WEBHOOK_SECRET'),
     ],

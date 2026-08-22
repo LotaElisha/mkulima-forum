@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Contracts\SmsProvider;
+use App\Models\CounterfeitReport;
 use App\Models\ServiceProvider;
+use App\Models\ShortLink;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Sms\Providers\AfricasTalkingProvider;
@@ -14,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /**
@@ -36,7 +39,7 @@ class SecurityHardeningTest extends TestCase
 
     private function farmer(): User
     {
-        return User::create([
+        return User::provision([
             'tenant_id' => $this->tenant()->id,
             'name' => 'Juma Said',
             'email' => 'juma@example.com',
@@ -89,7 +92,7 @@ class SecurityHardeningTest extends TestCase
         Storage::fake('public');
         $user = $this->farmer();
 
-        $owner = User::create([
+        $owner = User::provision([
             'tenant_id' => $this->tenant()->id,
             'name' => 'Agronomist',
             'email' => 'agro@example.com',
@@ -127,6 +130,67 @@ class SecurityHardeningTest extends TestCase
         $this->assertCount(0, Storage::disk('public')->allFiles());
     }
 
+    // ── Privilege escalation surface ────────────────────────────────
+
+    public function test_a_role_cannot_be_mass_assigned(): void
+    {
+        $user = $this->farmer();
+
+        // The exact shape of the mistake this guards against: request input
+        // reaching a model write. Before role left $fillable, this one line
+        // was privilege escalation.
+        $user->update(['name' => 'Renamed', 'role' => 'admin']);
+
+        $user->refresh();
+        $this->assertSame('Renamed', $user->name);
+        $this->assertSame('farmer', $user->role);
+        $this->assertFalse($user->isAdmin());
+    }
+
+    public function test_a_suspended_account_cannot_reactivate_itself_by_mass_assignment(): void
+    {
+        $user = $this->farmer();
+        $user->setPrivileged(['status' => 'suspended', 'is_active' => false]);
+
+        $user->update(['status' => 'active', 'is_active' => true]);
+
+        $user->refresh();
+        $this->assertSame('suspended', $user->status);
+        $this->assertFalse((bool) $user->is_active);
+    }
+
+    public function test_verification_timestamps_cannot_be_mass_assigned(): void
+    {
+        $user = $this->farmer();
+        $this->assertNull($user->email_verified_at);
+
+        $user->update(['email_verified_at' => now(), 'phone_verified_at' => now()]);
+
+        $user->refresh();
+        $this->assertNull($user->email_verified_at);
+        $this->assertNull($user->phone_verified_at);
+    }
+
+    public function test_kyc_status_cannot_be_mass_assigned(): void
+    {
+        $user = $this->farmer();
+
+        $user->update(['kyc_status' => 'verified']);
+
+        $this->assertNotSame('verified', $user->fresh()->kyc_status);
+    }
+
+    public function test_the_sanctioned_path_still_sets_privileged_attributes(): void
+    {
+        // The guard must not make legitimate administration impossible.
+        $user = $this->farmer();
+        $user->setPrivileged(['role' => 'agronomist', 'kyc_status' => 'verified']);
+
+        $user->refresh();
+        $this->assertSame('agronomist', $user->role);
+        $this->assertSame('verified', $user->kyc_status);
+    }
+
     // ── Webhooks ────────────────────────────────────────────────────
 
     public function test_sms_webhook_is_refused_without_the_shared_secret(): void
@@ -159,6 +223,98 @@ class SecurityHardeningTest extends TestCase
             ['from' => '255700000000', 'text' => 'MSAADA'],
             ['X-Webhook-Signature' => 'not-the-secret']
         )->assertStatus(401);
+    }
+
+    // ── Short links ─────────────────────────────────────────────────
+
+    public function test_a_short_link_to_an_allowed_host_redirects(): void
+    {
+        config(['services.short_links.allowed_hosts' => ['wa.me', 'mkulimaforum.com']]);
+
+        ShortLink::create([
+            'slug' => 'ok',
+            'target_url' => 'https://wa.me/255700000000',
+            'is_active' => true,
+        ]);
+
+        $this->get('/c/ok')->assertRedirect('https://wa.me/255700000000');
+    }
+
+    public function test_a_subdomain_of_an_allowed_host_redirects(): void
+    {
+        config(['services.short_links.allowed_hosts' => ['mkulimaforum.com']]);
+
+        ShortLink::create([
+            'slug' => 'sub',
+            'target_url' => 'https://app.mkulimaforum.com/verify',
+            'is_active' => true,
+        ]);
+
+        $this->get('/c/sub')->assertRedirect('https://app.mkulimaforum.com/verify');
+    }
+
+    public function test_a_short_link_elsewhere_shows_an_interstitial_instead_of_redirecting(): void
+    {
+        config(['services.short_links.allowed_hosts' => ['mkulimaforum.com']]);
+
+        ShortLink::create([
+            'slug' => 'evil',
+            'target_url' => 'https://phishing.example.net/steal',
+            'is_active' => true,
+        ]);
+
+        // Without this, the platform's own domain becomes a redirector that
+        // lends its reputation to a phishing link.
+        $this->get('/c/evil')
+            ->assertOk()
+            ->assertSee('phishing.example.net')
+            ->assertDontSee('Location: https://phishing.example.net');
+    }
+
+    public function test_a_lookalike_host_does_not_pass_the_allowlist(): void
+    {
+        config(['services.short_links.allowed_hosts' => ['mkulimaforum.com']]);
+
+        ShortLink::create([
+            'slug' => 'lookalike',
+            // Suffix matching must not accept "notmkulimaforum.com".
+            'target_url' => 'https://notmkulimaforum.com/pay',
+            'is_active' => true,
+        ]);
+
+        $this->get('/c/lookalike')->assertOk()->assertSee('notmkulimaforum.com');
+    }
+
+    // ── Counterfeit report disclosure ───────────────────────────────
+
+    public function test_a_report_cannot_be_looked_up_by_its_case_number(): void
+    {
+        $report = CounterfeitReport::create([
+            'uuid' => (string) Str::uuid(),
+            'case_number' => 'MF-2026-000123',
+            'product_name' => 'Fake pesticide',
+            'description' => 'Sold to me in Arumeru market.',
+            'status' => 'received',
+        ]);
+
+        // Sequential case numbers are walkable; a farmer reporting a fake
+        // pesticide should not be readable by the dealer they reported.
+        $this->getJson('/api/v1/reports/'.$report->case_number)->assertStatus(404);
+    }
+
+    public function test_the_reporter_can_still_look_up_their_own_report_by_uuid(): void
+    {
+        $report = CounterfeitReport::create([
+            'uuid' => (string) Str::uuid(),
+            'case_number' => 'MF-2026-000124',
+            'product_name' => 'Fake pesticide',
+            'description' => 'Sold to me in Arumeru market.',
+            'status' => 'received',
+        ]);
+
+        $this->getJson('/api/v1/reports/'.$report->uuid)
+            ->assertOk()
+            ->assertJsonPath('data.case_number', 'MF-2026-000124');
     }
 
     // ── SMS provider abstraction ────────────────────────────────────

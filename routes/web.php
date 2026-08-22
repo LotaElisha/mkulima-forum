@@ -173,6 +173,27 @@ Route::get('/c/{slug}', function (string $slug) {
     $shortLink = ShortLink::where('slug', $slug)->where('is_active', true)->firstOrFail();
     $shortLink->increment('click_count');
 
+    // Host allowlist. The target is admin-authored, so this is not a hole an
+    // outsider can open — but without it, mkulimaforum.com/c/... is a
+    // redirector that lends the platform's own domain to a phishing link, and
+    // a single compromised or careless admin account is enough. Anything off
+    // the list goes to an interstitial rather than straight out.
+    $host = strtolower((string) parse_url($shortLink->target_url, PHP_URL_HOST));
+    $allowed = collect(config('services.short_links.allowed_hosts', []))
+        ->map(fn ($h) => strtolower(trim($h)))
+        ->filter();
+
+    $isAllowed = $allowed->contains(
+        fn ($candidate) => $host === $candidate || str_ends_with($host, '.'.$candidate)
+    );
+
+    if (! $isAllowed) {
+        return response()->view('pages.leaving', [
+            'target' => $shortLink->target_url,
+            'host' => $host,
+        ], 200);
+    }
+
     return redirect()->away($shortLink->target_url);
 });
 

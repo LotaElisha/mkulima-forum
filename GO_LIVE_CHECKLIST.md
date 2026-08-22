@@ -45,6 +45,7 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 - [ ] Index review under production data volume — check `market_prices`,
       `verification_scans`, `analytics_events`
 - [x] 55 migrations present and applying cleanly from scratch
+- [x] Test suite: 155 passing, 45 new, no regressions
 
 ## Security
 
@@ -56,16 +57,21 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 - [x] CSP with per-request nonces
 - [x] Password reset endpoints do not leak whether an account exists
 - [x] Ownership scoping verified on farms, wallet, bot conversations and moderation
-- [ ] **`git rm -r --cached admin-dashboard/node_modules`** — 15,503 files are committed
-- [ ] **Delete the two stale APKs** in `public/app/` (~340 MB of old test builds
-      publicly downloadable from the web root)
+- [x] **`git rm -r --cached admin-dashboard/node_modules`** — done; 15,503 files untracked,
+      `.gitignore` already covered the path (files remain on disk)
+- [x] **Stale APKs out of the web root** — the two old test builds (343 MB) were moved to
+      `_to_delete/stale-apks/`. One current APK remains and the download page reads it from
+      disk. Delete that folder yourself when you're ready; I cannot remove files.
 - [ ] Rotate `GEMINI_API_KEY` and `OPENWEATHER_API_KEY` if they were ever shared
 - [ ] HTTPS enforced at the web server, with a valid certificate and auto-renewal
 - [ ] CORS reviewed for the production origin
-- [ ] Consider a host allowlist on `/c/{slug}` so the short-link domain cannot be used
-      as an open redirector
-- [ ] Consider moving `User::$fillable` to `$guarded` — `role`, `status` and `is_active`
-      are currently mass-assignable, though nothing exploits it today
+- [x] Host allowlist on `/c/{slug}` — set `SHORT_LINK_ALLOWED_HOSTS` for production;
+      anything else shows an interstitial naming the destination
+- [x] Privileged attributes out of `User::$fillable` — role, status, is_active,
+      is_verified_expert, kyc_status, both verification timestamps and password. Writes go
+      through `User::provision()` / `setPrivileged()`; five tests assert escalation fails
+- [x] Default vendor password `password123` removed — vendors without a supplied password
+      now get a random credential and a reset link
 
 ## Authentication
 
@@ -80,9 +86,11 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 - [ ] Phone + OTP — architecture complete behind `App\Contracts\SmsProvider`;
       enable via `auth.otp_enabled` once an SMS provider is credentialled.
       **Not a launch blocker** — email auth is production-ready.
-- [ ] **Account linking**: OTP registration keys on phone alone, so one person signing up
-      by email and later by phone gets two accounts. Write this before the user base makes
-      duplicates expensive.
+- [x] **Account linking** — a signed-in user verifying an unclaimed number extends their
+      existing account instead of creating a second one; a number on another account is
+      refused rather than merged. Four endpoints under `/api/auth/`, ten tests.
+- [ ] Enable phone linking in the app UI (backend is ready; the Flutter screens for
+      `/api/auth/phone/link/*` are not built yet)
 
 ## Application
 
@@ -92,7 +100,10 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
 - [x] No horizontal overflow at 360, 375, 390, 412, 430, 768, 820 or 1024px
 - [x] Touch targets at or above 44px across the public tier
 - [x] Icons no longer depend on a network request
-- [ ] `npm run build` — note the build script still renders `view('landing')`, a dead view
+- [x] `npm run build` fixed — it rendered `view('landing')`, a view nothing has routed to
+      since the multi-page rebuild, so every deploy shipped a stale `dist/index.html`. Now
+      runs `php artisan mkulima:export-landing`, which renders the live home page and fails
+      loudly rather than writing a broken file
 - [ ] `php artisan config:cache route:cache view:cache` in production
 - [ ] `APP_DEBUG=false` confirmed in production
 - [ ] Application version set (`config('app.version')`) — the download page reads it
@@ -115,8 +126,8 @@ Full findings: [`MKULIMA_FORUM_AUDIT.md`](./MKULIMA_FORUM_AUDIT.md)
       test key and the download page says so)
 - [ ] **`firebase_messaging` is commented out of `pubspec.yaml`** — push notifications do
       not work, while the backend has a complete `PushNotificationService`
-- [ ] Gate `iot_screen` and `drone_screen` behind their feature flags — both front
-      endpoints that return 503 by design
+- [x] `iot_screen` and `drone_screen` no longer open on an error — both entry points carry
+      an "Inakuja" label and explain rather than failing
 - [ ] Verify offline behaviour (Drift) on a real device with the network off
 - [x] Auth token stored in `flutter_secure_storage`, not `SharedPreferences`
 - [x] Bottom navigation already matches the target architecture

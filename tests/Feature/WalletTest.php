@@ -25,11 +25,11 @@ class WalletTest extends TestCase
             'name' => 'Tanzania', 'country_code' => 'tz', 'currency' => 'TZS',
         ]);
 
-        $this->sender = User::create([
+        $this->sender = User::provision([
             'tenant_id' => $tenant->id, 'name' => 'Mtumaji',
             'phone' => '255710000001', 'role' => 'farmer',
         ]);
-        $this->recipient = User::create([
+        $this->recipient = User::provision([
             'tenant_id' => $tenant->id, 'name' => 'Mpokeaji',
             'phone' => '255710000002', 'role' => 'farmer',
         ]);

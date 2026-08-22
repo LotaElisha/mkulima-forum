@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\Admin\VendorController;
 use App\Http\Controllers\Api\Admin\Verify\AdminVerifyController;
 use App\Http\Controllers\Api\AgronomistController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\Auth\IdentityController;
 use App\Http\Controllers\Api\Auth\PasswordController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Community\CommunityClickController;
@@ -142,6 +143,14 @@ Route::prefix('auth')->group(function () {
         Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:3,10');
         Route::post('/email/change', [EmailVerificationController::class, 'requestChange'])->middleware('throttle:3,10');
         Route::delete('/email/change', [EmailVerificationController::class, 'cancelChange']);
+
+        // Identity linking. This is what stops one farmer becoming two
+        // accounts: rather than discovering a duplicate later, a signed-in
+        // user attaches their phone number to the account they already have.
+        Route::get('/identities', [IdentityController::class, 'index']);
+        Route::post('/phone/link/request', [IdentityController::class, 'requestPhoneLink'])->middleware('throttle:5,10');
+        Route::post('/phone/link/confirm', [IdentityController::class, 'confirmPhoneLink'])->middleware('throttle:10,10');
+        Route::delete('/phone/link', [IdentityController::class, 'unlinkPhone'])->middleware('throttle:5,10');
     });
 });
 

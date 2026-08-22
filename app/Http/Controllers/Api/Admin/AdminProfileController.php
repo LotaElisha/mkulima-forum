@@ -85,7 +85,7 @@ class AdminProfileController extends Controller
             ]);
         }
 
-        $user->update([
+        $user->setPrivileged([
             'password' => Hash::make($request->input('new_password')),
         ]);
 
