@@ -1,8 +1,29 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Models\LandingSetting;
 use App\Models\ShortLink;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/web-app-assets/sqlite', function () {
+    $path = storage_path('app/private/web/sqlite3.wasm');
+    abort_unless(is_file($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/wasm',
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+});
+
+Route::get('/web-app-assets/drift-worker', function () {
+    $path = storage_path('app/private/web/drift_worker.js');
+    abort_unless(is_file($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/javascript; charset=utf-8',
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+});
 
 Route::get('/', function () {
     $settings = [];
@@ -31,7 +52,7 @@ Route::get('/', function () {
         'kicker_vipengele' => 'Vipengele',
         'title_vipengele' => 'Zaidi ya scanner — mfumo kamili wa kilimo',
         'sub_vipengele' => 'Kila kitu mkulima anachohitaji, mahali pamoja, kwa Kiswahili.',
-        'contact_email' => 'hello@mkulimaforum.app',
+        'contact_email' => 'hello@mkulimaforum.com',
         // Impact metrics (empty until launch)
         'metric_farmers' => null,
         'metric_regions' => null,
@@ -60,7 +81,7 @@ $publicSettings = function () {
         'emblem_url' => '/images/logo-icon.jpg',
         'pitch_deck_url' => '/docs/Mkulima_Forum_Pitch_Deck.pdf',
         'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
-        'contact_email' => 'hello@mkulimaforum.app',
+        'contact_email' => 'hello@mkulimaforum.com',
         'metric_farmers' => null,
         'metric_regions' => null,
         'metric_scans' => null,
@@ -158,6 +179,25 @@ Route::get('/c/{slug}', function (string $slug) {
 // ─── Auth ────────────────────────────────────────────────────────────────────
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
+
+// Password recovery pages. These are web routes rather than API ones because
+// they are opened from an email client on whatever device is to hand — the
+// link has to render something a person can read and type into.
+Route::view('/forgot-password', 'auth.forgot-password')->name('password.request');
+
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('auth.reset-password', [
+        'token' => $token,
+        'email' => request()->string('email')->toString(),
+    ]);
+})->name('password.reset');
+
+// Signed link from the verification mail. 'signed' proves the URL was not
+// edited and has not expired; the throttle stops the id/hash space being
+// walked. No session or token is required — the signature is the credential.
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 // React admin SPA deep-link fallback. Static assets are served directly from
 // public/admin; application routes must all return the same entry document.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Verify;
 use App\Http\Controllers\Controller;
 use App\Models\CounterfeitReport;
 use App\Services\Verify\CounterfeitReportService;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,8 @@ class CounterfeitReportController extends Controller
             'crop_affected_id' => 'nullable|integer|exists:crops,id',
             'contact_preference' => 'nullable|string|in:phone,email,none',
             'reporter_anonymous' => 'nullable|boolean',
-            'evidence.*' => 'nullable|file|image|max:10240',
+            'evidence' => ['nullable', 'array', 'max:5'],
+            'evidence.*' => UploadRules::rasterOrDocument(10240),
         ]);
 
         $evidenceFiles = $request->file('evidence') ?? [];

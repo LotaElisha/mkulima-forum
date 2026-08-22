@@ -2,63 +2,73 @@
 
 namespace App\Services;
 
+use App\Contracts\SmsProvider;
 use App\Models\SmsLog;
-use Illuminate\Support\Facades\Http;
+use App\Services\Sms\SmsProviderManager;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Application-facing SMS API: normalisation, logging, bulk fan-out and the
+ * message templates. Delivery itself is delegated to an App\Contracts\SmsProvider.
+ *
+ * This class used to embed the Africa's Talking and Twilio HTTP calls directly,
+ * duplicated again in App\Services\Notifications\SmsService. Both gateways are
+ * now implementations behind one interface, so changing aggregator — likely at
+ * some point, given Tanzanian SMS pricing — cannot reach the OTP or login code.
+ *
+ * The public method signatures and return shapes are unchanged, so every
+ * existing caller keeps working.
+ */
 class SmsService
 {
-    protected string $gateway;
-
-    protected string $username;
-
-    protected string $apiKey;
+    protected SmsProvider $provider;
 
     protected string $senderId;
 
-    public function __construct()
+    public function __construct(?SmsProviderManager $manager = null)
     {
-        $this->gateway = config('services.sms.gateway', 'africastalking');
-        $this->username = (string) (config('services.africastalking.username') ?? '');
-        $this->apiKey = (string) (config('services.africastalking.api_key') ?? '');
-        $this->senderId = config('services.sms.sender_id', 'MKULIMA');
+        $this->provider = ($manager ?? app(SmsProviderManager::class))->driver();
+        $this->senderId = (string) config('services.sms.sender_id', 'MKULIMA');
     }
 
+    /** Which gateway is live, for diagnostics and admin screens. */
+    public function gateway(): string
+    {
+        return $this->provider->name();
+    }
+
+    public function isConfigured(): bool
+    {
+        return $this->provider->isConfigured();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function send(string $phone, string $message, string $type = 'alert', ?int $userId = null): array
     {
         if (! $this->isConfigured()) {
             return ['success' => false, 'message' => 'SMS gateway is not configured'];
         }
 
+        $formatted = $this->formatPhone($phone);
+
         $log = SmsLog::create([
             'user_id' => $userId,
-            'phone' => $this->formatPhone($phone),
+            'phone' => $formatted,
             'message' => $message,
-            'gateway' => $this->gateway,
+            'gateway' => $this->provider->name(),
             'type' => $type,
             'status' => 'pending',
         ]);
 
         try {
-            if ($this->gateway === 'africastalking') {
-                $result = $this->sendViaAfricasTalking($phone, $message);
-            } else {
-                $result = $this->sendViaTwilio($phone, $message);
-            }
-
-            $log->update([
-                'status' => $result['success'] ? 'sent' : 'failed',
-                'gateway_response' => json_encode($result),
-                'message_id' => $result['message_id'] ?? null,
-            ]);
-
-            return $result;
-        } catch (\Exception $e) {
-            Log::error('SMS send failed: '.$e->getMessage());
-            $log->update([
-                'status' => 'failed',
-                'gateway_response' => $e->getMessage(),
-            ]);
+            $result = $this->provider->send($formatted, $message);
+        } catch (\Throwable $e) {
+            // A provider should return a failed result rather than throw, but
+            // a bug in one gateway must not take the caller down with it.
+            Log::error('SMS send failed: '.$e->getMessage(), ['gateway' => $this->provider->name()]);
+            $log->update(['status' => 'failed', 'gateway_response' => $e->getMessage()]);
 
             return [
                 'success' => false,
@@ -66,17 +76,23 @@ class SmsService
                 'error' => $e->getMessage(),
             ];
         }
-    }
 
-    public function isConfigured(): bool
-    {
-        if ($this->gateway === 'africastalking') {
-            return $this->username !== '' && $this->apiKey !== '';
+        $payload = $result->toArray();
+
+        $log->update([
+            'status' => $result->success ? 'sent' : 'failed',
+            'gateway_response' => json_encode($payload),
+            'message_id' => $result->messageId,
+        ]);
+
+        if (! $result->success) {
+            Log::warning('SMS rejected by gateway', [
+                'gateway' => $result->provider,
+                'error' => $result->error,
+            ]);
         }
 
-        return (string) config('services.twilio.sid', '') !== ''
-            && (string) config('services.twilio.token', '') !== ''
-            && (string) config('services.twilio.from', '') !== '';
+        return $payload;
     }
 
     public function sendBulk(array $recipients, string $message, string $type = 'alert'): array
@@ -114,67 +130,6 @@ class SmsService
         $message .= 'Check app for farming advisory. *384# for IVR.';
 
         return $this->send($phone, $message, 'alert', $userId);
-    }
-
-    protected function sendViaAfricasTalking(string $phone, string $message): array
-    {
-        $response = Http::withHeaders([
-            'apiKey' => $this->apiKey,
-            'Accept' => 'application/json',
-        ])->asForm()->post('https://api.africastalking.com/version1/messaging', [
-            'username' => $this->username,
-            'to' => $this->formatPhone($phone),
-            'message' => $message,
-            'from' => $this->senderId,
-        ]);
-
-        if ($response->successful()) {
-            $data = $response->json();
-
-            return [
-                'success' => true,
-                'message_id' => $data['SMSMessageData']['Recipients'][0]['messageId'] ?? null,
-                'cost' => $data['SMSMessageData']['Recipients'][0]['cost'] ?? null,
-                'gateway' => 'africastalking',
-            ];
-        }
-
-        return [
-            'success' => false,
-            'error' => $response->body(),
-            'gateway' => 'africastalking',
-        ];
-    }
-
-    protected function sendViaTwilio(string $phone, string $message): array
-    {
-        $sid = config('services.twilio.sid', env('TWILIO_SID', ''));
-        $token = config('services.twilio.token', env('TWILIO_TOKEN', ''));
-        $from = config('services.twilio.from', env('TWILIO_FROM', ''));
-
-        $response = Http::withBasicAuth($sid, $token)
-            ->asForm()
-            ->post("https://api.twilio.com/2010-04-01/Accounts/{$sid}/Messages.json", [
-                'To' => $this->formatPhone($phone),
-                'From' => $from,
-                'Body' => $message,
-            ]);
-
-        if ($response->successful()) {
-            $data = $response->json();
-
-            return [
-                'success' => true,
-                'message_id' => $data['sid'] ?? null,
-                'gateway' => 'twilio',
-            ];
-        }
-
-        return [
-            'success' => false,
-            'error' => $response->body(),
-            'gateway' => 'twilio',
-        ];
     }
 
     protected function formatPhone(string $phone): string

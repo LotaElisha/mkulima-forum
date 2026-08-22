@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\Escrow;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class MarketplaceController extends Controller
 {
@@ -124,8 +123,8 @@ class MarketplaceController extends Controller
             'price' => ['required', 'numeric', 'min:0'],
             'stock_quantity' => ['required', 'integer', 'min:0'],
             'unit' => ['required', 'string', 'max:20'],
-            'images' => ['nullable', 'array'],
-            'images.*' => ['image', 'max:2048'],
+            'images' => ['nullable', 'array', 'max:8'],
+            'images.*' => UploadRules::raster(2048),
             'attributes' => ['nullable', 'array'],
         ]);
 
@@ -266,17 +265,6 @@ class MarketplaceController extends Controller
                 $item['order_id'] = $order->id;
                 OrderItem::create($item);
             }
-
-            // Create escrow
-            Escrow::create([
-                'tenant_id' => $user->tenant_id,
-                'order_id' => $order->id,
-                'reference' => 'ESC-'.strtoupper(Str::random(10)),
-                'status' => 'HELD',
-                'amount' => $total,
-                'currency' => $order->currency,
-                'expires_at' => now()->addDays(7),
-            ]);
 
             return $order;
         });

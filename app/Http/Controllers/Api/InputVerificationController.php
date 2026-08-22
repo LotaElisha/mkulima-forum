@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CounterfeitAlert;
 use App\Models\RegisteredInput;
 use App\Services\AI\AIService;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -71,7 +72,7 @@ class InputVerificationController extends Controller
     public function checkLabel(Request $request): JsonResponse
     {
         $request->validate([
-            'image' => ['required', 'image', 'max:10240'],
+            'image' => ['required', ...UploadRules::raster(10240)],
         ]);
 
         $apiKey = config('services.gemini.api_key');
@@ -184,7 +185,7 @@ class InputVerificationController extends Controller
             'region' => ['required', 'string', 'max:64'],
             'district' => ['nullable', 'string', 'max:64'],
             'description' => ['required', 'string', 'max:2000'],
-            'photo' => ['nullable', 'image', 'max:10240'],
+            'photo' => ['nullable', ...UploadRules::raster(10240)],
         ]);
 
         $photoPath = null;
