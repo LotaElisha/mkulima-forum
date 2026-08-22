@@ -4,27 +4,20 @@
 @section('meta_description', 'MkulimaForum inaunganisha wakulima wa Tanzania na maarifa, masoko, huduma na Mkulima AI.')
 
 @section('head_extra')
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Material+Symbols+Rounded:opsz,wght,FILL@20..48,400,0&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream-bg:#fffdf8; --surface-card:#fffefa; --ink-dark:#181711;
-    --ink-body:#4b4942; --ink-muted:#6f6b61; --ink-faint:#9c968b;
-    --forest-dark:#264f27; --forest-mid:#356d33; --forest-light:#477a42;
-    --leaf-green:#477a42; --leaf-bright:#67935b; --leaf-pale:#f3f6ec;
-    --sun-gold:#efa91f; --sun-amber:#f6b83a;
-    --border-light:#e9e3d8; --border-mid:#d7cdbc;
-    --shadow-sm:0 8px 26px rgba(50,42,24,.06); --shadow-md:0 16px 38px rgba(50,42,24,.1);
-  }
-  body { background:var(--cream-bg); color:var(--ink-body); }
-  #site-header { background:rgba(255,253,248,.96); border-color:var(--border-light); }
-  .nav-links a:hover,.nav-links a.active,.nav-dropdown-trigger:hover { background:transparent; color:var(--ink-dark); }
-  .nav-links a.active { box-shadow:inset 0 -2px var(--sun-gold); border-radius:0; }
+  /* This page used to re-import Google Fonts and re-declare the whole :root
+     token set in cream, overriding the design system in the layout. A page
+     that redefines its own palette is how a product ends up with three
+     different greens; the tokens now come from layouts/public.blade.php only. */
+  #site-header { background:rgba(255,255,255,.97); border-color:var(--border-light); }
+  .nav-links a:hover,.nav-links a.active,.nav-dropdown-trigger:hover { background:var(--leaf-pale); color:var(--forest-dark); }
+  .nav-links a.active { box-shadow:inset 0 -2px var(--forest-mid); border-radius:0; }
   .lang-pill { background:#fff; border-color:var(--border-mid); }
-  .lang-btn.active { background:#fff; color:var(--ink-dark); box-shadow:none; outline:1px solid var(--border-mid); }
-  .btn-gold { background:var(--sun-gold); color:#181711; box-shadow:none; }
-  .btn-gold:hover { background:#e19a12; }
-  .material-symbols-rounded { font-size:1.2em; line-height:1; vertical-align:-.18em; }
+  .lang-btn.active { background:var(--forest-mid); color:#fff; box-shadow:none; }
+  /* Inline SVG icons (see resources/views/components/icon.blade.php).
+     These replaced a remote ligature font whose failure mode was printing
+     the icon's own name on screen. */
+  .ico { width:1.15em; height:1.15em; vertical-align:-.2em; flex:none; stroke-width:2; }
 
   .editorial-hero { min-height:650px; position:relative; overflow:hidden; border-bottom:1px solid var(--border-light); }
   .hero-art { position:absolute; inset:0; background:url('/images/home/hero-composite.webp') right center/auto 92% no-repeat; }
@@ -32,11 +25,11 @@
   .editorial-hero .wrap { min-height:650px; display:flex; align-items:center; position:relative; z-index:2; }
   .hero-copy { width:min(48%,550px); padding:48px 0; }
   .hero-kicker { display:inline-flex; align-items:center; padding:7px 16px; border:1px solid #87a57a; border-radius:999px; color:var(--forest-mid); font-size:.74rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase; margin-bottom:22px; background:rgba(255,253,248,.72); }
-  .editorial-title { font-family:'DM Serif Display',Georgia,serif; color:var(--ink-dark); font-size:clamp(3.1rem,5.4vw,4.8rem); font-weight:400; letter-spacing:-.035em; line-height:.99; max-width:720px; margin-bottom:24px; }
+  .editorial-title { color:var(--ink-dark); font-size:clamp(2rem,5.4vw,4.4rem); font-weight:800; letter-spacing:-.035em; line-height:.99; max-width:720px; margin-bottom:24px; }
   .hero-summary { font-size:1.02rem; max-width:34rem; line-height:1.72; margin-bottom:24px; color:var(--ink-body); }
   .benefit-list { display:grid; gap:11px; list-style:none; margin:0 0 30px; }
   .benefit-list li { display:flex; align-items:center; gap:10px; font-size:.9rem; color:var(--ink-body); }
-  .benefit-list .material-symbols-rounded { color:var(--forest-mid); font-size:17px; }
+  .benefit-list .ico { color:var(--forest-mid); width:19px; height:19px; margin-top:2px; }
   .hero-actions { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
   .text-link { font-weight:700; color:var(--ink-dark); border-bottom:1px solid var(--ink-dark); padding-bottom:2px; }
   .availability { display:flex; gap:8px; margin-top:26px; align-items:center; flex-wrap:wrap; }
@@ -49,26 +42,26 @@
   .story-image img { width:100%; height:170px; object-fit:cover; border-radius:12px; }
   .story-proof { position:absolute; left:-26px; bottom:20px; background:var(--forest-mid); color:#fff; padding:14px 18px; border-radius:10px; width:132px; }
   .story-proof small { display:block; font-size:.64rem; font-weight:800; letter-spacing:.12em; }
-  .story-proof strong { display:block; font-family:'DM Serif Display',serif; font-size:1.55rem; font-weight:400; }
+  .story-proof strong { display:block; font-family:inherit; font-size:1.35rem; font-weight:800; }
   .story-proof span { display:block; font-size:.62rem; line-height:1.35; opacity:.84; }
-  blockquote { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(1.3rem,2.2vw,1.75rem); line-height:1.34; color:var(--ink-dark); }
+  blockquote { font-family:inherit; font-size:clamp(1.3rem,2.2vw,1.75rem); line-height:1.34; color:var(--ink-dark); }
   .quote-by { margin-top:18px; font-size:.84rem; color:var(--ink-muted); }
 
   .journey { padding:84px 0 92px; background:var(--cream-bg); }
   .journey-head { max-width:900px; margin:0 auto 44px; }
   .journey-head .eyebrow { color:var(--forest-mid); }
-  .journey-title { font-family:'DM Serif Display',Georgia,serif; font-size:clamp(2.25rem,4vw,3.25rem); font-weight:400; color:var(--ink-dark); margin-bottom:8px; }
+  .journey-title { font-family:inherit; font-size:clamp(2.25rem,4vw,3.25rem); font-weight:400; color:var(--ink-dark); margin-bottom:8px; }
   .journey-steps { max-width:1100px; margin:auto; display:grid; grid-template-columns:repeat(3,1fr); }
   .journey-step { padding:0 38px; border-right:1px solid #e3d7c4; }
   .journey-step:first-child { padding-left:0; }
   .journey-step:last-child { border:0; padding-right:0; }
-  .step-number { font-family:'DM Serif Display',serif; color:#e6cc98; font-size:3rem; line-height:1; display:block; margin-bottom:15px; }
-  .journey-step h3 { color:var(--ink-dark); font-family:'DM Serif Display',serif; font-size:1.55rem; font-weight:400; margin-bottom:10px; }
+  .step-number { font-family:inherit; font-weight:800; color:var(--leaf-bright); font-size:3rem; line-height:1; display:block; margin-bottom:15px; }
+  .journey-step h3 { color:var(--ink-dark); font-family:inherit; font-size:1.35rem; font-weight:800; margin-bottom:10px; }
   .journey-step p { font-size:.88rem; line-height:1.65; min-height:76px; }
   .journey-step img { width:100%; height:175px; object-fit:cover; border-radius:10px; margin-top:20px; }
   .journey-step:nth-child(2) img { object-position:center; }
   .journey-step:nth-child(3) img { object-position:center 40%; }
-  .journey-close { text-align:center; font-family:'DM Serif Display',serif; font-size:1.15rem; color:var(--ink-dark); margin-top:42px; }
+  .journey-close { text-align:center; font-family:inherit; font-size:1.15rem; color:var(--ink-dark); margin-top:42px; }
   .journey-close span { display:block; font-family:'Plus Jakarta Sans',sans-serif; color:var(--forest-mid); font-size:.9rem; font-weight:700; margin-top:5px; }
 
   .light-capabilities { background:#fffaf0; border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:72px 0; }
@@ -76,11 +69,11 @@
   .cap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); }
   .cap-item { padding:28px 24px; border-right:1px solid var(--border-light); }
   .cap-item:last-child { border:0; }
-  .cap-item .material-symbols-rounded { color:var(--forest-mid); font-size:25px; margin-bottom:14px; display:block; }
+  .cap-item .ico { color:var(--forest-mid); width:26px; height:26px; margin-bottom:12px; display:block; }
   .cap-item h3 { font-size:1rem; color:var(--ink-dark); margin-bottom:7px; }
   .cap-item p { font-size:.82rem; line-height:1.55; color:var(--ink-muted); }
   .final-cta { padding:72px 0; text-align:center; background:#fff; }
-  .final-cta h2 { font-family:'DM Serif Display',serif; font-size:clamp(2.1rem,4vw,3rem); font-weight:400; color:var(--ink-dark); margin-bottom:12px; }
+  .final-cta h2 { font-family:inherit; font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; color:var(--ink-dark); margin-bottom:12px; }
   .final-cta p { max-width:560px; margin:0 auto 26px; color:var(--ink-muted); }
 
   @media(max-width:900px) {
@@ -113,6 +106,70 @@
     .cap-item { border-right:0; border-bottom:1px solid var(--border-light); }
     .cap-item:last-child { border-bottom:0; }
   }
+
+  /* ── Mobile hero legibility ─────────────────────────────────────────── */
+  @media (max-width:700px) {
+    /* The desktop hero fades the photograph out horizontally, from the left
+       edge across to 66%. On a phone the copy sits directly on top of the
+       image instead, so the headline was reading over a farmer's face and a
+       phone screen. Below 700px the artwork moves behind a vertical scrim and
+       drops to the lower half of the block, which keeps the photograph in the
+       design without putting text on top of it. */
+    /* Rather than fade a photograph out from under the copy — which still
+       left body text sitting over a face — the artwork is confined to a band
+       below the hero copy. Text on white, image as image. */
+    .hero-art {
+      top: auto !important; height: 190px !important;
+      background-position: center 62% !important;
+      background-size: cover !important;
+      border-radius: 16px;
+      margin: 0 18px 0;
+      left: 0; right: 0; width: auto;
+      position: relative !important;
+      order: 2;
+    }
+    .hero-art::before { display: none !important; }
+    .editorial-hero {
+      display: flex !important; flex-direction: column;
+      overflow: visible !important;
+    }
+    .editorial-hero .wrap { order: 1; }
+    .hero-copy { width: 100% !important; }
+    .editorial-title { font-size: 30px !important; line-height: 1.14 !important; }
+    .hero-summary { font-size: 15.5px; margin-bottom: 18px; }
+    .benefit-list { gap: 8px; margin-bottom: 20px; }
+    .benefit-list li { font-size: 14.5px; }
+    .hero-actions { gap: 12px; }
+  }
+
+  /* ── Mobile quick access ────────────────────────────────────────────── */
+  .quick-access { display:none; }
+  @media (max-width:700px) {
+    .quick-access {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+      padding:0 18px 8px; margin-top:-8px;
+    }
+    .qa-tile {
+      display:flex; flex-direction:column; align-items:center; gap:5px;
+      padding:14px 6px 12px; min-height:96px;
+      background:#fff; border:1px solid var(--border-light); border-radius:14px;
+      text-align:center; transition:border-color .15s, background .15s;
+    }
+    .qa-tile:active { background:var(--leaf-pale); border-color:var(--forest-light); }
+    .qa-ico {
+      width:38px; height:38px; border-radius:11px; display:grid; place-items:center;
+      background:var(--leaf-pale); color:var(--forest-mid);
+    }
+    .qa-label { font-size:12px; font-weight:700; color:var(--ink-dark); line-height:1.2; letter-spacing:-.01em; }
+    .qa-sub   { font-size:11.5px; color:var(--ink-muted); line-height:1.2; }
+
+    /* The three journey images are decorative repeats of the hero art. At
+       full height they added roughly 900px to the page on their own. */
+    .journey-step img { height:132px; object-fit:cover; object-position:center; aspect-ratio:auto; }
+    .journey-step { padding-bottom:4px; }
+    .journey-close { margin-top:22px !important; font-size:15px; }
+    .story-image img { height:150px !important; }
+  }
 </style>
 @endsection
 
@@ -126,13 +183,13 @@
         <h1 class="editorial-title" id="home-title" data-i18n="home_title">Jukwaa la Kidigitali la Wakulima wa Tanzania.</h1>
         <p class="hero-summary" data-i18n="home_summary">Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.</p>
         <ul class="benefit-list">
-          <li><span class="material-symbols-rounded" aria-hidden="true">check_circle</span><span data-i18n="benefit_1">Maarifa sahihi na kwa wakati</span></li>
-          <li><span class="material-symbols-rounded" aria-hidden="true">check_circle</span><span data-i18n="benefit_2">Ufikiaji wa masoko na wanunuzi</span></li>
-          <li><span class="material-symbols-rounded" aria-hidden="true">check_circle</span><span data-i18n="benefit_3">Zana za kisasa za kilimo</span></li>
-          <li><span class="material-symbols-rounded" aria-hidden="true">check_circle</span><span data-i18n="benefit_4">Jumuiya ya wakulima na ushauri</span></li>
+          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_1">Maarifa sahihi na kwa wakati</span></li>
+          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_2">Ufikiaji wa masoko na wanunuzi</span></li>
+          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_3">Zana za kisasa za kilimo</span></li>
+          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_4">Jumuiya ya wakulima na ushauri</span></li>
         </ul>
         <div class="hero-actions">
-          <a href="/download" class="btn btn-gold"><span class="material-symbols-rounded" aria-hidden="true">download</span><span data-i18n="download_app">Pakua App ya Mkulima</span></a>
+          <a href="/download" class="btn btn-gold"><x-icon name="download" class="ico" /><span data-i18n="download_app">Pakua App ya Mkulima</span></a>
           <a href="/pitch-deck" class="text-link" data-i18n="view_pitch">Tazama Pitch Deck →</a>
         </div>
         <div class="availability" aria-label="App availability">
@@ -142,6 +199,49 @@
       </div>
     </div>
   </section>
+
+  {{-- Mobile quick access.
+
+       The brief asks that the home page say what MkulimaForum does and put the
+       main services within one to three taps. Before this, the capabilities
+       grid was the fourth section down — roughly 3,500px on a 390px screen —
+       so a farmer arriving on a phone saw a hero, a testimonial and a
+       three-step explainer before anything they could actually use.
+
+       Hidden above 700px, where the editorial layout and the header nav
+       already do this job. --}}
+  <nav class="quick-access" aria-label="Huduma kuu">
+    <a href="/solutions#mkulima-ai" class="qa-tile">
+      <span class="qa-ico"><x-icon name="scan" :size="22" /></span>
+      <span class="qa-label" data-i18n="qa_ai">Mkulima AI</span>
+      <span class="qa-sub" data-i18n="qa_ai_sub">Tambua ugonjwa</span>
+    </a>
+    <a href="/verify" class="qa-tile">
+      <span class="qa-ico"><x-icon name="verified" :size="22" /></span>
+      <span class="qa-label" data-i18n="qa_verify">Kagua Pembejeo</span>
+      <span class="qa-sub" data-i18n="qa_verify_sub">Epuka bandia</span>
+    </a>
+    <a href="/solutions#soko" class="qa-tile">
+      <span class="qa-ico"><x-icon name="storefront" :size="22" /></span>
+      <span class="qa-label" data-i18n="qa_market">Soko la Mazao</span>
+      <span class="qa-sub" data-i18n="qa_market_sub">Nunua na uuze</span>
+    </a>
+    <a href="/solutions#bei" class="qa-tile">
+      <span class="qa-ico"><x-icon name="chart" :size="22" /></span>
+      <span class="qa-label" data-i18n="qa_prices">Bei za Soko</span>
+      <span class="qa-sub" data-i18n="qa_prices_sub">Bei za leo</span>
+    </a>
+    <a href="/solutions#hali-ya-hewa" class="qa-tile">
+      <span class="qa-ico"><x-icon name="sun" :size="22" /></span>
+      <span class="qa-label" data-i18n="qa_weather">Hali ya Hewa</span>
+      <span class="qa-sub" data-i18n="qa_weather_sub">Utabiri wa mvua</span>
+    </a>
+    <a href="/community" class="qa-tile">
+      <span class="qa-ico"><x-icon name="groups" :size="22" /></span>
+      <span class="qa-label" data-i18n="qa_community">Jamii</span>
+      <span class="qa-sub" data-i18n="qa_community_sub">Uliza wakulima</span>
+    </a>
+  </nav>
 
   <section class="story-band" aria-labelledby="farmer-story">
     <div class="story-grid">
@@ -176,23 +276,23 @@
     <div class="wrap">
       <div class="cap-head"><div><span class="eyebrow" data-i18n="cap_kicker">KILA KITU MAHALI PAMOJA</span><h2 class="journey-title" id="cap-title" data-i18n="cap_title">Zana za kukusaidia kutoka shambani hadi sokoni</h2></div><a href="/solutions" class="text-link" data-i18n="all_solutions">Angalia suluhisho zote →</a></div>
       <div class="cap-grid">
-        <article class="cap-item"><span class="material-symbols-rounded" aria-hidden="true">document_scanner</span><h3>Mkulima AI</h3><p>Tambua matatizo ya mimea na pata ushauri wa vitendo.</p></article>
-        <article class="cap-item"><span class="material-symbols-rounded" aria-hidden="true">verified</span><h3>Kagua Pembejeo</h3><p>Thibitisha ubora kabla ya kununua mbegu, dawa au mbolea.</p></article>
-        <article class="cap-item"><span class="material-symbols-rounded" aria-hidden="true">storefront</span><h3>Soko la Kilimo</h3><p>Fikia wanunuzi, wauzaji na bei za mazao kwa urahisi.</p></article>
-        <article class="cap-item"><span class="material-symbols-rounded" aria-hidden="true">groups</span><h3>Jamii ya Wakulima</h3><p>Jifunze, uliza maswali na shiriki uzoefu na wengine.</p></article>
+        <article class="cap-item"><x-icon name="scan" class="ico" /><h3>Mkulima AI</h3><p>Tambua matatizo ya mimea na pata ushauri wa vitendo.</p></article>
+        <article class="cap-item"><x-icon name="verified" class="ico" /><h3>Kagua Pembejeo</h3><p>Thibitisha ubora kabla ya kununua mbegu, dawa au mbolea.</p></article>
+        <article class="cap-item"><x-icon name="storefront" class="ico" /><h3>Soko la Kilimo</h3><p>Fikia wanunuzi, wauzaji na bei za mazao kwa urahisi.</p></article>
+        <article class="cap-item"><x-icon name="groups" class="ico" /><h3>Jamii ya Wakulima</h3><p>Jifunze, uliza maswali na shiriki uzoefu na wengine.</p></article>
       </div>
     </div>
   </section>
 
-  <section class="final-cta" aria-labelledby="cta-title"><div class="wrap"><span class="eyebrow">ANZA LEO</span><h2 id="cta-title">Kilimo bora kiko mikononi mwako.</h2><p>Pakua MkulimaForum na upate maarifa, masoko na msaada unaohitaji kila siku.</p><a href="/download" class="btn btn-gold btn-lg"><span class="material-symbols-rounded" aria-hidden="true">download</span> Pakua App ya Mkulima</a></div></section>
+  <section class="final-cta" aria-labelledby="cta-title"><div class="wrap"><span class="eyebrow">ANZA LEO</span><h2 id="cta-title">Kilimo bora kiko mikononi mwako.</h2><p>Pakua MkulimaForum na upate maarifa, masoko na msaada unaohitaji kila siku.</p><a href="/download" class="btn btn-gold btn-lg"><x-icon name="download" class="ico" /> Pakua App ya Mkulima</a></div></section>
 </div>
 @endsection
 
 @section('page_scripts')
 <script nonce="{{ $cspNonce ?? '' }}">
 mkPageTranslations = {
-  sw:{home_kicker:'SHIRIKISHO · ELIMU · BIASHARA',home_title:'Jukwaa la Kidigitali la Wakulima wa Tanzania.',home_summary:'Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.',benefit_1:'Maarifa sahihi na kwa wakati',benefit_2:'Ufikiaji wa masoko na wanunuzi',benefit_3:'Zana za kisasa za kilimo',benefit_4:'Jumuiya ya wakulima na ushauri',download_app:'Pakua App ya Mkulima',view_pitch:'Tazama Pitch Deck →',available_on:'Inapatikana kwenye',journey_kicker:'ANZIA HAPA',journey_title:'Hatua 3 tu – wezesha kilimo chako',journey_sub:'Rahisi, haraka na yenye matokeo halisi.',step1_title:'Gundua',step1_desc:'Piga picha ya tatizo la mmea au uliza swali lolote la kilimo.',step2_title:'Pata suluhisho',step2_desc:'Pata majibu sahihi kutoka Mkulima AI na ushauri wa kitaalam kwa lugha rahisi.',step3_title:'Tekeleza na faidika',step3_desc:'Tumia maarifa, nunue pembejeo bora na uuze mazao kwa bei nzuri kupitia masoko ya uhakika.',cap_kicker:'KILA KITU MAHALI PAMOJA',cap_title:'Zana za kukusaidia kutoka shambani hadi sokoni',all_solutions:'Angalia suluhisho zote →'},
-  en:{home_kicker:'COMMUNITY · KNOWLEDGE · TRADE',home_title:'The Digital Platform for Tanzanian Farmers.',home_summary:'Knowledge, markets and essential services in one place. From field to market, every step is easier with MkulimaForum.',benefit_1:'Reliable, timely farming knowledge',benefit_2:'Access to markets and buyers',benefit_3:'Modern tools for better farming',benefit_4:'A farmer community and expert advice',download_app:'Download the Farmer App',view_pitch:'View Pitch Deck →',available_on:'Available on',journey_kicker:'START HERE',journey_title:'Three steps to strengthen your farm',journey_sub:'Simple, fast and built for real results.',step1_title:'Discover',step1_desc:'Photograph a crop problem or ask any farming question.',step2_title:'Get a solution',step2_desc:'Receive clear answers from Mkulima AI and practical expert guidance.',step3_title:'Act and benefit',step3_desc:'Apply the advice, buy trusted inputs and sell produce through reliable markets.',cap_kicker:'EVERYTHING IN ONE PLACE',cap_title:'Tools that support you from field to market',all_solutions:'View all solutions →'}
+  sw:{home_kicker:'SHIRIKISHO · ELIMU · BIASHARA',home_title:'Jukwaa la Kidigitali la Wakulima wa Tanzania.',home_summary:'Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.',benefit_1:'Maarifa sahihi na kwa wakati',benefit_2:'Ufikiaji wa masoko na wanunuzi',benefit_3:'Zana za kisasa za kilimo',benefit_4:'Jumuiya ya wakulima na ushauri',download_app:'Pakua App ya Mkulima',view_pitch:'Tazama Pitch Deck →',available_on:'Inapatikana kwenye',journey_kicker:'ANZIA HAPA',journey_title:'Hatua 3 tu – wezesha kilimo chako',journey_sub:'Rahisi, haraka na yenye matokeo halisi.',step1_title:'Gundua',step1_desc:'Piga picha ya tatizo la mmea au uliza swali lolote la kilimo.',step2_title:'Pata suluhisho',step2_desc:'Pata majibu sahihi kutoka Mkulima AI na ushauri wa kitaalam kwa lugha rahisi.',step3_title:'Tekeleza na faidika',step3_desc:'Tumia maarifa, nunue pembejeo bora na uuze mazao kwa bei nzuri kupitia masoko ya uhakika.',cap_kicker:'KILA KITU MAHALI PAMOJA',cap_title:'Zana za kukusaidia kutoka shambani hadi sokoni',all_solutions:'Angalia suluhisho zote →',qa_ai:'Mkulima AI',qa_ai_sub:'Tambua ugonjwa',qa_verify:'Kagua Pembejeo',qa_verify_sub:'Epuka bandia',qa_market:'Soko la Mazao',qa_market_sub:'Nunua na uuze',qa_prices:'Bei za Soko',qa_prices_sub:'Bei za leo',qa_weather:'Hali ya Hewa',qa_weather_sub:'Utabiri wa mvua',qa_community:'Jamii',qa_community_sub:'Uliza wakulima'},
+  en:{home_kicker:'COMMUNITY · KNOWLEDGE · TRADE',home_title:'The Digital Platform for Tanzanian Farmers.',home_summary:'Knowledge, markets and essential services in one place. From field to market, every step is easier with MkulimaForum.',benefit_1:'Reliable, timely farming knowledge',benefit_2:'Access to markets and buyers',benefit_3:'Modern tools for better farming',benefit_4:'A farmer community and expert advice',download_app:'Download the Farmer App',view_pitch:'View Pitch Deck →',available_on:'Available on',journey_kicker:'START HERE',journey_title:'Three steps to strengthen your farm',journey_sub:'Simple, fast and built for real results.',step1_title:'Discover',step1_desc:'Photograph a crop problem or ask any farming question.',step2_title:'Get a solution',step2_desc:'Receive clear answers from Mkulima AI and practical expert guidance.',step3_title:'Act and benefit',step3_desc:'Apply the advice, buy trusted inputs and sell produce through reliable markets.',cap_kicker:'EVERYTHING IN ONE PLACE',cap_title:'Tools that support you from field to market',all_solutions:'View all solutions →',qa_ai:'Mkulima AI',qa_ai_sub:'Diagnose disease',qa_verify:'Verify Inputs',qa_verify_sub:'Avoid fakes',qa_market:'Produce Market',qa_market_sub:'Buy and sell',qa_prices:'Market Prices',qa_prices_sub:'Prices today',qa_weather:'Weather',qa_weather_sub:'Rain forecast',qa_community:'Community',qa_community_sub:'Ask farmers'}
 };
 </script>
 @endsection

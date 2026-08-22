@@ -37,161 +37,163 @@ class ProfileScreen extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          _buildProfileHeader(user),
-          const SizedBox(height: 24),
-          _buildStatsRow(),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Miamala na Malipo'),
-          _buildMenuItem(
-            icon: Icons.account_balance_wallet,
-            title: 'Mkulima Pay',
-            subtitle: 'Lipia na uweke pesa',
-            color: Colors.green,
-            onTap: () => _navigate(context, const WalletScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.shopping_bag,
-            title: 'Maagizo Yangu',
-            subtitle: 'Fuatilia ununuzi wako',
-            color: Colors.indigo,
-            onTap: () => _navigate(context, const OrdersScreen()),
-          ),
-          const SizedBox(height: 16),
-          _buildSectionTitle('Zana za Kilimo'),
-          _buildMenuItem(
-            icon: Icons.wb_sunny,
-            title: 'Hali ya Hewa',
-            subtitle: 'Tahmini na arifa za hali ya hewa',
-            color: Colors.orange,
-            onTap: () => _navigate(context, const WeatherScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.psychology,
-            title: 'Mkulima AI',
-            subtitle: 'Msaidizi wako wa kilimo wa AI',
-            color: Colors.blue,
-            onTap: () => _navigate(context, const MkulimaBotScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.camera_alt,
-            title: 'Kagua Mimea',
-            subtitle: 'Piga picha ugundue ugonjwa',
-            color: Colors.red,
-            onTap: () => _navigate(context, const ScannerScreen()),
-          ),
-          const SizedBox(height: 16),
-          _buildSectionTitle('Mawasiliano'),
-          _buildMenuItem(
-            icon: Icons.message,
-            title: 'SMS/USSD',
-            subtitle: 'Tuma ujumbe mfupi',
-            color: Colors.blue,
-            onTap: () => _navigate(context, const SmsScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.phone_in_talk,
-            title: 'Simu ya Kupiga',
-            subtitle: 'IVR msaada wa sauti',
-            color: Colors.purple,
-            onTap: () => _navigate(context, const IvrScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.notifications,
-            title: 'Arifa Zangu',
-            subtitle: 'Taarifa muhimu',
-            color: Colors.amber,
-            badge: '3',
-            onTap: () => _navigate(context, const NotificationsScreen()),
-          ),
-          const SizedBox(height: 16),
-          _buildSectionTitle('Biashara'),
-          if (user.role == 'farmer' || user.role == 'agrodealer')
+    return RefreshIndicator(
+      onRefresh: auth.refreshUser,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildProfileHeader(user),
+            const SizedBox(height: 24),
+            _buildSectionTitle('Miamala na Malipo'),
             _buildMenuItem(
-              icon: Icons.dashboard,
-              title: 'Dashibodi ya Muuzaji',
-              subtitle: 'Onesha mauzo na bidhaa',
-              color: Colors.cyan,
-              onTap: () => _navigate(context, const SellerDashboardScreen()),
+              icon: Icons.account_balance_wallet,
+              title: 'Mkulima Pay',
+              subtitle: 'Lipia na uweke pesa',
+              color: Colors.green,
+              onTap: () => _navigate(context, const WalletScreen()),
             ),
-          _buildMenuItem(
-            icon: Icons.verified_user,
-            title: 'KYC Verification',
-            subtitle: user.kycStatus.toUpperCase(),
-            color: Colors.deepOrange,
-            onTap: () => _navigate(context, const KycScreen()),
-          ),
-          const SizedBox(height: 16),
-          _buildSectionTitle('Teknolojia Kuu'),
-          _buildMenuItem(
-            icon: Icons.flight_takeoff,
-            title: 'Huduma za Drone',
-            subtitle: 'Puliza, piga picha, fuatilia',
-            color: Colors.indigo,
-            onTap: () => _navigate(context, const DroneScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.sensors,
-            title: 'Vifaa vya IoT',
-            subtitle: 'Fuatilia udongo na hali ya hewa',
-            color: Colors.blue,
-            onTap: () => _navigate(context, const IoTScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.calculate,
-            title: 'Kadiria Mavuno',
-            subtitle: 'AI inakadiria mavuno yako',
-            color: Colors.orange,
-            onTap: () => _navigate(context, const YieldScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.security,
-            title: 'Mkulima Escrow',
-            subtitle: 'Linda malipo yako',
-            color: Colors.green,
-            onTap: () => _navigate(context, const EscrowScreen()),
-          ),
-          const SizedBox(height: 16),
-          _buildSectionTitle('Mfumo'),
-          _buildMenuItem(
-            icon: Icons.settings,
-            title: 'Mipangilio',
-            subtitle: 'Weka upendeleo wa programu',
-            color: Colors.grey,
-            onTap: () => _navigate(context, const SettingsScreen()),
-          ),
-          _buildMenuItem(
-            icon: Icons.help_outline,
-            title: 'Msaada',
-            subtitle: 'Jifunze jinsi ya kutumia',
-            color: Colors.lightBlue,
-            onTap: () {},
-          ),
-          const SizedBox(height: 32),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                await auth.logout();
-                if (context.mounted) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
-                }
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Toka'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[700],
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+            _buildMenuItem(
+              icon: Icons.shopping_bag,
+              title: 'Maagizo Yangu',
+              subtitle: 'Fuatilia ununuzi wako',
+              color: Colors.indigo,
+              onTap: () => _navigate(context, const OrdersScreen()),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Zana za Kilimo'),
+            _buildMenuItem(
+              icon: Icons.wb_sunny,
+              title: 'Hali ya Hewa',
+              subtitle: 'Tahmini na arifa za hali ya hewa',
+              color: Colors.orange,
+              onTap: () => _navigate(context, const WeatherScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.psychology,
+              title: 'Mkulima AI',
+              subtitle: 'Msaidizi wako wa kilimo wa AI',
+              color: Colors.blue,
+              onTap: () => _navigate(context, const MkulimaBotScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.camera_alt,
+              title: 'Kagua Mimea',
+              subtitle: 'Piga picha ugundue ugonjwa',
+              color: Colors.red,
+              onTap: () => _navigate(context, const ScannerScreen()),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Mawasiliano'),
+            _buildMenuItem(
+              icon: Icons.message,
+              title: 'SMS/USSD',
+              subtitle: 'Tuma ujumbe mfupi',
+              color: Colors.blue,
+              onTap: () => _navigate(context, const SmsScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.phone_in_talk,
+              title: 'Simu ya Kupiga',
+              subtitle: 'IVR msaada wa sauti',
+              color: Colors.purple,
+              onTap: () => _navigate(context, const IvrScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.notifications,
+              title: 'Arifa Zangu',
+              subtitle: 'Taarifa muhimu',
+              color: Colors.amber,
+              badge: '3',
+              onTap: () => _navigate(context, const NotificationsScreen()),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Biashara'),
+            if (user.role == 'farmer' || user.role == 'agrodealer')
+              _buildMenuItem(
+                icon: Icons.dashboard,
+                title: 'Dashibodi ya Muuzaji',
+                subtitle: 'Onesha mauzo na bidhaa',
+                color: Colors.cyan,
+                onTap: () => _navigate(context, const SellerDashboardScreen()),
+              ),
+            _buildMenuItem(
+              icon: Icons.verified_user,
+              title: 'KYC Verification',
+              subtitle: user.kycStatus.toUpperCase(),
+              color: Colors.deepOrange,
+              onTap: () => _navigate(context, const KycScreen()),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Teknolojia Kuu'),
+            _buildMenuItem(
+              icon: Icons.flight_takeoff,
+              title: 'Huduma za Drone',
+              subtitle: 'Puliza, piga picha, fuatilia',
+              color: Colors.indigo,
+              onTap: () => _navigate(context, const DroneScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.sensors,
+              title: 'Vifaa vya IoT',
+              subtitle: 'Fuatilia udongo na hali ya hewa',
+              color: Colors.blue,
+              onTap: () => _navigate(context, const IoTScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.calculate,
+              title: 'Kadiria Mavuno',
+              subtitle: 'AI inakadiria mavuno yako',
+              color: Colors.orange,
+              onTap: () => _navigate(context, const YieldScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.security,
+              title: 'Mkulima Escrow',
+              subtitle: 'Linda malipo yako',
+              color: Colors.green,
+              onTap: () => _navigate(context, const EscrowScreen()),
+            ),
+            const SizedBox(height: 16),
+            _buildSectionTitle('Mfumo'),
+            _buildMenuItem(
+              icon: Icons.settings,
+              title: 'Mipangilio',
+              subtitle: 'Weka upendeleo wa programu',
+              color: Colors.grey,
+              onTap: () => _navigate(context, const SettingsScreen()),
+            ),
+            _buildMenuItem(
+              icon: Icons.help_outline,
+              title: 'Msaada',
+              subtitle: 'Jifunze jinsi ya kutumia',
+              color: Colors.lightBlue,
+              onTap: () => _navigate(context, const SettingsScreen()),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await auth.logout();
+                  if (context.mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text('Toka'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red[700],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -219,10 +221,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Hujajiunga bado',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -243,10 +242,7 @@ class ProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Ingia Sasa',
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: const Text('Ingia Sasa', style: TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(height: 16),
@@ -256,9 +252,7 @@ class ProfileScreen extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
                   );
                 },
                 style: OutlinedButton.styleFrom(
@@ -288,14 +282,15 @@ class ProfileScreen extends StatelessWidget {
               backgroundColor: MkColors.primary,
               child: Text(
                 user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
-                style: const TextStyle(fontSize: 36, color: Colors.white),
+                style: const TextStyle(fontSize: 36, color: MkColors.charcoal),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               user.name,
               style: const TextStyle(
-                fontSize: 22,
+                fontFamily: 'serif',
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -322,52 +317,12 @@ class ProfileScreen extends StatelessWidget {
                     style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
                   backgroundColor: user.kycStatus == 'verified'
-                      ? Colors.green
-                      : Colors.orange,
+                      ? MkColors.leafGreen
+                      : MkColors.accent,
                 ),
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatsRow() {
-    return Row(
-      children: [
-        _buildStatCard('Mauzo', '12', Icons.trending_up, Colors.green),
-        const SizedBox(width: 12),
-        _buildStatCard('Manunuzi', '5', Icons.shopping_cart, Colors.blue),
-        const SizedBox(width: 12),
-        _buildStatCard('Mapato', '450K', Icons.attach_money, Colors.orange),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
-    return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -383,7 +338,8 @@ class ProfileScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: MkColors.primary,
+            color: MkColors.charcoal,
+            fontFamily: 'serif',
           ),
         ),
       ),
@@ -404,10 +360,17 @@ class ProfileScreen extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color == Colors.green || color == MkColors.leafGreen
+                ? MkColors.leafGreen.withValues(alpha: 0.12)
+                : MkColors.accentSoft,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: color),
+          child: Icon(
+            icon,
+            color: color == Colors.green || color == MkColors.leafGreen
+                ? MkColors.leafGreen
+                : MkColors.charcoal,
+          ),
         ),
         title: Text(title),
         subtitle: Text(subtitle),
@@ -423,7 +386,7 @@ class ProfileScreen extends StatelessWidget {
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
               )
-            : const Icon(Icons.chevron_right),
+            : const Icon(Icons.chevron_right, color: MkColors.muted),
         onTap: onTap,
       ),
     );

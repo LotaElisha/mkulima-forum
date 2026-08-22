@@ -51,89 +51,95 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(titles[_currentIndex]),
-        backgroundColor: MkColors.surface,
-        foregroundColor: MkColors.charcoal,
-        elevation: 0,
-        actions: [
-          // Flagship: AI Plant Scanner — always visible, brand accent color.
-          IconButton(
-            tooltip: MkStrings.scannerTooltip,
-            onPressed: _openScanner,
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: MkColors.accent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.center_focus_strong,
-                size: 20,
-                color: MkColors.charcoal,
-              ),
-            ),
-          ),
-          if (_currentIndex == 1)
-            Consumer<CartProvider>(
-              builder: (context, cart, child) {
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.shopping_cart),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const CartScreen()),
-                        );
-                      },
+      appBar: _currentIndex == 0
+          ? null
+          : AppBar(
+              title: Text(titles[_currentIndex]),
+              backgroundColor: MkColors.surface,
+              foregroundColor: MkColors.charcoal,
+              elevation: 0,
+              actions: [
+                // Flagship: AI Plant Scanner — always visible, brand accent color.
+                IconButton(
+                  tooltip: MkStrings.scannerTooltip,
+                  onPressed: _openScanner,
+                  icon: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: MkColors.primary,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    if (cart.itemCount > 0)
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                    child: const Icon(
+                      Icons.center_focus_strong,
+                      size: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                if (_currentIndex == 1)
+                  Consumer<CartProvider>(
+                    builder: (context, cart, child) {
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.shopping_cart),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const CartScreen(),
+                                ),
+                              );
+                            },
                           ),
-                          child: Text(
-                            '${cart.itemCount}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                          if (cart.itemCount > 0)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  '${cart.itemCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                        ],
+                      );
+                    },
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.notifications_outlined),
+                  onPressed: () {
+                    if (!auth.isAuthenticated) {
+                      LoginModal.show(context);
+                      return;
+                    }
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const NotificationsScreen(),
                       ),
-                  ],
-                );
-              },
+                    );
+                  },
+                ),
+                if (!auth.isAuthenticated)
+                  TextButton(
+                    onPressed: () => LoginModal.show(context),
+                    child: const Text(
+                      MkStrings.navLogin,
+                      style: TextStyle(color: MkColors.charcoal),
+                    ),
+                  ),
+              ],
             ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              if (!auth.isAuthenticated) {
-                LoginModal.show(context);
-                return;
-              }
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
-              );
-            },
-          ),
-          if (!auth.isAuthenticated)
-            TextButton(
-              onPressed: () => LoginModal.show(context),
-              child: const Text(
-                MkStrings.navLogin,
-                style: TextStyle(color: MkColors.charcoal),
-              ),
-            ),
-        ],
-      ),
       body: screens[_currentIndex],
 
       // Flagship center action: one-tap AI Plant Scanner from any tab.
@@ -143,8 +149,11 @@ class _HomeScreenState extends State<HomeScreen> {
         child: FloatingActionButton(
           onPressed: _openScanner,
           tooltip: MkStrings.scannerTooltip,
-          backgroundColor: MkColors.accent,
-          foregroundColor: MkColors.charcoal,
+          // The scanner is the flagship action, so it takes the brand green.
+          // It was amber on a charcoal bar, which read as a warning rather
+          // than as the main thing to press.
+          backgroundColor: MkColors.primary,
+          foregroundColor: Colors.white,
           shape: const CircleBorder(),
           elevation: 4,
           child: const Icon(Icons.center_focus_strong, size: 32),
@@ -155,11 +164,18 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
-        color: MkColors.surfaceRaised,
+        // White bar with a hairline, matching the 90%-white direction. A solid
+        // dark slab across the bottom of every screen fought the white canvas
+        // above it and made the amber FAB the loudest thing on the page.
+        color: MkColors.surface,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         padding: EdgeInsets.zero,
-        child: SizedBox(
-          height: 62,
+        child: Container(
+          decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: MkColors.border)),
+          ),
+          height: 66,
           child: Row(
             children: [
               _NavItem(
@@ -184,9 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     MkStrings.navScanner,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: MkColors.charcoal,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: MkColors.primary,
                     ),
                   ),
                 ),
@@ -230,25 +246,34 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? MkColors.charcoal : MkColors.muted;
+    // Selected is brand green on white; unselected is muted ink. The bar used
+    // to be amber-on-charcoal, where the unselected state was white at 62%
+    // opacity — under 3:1 against the bar behind it, so on a phone in daylight
+    // three of the five tabs were barely visible.
+    final color = selected ? MkColors.primary : MkColors.muted;
 
     return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(selected ? selectedIcon : icon, color: color, size: 24),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                color: color,
-                fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+      child: Semantics(
+        selected: selected,
+        button: true,
+        label: label,
+        child: InkWell(
+          onTap: onTap,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(selected ? selectedIcon : icon, color: color, size: 25),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  color: color,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
+import '../providers/auth_provider.dart';
+import 'notifications_screen.dart';
+import 'login_modal.dart';
 import '../services/api_service.dart';
 import 'scanner_screen.dart';
 import 'search_screen.dart';
@@ -76,11 +79,71 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().user;
+    final firstName = user?.name.trim().split(RegExp(r'\s+')).first;
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: MkColors.primary,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(Icons.eco_outlined, color: MkColors.charcoal),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      firstName == null
+                          ? 'Karibu Mkulima'
+                          : 'Habari, $firstName',
+                      style: const TextStyle(
+                        fontFamily: 'serif',
+                        fontSize: 25,
+                        fontWeight: FontWeight.w700,
+                        color: MkColors.charcoal,
+                      ),
+                    ),
+                    const Text(
+                      'Kilimo bora huanza na taarifa sahihi',
+                      style: TextStyle(color: MkColors.muted, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton.filledTonal(
+                tooltip: 'Arifa',
+                onPressed: () {
+                  final auth = context.read<AuthProvider>();
+                  if (!auth.isAuthenticated) {
+                    LoginModal.show(context);
+                    return;
+                  }
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                },
+                style: IconButton.styleFrom(
+                  backgroundColor: MkColors.surfaceRaised,
+                  foregroundColor: MkColors.charcoal,
+                  side: const BorderSide(color: MkColors.border),
+                ),
+                icon: const Icon(Icons.notifications_none_outlined),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           // ============ HERO: AI PLANT SCANNER (flagship, above the fold) ====
           _ScannerHero(onScan: _openScanner),
 
@@ -135,7 +198,11 @@ class _HomeTabState extends State<HomeTab> {
           // ============ QUICK SERVICES =====================================
           const Text(
             'Huduma za Haraka',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontFamily: 'serif',
+              fontSize: 21,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 12),
           GridView.count(
@@ -175,7 +242,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.price_change_outlined,
                 label: 'Bei za Masoko',
-                color: MkColors.accent,
+                color: MkColors.primary,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const MarketPricesScreen()),
                 ),
@@ -183,7 +250,7 @@ class _HomeTabState extends State<HomeTab> {
               _QuickService(
                 icon: Icons.wb_sunny_outlined,
                 label: 'Hali ya Hewa',
-                color: MkColors.accent,
+                color: MkColors.primary,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const WeatherScreen()),
                 ),
@@ -216,7 +283,11 @@ class _HomeTabState extends State<HomeTab> {
             children: [
               const Text(
                 'Mijadala Inayovuma',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontFamily: 'serif',
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               TextButton(
                 onPressed: () => widget.onSwitchTab?.call(2),
@@ -301,7 +372,7 @@ class _ScannerHero extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: MkColors.accent,
+                  color: MkColors.primary,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
@@ -327,7 +398,7 @@ class _ScannerHero extends StatelessWidget {
                       MkStrings.scannerTagline,
                       style: TextStyle(
                         fontSize: 13,
-                        color: MkColors.accent,
+                        color: MkColors.leafPale,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                       ),
@@ -354,8 +425,8 @@ class _ScannerHero extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MkColors.accent,
-                foregroundColor: MkColors.charcoal,
+                backgroundColor: MkColors.primary,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),

@@ -148,6 +148,17 @@
       display:inline-flex; align-items:center; gap:6px;
       min-height:44px; font-size:.9375rem;
     }
+
+    /* Every inline link inside an auth screen is a real touch target.
+       "Umesahau?" was 22px tall and the terms links 16px — under any
+       guideline, and these are the links a farmer most needs to hit. */
+    .auth-card a, .foot a, .auth-brand{
+      display:inline-flex; align-items:center;
+      min-height:44px; padding:2px 0;
+    }
+    .consent a{ min-height:0; display:inline; }
+    .consent{ min-height:44px; align-items:center; }
+    .consent input{ width:26px; height:26px; }
   </style>
   @yield('head_extra')
 </head>

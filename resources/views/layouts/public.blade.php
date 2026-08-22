@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>@yield('title', 'MkulimaForum | AI-Powered Agriculture Platform for Tanzania')</title>
   <meta name="description" content="@yield('meta_description', 'MkulimaForum is an AI-powered digital agriculture ecosystem connecting Tanzania farmers with knowledge, markets, trusted inputs, weather intelligence, and practical farming support.')">
-  <meta name="theme-color" content="#FFFDF8">
+  <meta name="theme-color" content="#FFFFFF">
   <link rel="canonical" href="{{ url()->current() }}">
 
   {{-- Open Graph --}}
@@ -23,9 +23,15 @@
   <meta name="twitter:description" content="@yield('og_description', 'AI Agriculture Platform for Tanzania')">
   <meta name="twitter:image" content="{{ url($settings['logo_url'] ?? '/images/brand-banner.png') }}">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Material+Symbols+Rounded:opsz,wght,FILL@20..48,400,0&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  {{-- No remote fonts.
+
+       This used to pull four families and thirteen weights from
+       fonts.googleapis.com — including Material Symbols, on which every icon
+       on the site depended. On a slow or filtered Tanzanian mobile connection
+       that request blocked first paint and, when it failed, printed the icon
+       names as literal text. Typography now uses the device's own UI font,
+       which paints instantly, costs nothing in data, and looks native on the
+       low-cost Androids most farmers are using. --}}
 
   @yield('head_extra')
 
@@ -33,23 +39,29 @@
     /* =============================================
        DESIGN TOKENS
        ============================================= */
+    /* Brand direction: a white canvas carrying agricultural green.
+       White is the page; green marks what you can act on — buttons, active
+       navigation, verification state, progress. Gold survives only as a small
+       highlight, never as a primary action, so "the green button" is always
+       the thing to press. */
     :root {
-      --forest-dark:   #264F27;
-      --forest-mid:    #356D33;
-      --forest-light:  #477A42;
-      --leaf-green:    #477A42;
-      --leaf-bright:   #67935B;
-      --leaf-pale:     #F3F6EC;
-      --sun-gold:      #EFA91F;
-      --sun-amber:     #F6B83A;
-      --cream-bg:      #FFFDF8;
-      --surface-card:  #FFFEFA;
-      --ink-dark:      #181711;
-      --ink-body:      #4B4942;
-      --ink-muted:     #6F6B61;
-      --ink-faint:     #9C968B;
-      --border-light:  #E9E3D8;
-      --border-mid:    #D7CDBC;
+      --forest-dark:   #14532D;
+      --forest-mid:    #1B7A3E;
+      --forest-light:  #2E9150;
+      --leaf-green:    #1B7A3E;
+      --leaf-bright:   #3FA463;
+      --leaf-pale:     #EEF7F0;   /* subtle green tint for section separation */
+      --sun-gold:      #E0A008;   /* accent only — badges, small highlights */
+      --sun-amber:     #F0B429;
+      --cream-bg:      #FFFFFF;   /* was #FFFDF8 cream; the brief asks for white */
+      --surface-card:  #FFFFFF;
+      --surface-soft:  #F7F9F7;   /* the only non-white background in use */
+      --ink-dark:      #0F1511;
+      --ink-body:      #3B443E;
+      --ink-muted:     #626D66;   /* 5.3:1 on white — was #6F6B61 at 4.6:1 */
+      --ink-faint:     #8A938C;
+      --border-light:  #E5EAE6;
+      --border-mid:    #CDD6CF;
       --radius-2xl:    28px;
       --radius-xl:     20px;
       --radius-lg:     14px;
@@ -67,14 +79,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       color: var(--ink-body);
       background: var(--cream-bg);
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
-    h1,h2,h3,h4,h5,h6,.brand-font { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
+    h1,h2,h3,h4,h5,h6,.brand-font { font-family: inherit; letter-spacing: -0.022em; font-weight: 800; }
     a { color: inherit; text-decoration: none; }
     img,svg { display: block; max-width: 100%; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; }
@@ -100,21 +112,20 @@
        ============================================= */
     .eyebrow {
       display: inline-block;
-      font-family: 'Outfit', sans-serif;
-      font-size: .78rem; font-weight: 800;
+            font-size: .82rem; font-weight: 800;
       letter-spacing: .14em; text-transform: uppercase;
       color: var(--forest-light); margin-bottom: 14px;
     }
     .page-title {
-      font-family: 'DM Serif Display', Georgia, serif;
+      font-family: inherit;
       font-size: clamp(2.2rem, 5vw, 3.6rem);
-      font-weight: 400; line-height: 1.05;
+      font-weight: 800; line-height: 1.08;
       color: var(--ink-dark); margin-bottom: 20px;
     }
     .section-title {
-      font-family: 'DM Serif Display', Georgia, serif;
+      font-family: inherit;
       font-size: clamp(1.7rem, 3.5vw, 2.5rem);
-      font-weight: 400; line-height: 1.14;
+      font-weight: 800; line-height: 1.16;
       color: var(--ink-dark); margin-bottom: 14px;
     }
     .section-lead {
@@ -129,7 +140,7 @@
        ============================================= */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .95rem;
+       font-weight: 700; font-size: .95rem;
       padding: 13px 26px; border-radius: 999px; border: none;
       transition: all .22s cubic-bezier(.16,1,.3,1); white-space: nowrap;
     }
@@ -184,7 +195,7 @@
     .nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .nav-logo img { height: 44px; width: auto; object-fit: contain; }
     .nav-logo-text {
-      font-family: 'Outfit', sans-serif; font-size: 1.18rem; font-weight: 900;
+       font-size: 1.18rem; font-weight: 900;
       color: var(--forest-dark); display: none;
     }
     /* Primary links */
@@ -297,7 +308,7 @@
     @media(max-width: 540px) { .foot-grid { grid-template-columns: 1fr; } }
     .foot-brand img { height: 42px; width: auto; }
     .foot-brand p { font-size: .88rem; margin-top: 14px; color: rgba(255,255,255,.65); line-height: 1.6; }
-    .foot-col-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: .92rem; color: #fff; margin-bottom: 18px; letter-spacing: .04em; }
+    .foot-col-title {  font-weight: 800; font-size: .92rem; color: #fff; margin-bottom: 18px; letter-spacing: .04em; }
     .foot-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
     .foot-links a { font-size: .88rem; color: rgba(255,255,255,.65); transition: color .18s; }
     .foot-links a:hover { color: var(--sun-gold); }
@@ -336,7 +347,7 @@
       color: var(--ink-body); border: 1px solid var(--border-light); border-radius: var(--radius-2xl); padding: 56px;
     }
     @media(max-width: 640px) { .panel-dark { padding: 36px 24px; } }
-    .panel-dark h2 { color: var(--ink-dark); font-family:'DM Serif Display',Georgia,serif; font-weight:400; }
+    .panel-dark h2 { color: var(--ink-dark); font-family:inherit; font-weight:800; }
     .panel-dark p  { color: var(--ink-muted); }
     .panel-dark .badge.dark { background:transparent; border-color:#87A57A; color:var(--forest-mid); }
     .panel-dark .btn-ghost { background:transparent; color:var(--ink-dark); border:1.5px solid var(--ink-dark); backdrop-filter:none; }
@@ -347,7 +358,7 @@
       border-bottom: 1px solid var(--border-light);
     }
     .comm-hero h1, .verify-hero h1, .pitch-hero h1 {
-      color: var(--ink-dark) !important; font-family:'DM Serif Display',Georgia,serif !important;
+      color: var(--ink-dark) !important; font-family:inherit !important;
       font-weight:400 !important; letter-spacing:-.025em;
     }
     .comm-hero p, .verify-hero p, .pitch-hero p { color: var(--ink-muted) !important; }
@@ -355,7 +366,7 @@
       background:transparent; border-color:#87A57A; color:var(--forest-mid);
     }
     .contact-info-card { background:#F7F0E3 !important; color:var(--ink-body) !important; border:1px solid var(--border-light); }
-    .contact-info-card h3 { color:var(--ink-dark) !important; font-family:'DM Serif Display',Georgia,serif; font-weight:400 !important; }
+    .contact-info-card h3 { color:var(--ink-dark) !important; font-family:inherit; font-weight:800 !important; }
     .contact-info-card a, .contact-info-card p { color:var(--ink-muted) !important; }
     .contact-info-card .c-info-icon { background:#FFFDF8; border:1px solid var(--border-light); color:var(--forest-mid); }
     .contact-info-card .c-info-label { color:var(--forest-mid); }
@@ -374,7 +385,7 @@
     }
     section[style*="linear-gradient(135deg,#0E4220"] h2,
     section[style*="linear-gradient(135deg, #0E4220"] h2,
-    div[style*="linear-gradient(145deg,#0C3619"] h3 { color:var(--ink-dark) !important; font-family:'DM Serif Display',Georgia,serif; font-weight:400 !important; }
+    div[style*="linear-gradient(145deg,#0C3619"] h3 { color:var(--ink-dark) !important; font-family:inherit; font-weight:800 !important; }
     section[style*="linear-gradient(135deg,#0E4220"] p,
     section[style*="linear-gradient(135deg, #0E4220"] p,
     div[style*="linear-gradient(145deg,#0C3619"] p { color:var(--ink-muted) !important; }
@@ -388,6 +399,181 @@
     .js .fade-up { opacity: 0; transform: translateY(24px); transition: opacity .55s ease, transform .55s ease; }
     .js .fade-up.visible { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) { .js .fade-up { opacity: 1; transform: none; transition: none; } }
+
+    /* =============================================
+       MOBILE-FIRST CORRECTIONS
+       ---------------------------------------------
+       The desktop layout above was only ever adapted for phones by collapsing
+       grids to one column, so every section kept its 96px desktop padding and
+       every heading kept its desktop size. At 390px that produced a home page
+       6,312px tall — roughly seven and a half screens of scrolling — and a
+       solutions page of 11,173px. The rules below re-proportion the page for
+       the screen most farmers actually hold.
+       ============================================= */
+    @media (max-width: 700px) {
+
+      /* Vertical rhythm: ~40% of the desktop value. Sections still read as
+         separate, without a screen of empty space between each one. */
+      section            { padding: 44px 0; }
+      section.tight      { padding: 32px 0; }
+      .wrap, .wrap-lg, .wrap-sm { padding-left: 18px; padding-right: 18px; }
+
+      /* Type scale. clamp() was already shrinking headings by viewport, but
+         from a desktop baseline, so h1 still landed near 35px on a 390px
+         screen and wrapped to four lines. */
+      /* Sizes in px, not rem: shrinking the root font size scaled the whole
+         page down and pushed eyebrows and captions to 11px, which is not
+         readable in daylight on a phone held at arm's length. 13px is the
+         floor for any text a farmer has to read. */
+      .page-title        { font-size: 28px; line-height: 1.18; margin-bottom: 14px; }
+      .section-title     { font-size: 23px; line-height: 1.22; margin-bottom: 10px; }
+      .section-lead      { font-size: 16px; line-height: 1.62; }
+      .eyebrow           { font-size: 13px; letter-spacing: .09em; margin-bottom: 10px; }
+      body               { font-size: 16px; }
+      p, li, td, label, .card p, .tag { font-size: max(1em, 14px); }
+
+      /* Cards: compact, so more than one is visible at a time. Desktop used
+         32px padding and a 20px radius, which at phone width leaves a card
+         that is mostly margin. */
+      .card              { padding: 18px; border-radius: 14px; }
+      .card h3           { font-size: 1.05rem; margin-bottom: 6px; }
+      .card p            { font-size: .9rem; line-height: 1.55; }
+      .card-icon         { width: 42px; height: 42px; border-radius: 12px; margin-bottom: 12px; }
+      .grid-2, .grid-3, .grid-4 { gap: 12px; }
+
+      /* Touch targets. The audit found 19-25 controls per page under the 40px
+         minimum — mostly 16px text links in the footer and drawer. */
+      .btn               { min-height: 48px; padding: 13px 22px; width: 100%; }
+      .btn-sm            { min-height: 44px; width: auto; }
+      .btn-lg            { min-height: 52px; font-size: 1rem; }
+      .drawer-links a,
+      .drawer-links button { min-height: 52px; }
+      #site-footer a     { display: inline-block; padding: 7px 0; min-height: 40px; }
+
+      /* Nothing below 13px: 12px eyebrows and captions are unreadable in
+         daylight on a small screen. */
+      .tag               { font-size: .8rem; padding: 4px 11px; }
+
+      /* Inline text links ("Tazama Pitch Deck →", "Angalia suluhisho zote →")
+         were 22-29px tall, well under any touch guideline. */
+      .text-link, .store-pill {
+        display: inline-flex; align-items: center;
+        min-height: 44px; padding: 6px 2px;
+      }
+      .store-pill { padding: 6px 12px; font-size: 13px; }
+      .hero-kicker { font-size: 13px !important; }
+
+      /* Filter chips and any other bare <button> in page content. */
+      .cat-btn, .chip, .filter-btn { min-height: 44px !important; padding: 10px 16px !important; }
+
+      /* The drawer close control was a 20x29 glyph. */
+      .drawer-header button, .hamburger { min-width: 48px; min-height: 48px; }
+      .availability small { font-size: 13px; }
+
+      /* Hover lifts are meaningless on touch and cause a sticky pressed state. */
+      .card:hover, .btn:hover { transform: none; box-shadow: var(--shadow-sm); }
+
+      /* Page-level blocks keep their own desktop padding, declared inside each
+         page's <style>. Rather than edit ten files, cap the recurring ones
+         here; this is what turns an 11,000px page into a scrollable one. */
+      .solution-row, .journey, .light-capabilities, .final-cta,
+      .sol-band, .submit-story-panel, .no-pitch, .story-band,
+      .contact-form-card, .partner-form, .deck-inner, .pdf-fallback {
+        padding-top: 36px !important;
+        padding-bottom: 36px !important;
+      }
+      .cap-item, .highlight-card, .principle-card, .team-card,
+      .story-card-body, .contact-info-card {
+        padding: 18px !important;
+      }
+      .contact-form-card, .partner-form, .submit-story-panel {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+      }
+      .hero-copy { padding: 28px 0 !important; }
+      .editorial-hero, .editorial-hero .wrap { min-height: 0 !important; }
+
+      /* Section separation without a colour wash: the brief asks for white to
+         dominate, so alternating bands are a hairline rule, not a fill. */
+      .panel-dark { padding: 28px 18px !important; border-radius: 16px; }
+
+      /* Hero blocks. The home hero carried 315px of top padding on a 390px
+         screen — most of the first screenful was empty space above the
+         headline. */
+      .page-hero, .editorial-hero, .hero-section {
+        padding-top: 28px !important;
+        padding-bottom: 32px !important;
+      }
+      .editorial-title { margin-bottom: 16px; }
+
+      /* Long-form marketing rows. Eight of these stacked is what made
+         /solutions 11,000px tall. */
+      .solution-row { gap: 20px !important; }
+      .sol-tile { padding: 20px !important; min-height: 0 !important; }
+
+      /* Footer. At 1,571px it was nearly two full screens of links below every
+         page. Two columns halves that without shrinking any tap target, and
+         the link rows tighten from 40px to a still-comfortable 36px because
+         they sit in a list where a mis-tap is cheap. */
+      .foot-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 20px !important;
+        padding-bottom: 28px !important;
+      }
+      .foot-brand { grid-column: 1 / -1; }
+      #site-footer { padding-top: 36px !important; }
+      #site-footer a { padding: 9px 0; min-height: 42px; font-size: 14px; }
+      .foot-col-title { margin-bottom: 8px !important; font-size: 13px !important; }
+    }
+
+    /* =============================================
+       STICKY MOBILE ACTION BAR
+       ---------------------------------------------
+       The primary conversion (get the app / sign in) used to live only in the
+       hamburger drawer once the page scrolled past the hero, so on a phone the
+       site had no visible call to action for thousands of pixels at a time.
+       ============================================= */
+    .mobile-action-bar { display: none; }
+    @media (max-width: 700px) {
+      .mobile-action-bar {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 180;
+        display: flex; gap: 10px; align-items: center;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(255,255,255,.97);
+        backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border-light);
+      }
+      .mobile-action-bar .btn { margin: 0; flex: 1; min-height: 48px; font-size: .95rem; }
+      .mobile-action-bar .btn-quiet {
+        flex: 0 0 auto; width: auto; padding: 13px 18px;
+        background: #fff; color: var(--forest-dark);
+        border: 1.5px solid var(--border-mid);
+      }
+      /* Clear the bar so it never covers the last line of the footer. */
+      #site-footer { padding-bottom: 84px; }
+    }
+
+    /* =============================================
+       BUTTON ROLES
+       ---------------------------------------------
+       Primary action is green. It was near-black with a gold secondary, which
+       read as a generic corporate site rather than an agricultural one and
+       gave the eye no single place to land.
+       ============================================= */
+    .btn-primary   { background: var(--forest-mid); color: #fff; }
+    .btn-primary:hover { background: var(--forest-dark); }
+    .btn-gold      { background: var(--forest-mid); color: #fff; }
+    .btn-gold:hover { background: var(--forest-dark); }
+    .btn-outline   { background: #fff; color: var(--forest-dark); border: 1.5px solid var(--border-mid); }
+    .btn-outline:hover { background: var(--leaf-pale); color: var(--forest-dark); border-color: var(--forest-light); }
+
+    /* Focus visibility: keyboard and switch-access users had no focus ring at
+       all, because `button { outline: none }` sits in the reset above. */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid var(--leaf-bright);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
@@ -455,6 +641,7 @@
         <button class="lang-btn active" id="btnSw" onclick="mkSwitchLang('sw')">SW</button>
         <button class="lang-btn" id="btnEn" onclick="mkSwitchLang('en')">EN</button>
       </div>
+      <a href="/login" class="btn btn-outline btn-sm" data-i18n="nav_login">Ingia</a>
       <a href="/download" class="btn btn-gold btn-sm" data-i18n="nav_download">Pakua App</a>
 
       <!-- Hamburger -->
@@ -501,6 +688,7 @@
     </div>
   </div>
   <div class="drawer-footer">
+    <a href="/login" class="btn btn-outline" style="flex:1; justify-content:center;" data-i18n="nav_login">Ingia</a>
     <a href="/download" class="btn btn-gold" style="flex:1; justify-content:center;" data-i18n="nav_download">Pakua App</a>
   </div>
 </nav>
@@ -573,6 +761,23 @@
   </div>
 </footer>
 
+{{-- Sticky mobile action bar.
+
+     On a phone the only route to the app or to sign-in was buried in the
+     hamburger drawer, so once a visitor scrolled past the hero — which on the
+     home page meant the next 5,000+ pixels — there was no call to action on
+     screen at all. Hidden above 700px, where the header nav already carries
+     these actions. --}}
+<div class="mobile-action-bar" role="navigation" aria-label="Vitendo vikuu">
+  <a href="/download" class="btn btn-primary">
+    <x-icon name="download" :size="18" />
+    <span data-i18n="nav_download">Pakua App</span>
+  </a>
+  <a href="/login" class="btn btn-quiet" aria-label="Ingia kwenye akaunti yako">
+    <span data-i18n="nav_login">Ingia</span>
+  </a>
+</div>
+
 <!-- ============================================================
      GLOBAL SCRIPTS: i18n + Nav
      ============================================================ -->
@@ -584,7 +789,7 @@ const MK_TRANSLATIONS = {
     nav_solutions_group:'Suluhisho', nav_community_group:'Jamii', nav_company_group:'Taasisi',
     nav_impact:'Athari', nav_partners:'Washirika', nav_pitchdeck:'Pitch Deck',
     nav_more:'Zaidi', nav_stories:'Hadithi za Wakulima', nav_tech:'Teknolojia na AI',
-    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'Pakua App',
+    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'Pakua App', nav_login:'Ingia', nav_webapp:'Web App',
     foot_tagline:'Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.',
     foot_contact_link:'Wasiliana Nasi →',
     foot_company:'KAMPUNI', foot_about:'Kuhusu Sisi', foot_impact:'Athari Zetu',
@@ -600,7 +805,7 @@ const MK_TRANSLATIONS = {
     nav_solutions_group:'Solutions', nav_community_group:'Community', nav_company_group:'Company',
     nav_impact:'Impact', nav_partners:'Partners', nav_pitchdeck:'Pitch Deck',
     nav_more:'More', nav_stories:'Farmer Stories', nav_tech:'Technology & AI',
-    nav_contact:'Contact', nav_api:'API Status', nav_download:'Download App',
+    nav_contact:'Contact', nav_api:'API Status', nav_download:'Download App', nav_login:'Login', nav_webapp:'Web App',
     foot_tagline:'A digital platform connecting farmers, agronomists, markets, and AI technology across Tanzania and East Africa.',
     foot_contact_link:'Contact Us →',
     foot_company:'COMPANY', foot_about:'About Us', foot_impact:'Our Impact',
