@@ -10,6 +10,16 @@ import '../services/api_service.dart';
 import '../services/local_database.dart' as db;
 import '../screens/login_modal.dart';
 
+/// Base URL of the MkulimaForum API.
+///
+/// Single definition so the API host and the Apple redirect URI cannot drift
+/// apart. Override at build time:
+///   flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
+const String kApiBaseUrl = String.fromEnvironment(
+  'API_URL',
+  defaultValue: 'https://mkulimaforum.app/api',
+);
+
 class AuthProvider extends ChangeNotifier {
   final ApiService _api;
   final db.LocalDatabase _db;
@@ -342,9 +352,10 @@ class AuthProvider extends ChangeNotifier {
         webAuthenticationOptions: isAndroid
             ? WebAuthenticationOptions(
                 clientId: appleServiceId,
-                redirectUri: Uri.parse(
-                  'https://mkulimaforum.com/api/auth/apple/callback',
-                ),
+                // Must match APP_URL, or Apple refuses the redirect. Built
+                // from the same --dart-define as the API base so the two
+                // cannot drift apart the way they had.
+                redirectUri: Uri.parse('$kApiBaseUrl/auth/apple/callback'),
               )
             : null,
       );

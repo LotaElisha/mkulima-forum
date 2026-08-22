@@ -110,7 +110,7 @@ class MarketPriceTest extends TestCase
 
         $this->postJson('/api/sms/receive', ['from' => '255700000001', 'text' => 'BEI mahindi'])
             ->assertOk()
-            ->assertJsonFragment(['message' => "Bei za mahindi:\nKariakoo: TZS 45,000/gunia (".now()->format('d/m').")\nApp: https://mkulimaforum.app"]);
+            ->assertJsonFragment(['message' => "Bei za mahindi:\nKariakoo: TZS 45,000/gunia (".now()->format('d/m').")\nApp: ".config('app.url')]);
 
         // No data → honest apology, never invented prices
         $response = $this->postJson('/api/sms/receive', ['from' => '255700000001', 'text' => 'BEI vanilla']);

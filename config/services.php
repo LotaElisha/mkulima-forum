@@ -85,7 +85,7 @@ return [
     'short_links' => [
         'allowed_hosts' => array_values(array_filter(array_map(
             'trim',
-            explode(',', (string) env('SHORT_LINK_ALLOWED_HOSTS', 'mkulimaforum.com,wa.me,youtube.com,youtu.be,facebook.com,instagram.com,x.com,twitter.com,linkedin.com,tiktok.com'))
+            explode(',', (string) env('SHORT_LINK_ALLOWED_HOSTS', 'mkulimaforum.app,mkulimaforum.com,wa.me,youtube.com,youtu.be,facebook.com,instagram.com,x.com,twitter.com,linkedin.com,tiktok.com'))
         ))),
     ],
 

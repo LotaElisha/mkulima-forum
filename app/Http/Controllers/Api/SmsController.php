@@ -113,7 +113,7 @@ class SmsController extends Controller
 
         if ($prices->isEmpty()) {
             return "Samahani, hatuna bei za '{$commodity}' kwa sasa. "
-                .'Angalia app: https://mkulimaforum.app';
+                .'Angalia app: '.config('app.url');
         }
 
         $lines = $prices->map(fn ($p) => sprintf(
@@ -125,7 +125,7 @@ class SmsController extends Controller
         ))->implode("\n");
 
         return "Bei za {$prices->first()->commodity}:\n{$lines}\n"
-            .'App: https://mkulimaforum.app';
+            .'App: '.config('app.url');
     }
 
     private function handleWeatherQuery(string $phone, string $text): string
@@ -156,6 +156,6 @@ class SmsController extends Controller
             ."2. HALI - Hali ya hewa\n"
             ."3. MSAADA - Msaada huu\n"
             ."4. PIGA 0714524007\n"
-            .'App: https://mkulimaforum.app';
+            .'App: '.config('app.url');
     }
 }

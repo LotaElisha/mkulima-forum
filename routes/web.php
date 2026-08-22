@@ -52,7 +52,7 @@ Route::get('/', function () {
         'kicker_vipengele' => 'Vipengele',
         'title_vipengele' => 'Zaidi ya scanner — mfumo kamili wa kilimo',
         'sub_vipengele' => 'Kila kitu mkulima anachohitaji, mahali pamoja, kwa Kiswahili.',
-        'contact_email' => 'hello@mkulimaforum.com',
+        'contact_email' => 'hello@mkulimaforum.app',
         // Impact metrics (empty until launch)
         'metric_farmers' => null,
         'metric_regions' => null,
@@ -81,7 +81,7 @@ $publicSettings = function () {
         'emblem_url' => '/images/logo-icon.jpg',
         'pitch_deck_url' => '/docs/Mkulima_Forum_Pitch_Deck.pdf',
         'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
-        'contact_email' => 'hello@mkulimaforum.com',
+        'contact_email' => 'hello@mkulimaforum.app',
         'metric_farmers' => null,
         'metric_regions' => null,
         'metric_scans' => null,
