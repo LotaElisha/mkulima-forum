@@ -38,7 +38,7 @@ Route files: `routes/api.php` (core), `api_kyc.php`, `api_notifications.php`, `a
 cd mkulima_app
 flutter pub get
 flutter run --dart-define=API_URL=http://10.0.2.2:8000/api        # Android emulator → local API
-flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
+flutter build apk --dart-define=API_URL=https://mkulimaforum.com/api
 ```
 
 The API base URL is injected via `--dart-define=API_URL` (defaults to production). No hardcoded hosts.
@@ -49,13 +49,35 @@ The API base URL is injected via `--dart-define=API_URL` (defaults to production
 cd admin-dashboard
 npm install
 npm run dev     # http://localhost:3020, proxies VITE_API_URL (default /api)
-npm run build   # uses .env.production → https://mkulimaforum.app/api
+npm run build   # uses .env.production → https://mkulimaforum.com/api
 ```
 
 ## Canonical API Host
 
-All clients target **`https://mkulimaforum.app/api`** in production. Change it in one place per client: `--dart-define=API_URL` (Flutter), `.env.production` (admin), `APP_URL` in `.env` (backend).
+All clients target **`https://mkulimaforum.com/api`** in production. Change it in one place per client: `--dart-define=API_URL` (Flutter), `.env.production` (admin), `APP_URL` in `.env` (backend).
 
 ## Status
 
 Phase 0 (make it run) is in progress — see `REDESIGN.md` §4 for the roadmap and §6 for the fix list.
+
+## Production configuration
+
+Most operational settings are managed from **Admin → System → Configuration** rather than
+by editing `.env` on the server: SMTP credentials, SMS and IVR provider settings, webhook
+secrets, short-link allowed hosts, and application URLs.
+
+Settings resolve **database → `.env` → default**, and are overlaid onto Laravel's runtime
+config on every request, so they work correctly under `php artisan config:cache` and take
+effect with no cache clear and no deploy.
+
+Secrets are encrypted at rest, never returned to the client, restricted to superadmins,
+and audit-logged as a rotation rather than a value.
+
+Verify any environment with:
+
+```bash
+php artisan mkulima:preflight
+```
+
+Full detail — including which settings must stay in `.env` and why, the security model,
+and queue worker setup — is in [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md).

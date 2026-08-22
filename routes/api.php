@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\Admin\DocumentController;
 use App\Http\Controllers\Api\Admin\FinancialReportController;
 use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
+use App\Http\Controllers\Api\Admin\System\ConfigurationController;
+use App\Http\Controllers\Api\Admin\System\SystemActionsController;
 use App\Http\Controllers\Api\Admin\VendorController;
 use App\Http\Controllers\Api\Admin\Verify\AdminVerifyController;
 use App\Http\Controllers\Api\AgronomistController;
@@ -432,6 +434,25 @@ Route::prefix('admin')
         Route::get('/financial-reports/daily', [FinancialReportController::class, 'dailyReport']);
 
         // Feature Flags Management
+        /*
+         |--------------------------------------------------------------------
+         | System → Configuration (Admin dashboard)
+         |--------------------------------------------------------------------
+         | Production settings managed from the dashboard instead of by SSHing
+         | in to edit .env. Secrets are encrypted at rest and never returned.
+         | The test and rotate actions are throttled because each one either
+         | costs money or reaches an external provider.
+         */
+        Route::prefix('system')->group(function () {
+            Route::get('/configuration', [ConfigurationController::class, 'index']);
+            Route::put('/configuration', [ConfigurationController::class, 'update']);
+            Route::get('/readiness', [SystemActionsController::class, 'readiness']);
+            Route::post('/test-email', [SystemActionsController::class, 'testEmail'])->middleware('throttle:6,10');
+            Route::post('/test-sms', [SystemActionsController::class, 'testSms'])->middleware('throttle:3,10');
+            Route::post('/rotate-webhook-secret', [SystemActionsController::class, 'rotateWebhookSecret'])
+                ->middleware('throttle:5,60');
+        });
+
         Route::get('/features', [FeatureController::class, 'index']);
         Route::post('/features/{key}/toggle', [FeatureController::class, 'toggle']);
         Route::put('/features/{key}', [FeatureController::class, 'update']);

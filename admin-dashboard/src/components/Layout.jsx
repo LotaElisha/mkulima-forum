@@ -7,6 +7,7 @@ import {
   UserCheck,
   BarChart3,
   Settings,
+  ServerCog,
   LogOut,
   Menu,
   Sprout,
@@ -24,7 +25,8 @@ import {
   Key,
   Tractor,
   ShieldCheck,
-  Globe
+  Globe,
+  FolderOpen
 } from 'lucide-react'
 import { useState } from 'react'
 import { authApi } from '../utils/api'
@@ -56,9 +58,11 @@ export default function Layout() {
     { to: '/features', icon: ToggleRight, label: 'Feature Flags' },
     { to: '/ai-management', icon: Brain, label: 'AI Scans & KB' },
     { to: '/ai-providers', icon: Key, label: 'AI Providers' },
+    { to: '/documents', icon: FolderOpen, label: 'Documents' },
     { to: '/analytics', icon: BarChart3, label: 'Analytics' },
     { to: '/hr', icon: Briefcase, label: 'HR / Staff' },
     { to: '/settings', icon: Settings, label: 'Settings' },
+    { to: '/system', icon: ServerCog, label: 'System Config' },
     { to: '/profile', icon: UserCircle, label: 'My Profile' },
   ]
 

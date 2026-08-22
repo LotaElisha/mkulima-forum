@@ -12,6 +12,7 @@ const Escrows = lazy(() => import('./pages/Escrows'))
 const KycVerification = lazy(() => import('./pages/KycVerification'))
 const Analytics = lazy(() => import('./pages/Analytics'))
 const Settings = lazy(() => import('./pages/Settings'))
+const SystemConfiguration = lazy(() => import('./pages/SystemConfiguration'))
 const AdminProfile = lazy(() => import('./pages/AdminProfile'))
 const HrManagement = lazy(() => import('./pages/HrManagement'))
 const PosTerminal = lazy(() => import('./pages/PosTerminal'))
@@ -27,6 +28,7 @@ const AiProviders = lazy(() => import('./pages/AiProviders'))
 const FarmManagement = lazy(() => import('./pages/FarmManagement'))
 const MkulimaVerify = lazy(() => import('./pages/MkulimaVerify'))
 const CommunityHub = lazy(() => import('./pages/CommunityHub'))
+const Documents = lazy(() => import('./pages/Documents'))
 
 export function ProtectedRoute({ children }) {
   const [isAuth, setIsAuth] = useState(false)
@@ -88,6 +90,8 @@ function App() {
         <Route path="kyc" element={<KycVerification />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="system" element={<SystemConfiguration />} />
+        <Route path="documents" element={<Documents />} />
         <Route path="profile" element={<AdminProfile />} />
         <Route path="hr" element={
           <RequireRole roles={['admin', 'superadmin']}><HrManagement /></RequireRole>

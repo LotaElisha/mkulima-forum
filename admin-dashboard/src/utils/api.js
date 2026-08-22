@@ -62,5 +62,30 @@ export const featureApi = {
   updateFeature: (key, data) => api.put(`/admin/features/${key}`, data)
 }
 
+export const documentsApi = {
+  list: (params = {}) => api.get('/admin/documents', { params }),
+  sync: () => api.post('/admin/documents/sync')
+}
+
 export { API_BASE }
 export default api
+
+/**
+ * Admin → System → Configuration.
+ *
+ * Secrets are write-only by design: the GET never returns one, so the UI shows
+ * "configured" or "not set" and an empty field on save means "leave unchanged".
+ */
+export const systemApi = {
+  getConfiguration: () => api.get('/admin/system/configuration'),
+  saveConfiguration: (settings, confirmHighImpact = false) =>
+    api.put('/admin/system/configuration', {
+      settings,
+      confirm_high_impact: confirmHighImpact,
+    }),
+  getReadiness: () => api.get('/admin/system/readiness'),
+  sendTestEmail: (to) => api.post('/admin/system/test-email', { to }),
+  sendTestSms: (phone) => api.post('/admin/system/test-sms', { phone }),
+  rotateWebhookSecret: (channel) =>
+    api.post('/admin/system/rotate-webhook-secret', { channel }),
+}

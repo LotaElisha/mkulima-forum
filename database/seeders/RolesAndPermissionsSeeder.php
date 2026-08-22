@@ -38,9 +38,26 @@ class RolesAndPermissionsSeeder extends Seeder
             'staff.manage',
             // Settings
             'settings.manage',
+            // Production configuration (Admin -> System -> Configuration)
+            'system.settings.view',
+            'system.settings.manage',
+            'system.queue.manage',
+            'system.maintenance.manage',
         ];
 
-        foreach ($permissions as $permission) {
+        /*
+         * Permissions a plain admin must NOT hold.
+         *
+         * Kept out of $permissions deliberately: the matrix below grants
+         * Roles::ADMIN every entry of $permissions, so anything listed there is
+         * automatically an admin capability. Rotating an SMTP password or a
+         * webhook secret is a superadmin action, so it lives here instead.
+         */
+        $superadminOnly = [
+            'system.secrets.manage',
+        ];
+
+        foreach (array_merge($permissions, $superadminOnly) as $permission) {
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
@@ -55,9 +72,10 @@ class RolesAndPermissionsSeeder extends Seeder
             Roles::LOGISTICS => ['forum.post', 'wallet.use'],
             Roles::WAREHOUSE => ['forum.post', 'wallet.use'],
             Roles::MODERATOR => ['forum.post', 'forum.moderate', 'threads.moderate', 'replies.moderate'],
-            // Admin & Superadmin get EVERY permission (full access)
+            // Admin gets every ordinary permission; superadmin additionally
+            // holds the production-secret permissions.
             Roles::ADMIN => $permissions,
-            Roles::SUPERADMIN => $permissions,
+            Roles::SUPERADMIN => array_merge($permissions, $superadminOnly),
         ];
 
         foreach ($matrix as $role => $perms) {
