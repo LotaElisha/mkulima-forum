@@ -31,7 +31,7 @@ class KaguaDawaScreen extends StatelessWidget {
             ),
           ],
           bottom: const TabBar(
-            indicatorColor: MkColors.accent,
+            indicatorColor: MkColors.primary,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white70,
             tabs: [
@@ -377,7 +377,7 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
                   : const Icon(Icons.verified_user),
               label: const Text('Kagua Lebo Sasa'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: MkColors.accent,
+                backgroundColor: MkColors.primary,
                 foregroundColor: MkColors.primaryDark,
               ),
             ),

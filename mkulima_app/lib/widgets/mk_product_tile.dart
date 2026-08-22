@@ -25,6 +25,10 @@ class MkProductTile extends StatelessWidget {
         ? product.name
         : (product['name'] ?? 'Bidhaa');
 
+    final parsedPrice = price is num
+        ? price.toDouble()
+        : double.tryParse(price.toString()) ?? 0;
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -66,9 +70,9 @@ class MkProductTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'TZS $price',
+                      'TZS ${parsedPrice.toStringAsFixed(0)}',
                       style: const TextStyle(
-                        color: MkColors.primary,
+                        color: MkColors.charcoal,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -82,11 +86,26 @@ class MkProductTile extends StatelessWidget {
                           color: Colors.grey[600],
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          '$stock ${MkStrings.stockLeft}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
+                        Expanded(
+                          child: Text(
+                            '$stock ${MkStrings.stockLeft}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: MkColors.primary,
+                            borderRadius: BorderRadius.circular(9),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward,
+                            size: 17,
+                            color: Colors.white,
                           ),
                         ),
                       ],

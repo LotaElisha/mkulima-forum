@@ -40,6 +40,11 @@ class UssdSessionService
             default => 'ℹ️ HAIJAPATIKANA: Namba hii haipo kwenye daftari ya sasa.',
         };
 
-        return "END Mkulima Verify:\n{$statusText}\nSoma zaidi: mkulimaforum.app";
+        // Domain read from APP_URL rather than hardcoded: a USSD reply is the
+        // one channel a farmer cannot copy-paste from, so a stale domain here
+        // is a dead end typed out by hand.
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'mkulimaforum.app';
+
+        return "END Mkulima Verify:\n{$statusText}\nSoma zaidi: {$host}";
     }
 }

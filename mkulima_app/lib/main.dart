@@ -6,6 +6,7 @@ import 'core/app_router.dart';
 import 'core/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
+import 'providers/app_settings_provider.dart';
 import 'providers/connectivity_provider.dart';
 import 'services/api_service.dart';
 import 'services/local_database.dart';
@@ -22,11 +23,12 @@ void main() async {
   // Configure per environment:
   //   flutter run --dart-define=API_URL=http://10.0.2.2:8000/api   (local dev)
   //   flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
-  const apiUrl = String.fromEnvironment(
-    'API_URL',
-    defaultValue: 'https://mkulimaforum.app/api',
-  );
-  final api = ApiService(baseUrl: apiUrl);
+  //
+  // The default was mkulimaforum.com while APP_URL in .env.production is
+  // mkulimaforum.app. Any release built without an explicit --dart-define
+  // therefore shipped pointing at a different host from the one the backend
+  // actually answers on — the app would install and then fail every request.
+  final api = ApiService(baseUrl: kApiBaseUrl);
 
   runApp(MkulimaApp(db: db, api: api));
 }
@@ -61,14 +63,17 @@ class _MkulimaAppState extends State<MkulimaApp> {
         ChangeNotifierProvider(create: (_) => ConnectivityProvider()),
         ChangeNotifierProvider.value(value: _auth),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => AppSettingsProvider()),
       ],
-      child: MaterialApp.router(
-        title: 'MkulimaForum',
-        debugShowCheckedModeBanner: false,
-        theme: mkLightTheme(),
-        darkTheme: mkDarkTheme(),
-        themeMode: ThemeMode.light,
-        routerConfig: _router,
+      child: Consumer<AppSettingsProvider>(
+        builder: (context, settings, _) => MaterialApp.router(
+          title: 'MkulimaForum',
+          debugShowCheckedModeBanner: false,
+          theme: mkLightTheme(),
+          darkTheme: mkDarkTheme(),
+          themeMode: settings.darkMode ? ThemeMode.dark : ThemeMode.light,
+          routerConfig: _router,
+        ),
       ),
     );
   }

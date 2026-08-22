@@ -20,35 +20,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'title': 'Karibu Mkulima Forum',
       'subtitle':
           'Soko la kilimo kwa wote. Nunua na uza bidhaa za kilimo kwa urahisi.',
-      'color': MkColors.leafGreen,
+      'color': MkColors.primary,
     },
     {
       'icon': Icons.psychology_outlined,
       'title': 'Mkulima AI',
       'subtitle':
           'Uliza maswali yoyote kuhusu kilimo. Pata majibu papo hapo kutoka kwa mtaalamu wa AI.',
-      'color': MkColors.charcoal,
+      'color': MkColors.primary,
     },
     {
       'icon': Icons.document_scanner_outlined,
       'title': 'Kichunguzi cha Mimea',
       'subtitle':
           'Piga picha ya mimea yako iliyougua. Pata utambuzi na matibabu kwa sekunde chache.',
-      'color': MkColors.accent,
+      'color': MkColors.primary,
     },
     {
       'icon': Icons.forum_outlined,
       'title': 'Jukwaa la Mkulima',
       'subtitle':
           'Ungana na wakulima wengine. Shirikiana uzoefu, maswali, na mafanikio.',
-      'color': MkColors.charcoal,
+      'color': MkColors.primary,
     },
     {
       'icon': Icons.lock_outline,
       'title': 'Malipo Salama',
       'subtitle':
           'Lipa kwa kutumia Escrow. Pesa zinahifadhiwa hadi bidhaa ifike salama.',
-      'color': MkColors.leafGreen,
+      'color': MkColors.primary,
     },
   ];
 
@@ -196,9 +196,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: _nextPage,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: page['color'] as Color,
-                    foregroundColor: _currentPage == 2
-                        ? MkColors.charcoal
-                        : Colors.white,
+                    // Was conditional on a hardcoded page index, which broke
+                    // as soon as the page order changed.
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),

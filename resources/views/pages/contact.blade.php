@@ -32,7 +32,7 @@
   .faq-item { border:1px solid var(--border-light); border-radius:14px; overflow:hidden; }
   .faq-q {
     width:100%; text-align:left; padding:18px 22px; background:var(--surface-card); border:none;
-    font-family:'Outfit',sans-serif; font-size:1rem; font-weight:700; color:var(--ink-dark);
+    font-family:inherit; font-size:1rem; font-weight:700; color:var(--ink-dark);
     cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px;
     transition:background .15s;
   }

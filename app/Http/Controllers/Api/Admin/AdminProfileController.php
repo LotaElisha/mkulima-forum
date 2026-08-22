@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -84,7 +85,7 @@ class AdminProfileController extends Controller
             ]);
         }
 
-        $user->update([
+        $user->setPrivileged([
             'password' => Hash::make($request->input('new_password')),
         ]);
 
@@ -103,7 +104,7 @@ class AdminProfileController extends Controller
     public function updateAvatar(Request $request): JsonResponse
     {
         $request->validate([
-            'avatar' => ['required', 'image', 'max:2048'],
+            'avatar' => ['required', ...UploadRules::raster(2048)],
         ]);
 
         $user = $request->user();

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'reset_link_sent' => 'Kama barua pepe hiyo ina akaunti ya MkulimaForum, kiungo cha kuweka upya nenosiri kimetumwa. Angalia kikasha chako na folda ya taka.',
+    'reset_failed' => 'Kiungo hiki si sahihi au muda wake umepita. Omba kiungo kipya.',
+    'reset_done' => 'Nenosiri lako limebadilishwa. Ingia kwa nenosiri jipya.',
+    'current_password_wrong' => 'Nenosiri la sasa uliloweka si sahihi.',
+    'password_changed' => 'Nenosiri limebadilishwa. Vifaa vingine vimetolewa kwenye akaunti.',
+    'verification_sent' => 'Kama uthibitisho ulihitajika, kiungo cha kuthibitisha kimetumwa.',
+    'email_change_pending' => 'Thibitisha barua pepe mpya kupitia kiungo tulichotuma. Barua pepe yako ya sasa itaendelea kufanya kazi hadi hapo.',
+    'email_change_cancelled' => 'Ombi la kubadilisha barua pepe limefutwa.',
+    'set_password_first' => 'Weka nenosiri kwenye akaunti hii kabla ya kubadilisha barua pepe.',
+    'email_unverified' => 'Thibitisha barua pepe yako ili kutumia huduma hii.',
+    'phone_taken' => 'Namba hiyo ya simu tayari ipo kwenye akaunti nyingine ya MkulimaForum. Ingia nayo, au tumia namba nyingine.',
+    'phone_linked' => 'Namba ya simu imethibitishwa na kuongezwa kwenye akaunti yako.',
+    'phone_unlinked' => 'Namba ya simu imeondolewa kwenye akaunti yako.',
+    'phone_already_linked' => 'Namba hiyo tayari imethibitishwa kwenye akaunti hii.',
+    'no_phone_linked' => 'Hakuna namba ya simu kwenye akaunti hii.',
+    'last_credential' => 'Hii ndiyo njia pekee ya kuingia kwenye akaunti yako. Ongeza barua pepe na nenosiri kwanza.',
+    'otp_disabled' => 'Uthibitisho kwa simu haujawashwa bado.',
+    'otp_unavailable' => 'Misimbo haiwezi kutumwa kwa sasa. Jaribu tena baadaye.',
+    'otp_rate_limited' => 'Umeomba misimbo mara nyingi. Jaribu tena baadaye.',
+    'otp_attempts' => 'Umeweka misimbo isiyo sahihi mara nyingi. Jaribu tena baadaye.',
+    'otp_invalid' => 'Msimbo huo si sahihi au muda wake umepita.',
+    'report_lookup_uuid' => 'Tumia kumbukumbu uliyopewa wakati wa kuwasilisha ripoti yako.',
+];

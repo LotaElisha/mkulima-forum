@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build && mkdir -p dist && cp -r public/build/* dist/ && php -r \"require 'vendor/autoload.php'; \\$app = require 'bootstrap/app.php'; \\$kernel = \\$app->make(Illuminate\\Contracts\\Console\\Kernel::class); \\$kernel->bootstrap(); echo view('landing', ['settings' => []])->render();\" > dist/index.html",
+        "build": "vite build && mkdir -p dist && cp -r public/build/* dist/ && php artisan mkulima:export-landing dist/index.html",
         "dev": "vite"
     },
     "devDependencies": {

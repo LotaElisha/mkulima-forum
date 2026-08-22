@@ -55,14 +55,58 @@ return [
         'use_open_meteo' => env('WEATHER_USE_OPEN_METEO', true),
     ],
 
+    /*
+     |------------------------------------------------------------------
+     | SMS / OTP delivery
+     |------------------------------------------------------------------
+     | 'provider' selects an implementation of App\Contracts\SmsProvider.
+     | Swapping Africa's Talking for Twilio (or a future aggregator) is a
+     | one-line env change; nothing in the authentication or OTP code knows
+     | which gateway is behind it.
+     |
+     | 'log' writes messages to the application log instead of sending them,
+     | which is what local development and the test suite use.
+     */
     'sms' => [
+        'provider' => env('SMS_PROVIDER', env('SMS_GATEWAY', 'africastalking')),
         'gateway' => env('SMS_GATEWAY', 'africastalking'),
         'sender_id' => env('SMS_SENDER_ID', 'MKULIMA'),
+        'webhook_secret' => env('SMS_WEBHOOK_SECRET'),
+    ],
+
+    /*
+     |------------------------------------------------------------------
+     | Short links (/c/{slug})
+     |------------------------------------------------------------------
+     | Hosts a short link may redirect straight to. Subdomains of a listed
+     | host are included. Anything else shows a "you are leaving" page first,
+     | so the platform's domain cannot be borrowed for a phishing redirect.
+     */
+    'short_links' => [
+        'allowed_hosts' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) env('SHORT_LINK_ALLOWED_HOSTS', 'mkulimaforum.app,mkulimaforum.com,wa.me,youtube.com,youtu.be,facebook.com,instagram.com,x.com,twitter.com,linkedin.com,tiktok.com'))
+        ))),
+    ],
+
+    'ivr' => [
+        'webhook_secret' => env('IVR_WEBHOOK_SECRET'),
     ],
 
     'twilio' => [
         'sid' => env('TWILIO_SID'),
         'token' => env('TWILIO_TOKEN'),
         'from' => env('TWILIO_FROM'),
+    ],
+
+    'google_drive' => [
+        'folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        'credentials_path' => env('GOOGLE_DRIVE_CREDENTIALS_PATH', 'storage/app/private/google-drive-service-account.json'),
+    ],
+
+    'social' => [
+        'google_client_ids' => array_values(array_filter(array_map('trim', explode(',', (string) env('GOOGLE_AUTH_CLIENT_IDS', ''))))),
+        'apple_client_ids' => array_values(array_filter(array_map('trim', explode(',', (string) env('APPLE_AUTH_CLIENT_IDS', ''))))),
+        'android_package' => env('ANDROID_APP_PACKAGE', 'app.mkulimaforum.mobile'),
     ],
 ];

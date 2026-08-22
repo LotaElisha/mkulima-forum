@@ -30,7 +30,7 @@ class ForumAndServicesTest extends TestCase
             'currency' => 'TZS',
         ]);
 
-        $this->farmer = User::create([
+        $this->farmer = User::provision([
             'tenant_id' => $this->tenant->id,
             'name' => 'Mkulima Mfano',
             'phone' => '255710000001',
@@ -90,7 +90,7 @@ class ForumAndServicesTest extends TestCase
 
     public function test_service_booking_flow(): void
     {
-        $providerUser = User::create([
+        $providerUser = User::provision([
             'tenant_id' => $this->tenant->id,
             'name' => 'Dkt. Mifugo',
             'phone' => '255710000002',

@@ -37,7 +37,7 @@
   .google-gemini-badge {
     display:inline-flex; align-items:center; gap:10px; padding:8px 20px;
     background:#fff; border:1.5px solid #C0CEFF; border-radius:999px;
-    font-family:'Outfit',sans-serif; font-weight:800; font-size:.9rem;
+    font-family:inherit; font-weight:800; font-size:.9rem;
   }
   .g-letter { font-size:1.3rem; font-weight:900; }
   .g-e { color:#4285F4; }

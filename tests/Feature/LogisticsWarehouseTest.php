@@ -32,21 +32,21 @@ class LogisticsWarehouseTest extends TestCase
             'currency' => 'TZS',
         ]);
 
-        $this->farmer = User::create([
+        $this->farmer = User::provision([
             'tenant_id' => $this->tenant->id,
             'name' => 'Mkulima Mfano',
             'phone' => '255710000001',
             'role' => 'farmer',
         ]);
 
-        $this->driver = User::create([
+        $this->driver = User::provision([
             'tenant_id' => $this->tenant->id,
             'name' => 'Dereva Mfano',
             'phone' => '255710000002',
             'role' => 'logistics',
         ]);
 
-        $this->operator = User::create([
+        $this->operator = User::provision([
             'tenant_id' => $this->tenant->id,
             'name' => 'Mmiliki Ghala',
             'phone' => '255710000003',

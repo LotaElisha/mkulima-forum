@@ -24,7 +24,7 @@ class MkulimaBotTest extends TestCase
             'name' => 'Tanzania', 'country_code' => 'tz', 'currency' => 'TZS',
         ]);
 
-        $this->farmer = User::create([
+        $this->farmer = User::provision([
             'tenant_id' => $tenant->id, 'name' => 'Mkulima Mfano',
             'phone' => '255710000001', 'role' => 'farmer',
         ]);
@@ -99,7 +99,7 @@ class MkulimaBotTest extends TestCase
         $uuid = $this->postJson('/api/bot/chat', ['message' => 'Siri yangu'])
             ->json('conversation_uuid');
 
-        $other = User::create([
+        $other = User::provision([
             'tenant_id' => $this->farmer->tenant_id, 'name' => 'Mwingine',
             'phone' => '255710000002', 'role' => 'farmer',
         ]);

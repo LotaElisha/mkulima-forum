@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DiseaseScan;
 use App\Services\AI\AIService;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,7 @@ class DiseaseScannerController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'image' => ['required', ...UploadRules::raster(5120)],
             'crop_type' => ['nullable', 'string', 'in:maize,beans,rice,cassava,banana,coffee,tea,tomato,onion,potato'],
             'use_cloud' => ['nullable', 'boolean'],
         ]);

@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'reset_link_sent' => 'If that email address has a MkulimaForum account, a reset link is on its way. Check your inbox and spam folder.',
+    'reset_failed' => 'This reset link is invalid or has expired. Request a new one.',
+    'reset_done' => 'Your password has been changed. Sign in with your new password.',
+    'current_password_wrong' => 'The current password you entered is not correct.',
+    'password_changed' => 'Password changed. Other devices have been signed out.',
+    'verification_sent' => 'If verification was needed, a confirmation link has been sent.',
+    'email_change_pending' => 'Confirm the new address from the link we sent. Your current email stays active until then.',
+    'email_change_cancelled' => 'The email change has been cancelled.',
+    'set_password_first' => 'Set a password on this account before changing the email address.',
+    'email_unverified' => 'Confirm your email address to use this feature.',
+    'phone_taken' => 'That phone number is already on another MkulimaForum account. Sign in with it, or use a different number.',
+    'phone_linked' => 'Phone number confirmed and added to your account.',
+    'phone_unlinked' => 'Phone number removed from your account.',
+    'phone_already_linked' => 'That number is already confirmed on this account.',
+    'no_phone_linked' => 'There is no phone number on this account.',
+    'last_credential' => 'This is the only way into your account. Add an email address and password first.',
+    'otp_disabled' => 'Phone verification is not switched on yet.',
+    'otp_unavailable' => 'Codes cannot be sent right now. Try again shortly.',
+    'otp_rate_limited' => 'Too many code requests. Try again later.',
+    'otp_attempts' => 'Too many incorrect codes. Try again later.',
+    'otp_invalid' => 'That code is wrong or has expired.',
+    'report_lookup_uuid' => 'Look up a report using the reference you were given when you submitted it.',
+];

@@ -8,12 +8,16 @@ use App\Http\Controllers\Api\Admin\AiManagementController;
 use App\Http\Controllers\Api\Admin\AiProviderController;
 use App\Http\Controllers\Api\Admin\CatalogController;
 use App\Http\Controllers\Api\Admin\Community\AdminCommunityController;
+use App\Http\Controllers\Api\Admin\DocumentController;
 use App\Http\Controllers\Api\Admin\FinancialReportController;
 use App\Http\Controllers\Api\Admin\HrController;
 use App\Http\Controllers\Api\Admin\PosController;
 use App\Http\Controllers\Api\Admin\VendorController;
 use App\Http\Controllers\Api\Admin\Verify\AdminVerifyController;
 use App\Http\Controllers\Api\AgronomistController;
+use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\Auth\IdentityController;
+use App\Http\Controllers\Api\Auth\PasswordController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Community\CommunityClickController;
 use App\Http\Controllers\Api\Community\SocialLinksController;
@@ -73,7 +77,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/verify/seed-varieties', [VerifyProductController::class, 'seedVarieties']);
     Route::get('/verify/pesticides', [VerifyProductController::class, 'pesticides']);
     Route::get('/verify/dealers/{id}', [VerifyDealerController::class, 'show']);
-    Route::post('/reports/counterfeit', [CounterfeitReportController::class, 'store']);
+    // Unauthenticated by design (a farmer reporting fake inputs should not
+    // need an account), but it accepts file uploads, so it is throttled per IP.
+    Route::post('/reports/counterfeit', [CounterfeitReportController::class, 'store'])
+        ->middleware('throttle:5,60');
     Route::get('/reports/{caseNumber}', [CounterfeitReportController::class, 'show']);
     Route::get('/advisories', [AdvisoryController::class, 'index']);
 
@@ -112,14 +119,38 @@ Route::prefix('auth')->group(function () {
     // has per-phone rate limiting inside OtpService.
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
     Route::post('/login/email', [AuthController::class, 'loginWithEmail'])->middleware('throttle:10,1');
+    Route::post('/register/email', [AuthController::class, 'registerWithEmail'])->middleware('throttle:5,1');
+    Route::post('/social', [AuthController::class, 'social'])->middleware('throttle:10,1');
+    Route::post('/apple/callback', [AuthController::class, 'appleAndroidCallback'])->middleware('throttle:20,1');
     Route::post('/otp/request', [AuthController::class, 'requestOtp'])->middleware('throttle:5,1');
     Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->middleware('throttle:10,1');
+
+    // Password recovery. Both endpoints answer identically for known and
+    // unknown addresses, so neither can be used to enumerate accounts; the
+    // throttles are tighter than login because each call can send mail.
+    Route::post('/password/forgot', [PasswordController::class, 'forgot'])->middleware('throttle:5,10');
+    Route::post('/password/reset', [PasswordController::class, 'reset'])->middleware('throttle:5,10');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/logout-all', [AuthController::class, 'logoutAll']);
+
+        Route::post('/password/change', [PasswordController::class, 'change'])->middleware('throttle:5,10');
+
+        Route::get('/email/status', [EmailVerificationController::class, 'status']);
+        Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->middleware('throttle:3,10');
+        Route::post('/email/change', [EmailVerificationController::class, 'requestChange'])->middleware('throttle:3,10');
+        Route::delete('/email/change', [EmailVerificationController::class, 'cancelChange']);
+
+        // Identity linking. This is what stops one farmer becoming two
+        // accounts: rather than discovering a duplicate later, a signed-in
+        // user attaches their phone number to the account they already have.
+        Route::get('/identities', [IdentityController::class, 'index']);
+        Route::post('/phone/link/request', [IdentityController::class, 'requestPhoneLink'])->middleware('throttle:5,10');
+        Route::post('/phone/link/confirm', [IdentityController::class, 'confirmPhoneLink'])->middleware('throttle:10,10');
+        Route::delete('/phone/link', [IdentityController::class, 'unlinkPhone'])->middleware('throttle:5,10');
     });
 });
 
@@ -316,6 +347,9 @@ Route::prefix('admin')
         Route::post('/settings/landing/media', [AdminController::class, 'uploadLandingMedia']);
         Route::get('/settings/otp', [AdminController::class, 'getOtpSettings']);
         Route::put('/settings/otp', [AdminController::class, 'updateOtpSettings']);
+        Route::get('/documents', [DocumentController::class, 'index']);
+        Route::post('/documents/sync', [DocumentController::class, 'sync'])->middleware('throttle:5,1');
+        Route::get('/documents/{document}/open', [DocumentController::class, 'open'])->whereNumber('document');
 
         // Admin Profile
         Route::get('/profile', [AdminProfileController::class, 'show']);
@@ -418,7 +452,9 @@ require __DIR__.'/api_kyc.php';
 | Weather Routes
 |--------------------------------------------------------------------------
 */
-Route::prefix('weather')->group(function () {
+// Public, but every cache miss spends an OpenWeather call against a metered
+// key, so anonymous callers are throttled.
+Route::prefix('weather')->middleware('throttle:60,1')->group(function () {
     Route::get('/current', [WeatherController::class, 'current']);
     Route::get('/forecast', [WeatherController::class, 'forecast']);
     Route::get('/advisory', [WeatherController::class, 'advisory']);
@@ -520,8 +556,14 @@ Route::prefix('sms')->middleware('auth:sanctum')->group(function () {
     Route::get('/history', [SmsController::class, 'getHistory']);
 });
 
-Route::post('/sms/callback', [SmsController::class, 'callback']);
-Route::post('/sms/receive', [SmsController::class, 'receive']);
+// Gateway webhooks. These carry no user credential, so they are protected by
+// a shared-secret signature (config: services.sms.webhook_secret) and a hard
+// per-IP throttle. Before this, /sms/receive was an open endpoint that ran a
+// DB query and an outbound OpenWeather call on every anonymous request.
+Route::middleware(['verify.webhook:sms', 'throttle:60,1'])->group(function () {
+    Route::post('/sms/callback', [SmsController::class, 'callback']);
+    Route::post('/sms/receive', [SmsController::class, 'receive']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -543,7 +585,7 @@ Route::prefix('wallet')->middleware('auth:sanctum')->group(function () {
 | IVR Routes
 |--------------------------------------------------------------------------
 */
-Route::prefix('ivr')->group(function () {
+Route::prefix('ivr')->middleware(['verify.webhook:ivr', 'throttle:60,1'])->group(function () {
     Route::post('/incoming', [IvrController::class, 'handleIncoming']);
     Route::post('/callback', [IvrController::class, 'handleCallback']);
 });

@@ -18,7 +18,6 @@ import 'iot_screen.dart';
 import 'yield_screen.dart';
 import 'escrow_screen.dart';
 import 'forum_screen.dart';
-import 'upgrade_screen.dart';
 
 class ServiceItem {
   final IconData icon;
@@ -29,6 +28,14 @@ class ServiceItem {
   final Widget targetScreen;
   final List<String> benefits;
 
+  /// True when the backend for this service is not live yet.
+  ///
+  /// Drone and IoT front endpoints that answer 503 by design — there is no
+  /// operator network and no device fleet. The entries stay because they
+  /// describe the roadmap, but they open an explanation rather than a screen
+  /// that will fail.
+  final bool comingSoon;
+
   const ServiceItem({
     required this.icon,
     required this.name,
@@ -37,6 +44,7 @@ class ServiceItem {
     required this.color,
     required this.targetScreen,
     required this.benefits,
+    this.comingSoon = false,
   });
 }
 
@@ -144,6 +152,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       requiredPlan: 'Enterprise',
       color: Colors.purple,
       targetScreen: DroneScreen(),
+      comingSoon: true,
       benefits: ['Upigaji picha na ramani ya shamba', 'Upuliziaji wa kisasa wa viatilifu', 'Ufuatiliaji wa ukuaji wa mazao'],
     ),
     const ServiceItem(
@@ -153,6 +162,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       requiredPlan: 'Business',
       color: Colors.cyan,
       targetScreen: IoTScreen(),
+      comingSoon: true,
       benefits: ['Vipimo vya unyevu wa udongo live', 'Kiwango cha joto cha udongo shambani', 'Taarifa za virutubisho vya NPK'],
     ),
   ];
@@ -198,25 +208,6 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
 
 
 
-  int _getPlanRank(String plan) {
-    switch (plan.toLowerCase()) {
-      case 'free':
-        return 1;
-      case 'pro':
-        return 2;
-      case 'business':
-        return 3;
-      case 'enterprise':
-        return 4;
-      default:
-        return 0;
-    }
-  }
-
-  bool _isPlanAuthorized(String userPlan, String requiredPlan) {
-    return _getPlanRank(userPlan) >= _getPlanRank(requiredPlan);
-  }
-
   Color _getBadgeColor(String plan) {
     switch (plan.toLowerCase()) {
       case 'free':
@@ -232,38 +223,74 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
     }
   }
 
-  Future<void> _handleServiceTap(ServiceItem service) async {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final authenticated = await AuthProvider.requireAuth(
-      context,
-      action: 'kutumia huduma ya ${service.name}',
-    );
-    if (!authenticated) return;
+  void _handleServiceTap(ServiceItem service) {
+    if (!mounted) return;
 
-    final userPlan = auth.subscriptionPlan;
-    final isAuthorized = _isPlanAuthorized(userPlan, service.requiredPlan);
-
-    if (isAuthorized) {
-      if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => service.targetScreen),
-        );
-      }
-    } else {
-      if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => UpgradeScreen(
-              currentPlan: userPlan,
-              requiredPlan: service.requiredPlan,
-              serviceName: service.name,
-              benefits: service.benefits,
-              targetScreen: service.targetScreen,
-            ),
+    // A service whose backend answers 503 by design opens an explanation, not
+    // a screen that will fail. Meeting an error here teaches a farmer that the
+    // app is unreliable, when in fact the feature simply is not built yet.
+    if (service.comingSoon) {
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (sheetContext) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 24,
+            bottom: MediaQuery.of(sheetContext).padding.bottom + 24,
           ),
-        );
-      }
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: MkColors.leafPale,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.schedule_outlined,
+                      color: MkColors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      service.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: MkColors.ink,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'Huduma hii bado haijaanza. ${service.description} '
+                'Tutakujulisha itakapopatikana katika eneo lako.',
+                style: const TextStyle(color: MkColors.muted, height: 1.5),
+              ),
+              const SizedBox(height: 22),
+              FilledButton(
+                onPressed: () => Navigator.of(sheetContext).pop(),
+                child: const Text('Nimeelewa'),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      return;
     }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => service.targetScreen),
+    );
   }
 
   @override
@@ -357,7 +384,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
                 const SizedBox(height: 4),
                 Text(
                   auth.isAuthenticated
-                      ? 'Kifurushi chako: ${auth.subscriptionPlan}'
+                      ? 'Huduma zako za kilimo sehemu moja'
                       : 'Jiunge leo kupata huduma zote',
                   style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),

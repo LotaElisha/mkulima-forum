@@ -27,14 +27,14 @@ class CreateAdminUser extends Command
         $user = User::where('email', $email)->first();
 
         if ($user) {
-            $user->update([
+            $user->setPrivileged([
                 'password' => Hash::make($password),
                 'role' => Roles::ADMIN,
                 'status' => 'active',
             ]);
             $this->info("Admin user '{$email}' password was reset successfully.");
         } else {
-            $user = User::create([
+            $user = User::provision([
                 'tenant_id' => 1,
                 'name' => $name,
                 'email' => $email,

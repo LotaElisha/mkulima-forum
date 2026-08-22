@@ -69,7 +69,7 @@ class HrController extends Controller
         $validated['phone_verified_at'] = now();
         $validated['email_verified_at'] = now();
 
-        $user = User::create($validated);
+        $user = User::provision($validated);
         $user->assignRole($validated['role']);
 
         return response()->json([

@@ -14,6 +14,7 @@ use App\Services\Payments\EscrowService;
 use App\Services\SmsService;
 use App\Services\Spine\ConfigRegistry;
 use App\Support\Roles;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -148,7 +149,9 @@ class AdminController extends Controller
             $user->syncRoles([$validated['role']]);
         }
 
-        $user->update($validated);
+        // Admin-authored and whitelist-validated, but role/kyc_status/status
+        // are privileged, so this goes through the explicit path.
+        $user->setPrivileged($validated);
 
         return response()->json([
             'message' => 'User updated successfully',
@@ -174,7 +177,10 @@ class AdminController extends Controller
         $validated['kyc_status'] = $validated['kyc_status'] ?? 'not_submitted';
         $validated['status'] = $validated['status'] ?? 'active';
 
-        $user = User::create($validated);
+        // Admin-authored, and every key here came through the validate()
+        // whitelist directly above — but role/status/kyc_status/password are no
+        // longer mass-assignable, so the privileged path is explicit.
+        $user = User::provision($validated);
         $user->assignRole($validated['role']);
 
         return response()->json([
@@ -318,7 +324,7 @@ class AdminController extends Controller
     public function verifyKyc(Request $request, string $uuid): JsonResponse
     {
         $user = User::where('uuid', $uuid)->firstOrFail();
-        $user->update(['kyc_status' => 'verified']);
+        $user->setPrivileged(['kyc_status' => 'verified']);
 
         return response()->json([
             'message' => 'KYC verified',
@@ -329,7 +335,7 @@ class AdminController extends Controller
     public function rejectKyc(Request $request, string $uuid): JsonResponse
     {
         $user = User::where('uuid', $uuid)->firstOrFail();
-        $user->update([
+        $user->setPrivileged([
             'kyc_status' => 'rejected',
             'kyc_rejection_reason' => $request->input('reason'),
         ]);
@@ -417,7 +423,9 @@ class AdminController extends Controller
     public function uploadLandingLogo(Request $request): JsonResponse
     {
         $request->validate([
-            'logo' => ['required', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            // SVG removed: it is a scriptable document, and this logo is
+            // rendered inside first-party pages on every screen.
+            'logo' => ['required', ...UploadRules::brandAsset(2048)],
         ]);
 
         $oldPath = LandingSetting::where('key', 'logo_path')->value('value');
@@ -455,8 +463,16 @@ class AdminController extends Controller
     public function uploadLandingMedia(Request $request): JsonResponse
     {
         $request->validate([
-            'media' => ['required', 'file', 'mimes:png,jpg,jpeg,svg,webp,gif,apk,pdf,pptx', 'max:51200'],
             'key' => ['required', 'string', 'in:logo,banner,emblem,hero_bg,app_apk,pitch_deck'],
+            // Distributables (APK, pitch deck) and rendered brand imagery have
+            // different risk profiles, so they no longer share one permissive
+            // rule that let an SVG in through the logo slot.
+            'media' => array_merge(
+                ['required'],
+                in_array($request->input('key'), ['app_apk', 'pitch_deck'], true)
+                    ? UploadRules::distributable(262144)
+                    : UploadRules::brandAsset(51200)
+            ),
         ]);
 
         $key = $request->input('key');

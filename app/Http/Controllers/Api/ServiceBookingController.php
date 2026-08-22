@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceBooking;
 use App\Models\ServiceProvider;
+use App\Support\UploadRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -107,8 +108,11 @@ class ServiceBookingController extends Controller
             'description' => ['nullable', 'string', 'max:2000'],
             'scheduled_at' => ['required', 'date', 'after:now'],
             'location' => ['nullable', 'string', 'max:255'],
-            'media' => ['nullable', 'array'],
-            'media.*' => ['file', 'max:5120'],
+            // Bounded, and typed: this used to accept ANY file up to 5MB
+            // and write it straight to the public disk, handing every signed-in
+            // account a first-party URL for arbitrary content.
+            'media' => ['nullable', 'array', 'max:5'],
+            'media.*' => UploadRules::rasterOrDocument(5120),
         ]);
 
         $provider = ServiceProvider::where('uuid', $validated['provider_uuid'])

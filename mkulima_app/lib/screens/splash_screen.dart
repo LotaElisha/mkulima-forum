@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MkColors.charcoal,
+      backgroundColor: MkColors.primary,
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen>
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: MkColors.accent,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
@@ -90,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Icon(
                           Icons.grass_outlined,
                           size: 60,
-                          color: MkColors.charcoal,
+                          color: MkColors.primary,
                         ),
                       ),
                     ),
@@ -109,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen>
                       'Soko la Kilimo kwa Wote',
                       style: TextStyle(
                         fontSize: 16,
-                        color: MkColors.surfaceMuted,
+                        color: Color(0xCCFFFFFF),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -119,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 40,
                       child: CircularProgressIndicator(
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                          MkColors.accent,
+                          Colors.white,
                         ),
                         strokeWidth: 3,
                         backgroundColor: Colors.white.withValues(alpha: 0.2),

@@ -29,7 +29,7 @@
     border-bottom:1px solid var(--border-light);
   }
   .metric-cell:nth-child(5n){ border-right:none; }
-  .metric-num { font-family:'Outfit',sans-serif; font-size:2.2rem; font-weight:900; color:var(--forest-dark); }
+  .metric-num { font-family:inherit; font-size:2.2rem; font-weight:900; color:var(--forest-dark); }
   .metric-label { font-size:.78rem; font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
   .metric-note { font-size:.68rem; color:var(--ink-faint); margin-top:4px; font-style:italic; }
 

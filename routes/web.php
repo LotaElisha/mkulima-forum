@@ -1,8 +1,29 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Models\LandingSetting;
 use App\Models\ShortLink;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/web-app-assets/sqlite', function () {
+    $path = storage_path('app/private/web/sqlite3.wasm');
+    abort_unless(is_file($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/wasm',
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+});
+
+Route::get('/web-app-assets/drift-worker', function () {
+    $path = storage_path('app/private/web/drift_worker.js');
+    abort_unless(is_file($path), 404);
+
+    return response()->file($path, [
+        'Content-Type' => 'application/javascript; charset=utf-8',
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+});
 
 Route::get('/', function () {
     $settings = [];
@@ -152,12 +173,52 @@ Route::get('/c/{slug}', function (string $slug) {
     $shortLink = ShortLink::where('slug', $slug)->where('is_active', true)->firstOrFail();
     $shortLink->increment('click_count');
 
+    // Host allowlist. The target is admin-authored, so this is not a hole an
+    // outsider can open — but without it, mkulimaforum.com/c/... is a
+    // redirector that lends the platform's own domain to a phishing link, and
+    // a single compromised or careless admin account is enough. Anything off
+    // the list goes to an interstitial rather than straight out.
+    $host = strtolower((string) parse_url($shortLink->target_url, PHP_URL_HOST));
+    $allowed = collect(config('services.short_links.allowed_hosts', []))
+        ->map(fn ($h) => strtolower(trim($h)))
+        ->filter();
+
+    $isAllowed = $allowed->contains(
+        fn ($candidate) => $host === $candidate || str_ends_with($host, '.'.$candidate)
+    );
+
+    if (! $isAllowed) {
+        return response()->view('pages.leaving', [
+            'target' => $shortLink->target_url,
+            'host' => $host,
+        ], 200);
+    }
+
     return redirect()->away($shortLink->target_url);
 });
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
+
+// Password recovery pages. These are web routes rather than API ones because
+// they are opened from an email client on whatever device is to hand — the
+// link has to render something a person can read and type into.
+Route::view('/forgot-password', 'auth.forgot-password')->name('password.request');
+
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('auth.reset-password', [
+        'token' => $token,
+        'email' => request()->string('email')->toString(),
+    ]);
+})->name('password.reset');
+
+// Signed link from the verification mail. 'signed' proves the URL was not
+// edited and has not expired; the throttle stops the id/hash space being
+// walked. No session or token is required — the signature is the credential.
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 // React admin SPA deep-link fallback. Static assets are served directly from
 // public/admin; application routes must all return the same entry document.

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class VendorController extends Controller
 {
@@ -61,9 +63,16 @@ class VendorController extends Controller
             'kyc_status' => ['nullable', 'string', 'in:verified,pending,unverified'],
         ]);
 
-        $password = $validated['password'] ?? 'password123';
+        // SECURITY: this defaulted to the literal string 'password123'. Every
+        // agrodealer or supplier onboarded without an explicit password shared
+        // one guessable credential — and these accounts hold marketplace
+        // listings and KYC records. A vendor with no password supplied is now
+        // created with a random one they can never guess either, and must use
+        // the password-reset flow to set their own.
+        $password = $validated['password'] ?? Str::random(40);
+        $mustReset = ! isset($validated['password']);
 
-        $vendor = User::create([
+        $vendor = User::provision([
             'tenant_id' => $request->user()->tenant_id ?? 1,
             'name' => $validated['name'],
             'phone' => $validated['phone'],
@@ -77,6 +86,12 @@ class VendorController extends Controller
             'status' => 'active',
             'kyc_status' => $validated['kyc_status'] ?? 'verified',
         ]);
+
+        // No password was chosen for them, so give them the one route in that
+        // does not involve an administrator knowing their credential.
+        if ($mustReset && $vendor->email) {
+            Password::broker()->sendResetLink(['email' => $vendor->email]);
+        }
 
         return response()->json([
             'message' => 'Vendor / Partner registered successfully.',

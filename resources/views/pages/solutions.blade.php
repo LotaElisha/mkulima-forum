@@ -19,7 +19,7 @@
   .solution-row.reverse .sol-visual { order:1; }
   @media(max-width:860px){ .solution-row,.solution-row.reverse { grid-template-columns:1fr; } .solution-row.reverse .sol-info,.solution-row.reverse .sol-visual { order:unset; } }
 
-  .sol-number { font-family:'Outfit',sans-serif; font-size:5rem; font-weight:900; color:var(--leaf-pale); line-height:1; margin-bottom:8px; }
+  .sol-number { font-family:inherit; font-size:5rem; font-weight:900; color:var(--leaf-pale); line-height:1; margin-bottom:8px; }
   .sol-info h2 { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; color:var(--ink-dark); margin-bottom:14px; }
   .sol-info p  { color:var(--ink-muted); line-height:1.75; margin-bottom:20px; }
   .sol-tags    { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
