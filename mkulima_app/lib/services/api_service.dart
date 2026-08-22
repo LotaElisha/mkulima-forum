@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../models/product.dart';
-import '../models/order.dart';
 import '../providers/cache_provider.dart';
 
 class ApiService {
@@ -77,6 +76,63 @@ class ApiService {
     return response.data;
   }
 
+  // ── Identity linking ──────────────────────────────────────────────
+  //
+  // Attaching a phone number to an account that already exists, rather than
+  // creating a second account. Backed by /api/auth/phone/link/* — see
+  // docs/CONFIGURATION.md and MKULIMA_FORUM_AUDIT.md section 3.
+
+  /// Every sign-in identity currently on this account.
+  Future<Map<String, dynamic>> getIdentities() async {
+    final response = await _dio.get('/auth/identities');
+    return Map<String, dynamic>.from(response.data['identities'] as Map);
+  }
+
+  /// Ask the backend to text a code to a number the user wants to attach.
+  ///
+  /// Throws a DioException with status 422 when the number already belongs to
+  /// another account — the backend refuses before spending an SMS.
+  Future<Map<String, dynamic>> requestPhoneLink(String phone) async {
+    final response = await _dio.post(
+      '/auth/phone/link/request',
+      data: {'phone': phone},
+    );
+    return Map<String, dynamic>.from(response.data as Map);
+  }
+
+  /// Verify the code and attach the number to the signed-in account.
+  Future<Map<String, dynamic>> confirmPhoneLink({
+    required String phone,
+    required String code,
+  }) async {
+    final response = await _dio.post(
+      '/auth/phone/link/confirm',
+      data: {'phone': phone, 'code': code},
+    );
+    return Map<String, dynamic>.from(response.data as Map);
+  }
+
+  /// Detach the phone number. Requires the account password, and the backend
+  /// refuses when the phone is the only way in.
+  Future<Map<String, dynamic>> unlinkPhone(String currentPassword) async {
+    final response = await _dio.delete(
+      '/auth/phone/link',
+      data: {'current_password': currentPassword},
+    );
+    return Map<String, dynamic>.from(response.data as Map);
+  }
+
+  /// Current email verification state, for the "confirm your email" nudge.
+  Future<Map<String, dynamic>> getEmailStatus() async {
+    final response = await _dio.get('/auth/email/status');
+    return Map<String, dynamic>.from(response.data as Map);
+  }
+
+  /// Re-send the email verification link.
+  Future<void> resendEmailVerification() async {
+    await _dio.post('/auth/email/resend');
+  }
+
   Future<User> getMe() async {
     final response = await _dio.get('/auth/me');
     return User.fromJson(response.data['user']);
@@ -124,16 +180,34 @@ class ApiService {
   }
 
   // Order APIs
-  Future<Order> createOrder(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> createOrder(Map<String, dynamic> data) async {
     final response = await _dio.post('/marketplace/orders', data: data);
-    return Order.fromJson(response.data['order'] ?? response.data['data']);
+    return Map<String, dynamic>.from(
+      response.data['order'] ?? response.data['data'],
+    );
   }
 
-  Future<List<Order>> getOrders() async {
+  Future<Map<String, dynamic>> initiatePayment({
+    required int orderId,
+    required String paymentMethod,
+    required String phone,
+  }) async {
+    final response = await _dio.post(
+      '/payments/initiate',
+      data: {
+        'order_id': orderId,
+        'payment_method': paymentMethod,
+        'phone': phone,
+      },
+    );
+    return Map<String, dynamic>.from(response.data);
+  }
+
+  Future<List<dynamic>> getOrders() async {
     final response = await _dio.get('/marketplace/orders');
-    return (response.data['orders'] ?? response.data['data'] ?? [])
-        .map((e) => Order.fromJson(e))
-        .toList();
+    return List<dynamic>.from(
+      response.data['orders'] ?? response.data['data'] ?? const [],
+    );
   }
 
   // Forum APIs
@@ -211,10 +285,7 @@ class ApiService {
   }) async {
     final response = await _dio.post(
       '/bot/chat',
-      data: {
-        'message': message,
-        'conversation_uuid': conversationUuid,
-      },
+      data: {'message': message, 'conversation_uuid': conversationUuid},
     );
     return response.data;
   }
@@ -354,15 +425,22 @@ class ApiService {
     return response.data;
   }
 
-  Future<Map<String, dynamic>> addFarmActivity(String farmUuid, Map<String, dynamic> activityData) async {
-    final response = await _dio.post('/farms/$farmUuid/activities', data: activityData);
+  Future<Map<String, dynamic>> addFarmActivity(
+    String farmUuid,
+    Map<String, dynamic> activityData,
+  ) async {
+    final response = await _dio.post(
+      '/farms/$farmUuid/activities',
+      data: activityData,
+    );
     return response.data;
   }
 
   /// Formats raw errors (e.g. DioException) into human-readable Swahili messages
   static String formatError(dynamic error) {
     if (error is DioException) {
-      if (error.response?.data is Map && error.response!.data['message'] != null) {
+      if (error.response?.data is Map &&
+          error.response!.data['message'] != null) {
         return error.response!.data['message'].toString();
       }
       switch (error.type) {

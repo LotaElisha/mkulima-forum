@@ -104,8 +104,11 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
 - [x] **Account linking** — a signed-in user verifying an unclaimed number extends their
       existing account instead of creating a second one; a number on another account is
       refused rather than merged. Four endpoints under `/api/auth/`, ten tests.
-- [ ] Enable phone linking in the app UI (backend is ready; the Flutter screens for
-      `/api/auth/phone/link/*` are not built yet)
+- [x] **Phone linking in the app UI** — `AccountIdentitiesScreen` and `LinkPhoneScreen`
+      built, routed at `/identities` and `/identities/link-phone`, reachable from Profile →
+      Akaunti. Still dark until `auth.otp_enabled` is switched on in
+      Admin → System → Configuration; with it off every endpoint answers 503 and the screen
+      shows the server's message rather than failing
 
 ## Application
 
@@ -138,7 +141,9 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
       environment (storage.googleapis.com, dl.google.com, pub.dev and the GitHub archive all
       refused). Static checks pass: every `MkColors` token resolves, no unused local imports,
       all delimiters balanced. That is not a build.
-- [ ] Screenshot the rebuilt screens and review
+- [ ] Screenshot the rebuilt screens and review — the full checklist is in
+      [`docs/FLUTTER_HANDOFF.md`](./docs/FLUTTER_HANDOFF.md), which also carries the API
+      contract, build commands and the `auth.otp_enabled` prerequisite
 - [ ] Signed release build with a production keystore (the current APK is signed with a
       test key and the download page says so)
 - [ ] **`firebase_messaging` is commented out of `pubspec.yaml`** — push notifications do

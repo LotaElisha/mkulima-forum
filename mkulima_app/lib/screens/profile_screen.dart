@@ -18,6 +18,7 @@ import 'mkulima_bot_screen.dart';
 import 'scanner_screen.dart';
 import 'yield_screen.dart';
 import 'escrow_screen.dart';
+import 'account_identities_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -44,6 +45,19 @@ class ProfileScreen extends StatelessWidget {
           children: [
             _buildProfileHeader(user),
             const SizedBox(height: 24),
+            _buildSectionTitle('Akaunti'),
+            // Placed first deliberately. A farmer who registered with email in
+            // one season and signed in with a phone in the next used to end up
+            // with two accounts holding different farms, orders and wallets;
+            // this is where they join the two into one.
+            _buildMenuItem(
+              icon: Icons.badge_outlined,
+              title: 'Barua pepe na Simu',
+              subtitle: 'Thibitisha na unganisha namba yako',
+              color: Colors.green,
+              onTap: () => _navigate(context, const AccountIdentitiesScreen()),
+            ),
+            const SizedBox(height: 16),
             _buildSectionTitle('Miamala na Malipo'),
             _buildMenuItem(
               icon: Icons.account_balance_wallet,

@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
 
+import '../screens/account_identities_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/drone_screen.dart';
 import '../screens/escrow_screen.dart';
@@ -50,6 +51,8 @@ const Set<String> _protectedPaths = {
   '/notifications',
   '/settings',
   '/profile',
+  '/identities',
+  '/identities/link-phone',
 };
 
 GoRouter buildAppRouter(AuthProvider auth) {
@@ -105,6 +108,18 @@ GoRouter buildAppRouter(AuthProvider auth) {
       ),
       GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
       GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
+
+      // Account identities. Registered as a real route (not only a
+      // Navigator.push from Profile) so the verification mail's deep link and
+      // the "link your phone" prompt can both land here directly.
+      GoRoute(
+        path: '/identities',
+        builder: (context, state) => const AccountIdentitiesScreen(),
+      ),
+      GoRoute(
+        path: '/identities/link-phone',
+        builder: (context, state) => const LinkPhoneScreen(),
+      ),
     ],
   );
 }
