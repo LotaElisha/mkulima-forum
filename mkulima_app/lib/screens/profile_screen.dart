@@ -19,6 +19,7 @@ import 'scanner_screen.dart';
 import 'yield_screen.dart';
 import 'escrow_screen.dart';
 import 'account_identities_screen.dart';
+import 'become_seller_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -117,26 +118,45 @@ class ProfileScreen extends StatelessWidget {
               title: 'Arifa Zangu',
               subtitle: 'Taarifa muhimu',
               color: Colors.amber,
-              badge: '3',
+              // The badge was hardcoded to '3' for every account, every time.
+              // A count that is not a count is worse than no count: it sends
+              // farmers to an empty screen looking for three things.
               onTap: () => _navigate(context, const NotificationsScreen()),
             ),
             const SizedBox(height: 16),
+
+            // Business.
+            //
+            // This block used to read
+            //   if (user.role == 'farmer' || user.role == 'agrodealer')
+            //     ... Dashibodi ya Muuzaji
+            // which put a Seller Dashboard in front of every farmer on the
+            // platform. The API refuses non-sellers, so tapping it produced a
+            // raw 403. The role string is no longer consulted at all: the
+            // server sends `seller.can_sell` and the client draws that.
             _buildSectionTitle('Biashara'),
-            if (user.role == 'farmer' || user.role == 'agrodealer')
+            if (auth.seller.canSell) ...[
               _buildMenuItem(
                 icon: Icons.dashboard,
                 title: 'Dashibodi ya Muuzaji',
                 subtitle: 'Onesha mauzo na bidhaa',
-                color: Colors.cyan,
+                color: Colors.green,
                 onTap: () => _navigate(context, const SellerDashboardScreen()),
               ),
-            _buildMenuItem(
-              icon: Icons.verified_user,
-              title: 'KYC Verification',
-              subtitle: user.kycStatus.toUpperCase(),
-              color: Colors.deepOrange,
-              onTap: () => _navigate(context, const KycScreen()),
-            ),
+              // Seller identity checks belong to the business, not to the
+              // farmer's own account. Shown here, where it has a reason.
+              _buildMenuItem(
+                icon: Icons.verified_user,
+                title: 'Uthibitisho wa Muuzaji',
+                subtitle: _kycLabel(user.kycStatus),
+                color: Colors.green,
+                onTap: () => _navigate(context, const KycScreen()),
+              ),
+            ] else
+              SellerStatusCard(
+                state: auth.seller,
+                onApply: () => _startSellerApplication(context),
+              ),
             const SizedBox(height: 16),
             _buildSectionTitle('Teknolojia Kuu'),
             // Drone and IoT front backend endpoints that answer 503 by design
@@ -371,6 +391,26 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+
+  /// Opens the seller application, then lets the profile rebuild from the
+  /// refreshed account state rather than guessing what changed.
+  Future<void> _startSellerApplication(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const BecomeSellerScreen()),
+    );
+    if (context.mounted) {
+      await context.read<AuthProvider>().refreshUser();
+    }
+  }
+
+  /// KYC status in words a farmer can act on, rather than PENDING in capitals.
+  static String _kycLabel(String status) => switch (status.toLowerCase()) {
+        'verified' => 'Imethibitishwa',
+        'pending' => 'Inasubiri kupitiwa',
+        'rejected' => 'Haikukubaliwa — tuma tena',
+        _ => 'Bado hujatuma nyaraka',
+      };
 
   Widget _buildMenuItem({
     required IconData icon,

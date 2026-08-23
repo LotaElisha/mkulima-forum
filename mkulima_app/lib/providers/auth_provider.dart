@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import '../core/social_auth_config.dart';
+import '../models/seller_state.dart';
 import '../models/user.dart';
 import '../services/api_service.dart';
 import '../services/local_database.dart' as db;
@@ -26,6 +28,8 @@ class AuthProvider extends ChangeNotifier {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   User? _user;
+
+  SellerState _seller = SellerState.unknown;
   bool _isLoading = false;
   String? _error;
   String? _devOtp;
@@ -41,12 +45,20 @@ class AuthProvider extends ChangeNotifier {
   }
 
   User? get user => _user;
+
+  /// Selling state, as the server reports it.
+  ///
+  /// Never derived from [User.role] in the UI. The profile screen used to do
+  /// exactly that - `role == 'farmer' || role == 'agrodealer'` - and offered
+  /// every farmer a dashboard the API refuses.
+  SellerState get seller => _seller;
   bool get isLoading => _isLoading;
   String? get error => _error;
   String? get devOtp => _devOtp;
   String get subscriptionPlan => _subscriptionPlan;
   bool get isAuthenticated => _user != null;
   bool get isFarmer => _user?.role == 'farmer';
+  bool get canSell => _seller.canSell;
   bool get isBuyer => _user?.role == 'buyer';
   bool get isAdmin => _user?.role == 'admin';
 
@@ -55,8 +67,10 @@ class AuthProvider extends ChangeNotifier {
   Future<void> refreshUser() async {
     if (!isAuthenticated) return;
     try {
-      final freshUser = await _api.getMe();
+      final fresh = await _api.getMeDetailed();
+      final freshUser = fresh.user;
       _user = freshUser;
+      _seller = fresh.seller;
       final token = await _secureStorage.read(key: 'auth_token');
       if (token != null) await _db.saveUser(freshUser, token);
       notifyListeners();
@@ -71,14 +85,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _api.put('/auth/profile', data: values);
-      _user = await _api.getMe();
+      final refreshed = await _api.getMeDetailed();
+      _user = refreshed.user;
+      _seller = refreshed.seller;
       final token = await _secureStorage.read(key: 'auth_token');
       if (token != null) await _db.saveUser(_user!, token);
       _isLoading = false;
       notifyListeners();
       return true;
     } catch (error) {
-      _error = error.toString();
+      _error = ApiService.formatError(error);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -138,7 +154,11 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _error = e.toString();
+      // A 503 here is the expected answer while auth.otp_enabled is off, and
+      // the backend sends a translated sentence saying so. Showing the raw
+      // DioException instead - which is what used to happen - made a
+      // deliberate feature flag look like the app was broken.
+      _error = ApiService.formatError(e);
       _isLoading = false;
       notifyListeners();
       return false;
@@ -170,6 +190,7 @@ class AuthProvider extends ChangeNotifier {
       final token = response['token'];
       final userData = response['user'];
       _user = User.fromJson(userData);
+      _seller = SellerState.fromAnywhere(response.data);
 
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
@@ -179,19 +200,39 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      String msg = e.toString();
-      if (msg.contains('422')) {
-        msg = 'OTP imekwisha muda au si sahihi. Tafadhali tuma OTP mpya.';
-      } else if (msg.contains('429')) {
-        msg = 'Maombi mengi sana. Tafadhali subiri dakika chache.';
-      } else if (msg.contains('404')) {
-        msg = 'Mtumiaji hajapatikana. Jiunge kwanza.';
-      }
-      _error = msg;
+      // Was matching on substrings of the exception's toString(), which meant
+      // an OTP code that happened to contain "422" could pick the wrong
+      // branch, and anything unmatched printed the whole DioException.
+      final error = ApiService.asApiError(e);
+      _error = switch (error.statusCode) {
+        422 => 'OTP imekwisha muda au si sahihi. Tafadhali tuma OTP mpya.',
+        429 => 'Maombi mengi sana. Tafadhali subiri dakika chache.',
+        404 => 'Mtumiaji hajapatikana. Jiunge kwanza.',
+        _ => error.message,
+      };
       _isLoading = false;
       notifyListeners();
       return false;
     }
+  }
+
+
+  /// A social sign-in failure the user can read.
+  ///
+  /// The provider SDKs put configuration diagnostics in their exception
+  /// messages, so interpolating the exception - which both of these methods
+  /// used to do - shows the user our client ids and setup problems.
+  String _socialFailureMessage(String provider, Object error) {
+    final text = error.toString().toLowerCase();
+    if (text.contains('cancel')) {
+      return 'Umeghairi kuingia kwa $provider.';
+    }
+    if (text.contains('network') || text.contains('socket')) {
+      return 'Hakikisha una intaneti kisha ujaribu tena.';
+    }
+    if (kDebugMode) debugPrint('$provider sign-in failed: $error');
+    return 'Kuingia kwa $provider hakukufanikiwa. Tafadhali jaribu njia '
+        'nyingine au tumia barua pepe.';
   }
 
   Future<void> logout() async {
@@ -199,6 +240,7 @@ class AuthProvider extends ChangeNotifier {
     await _secureStorage.delete(key: 'auth_token');
     await _db.clearUser();
     _user = null;
+    _seller = SellerState.unknown;
     _subscriptionPlan = 'Free';
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -224,18 +266,19 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('429')) {
-        _error = 'Umeomba mara nyingi mfululizo. Subiri dakika chache.';
-      } else if (msg.contains('422')) {
+      final error = ApiService.asApiError(e);
+      if (error.statusCode == 422) {
         // A validation failure means the address was malformed, which the
         // form should already have caught; nothing to disclose either way.
+        // Reporting success here is what keeps registered and unregistered
+        // addresses indistinguishable from the outside.
         _isLoading = false;
         notifyListeners();
         return true;
-      } else {
-        _error = 'Hakuna mtandao. Angalia muunganisho wako.';
       }
+      _error = error.statusCode == 429
+          ? 'Umeomba mara nyingi mfululizo. Subiri dakika chache.'
+          : error.message;
       _isLoading = false;
       notifyListeners();
       return false;
@@ -266,6 +309,7 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'];
       final userData = response.data['user'];
       _user = User.fromJson(userData);
+      _seller = SellerState.fromAnywhere(response.data);
 
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
@@ -275,13 +319,15 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      String msg = e.toString();
-      if (msg.contains('401')) {
-        msg = 'Email au password si sahihi.';
-      } else if (msg.contains('404')) {
-        msg = 'Akaunti haijapatikana. Jiunge kwanza.';
-      }
-      _error = msg;
+      final error = ApiService.asApiError(e);
+      _error = switch (error.statusCode) {
+        // Deliberately identical for "no such account" and "wrong password":
+        // a different message for each turns the login form into a way to
+        // discover which addresses are registered.
+        401 || 404 => 'Barua pepe au nenosiri si sahihi.',
+        403 => error.message,
+        _ => error.message,
+      };
       _isLoading = false;
       notifyListeners();
       return false;
@@ -304,12 +350,19 @@ class AuthProvider extends ChangeNotifier {
   });
 
   Future<bool> signInWithGoogle({String role = 'farmer'}) async {
+    // Checked before _startLoading so an unconfigured build fails instantly
+    // and legibly instead of spinning and then throwing
+    // `clientConfigurationError` at the user.
+    if (!SocialAuthConfig.isGoogleConfigured) {
+      _error = 'Kuingia kwa Google hakujawashwa kwenye toleo hili.';
+      notifyListeners();
+      return false;
+    }
+
     _startLoading();
     try {
       if (!_googleInitialized) {
-        const serverClientId = String.fromEnvironment(
-          'GOOGLE_SERVER_CLIENT_ID',
-        );
+        const serverClientId = SocialAuthConfig.googleServerClientId;
         await GoogleSignIn.instance.initialize(
           clientId: kIsWeb && serverClientId.isNotEmpty ? serverClientId : null,
           serverClientId: !kIsWeb && serverClientId.isNotEmpty
@@ -331,19 +384,25 @@ class AuthProvider extends ChangeNotifier {
         'country_code': 'tz',
       }, loadingAlreadyStarted: true);
     } catch (e) {
-      return _finishError('Google sign-in imeshindikana: $e');
+      // Never interpolate the exception: GoogleSignInException prints its own
+      // configuration diagnostics, which is how "serverClientId must be
+      // provided on Android" reached a farmer's screen.
+      return _finishError(_socialFailureMessage('Google', e));
     }
   }
 
   Future<bool> signInWithApple({String role = 'farmer'}) async {
+    if (!SocialAuthConfig.isAppleConfigured) {
+      _error = 'Kuingia kwa Apple hakujawashwa kwenye toleo hili.';
+      notifyListeners();
+      return false;
+    }
+
     _startLoading();
     try {
-      const appleServiceId = String.fromEnvironment('APPLE_SERVICE_ID');
+      const appleServiceId = SocialAuthConfig.appleServiceId;
       final isAndroid =
           !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
-      if (isAndroid && appleServiceId.isEmpty) {
-        throw Exception('APPLE_SERVICE_ID is not configured.');
-      }
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: const [
           AppleIDAuthorizationScopes.email,
@@ -374,7 +433,7 @@ class AuthProvider extends ChangeNotifier {
         'country_code': 'tz',
       }, loadingAlreadyStarted: true);
     } catch (e) {
-      return _finishError('Apple sign-in imeshindikana: $e');
+      return _finishError(_socialFailureMessage('Apple', e));
     }
   }
 
@@ -388,6 +447,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await _api.post(path, data: data);
       final token = response.data['token'] as String;
       _user = User.fromJson(response.data['user']);
+      _seller = SellerState.fromAnywhere(response.data);
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
       await _db.saveUser(_user!, token);
@@ -395,7 +455,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      return _finishError(e.toString());
+      return _finishError(ApiService.formatError(e));
     }
   }
 

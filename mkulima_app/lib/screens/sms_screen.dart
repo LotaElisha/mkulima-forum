@@ -15,14 +15,23 @@ class _SmsScreenState extends State<SmsScreen> {
   final _messageController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
   Future<void> _sendSms() async {
     final phone = _phoneController.text.trim();
     final message = _messageController.text.trim();
 
-    if (phone.isEmpty || message.isEmpty) {
+    if (!RegExp(r'^255[0-9]{9}$').hasMatch(phone) || message.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Weka namba na ujumbe')));
+      ).showSnackBar(const SnackBar(
+        content: Text('Weka namba ya tarakimu 12 inayoanza na 255 na ujumbe'),
+      ));
       return;
     }
 

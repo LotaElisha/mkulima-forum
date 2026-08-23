@@ -22,12 +22,9 @@ void main() async {
   final db = LocalDatabase();
   // Configure per environment:
   //   flutter run --dart-define=API_URL=http://10.0.2.2:8000/api   (local dev)
-  //   flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
+  //   flutter build apk --dart-define=API_URL=https://mkulimaforum.com/api
   //
-  // The default was mkulimaforum.com while APP_URL in .env.production is
-  // mkulimaforum.app. Any release built without an explicit --dart-define
-  // therefore shipped pointing at a different host from the one the backend
-  // actually answers on — the app would install and then fail every request.
+  // Canonical production host is mkulimaforum.com (APP_URL in .env.production).
   final api = ApiService(baseUrl: kApiBaseUrl);
 
   runApp(MkulimaApp(db: db, api: api));

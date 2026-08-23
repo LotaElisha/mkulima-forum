@@ -7,7 +7,7 @@ void main() {
 
     setUp(() {
       // Connects directly to the live production server API to test remote integration
-      api = ApiService(baseUrl: 'https://mkulimaforum.app/api');
+      api = ApiService(baseUrl: 'https://mkulimaforum.com/api');
     });
 
     test('Public Input Verification Checklist endpoint', () async {

@@ -151,11 +151,13 @@ class ProductDetailScreen extends StatelessWidget {
                             action: 'kununua bidhaa',
                           );
                           if (ok && context.mounted) {
+                            if (!cart.isInCart(product.id)) {
+                              cart.addToCart(product);
+                            }
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => PaymentScreen(
                                   amount: product.price,
-                                  orderId: product.id,
                                 ),
                               ),
                             );

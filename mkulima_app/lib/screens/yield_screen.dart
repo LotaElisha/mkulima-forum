@@ -30,6 +30,12 @@ class _YieldScreenState extends State<YieldScreen> {
     {'value': 'cassava', 'label': 'Mihogo'},
   ];
 
+  @override
+  void dispose() {
+    _acresController.dispose();
+    super.dispose();
+  }
+
   Future<void> _estimate() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
@@ -43,6 +49,7 @@ class _YieldScreenState extends State<YieldScreen> {
           'farm_size_acres': double.parse(_acresController.text),
         },
       );
+      if (!mounted) return;
       setState(() {
         _result = response.data;
         _isLoading = false;
@@ -52,7 +59,7 @@ class _YieldScreenState extends State<YieldScreen> {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Hitilafu: $e')));
+      ).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
     }
   }
 

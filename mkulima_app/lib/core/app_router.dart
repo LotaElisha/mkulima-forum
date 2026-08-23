@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 
 import '../screens/account_identities_screen.dart';
+import '../screens/become_seller_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/drone_screen.dart';
 import '../screens/escrow_screen.dart';
@@ -53,6 +54,7 @@ const Set<String> _protectedPaths = {
   '/profile',
   '/identities',
   '/identities/link-phone',
+  '/become-seller',
 };
 
 GoRouter buildAppRouter(AuthProvider auth) {
@@ -119,6 +121,13 @@ GoRouter buildAppRouter(AuthProvider auth) {
       GoRoute(
         path: '/identities/link-phone',
         builder: (context, state) => const LinkPhoneScreen(),
+      ),
+
+      // Applying to sell. /seller stays registered for accounts that already
+      // can; this is the route for the ones that cannot yet.
+      GoRoute(
+        path: '/become-seller',
+        builder: (context, state) => const BecomeSellerScreen(),
       ),
     ],
   );

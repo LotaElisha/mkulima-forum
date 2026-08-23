@@ -43,7 +43,7 @@ class UssdSessionService
         // Domain read from APP_URL rather than hardcoded: a USSD reply is the
         // one channel a farmer cannot copy-paste from, so a stale domain here
         // is a dead end typed out by hand.
-        $host = parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'mkulimaforum.app';
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST) ?: 'mkulimaforum.com';
 
         return "END Mkulima Verify:\n{$statusText}\nSoma zaidi: {$host}";
     }

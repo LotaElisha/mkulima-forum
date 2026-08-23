@@ -40,15 +40,6 @@ class EscrowService
                 'hold_until' => now()->addDays(7),
             ]);
 
-            // Create ledger entry
-            EscrowLedger::create([
-                'escrow_id' => $escrow->id,
-                'entry_type' => 'hold',
-                'amount' => $order->total,
-                'balance_after' => $order->total,
-                'description' => 'Funds held in escrow for order #'.$order->id,
-            ]);
-
             return $escrow;
         });
     }

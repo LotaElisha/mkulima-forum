@@ -32,14 +32,16 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final data = await api.getSellerDashboard();
+      if (!mounted) return;
       setState(() {
         _stats = data['stats'];
         _recentOrders = data['recent_orders'] ?? [];
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = ApiService.formatError(e);
         _isLoading = false;
       });
     }
@@ -163,13 +165,13 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
         ),
         _statCard(
           'Mapato',
-          'TSh ${(stats['total_revenue'] ?? 0).toStringAsFixed(0)}',
+          'TSh ${_money(stats['total_revenue'])}',
           Icons.attach_money,
           Colors.green,
         ),
         _statCard(
           'Mwezi Huu',
-          'TSh ${(stats['monthly_revenue'] ?? 0).toStringAsFixed(0)}',
+          'TSh ${_money(stats['monthly_revenue'])}',
           Icons.trending_up,
           Colors.purple,
         ),
@@ -234,19 +236,31 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               child: Icon(Icons.shopping_bag, color: statusColor),
             ),
             title: Text(
-              'Oda #${order['uuid']?.toString().substring(0, 8) ?? '---'}',
+              'Oda #${_shortId(order['uuid'])}',
             ),
             subtitle: Text(
               '${order['buyer_name'] ?? 'Unknown'} - ${order['items_count'] ?? 0} items',
             ),
             trailing: Text(
-              'TSh ${(order['total'] ?? 0).toStringAsFixed(0)}',
+              'TSh ${_money(order['total'])}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         );
       }).toList(),
     );
+  }
+
+  String _money(dynamic value) {
+    final amount = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '') ?? 0;
+    return amount.toStringAsFixed(0);
+  }
+
+  String _shortId(dynamic value) {
+    final id = value?.toString() ?? '';
+    return id.isEmpty ? '---' : id.substring(0, id.length < 8 ? id.length : 8);
   }
 
   Color _statusColor(String status) {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../core/social_auth_config.dart';
+import '../widgets/mkulima_logo.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme.dart';
@@ -94,17 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
-                      child: Image.asset(
-                        'assets/images/app_icon.jpg',
-                        width: 76,
-                        height: 76,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  const Center(child: MkulimaLogo(size: 76)),
                   const SizedBox(height: 22),
                   const Text(
                     'Karibu Mkulima',
@@ -238,33 +230,42 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                   ),
                   const SizedBox(height: 20),
-                  const _DividerLabel(),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: auth.isLoading
-                              ? null
-                              : () async =>
-                                    _finish(await auth.signInWithGoogle()),
-                          icon: const Icon(Icons.g_mobiledata, size: 25),
-                          label: const Text('Google'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: auth.isLoading
-                              ? null
-                              : () async =>
-                                    _finish(await auth.signInWithApple()),
-                          icon: const Icon(Icons.apple),
-                          label: const Text('Apple'),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Only drawn for providers this build carries credentials
+                  // for. Both used to render unconditionally and throw a
+                  // configuration exception the instant they were tapped.
+                  if (SocialAuthConfig.hasAnyProvider) ...[
+                    const _DividerLabel(),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        if (SocialAuthConfig.isGoogleConfigured)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: auth.isLoading
+                                  ? null
+                                  : () async =>
+                                        _finish(await auth.signInWithGoogle()),
+                              icon: const Icon(Icons.g_mobiledata, size: 25),
+                              label: const Text('Google'),
+                            ),
+                          ),
+                        if (SocialAuthConfig.isGoogleConfigured &&
+                            SocialAuthConfig.shouldOfferApple)
+                          const SizedBox(width: 12),
+                        if (SocialAuthConfig.shouldOfferApple)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: auth.isLoading
+                                  ? null
+                                  : () async =>
+                                        _finish(await auth.signInWithApple()),
+                              icon: const Icon(Icons.apple),
+                              label: const Text('Apple'),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   TextButton.icon(
                     onPressed: () => setState(() {

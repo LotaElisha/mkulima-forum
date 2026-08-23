@@ -6,25 +6,31 @@ import '../services/api_service.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double amount;
-  final String orderId;
 
-  const PaymentScreen({
-    super.key,
-    required this.amount,
-    required this.orderId,
-  });
+  const PaymentScreen({super.key, required this.amount});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String _selectedMethod = 'escrow';
+  String _selectedMethod = 'mpesa';
   final _phoneController = TextEditingController();
   final _regionController = TextEditingController();
   final _districtController = TextEditingController();
   final _wardController = TextEditingController();
   bool _isProcessing = false;
+  int? _createdOrderId;
+  double? _createdTotal;
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _regionController.dispose();
+    _districtController.dispose();
+    _wardController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,21 +120,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Column(
                 children: [
                   _buildPaymentMethod(
-                    value: 'escrow',
-                    title: 'Escrow (Salama)',
-                    subtitle: 'Pesa zinahifadhiwa hadi bidhaa ifike',
-                    icon: Icons.security,
-                  ),
-                  _buildPaymentMethod(
                     value: 'mpesa',
                     title: 'M-Pesa',
-                    subtitle: 'Lipa kwa M-Pesa (hivi karibuni)',
+                    subtitle: 'Utapokea ombi la malipo kwenye simu',
                     icon: Icons.phone_android,
                   ),
                   _buildPaymentMethod(
                     value: 'tigopesa',
                     title: 'Tigo Pesa',
-                    subtitle: 'Lipa kwa Tigo Pesa (hivi karibuni)',
+                    subtitle: 'Utapokea ombi la malipo kwenye simu',
                     icon: Icons.phone_android,
                   ),
                 ],
@@ -188,9 +188,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
       return;
     }
 
-    if (phone.isNotEmpty && !phone.startsWith('255')) {
+    if (!RegExp(r'^255[0-9]{9}$').hasMatch(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Namba lazima ianze na 255')),
+        const SnackBar(
+          content: Text('Weka namba ya tarakimu 12 inayoanza na 255'),
+        ),
       );
       return;
     }
@@ -203,28 +205,43 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       // Build order items from cart
       final items = cart.items.map((item) {
-        return {
-          'product_uuid': item.product.id,
-          'quantity': item.quantity,
-        };
+        return {'product_uuid': item.product.id, 'quantity': item.quantity};
       }).toList();
 
       final deliveryPhone = phone.isNotEmpty ? phone : '255714524007';
 
-      await api.createOrder({
-        'items': items,
-        'delivery_address': {
-          'region': region,
-          'district': district,
-          'ward': ward,
-          'street': '',
-        },
-        'delivery_phone': deliveryPhone,
-        'notes': 'Order placed via mobile app',
-      });
+      Map<String, dynamic>? order;
+      if (_createdOrderId == null) {
+        order = await api.createOrder({
+          'items': items,
+          'delivery_address': {
+            'region': region,
+            'district': district,
+            'ward': ward,
+            'street': '',
+          },
+          'delivery_phone': deliveryPhone,
+          'notes': 'Order placed via mobile app',
+        });
+        final rawOrderId = order['id'];
+        _createdOrderId = rawOrderId is int
+            ? rawOrderId
+            : int.tryParse(rawOrderId.toString());
+        _createdTotal = double.tryParse(order['total'].toString());
+        cart.clearCart();
+      }
+      final orderId = _createdOrderId;
+      if (orderId == null) {
+        throw StateError('Seva haikurudisha namba sahihi ya oda.');
+      }
 
-      // Clear cart after successful order
-      cart.clearCart();
+      await api.initiatePayment(
+        orderId: orderId,
+        paymentMethod: _selectedMethod,
+        phone: phone,
+      );
+
+      final chargedAmount = _createdTotal ?? widget.amount;
 
       if (mounted) {
         setState(() => _isProcessing = false);
@@ -243,15 +260,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Order yako imetumwa kikamilifu.'),
+                const Text(
+                  'Oda imeundwa na ombi la malipo limetumwa kwenye simu yako.',
+                ),
                 const SizedBox(height: 8),
                 Text(
-                  'TSh ${widget.amount.toStringAsFixed(0)} zimehifadhiwa kwenye escrow.',
+                  'Thibitisha malipo ya TSh ${chargedAmount.toStringAsFixed(0)} kwenye simu. Escrow itashikilia fedha baada ya mtoa huduma kuthibitisha malipo.',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Muuzaji atathibitisha na bidhaa itatumwa.',
+                  'Usifunge programu hadi uone uthibitisho wa mtoa huduma.',
                   style: TextStyle(fontSize: 13),
                 ),
               ],
@@ -272,8 +291,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isProcessing = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kosa: $e')),
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(
+            content: Text(
+              _createdOrderId == null
+                  ? 'Kosa: ${ApiService.formatError(e)}'
+                  : 'Oda imehifadhiwa lakini malipo hayakuanzishwa. Jaribu tena: ${ApiService.formatError(e)}',
+            ),
+          ),
         );
       }
     }

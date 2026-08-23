@@ -57,7 +57,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = ApiService.formatError(e);
         _isLoading = false;
       });
     }

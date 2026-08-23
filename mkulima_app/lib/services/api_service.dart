@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import '../core/api_error.dart';
+import '../models/app_notification.dart';
 import '../models/user.dart';
 import '../models/product.dart';
+import '../models/seller_state.dart';
 import '../providers/cache_provider.dart';
 
 class ApiService {
@@ -138,6 +141,53 @@ class ApiService {
     return User.fromJson(response.data['user']);
   }
 
+  /// The account plus its selling state, from one request.
+  ///
+  /// `/auth/me` returns both. Fetching them separately would let the two drift
+  /// apart between calls, which is the class of bug that put a Seller
+  /// Dashboard button in front of farmers in the first place.
+  Future<({User user, SellerState seller})> getMeDetailed() async {
+    final response = await _dio.get('/auth/me');
+    return (
+      user: User.fromJson(response.data['user']),
+      seller: SellerState.fromAnywhere(response.data),
+    );
+  }
+
+  // ── Selling ───────────────────────────────────────────────────────
+  //
+  // /seller/status is open to every authenticated account by design: it is
+  // what the app asks before deciding whether to draw the business section.
+
+  Future<SellerState> getSellerStatus() async {
+    final response = await _dio.get('/seller/status');
+    return SellerState.fromAnywhere(response.data);
+  }
+
+  Future<SellerState> submitSellerApplication({
+    required String businessName,
+    required String businessType,
+    required String region,
+    String? district,
+    required String contactPhone,
+    String? description,
+  }) async {
+    final response = await _dio.post(
+      '/seller/application',
+      data: {
+        'business_name': businessName,
+        'business_type': businessType,
+        'region': region,
+        if (district != null && district.isNotEmpty) 'district': district,
+        'contact_phone': contactPhone,
+        if (description != null && description.isNotEmpty)
+          'description': description,
+      },
+    );
+    return SellerState.fromAnywhere(response.data);
+  }
+
+
   // Marketplace APIs
   Future<List<Product>> getProducts({
     String? categoryId,
@@ -217,7 +267,7 @@ class ApiService {
       await CacheProvider.cacheForumCategories(
         response.data['categories'] ?? response.data['data'] ?? [],
       );
-      return response.data['categories'] ?? response.data['data'] ?? [];
+      return _asList(response.data, const ['categories']);
     } catch (e) {
       final cached = await CacheProvider.getCachedForumCategories();
       if (cached != null) return cached;
@@ -230,17 +280,38 @@ class ApiService {
       '/forum/threads',
       queryParameters: {'category_id': categoryId},
     );
-    return response.data['threads'] ?? response.data['data'] ?? [];
+    return _asList(response.data, const ['threads']);
   }
 
-  Future<Map<String, dynamic>> createThread(Map<String, dynamic> data) async {
-    final response = await _dio.post('/forum/threads', data: data);
-    return response.data['thread'] ?? response.data;
+  /// Start a forum thread.
+  ///
+  /// Named parameters rather than a loose map on purpose. The caller was
+  /// passing `category_id` while the API requires `forum_category_id`, so
+  /// every attempt to start a thread failed with
+  ///
+  ///   422 {"errors":{"forum_category_id":["The forum category id field is
+  ///   required."]}}
+  ///
+  /// A `Map<String, dynamic>` argument cannot catch a misspelled key; a
+  /// parameter list can, and now the field name is written down exactly once.
+  Future<Map<String, dynamic>> createThread({
+    required String categoryId,
+    required String title,
+    required String body,
+  }) async {
+    final response = await _dio.post('/forum/threads', data: {
+      // Sent as the string the screen carries. Laravel's `exists` rule
+      // resolves a numeric string against the id column without complaint.
+      'forum_category_id': categoryId,
+      'title': title,
+      'body': body,
+    });
+    return _asMap(response.data['thread'] ?? response.data);
   }
 
   Future<Map<String, dynamic>> getThread(String threadId) async {
     final response = await _dio.get('/forum/threads/$threadId');
-    return response.data['thread'] ?? response.data['data'] ?? response.data;
+    return _asMap(response.data['thread'] ?? response.data['data'] ?? response.data);
   }
 
   Future<void> createReply(String threadId, String body) async {
@@ -256,12 +327,12 @@ class ApiService {
       'image': MultipartFile.fromBytes(imageBytes, filename: filename),
     });
     final response = await _dio.post('/scanner/scan', data: formData);
-    return response.data['scan'] ?? response.data['data'] ?? response.data;
+    return _asMap(response.data['scan'] ?? response.data['data'] ?? response.data);
   }
 
   Future<List<dynamic>> getDiseaseHistory() async {
     final response = await _dio.get('/scanner/history');
-    return response.data['scans'] ?? response.data['data'] ?? [];
+    return _asList(response.data, const ['scans']);
   }
 
   // AI Agronomist APIs
@@ -270,12 +341,12 @@ class ApiService {
       '/agronomist/ask',
       data: {'question': query},
     );
-    return response.data['answer'] ?? response.data;
+    return _asMap(response.data['answer'] ?? response.data);
   }
 
   Future<List<dynamic>> getKbDocuments() async {
     final response = await _dio.get('/agronomist/kb/search');
-    return response.data['documents'] ?? response.data['data'] ?? [];
+    return _asList(response.data, const ['documents']);
   }
 
   // Mkulima AI chat APIs
@@ -291,9 +362,15 @@ class ApiService {
   }
 
   // Notifications APIs
-  Future<Map<String, dynamic>> getNotifications() async {
+  /// The notification feed, parsed.
+  ///
+  /// This method used to be declared `Future<Map<String, dynamic>>` while
+  /// returning `response.data['notifications']` - a List. Every call threw
+  /// before the screen saw a single row. Returning a typed object means the
+  /// declared type and the returned value cannot drift apart again.
+  Future<NotificationFeed> getNotifications() async {
     final response = await _dio.get('/notifications');
-    return response.data['notifications'] ?? response.data;
+    return NotificationFeed.fromResponse(response.data);
   }
 
   Future<void> markNotificationRead(String id) async {
@@ -305,25 +382,31 @@ class ApiService {
   }
 
   // Seller APIs
+  //
+  // This returned `response.data['stats']` - the inner object - while
+  // SellerDashboardScreen read `data['stats']` and `data['recent_orders']`
+  // off the result. Both came back null, so a genuine seller saw an empty
+  // dashboard with no error to explain it. The envelope is what the screen
+  // wants, so the envelope is what it gets.
   Future<Map<String, dynamic>> getSellerDashboard() async {
     final response = await _dio.get('/seller/dashboard');
-    return response.data['stats'] ?? response.data;
+    return _asMap(response.data);
   }
 
   Future<List<dynamic>> getSellerProducts() async {
     final response = await _dio.get('/seller/products');
-    return response.data['products'] ?? [];
+    return _asList(response.data, const ['products']);
   }
 
   Future<List<dynamic>> getSellerOrders() async {
     final response = await _dio.get('/seller/orders');
-    return response.data['orders'] ?? [];
+    return _asList(response.data, const ['orders']);
   }
 
   // KYC APIs
   Future<Map<String, dynamic>> getKycStatus() async {
     final response = await _dio.get('/kyc/status');
-    return response.data['kyc'] ?? response.data;
+    return _asMap(response.data['kyc'] ?? response.data);
   }
 
   Future<void> submitKyc(Map<String, dynamic> data) async {
@@ -333,12 +416,12 @@ class ApiService {
   // Wallet APIs
   Future<Map<String, dynamic>> getWalletBalance() async {
     final response = await _dio.get('/wallet/balance');
-    return response.data['wallet'] ?? response.data;
+    return _asMap(response.data['wallet'] ?? response.data);
   }
 
   Future<List<dynamic>> getWalletTransactions() async {
     final response = await _dio.get('/wallet/transactions');
-    return response.data['transactions'] ?? response.data['data'] ?? [];
+    return _asList(response.data, const ['transactions']);
   }
 
   Future<void> deposit(double amount, String phone, String provider) async {
@@ -417,7 +500,7 @@ class ApiService {
   // Farm Management APIs
   Future<List<dynamic>> getFarms() async {
     final response = await _dio.get('/farms');
-    return response.data['farms'] ?? [];
+    return _asList(response.data, const ['farms']);
   }
 
   Future<Map<String, dynamic>> createFarm(Map<String, dynamic> farmData) async {
@@ -436,27 +519,45 @@ class ApiService {
     return response.data;
   }
 
-  /// Formats raw errors (e.g. DioException) into human-readable Swahili messages
-  static String formatError(dynamic error) {
-    if (error is DioException) {
-      if (error.response?.data is Map &&
-          error.response!.data['message'] != null) {
-        return error.response!.data['message'].toString();
-      }
-      switch (error.type) {
-        case DioExceptionType.connectionTimeout:
-        case DioExceptionType.sendTimeout:
-        case DioExceptionType.receiveTimeout:
-        case DioExceptionType.connectionError:
-          return 'Hakuna muunganisho wa mtandao au server haipatikani.';
-        default:
-          final status = error.response?.statusCode;
-          if (status == 500 || status == 503) {
-            return 'Huduma ya AI haipatikani kwa sasa. Tafadhali jaribu tena baadaye.';
-          }
-          return error.message ?? 'Imeshindikana kukamilisha ombi.';
-      }
-    }
-    return error.toString();
+
+  /// Coerce a response body to a map without throwing.
+  ///
+  /// Every accessor in this file used to index straight into `response.data`,
+  /// which is `dynamic`. When the shape was not what the declared return type
+  /// promised, the cast failed at the call site with a message naming Dart
+  /// types rather than the endpoint - which is how
+  /// `type 'List<dynamic>' is not a subtype of 'FutureOr<Map<String,
+  /// dynamic>>'` reached the notifications screen.
+  static Map<String, dynamic> _asMap(dynamic body) {
+    if (body is Map) return Map<String, dynamic>.from(body);
+    return const {};
   }
+
+  /// Pull a list out of whichever envelope the endpoint uses.
+  static List<dynamic> _asList(dynamic body, List<String> keys) {
+    if (body is List) return body;
+    if (body is Map) {
+      for (final key in keys) {
+        final value = body[key];
+        if (value is List) return value;
+        // Laravel's paginator nests the rows one level deeper.
+        if (value is Map && value['data'] is List) return value['data'] as List;
+      }
+      if (body['data'] is List) return body['data'] as List;
+    }
+    return const [];
+  }
+
+  /// A message safe to show a farmer.
+  ///
+  /// Every call site in this file already routed its failures through here,
+  /// so fixing the mapping in one place fixes the whole app. The previous
+  /// implementation fell through to `error.message` and then
+  /// `error.toString()`, which is how "DioException [bad response] ... read
+  /// more at developer.mozilla.org" ended up on a production screen.
+  static String formatError(dynamic error) => ApiError.from(error).message;
+
+  /// The structured form, for callers that need the status code or the
+  /// field-level validation errors rather than one sentence.
+  static ApiError asApiError(dynamic error) => ApiError.from(error);
 }

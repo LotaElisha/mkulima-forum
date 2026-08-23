@@ -26,11 +26,13 @@ class _IoTScreenState extends State<IoTScreen> {
     try {
       final api = context.read<ApiService>();
       final response = await api.get('/iot/my-sensors');
+      if (!mounted) return;
       setState(() {
         _sensors = response.data['sensors'] ?? [];
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -88,7 +90,11 @@ class _IoTScreenState extends State<IoTScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.sensors, size: 48, color: Colors.white),
+                        const Icon(
+                          Icons.sensors,
+                          size: 48,
+                          color: Colors.white,
+                        ),
                         const SizedBox(height: 12),
                         const Text(
                           'Vifaa vya Akili',
@@ -112,10 +118,27 @@ class _IoTScreenState extends State<IoTScreen> {
                     children: [
                       const Text(
                         'Vifaa Vyangu',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () => showDialog<void>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Usajili wa sensor'),
+                            content: const Text(
+                              'Usajili wa vifaa vya IoT bado haujawashwa kwenye seva. Tutawasha kitufe hiki baada ya sajili ya vifaa kupatikana.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Sawa'),
+                              ),
+                            ],
+                          ),
+                        ),
                         icon: const Icon(Icons.add),
                         label: const Text('Ongeza'),
                       ),
@@ -129,7 +152,11 @@ class _IoTScreenState extends State<IoTScreen> {
                         child: Center(
                           child: Column(
                             children: [
-                              Icon(Icons.sensors_off, size: 48, color: Colors.grey),
+                              Icon(
+                                Icons.sensors_off,
+                                size: 48,
+                                color: Colors.grey,
+                              ),
                               SizedBox(height: 12),
                               Text('Huna vifaa vilivyounganishwa'),
                             ],
@@ -195,10 +222,7 @@ class _SensorCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              sensor['location'],
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            Text(sensor['location'], style: TextStyle(color: Colors.grey[600])),
             const SizedBox(height: 16),
             if (lastReading.isNotEmpty) ...[
               const Text(

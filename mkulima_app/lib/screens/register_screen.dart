@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../core/social_auth_config.dart';
+import '../widgets/mkulima_logo.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme.dart';
@@ -90,15 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: const Icon(Icons.arrow_back),
                         ),
                         const Spacer(),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: Image.asset(
-                            'assets/images/app_icon.jpg',
-                            width: 48,
-                            height: 48,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                        const MkulimaLogo(size: 48),
                       ],
                     ),
                     const SizedBox(height: 28),
@@ -236,48 +230,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           : const Text('Fungua akaunti'),
                     ),
                     const SizedBox(height: 20),
-                    const Row(
-                      children: [
-                        Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(
-                            'AU JISAJILI NA',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: MkColors.muted,
+                    // The divider announces the social options, so it is
+                    // hidden with them - otherwise an unconfigured build shows
+                    // "AU JISAJILI NA" above nothing at all.
+                    if (SocialAuthConfig.hasAnyProvider)
+                      const Row(
+                        children: [
+                          Expanded(child: Divider()),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'AU JISAJILI NA',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: MkColors.muted,
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(child: Divider()),
-                      ],
-                    ),
+                          Expanded(child: Divider()),
+                        ],
+                      ),
                     const SizedBox(height: 16),
+                    // Same rule as the login screen: a provider without
+                    // credentials in this build is not offered.
                     Row(
                       children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: auth.isLoading
-                                ? null
-                                : () async => _finish(
-                                    await auth.signInWithGoogle(role: _role),
-                                  ),
-                            icon: const Icon(Icons.g_mobiledata, size: 25),
-                            label: const Text('Google'),
+                        if (SocialAuthConfig.isGoogleConfigured)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: auth.isLoading
+                                  ? null
+                                  : () async => _finish(
+                                        await auth.signInWithGoogle(role: _role),
+                                      ),
+                              icon: const Icon(Icons.g_mobiledata, size: 25),
+                              label: const Text('Google'),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: auth.isLoading
-                                ? null
-                                : () async => _finish(
-                                    await auth.signInWithApple(role: _role),
-                                  ),
-                            icon: const Icon(Icons.apple),
-                            label: const Text('Apple'),
+                        if (SocialAuthConfig.isGoogleConfigured &&
+                            SocialAuthConfig.shouldOfferApple)
+                          const SizedBox(width: 12),
+                        if (SocialAuthConfig.shouldOfferApple)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: auth.isLoading
+                                  ? null
+                                  : () async => _finish(
+                                        await auth.signInWithApple(role: _role),
+                                      ),
+                              icon: const Icon(Icons.apple),
+                              label: const Text('Apple'),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 16),

@@ -8,6 +8,7 @@ use App\Models\SocialAccount;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\Auth\SocialIdentityVerifier;
+use App\Services\Seller\SellerStatus;
 use App\Services\OtpService;
 use App\Services\SmsService;
 use App\Services\Spine\ConfigRegistry;
@@ -74,15 +75,7 @@ class AuthController extends Controller
             'message' => 'Login successful.',
             'token' => $token,
             'token_type' => 'Bearer',
-            'user' => [
-                'uuid' => $user->uuid,
-                'name' => $user->name,
-                'phone' => $user->phone,
-                'email' => $user->email,
-                'role' => $user->role,
-                'kyc_status' => $user->kyc_status,
-                'preferred_language' => $user->preferred_language,
-            ],
+            'user' => $this->userPayload($user),
         ]);
     }
 
@@ -412,15 +405,7 @@ class AuthController extends Controller
             // the app believed it was signed in and every request silently
             // 401'd until the user force-quit it.
             'expires_in' => self::tokenLifetimeSeconds(),
-            'user' => [
-                'uuid' => $user->uuid,
-                'name' => $user->name,
-                'phone' => $user->phone,
-                'email' => $user->email,
-                'role' => $user->role,
-                'kyc_status' => $user->kyc_status,
-                'preferred_language' => $user->preferred_language,
-            ],
+            'user' => $this->userPayload($user),
         ]);
     }
 
@@ -429,16 +414,32 @@ class AuthController extends Controller
         return (bool) $this->configRegistry->get('auth.otp_enabled', ! app()->environment('production'));
     }
 
+    /**
+     * The one shape every authentication response returns.
+     *
+     * There used to be four hand-written copies of this array - login,
+     * loginWithEmail, verifyOtp and me - each with a slightly different set of
+     * keys. The Flutter client parsed whichever it happened to receive, and a
+     * field present in one response and absent in another is precisely how a
+     * client ends up reading null off a user it just authenticated.
+     */
     private function userPayload(User $user): array
     {
         return [
             'uuid' => $user->uuid,
             'name' => $user->name,
             'phone' => $user->phone,
+            'phone_verified' => $user->phone_verified_at !== null,
             'email' => $user->email,
+            'email_verified' => $user->hasVerifiedEmail(),
             'role' => $user->role,
             'kyc_status' => $user->kyc_status,
             'preferred_language' => $user->preferred_language,
+            'avatar' => $user->avatar,
+            'is_active' => (bool) $user->is_active,
+            // Lets the app draw the business section without guessing from the
+            // role string, and without calling an endpoint it may be refused.
+            'seller' => app(SellerStatus::class)->payload($user),
         ];
     }
 
@@ -496,17 +497,7 @@ class AuthController extends Controller
         $user = $request->user();
 
         return response()->json([
-            'user' => [
-                'uuid' => $user->uuid,
-                'name' => $user->name,
-                'phone' => $user->phone,
-                'email' => $user->email,
-                'role' => $user->role,
-                'kyc_status' => $user->kyc_status,
-                'preferred_language' => $user->preferred_language,
-                'avatar' => $user->avatar,
-                'is_active' => $user->is_active,
-            ],
+            'user' => $this->userPayload($user),
         ]);
     }
 

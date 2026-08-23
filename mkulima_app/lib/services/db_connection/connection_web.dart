@@ -9,8 +9,10 @@ QueryExecutor openConnection() {
   return DatabaseConnection.delayed(Future(() async {
     final result = await WasmDatabase.open(
       databaseName: 'mkulima_database',
-      sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.js'),
+      // Production shared hosting blocks static WebAssembly payloads. Laravel
+      // exposes this fixed, non-user-controlled asset from private storage.
+      sqlite3Uri: Uri.parse('/web-app-assets/sqlite'),
+      driftWorkerUri: Uri.parse('/web-app-assets/drift-worker'),
     );
     return result.resolvedExecutor;
   }));

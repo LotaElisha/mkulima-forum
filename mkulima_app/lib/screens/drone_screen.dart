@@ -25,11 +25,13 @@ class _DroneScreenState extends State<DroneScreen> {
     try {
       final api = context.read<ApiService>();
       final response = await api.get('/drone/services');
+      if (!mounted) return;
       setState(() {
         _services = response.data['services'] ?? [];
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -212,6 +214,16 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
   final _phoneController = TextEditingController();
   final _notesController = TextEditingController();
   DateTime? _selectedDate;
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _locationController.dispose();
+    _sizeController.dispose();
+    _phoneController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -310,15 +322,17 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: _submitBooking,
+                onPressed: _submitting ? null : _submitBooking,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2E7D32),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text(
-                  'Thibitisha Nafasi',
-                  style: TextStyle(fontSize: 16),
-                ),
+                child: _submitting
+                    ? const SizedBox.square(
+                        dimension: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Thibitisha Nafasi', style: TextStyle(fontSize: 16)),
               ),
             ),
             const SizedBox(height: 16),
@@ -328,32 +342,60 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
     );
   }
 
-  void _submitBooking() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final size = double.tryParse(_sizeController.text) ?? 1;
-      final cost = (widget.service['price_per_acre'] as int) * size;
+  Future<void> _submitBooking() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tafadhali chagua tarehe ya huduma.')),
+      );
+      return;
+    }
+    final size = double.tryParse(_sizeController.text);
+    if (size == null || size < 0.5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ukubwa wa shamba uwe angalau ekari 0.5.')),
+      );
+      return;
+    }
 
-      showDialog(
+    setState(() => _submitting = true);
+    try {
+      final response = await context.read<ApiService>().post('/drone/book', data: {
+        'service_id': widget.service['id'],
+        'farm_location': _locationController.text.trim(),
+        'farm_size_acres': size,
+        'preferred_date': _selectedDate!.toIso8601String().split('T').first,
+        'contact_phone': _phoneController.text.trim(),
+        'notes': _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+      });
+      if (!mounted) return;
+      final booking = response.data['booking'] as Map<String, dynamic>?;
+      final cost = booking?['total_cost'] ?? ((widget.service['price_per_acre'] as num) * size);
+      await showDialog<void>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Nafasi Imewekwa'),
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Ombi Limepokelewa'),
           content: Text(
-            'Ombi lako la ${widget.service['name']} limepokelewa.\n\n'
-            'Ukubwa: $size acres\n'
-            'Gharama: TZS ${cost.toStringAsFixed(0)}\n\n'
-            'Utapokea ujumbe wa kuthibitisha hivi karibuni.',
+            '${response.data['message'] ?? 'Ombi lako limepokelewa.'}\n\n'
+            'Ukubwa: $size ekari\nGharama ya makadirio: TZS $cost',
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Sawa'),
             ),
           ],
         ),
       );
+      if (mounted) Navigator.pop(context);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ApiService.formatError(error))),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _submitting = false);
     }
   }
 }

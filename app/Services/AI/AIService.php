@@ -5,6 +5,8 @@ namespace App\Services\AI;
 use App\Models\AiFeatureRoute;
 use App\Models\AiProvider;
 use App\Models\AiUsageLog;
+use App\Models\User;
+use App\Models\Tenant;
 use App\Services\AI\Contracts\AIProviderInterface;
 use App\Services\AI\DTO\AIResponse;
 use App\Services\AI\Providers\GeminiProvider;
@@ -211,16 +213,39 @@ class AIService
     /**
      * Record successful API call in ai_usage_logs.
      */
+
+    /**
+     * The tenant this log row belongs to.
+     *
+     * Both loggers hardcoded `'tenant_id' => 1`. On any installation whose
+     * first tenant is not id 1 - and in the test suite, which runs against an
+     * empty in-memory database - every insert failed the foreign key and was
+     * swallowed by the catch below as
+     *
+     *   Failed to log AI error usage: FOREIGN KEY constraint failed
+     *
+     * The effect was that AI failures went unrecorded precisely when
+     * something was wrong, which is when the record matters. Falling back to
+     * null rather than a guessed id keeps the row insertable if the column is
+     * nullable and fails loudly in the log if it is not.
+     */
+    protected function resolveTenantId(?int $userId): ?int
+    {
+        if ($userId !== null) {
+            $tenantId = User::whereKey($userId)->value('tenant_id');
+            if ($tenantId !== null) {
+                return (int) $tenantId;
+            }
+        }
+
+        return Tenant::query()->orderBy('id')->value('id');
+    }
+
     protected function logUsage(AIProviderInterface $providerAdapter, string $feature, AIResponse $response, ?int $userId, string $status): void
     {
         try {
-            $providerModelId = null;
-            if ($providerAdapter instanceof GeminiProvider || $providerAdapter instanceof OpenAIProvider) {
-                // Find matching provider ID if active in DB
-            }
-
             AiUsageLog::create([
-                'tenant_id' => 1,
+                'tenant_id' => $this->resolveTenantId($userId),
                 'user_id' => $userId,
                 'feature' => $feature,
                 'provider_type' => $providerAdapter->getProviderType(),
@@ -243,7 +268,7 @@ class AIService
     {
         try {
             AiUsageLog::create([
-                'tenant_id' => 1,
+                'tenant_id' => $this->resolveTenantId($userId),
                 'user_id' => $userId,
                 'feature' => $feature,
                 'provider_type' => $providerAdapter->getProviderType(),

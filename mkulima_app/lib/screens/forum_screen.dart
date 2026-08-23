@@ -49,9 +49,20 @@ class _ForumScreenState extends State<ForumScreen> {
     }
 
     if (_categories.isEmpty) {
-      return const MkEmptyState(
-        icon: Icons.forum_outlined,
-        title: MkStrings.emptyList,
+      return RefreshIndicator(
+        onRefresh: _loadCategories,
+        child: const CustomScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: MkEmptyState(
+                icon: Icons.forum_outlined,
+                title: MkStrings.emptyList,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
@@ -79,44 +90,48 @@ class _ForumScreenState extends State<ForumScreen> {
             ),
           ),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: _categories.length,
-            itemBuilder: (context, index) {
-              final cat = _categories[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: MkColors.primary,
-                    child: Icon(
-                      _getIcon(cat['icon'] ?? 'forum'),
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text(
-                    cat['name'] ?? 'Category',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    cat['description'] ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => ThreadsScreen(
-                          categoryId: cat['id']?.toString() ?? '',
-                          categoryName: cat['name'] ?? 'Category',
-                        ),
+          child: RefreshIndicator(
+            onRefresh: _loadCategories,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              itemCount: _categories.length,
+              itemBuilder: (context, index) {
+                final cat = _categories[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: MkColors.primary,
+                      child: Icon(
+                        _getIcon(cat['icon'] ?? 'forum'),
+                        color: Colors.white,
                       ),
-                    );
-                  },
-                ),
-              );
-            },
+                    ),
+                    title: Text(
+                      cat['name'] ?? 'Category',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      cat['description'] ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ThreadsScreen(
+                            categoryId: cat['id']?.toString() ?? '',
+                            categoryName: cat['name'] ?? 'Category',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -125,13 +140,20 @@ class _ForumScreenState extends State<ForumScreen> {
 
   IconData _getIcon(String icon) {
     switch (icon) {
-      case 'seed': return Icons.grass;
-      case 'flask': return Icons.science;
-      case 'spray': return Icons.sanitizer;
-      case 'wrench': return Icons.build;
-      case 'bone': return Icons.pets;
-      case 'droplet': return Icons.water_drop;
-      default: return Icons.forum;
+      case 'seed':
+        return Icons.grass;
+      case 'flask':
+        return Icons.science;
+      case 'spray':
+        return Icons.sanitizer;
+      case 'wrench':
+        return Icons.build;
+      case 'bone':
+        return Icons.pets;
+      case 'droplet':
+        return Icons.water_drop;
+      default:
+        return Icons.forum;
     }
   }
 }
@@ -226,11 +248,11 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
               Navigator.of(context).pop();
 
               try {
-                await api.createThread({
-                  'category_id': widget.categoryId,
-                  'title': title,
-                  'body': body,
-                });
+                await api.createThread(
+                  categoryId: widget.categoryId,
+                  title: title,
+                  body: body,
+                );
 
                 _loadThreads();
 
@@ -239,7 +261,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                 );
               } catch (e) {
                 messenger.showSnackBar(
-                  SnackBar(content: Text('Kosa: $e')),
+                  SnackBar(content: Text(ApiService.formatError(e))),
                 );
               }
             },
@@ -257,43 +279,43 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.categoryName),
-      ),
+      appBar: AppBar(title: Text(widget.categoryName)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _threads.isEmpty
-              ? const MkEmptyState(
-                  icon: Icons.chat_bubble_outline,
-                  title: MkStrings.emptyList,
-                )
-              : RefreshIndicator(
-                  onRefresh: _loadThreads,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _threads.length,
-                    itemBuilder: (context, index) {
-                      final thread = _threads[index];
-                      return MkThreadTile(
-                        thread: thread,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => ThreadDetailScreen(
-                                threadId: thread['uuid'] ?? '',
-                                threadTitle: thread['title'] ?? 'Thread',
-                              ),
-                            ),
-                          );
-                        },
+          ? const MkEmptyState(
+              icon: Icons.chat_bubble_outline,
+              title: MkStrings.emptyList,
+            )
+          : RefreshIndicator(
+              onRefresh: _loadThreads,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _threads.length,
+                itemBuilder: (context, index) {
+                  final thread = _threads[index];
+                  return MkThreadTile(
+                    thread: thread,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ThreadDetailScreen(
+                            threadId: thread['uuid'] ?? '',
+                            threadTitle: thread['title'] ?? 'Thread',
+                          ),
+                        ),
                       );
                     },
-                  ),
-                ),
+                  );
+                },
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final ok = await AuthProvider.requireAuth(context,
-              action: 'kuandika mada mpya');
+          final ok = await AuthProvider.requireAuth(
+            context,
+            action: 'kuandika mada mpya',
+          );
           if (ok && context.mounted) {
             _showCreateThreadDialog();
           }
@@ -363,15 +385,15 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       _replyController.clear();
       _loadThread();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Jibu limetumwa')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Jibu limetumwa')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kosa: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
       }
     }
   }
@@ -380,7 +402,11 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.threadTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(
+          widget.threadTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -436,26 +462,28 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                             child: Center(child: Text('Hakuna majibu bado')),
                           )
                         else
-                          ..._replies.map((reply) => Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(reply['body'] ?? ''),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Na: ${reply['user']?['name'] ?? 'Unknown'}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                          ..._replies.map(
+                            (reply) => Card(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(reply['body'] ?? ''),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Na: ${reply['user']?['name'] ?? 'Unknown'}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          )),
+                          ),
                       ],
                     ),
                   ),

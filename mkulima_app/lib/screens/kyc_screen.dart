@@ -29,15 +29,28 @@ class _KycScreenState extends State<KycScreen> {
     _loadKycStatus();
   }
 
+  @override
+  void dispose() {
+    _idNumberController.dispose();
+    _fullNameController.dispose();
+    _addressController.dispose();
+    _regionController.dispose();
+    _districtController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadKycStatus() async {
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final data = await api.getKycStatus();
+      if (!mounted) return;
       setState(() {
         _kycStatus = data['kyc_status'] ?? 'not_submitted';
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      if (!mounted) return;
       setState(() {
         _kycStatus = 'not_submitted';
         _isLoading = false;
@@ -89,11 +102,12 @@ class _KycScreenState extends State<KycScreen> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isSubmitting = false);
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
+        ).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
       }
     }
   }

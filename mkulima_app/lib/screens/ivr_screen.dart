@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IvrScreen extends StatelessWidget {
   const IvrScreen({super.key});
@@ -47,14 +48,23 @@ class IvrScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Text(
                     'Piga +255 714 524 007',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final uri = Uri(scheme: 'tel', path: '+255714524007');
+                      final opened = await launchUrl(uri);
+                      if (!opened && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Kifaa hiki hakiwezi kupiga simu. Piga +255 714 524 007 mwenyewe.',
+                            ),
+                          ),
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.call),
                     label: const Text('Piga Sasa'),
                     style: ElevatedButton.styleFrom(
@@ -73,10 +83,7 @@ class IvrScreen extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               'Chaguo za Menyu',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 

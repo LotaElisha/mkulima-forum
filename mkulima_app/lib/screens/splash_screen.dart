@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import '../widgets/mkulima_logo.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -86,13 +87,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ],
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.grass_outlined,
-                          size: 60,
-                          color: MkColors.primary,
-                        ),
-                      ),
+                      child: const Center(child: MkulimaLogo(size: 76)),
                     ),
                     const SizedBox(height: 32),
                     const Text(

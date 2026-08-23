@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive launcher icon (Android 8+). The launcher masks the foreground to
+  whatever shape the device uses, so the emblem is drawn inside the 66% safe
+  zone and the background is a flat brand green rather than part of the
+  artwork - a circular logo inside a circular mask would otherwise lose its
+  ring on devices that mask tighter than a circle.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

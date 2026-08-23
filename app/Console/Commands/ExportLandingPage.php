@@ -39,7 +39,7 @@ class ExportLandingPage extends Command
             'emblem_url' => '/images/logo-icon.jpg',
             'pitch_deck_url' => '/docs/Mkulima_Forum_Pitch_Deck.pdf',
             'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
-            'contact_email' => 'hello@mkulimaforum.app',
+            'contact_email' => 'hello@mkulimaforum.com',
             'metric_farmers' => null,
             'metric_regions' => null,
             'metric_scans' => null,

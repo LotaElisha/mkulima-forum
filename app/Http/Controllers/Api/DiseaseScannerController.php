@@ -34,6 +34,12 @@ class DiseaseScannerController extends Controller
         $finalResult = $this->runGeminiInference($fullPath, $validated['crop_type'] ?? null, $user?->id);
 
         if (! $finalResult) {
+            // Diagnose the failure for whoever has to fix it. Every cause -
+            // rejected key, exhausted quota, blocked egress, model returning
+            // prose instead of JSON - reached the farmer as the same sentence
+            // and the log as the same one-line string, so nobody could tell
+            // them apart. `php artisan mkulima:ai-check` runs the same call
+            // interactively.
             // Do not record a fake "completed" scan — be honest that analysis failed.
             DiseaseScan::create([
                 'tenant_id' => $user?->tenant_id ?? 1,
@@ -47,7 +53,7 @@ class DiseaseScannerController extends Controller
             Storage::disk('local')->delete($imagePath);
 
             return response()->json([
-                'message' => 'Uchambuzi wa picha haukufanikiwa kwa sasa. Tafadhali jaribu tena baadaye.',
+                'message' => __('scanner.analysis_unavailable'),
                 'error' => 'analysis_unavailable',
             ], 503);
         }
@@ -160,6 +166,18 @@ class DiseaseScannerController extends Controller
             $aiResponse = $aiService->analyzeImage('plant_diagnosis', $imagePath, $prompt, ['require_json' => true], $userId);
 
             $result = $aiResponse->structuredData;
+
+            if (! $result) {
+                // The call succeeded and the model answered with something
+                // that was not the JSON we asked for. Indistinguishable from
+                // a network failure before this line existed.
+                \Log::warning('AI plant diagnosis returned no structured data', [
+                    'provider' => $aiResponse->provider,
+                    'model' => $aiResponse->model,
+                    'user_id' => $userId,
+                ]);
+            }
+
             if ($result) {
                 return [
                     'disease_name' => $result['disease_name'] ?? 'Unknown',
@@ -171,10 +189,41 @@ class DiseaseScannerController extends Controller
                     'raw_response' => $result,
                 ];
             }
-        } catch (\Exception $e) {
-            \Log::error('AI plant diagnosis inference failed: '.$e->getMessage());
+        } catch (\Throwable $e) {
+            // Throwable, not Exception: a TypeError or a JSON decode failure
+            // inside the provider adapter is an Error, and was escaping this
+            // catch to become a raw 500 on the client.
+            \Log::error('AI plant diagnosis inference failed', [
+                'reason' => $this->classifyFailure($e->getMessage()),
+                'message' => $e->getMessage(),
+                'crop_type' => $cropType,
+                'user_id' => $userId,
+            ]);
         }
 
         return null;
+    }
+
+    /**
+     * Turn a provider error string into the one word an operator needs.
+     *
+     * Deliberately coarse. The point is to make "the key is wrong" and "the
+     * server has no route to Google" visibly different in the log, because
+     * they were previously the same line and led to hours spent on the wrong
+     * one.
+     */
+    private function classifyFailure(string $message): string
+    {
+        return match (true) {
+            str_contains($message, '401') => 'api_key_rejected',
+            str_contains($message, '403') => 'api_key_rejected_or_api_disabled_or_network_blocked',
+            str_contains($message, '429') => 'quota_exhausted',
+            str_contains($message, '404') => 'model_not_found',
+            str_contains($message, '400') => 'bad_request_or_wrong_model',
+            str_contains($message, 'cURL'),
+            str_contains($message, 'timed out'),
+            str_contains($message, 'Could not resolve') => 'network_unreachable',
+            default => 'unknown',
+        };
     }
 }

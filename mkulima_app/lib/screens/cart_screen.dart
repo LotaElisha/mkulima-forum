@@ -166,8 +166,6 @@ class CartScreen extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (_) => PaymentScreen(
                                     amount: cart.total,
-                                    orderId:
-                                        'ORD-${DateTime.now().millisecondsSinceEpoch}',
                                   ),
                                 ),
                               );

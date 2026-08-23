@@ -40,7 +40,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       });
     } catch (e) {
       setState(() {
-        _error = e.toString();
+        _error = ApiService.formatError(e);
         _isLoading = false;
       });
     }
@@ -169,7 +169,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Oda #${order['uuid']?.toString().substring(0, 8) ?? '---'}',
+                  'Oda #${_shortId(order['uuid'])}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -216,7 +216,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                         ),
                       ),
                       Text(
-                        'TSh ${(item['total_price'] ?? 0).toStringAsFixed(0)}',
+                        'TSh ${_money(item['total_price'])}',
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ],
@@ -229,7 +229,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
               children: [
                 const Text('Jumla:'),
                 Text(
-                  'TSh ${(order['total'] ?? 0).toStringAsFixed(0)}',
+                  'TSh ${_money(order['total'])}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -243,10 +243,115 @@ class _OrdersScreenState extends State<OrdersScreen> {
               'Tarehe: ${order['created_at'] ?? 'N/A'}',
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
+            if (status == 'pending') ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _retryPayment(order),
+                  icon: const Icon(Icons.payment),
+                  label: const Text('Endelea na Malipo'),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  String _money(dynamic value) {
+    final amount = value is num
+        ? value.toDouble()
+        : double.tryParse(value?.toString() ?? '') ?? 0;
+    return amount.toStringAsFixed(0);
+  }
+
+  String _shortId(dynamic value) {
+    final id = value?.toString() ?? '';
+    return id.isEmpty ? '---' : id.substring(0, id.length < 8 ? id.length : 8);
+  }
+
+  Future<void> _retryPayment(dynamic order) async {
+    final phoneController = TextEditingController(
+      text: order['delivery_phone']?.toString() ?? '',
+    );
+    var method = 'mpesa';
+    final shouldPay = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Endelea na Malipo'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<String>(
+                initialValue: method,
+                items: const [
+                  DropdownMenuItem(value: 'mpesa', child: Text('M-Pesa')),
+                  DropdownMenuItem(value: 'tigopesa', child: Text('Tigo Pesa')),
+                ],
+                onChanged: (value) => setDialogState(() => method = value ?? 'mpesa'),
+                decoration: const InputDecoration(labelText: 'Njia ya malipo'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Namba ya malipo',
+                  hintText: '2557XXXXXXXX',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Ghairi'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Tuma Ombi'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (shouldPay != true || !mounted) {
+      phoneController.dispose();
+      return;
+    }
+    final phone = phoneController.text.trim();
+    phoneController.dispose();
+    if (!RegExp(r'^255[0-9]{9}$').hasMatch(phone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Weka namba ya tarakimu 12 inayoanza na 255.')),
+      );
+      return;
+    }
+    final rawId = order['id'];
+    final orderId = rawId is int ? rawId : int.tryParse(rawId.toString());
+    if (orderId == null) return;
+    try {
+      await context.read<ApiService>().initiatePayment(
+        orderId: orderId,
+        paymentMethod: method,
+        phone: phone,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ombi la malipo limetumwa kwenye simu yako.')),
+        );
+        await _loadOrders();
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ApiService.formatError(error))),
+        );
+      }
+    }
   }
 
   Color _statusColor(String status) {

@@ -8,7 +8,7 @@ class User with _$User {
   const factory User({
     required String uuid,
     required String name,
-    required String phone,
+    @Default('') String phone,
     String? email,
     required String role,
     @Default('pending') String kycStatus,

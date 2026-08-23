@@ -218,64 +218,21 @@ class _WalletScreenState extends State<WalletScreen> {
   void _showDepositDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Weka Pesa'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(
-                Icons.phone_android,
-                color: Color(0xFF2E7D32),
-              ),
-              title: const Text('M-Pesa'),
-              onTap: () {
-                Navigator.pop(context);
-                _processDeposit('mpesa');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.phone_android, color: Colors.blue),
-              title: const Text('Tigo Pesa'),
-              onTap: () {
-                Navigator.pop(context);
-                _processDeposit('tigopesa');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.phone_android, color: Colors.red),
-              title: const Text('Airtel Money'),
-              onTap: () {
-                Navigator.pop(context);
-                _processDeposit('airtelmoney');
-              },
-            ),
-          ],
+        content: const Text(
+          'Uwekaji pesa moja kwa moja kwenye pochi bado haujawashwa. '
+          'Malipo ya ununuzi hutumwa kwa M-Pesa au Tigo Pesa na '
+          'huthibitishwa na mtoa huduma kabla ya kuonekana kama yamelipwa.',
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Nimeelewa'),
+          ),
+        ],
       ),
     );
-  }
-
-  Future<void> _processDeposit(String provider) async {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final phone = auth.user?.phone ?? '';
-
-    try {
-      final api = Provider.of<ApiService>(context, listen: false);
-      await api.deposit(50000, phone, provider);
-      _loadData();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Pesa imewekwa kikamilifu')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Kosa: $e')));
-      }
-    }
   }
 
   void _showTransferDialog() {
@@ -315,13 +272,22 @@ class _WalletScreenState extends State<WalletScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
+              final phone = phoneController.text.trim();
+              final amount = double.tryParse(amountController.text.trim());
+              if (!RegExp(r'^255[0-9]{9}$').hasMatch(phone) ||
+                  amount == null ||
+                  amount < 100) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Weka namba 255XXXXXXXXX na kiasi cha angalau TZS 100.'),
+                  ),
+                );
+                return;
+              }
               Navigator.pop(context);
               try {
                 final api = Provider.of<ApiService>(context, listen: false);
-                await api.transfer(
-                  phoneController.text,
-                  double.parse(amountController.text),
-                );
+                await api.transfer(phone, amount);
                 _loadData();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
 import '../services/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/connectivity_provider.dart';
 import '../widgets/mk_button.dart';
 
@@ -65,6 +66,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   Future<void> _scanDisease() async {
     if (_imageBytes == null) return;
+
+    final authenticated = await AuthProvider.requireAuth(
+      context,
+      action: 'kukagua ugonjwa wa mmea',
+    );
+    if (!authenticated || !mounted) return;
 
     setState(() => _isScanning = true);
 
