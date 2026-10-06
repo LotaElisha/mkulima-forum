@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/auth_provider.dart';
 import 'payment_screen.dart';
+import '../core/format.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -83,7 +84,7 @@ class CartScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      'TSh ${item.product.price.toStringAsFixed(0)} / ${item.product.unit}',
+                                      '${mkMoney(item.product.price)} / ${item.product.unit}',
                                       style: TextStyle(
                                         color: Colors.grey[600],
                                         fontSize: 13,
@@ -140,7 +141,7 @@ class CartScreen extends StatelessWidget {
                               style: TextStyle(fontSize: 18),
                             ),
                             Text(
-                              'TSh ${cart.total.toStringAsFixed(0)}',
+                              mkMoney(cart.total),
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,

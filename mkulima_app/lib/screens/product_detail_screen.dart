@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 import 'cart_screen.dart';
 import 'payment_screen.dart';
+import '../core/format.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
@@ -81,7 +82,7 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'TSh ${product.price.toStringAsFixed(0)} / ${product.unit}',
+              '${mkMoney(product.price)} / ${product.unit}',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

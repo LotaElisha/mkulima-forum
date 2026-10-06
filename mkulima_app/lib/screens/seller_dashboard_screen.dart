@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
+import '../core/format.dart';
 
 class SellerDashboardScreen extends StatefulWidget {
   const SellerDashboardScreen({super.key});
@@ -255,7 +256,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     final amount = value is num
         ? value.toDouble()
         : double.tryParse(value?.toString() ?? '') ?? 0;
-    return amount.toStringAsFixed(0);
+    return mkAmount(amount);
   }
 
   String _shortId(dynamic value) {

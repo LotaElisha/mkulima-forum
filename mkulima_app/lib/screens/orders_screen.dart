@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
+import '../core/format.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -264,7 +265,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     final amount = value is num
         ? value.toDouble()
         : double.tryParse(value?.toString() ?? '') ?? 0;
-    return amount.toStringAsFixed(0);
+    return mkAmount(amount);
   }
 
   String _shortId(dynamic value) {

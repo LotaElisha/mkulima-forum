@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../core/strings.dart';
 import '../core/theme.dart';
 import '../models/product.dart';
+import '../core/format.dart';
 
 /// Marketplace grid tile. Accepts either a [Product] or a raw API map so
 /// both online and drift-cached data render identically.
@@ -29,86 +31,63 @@ class MkProductTile extends StatelessWidget {
         ? price.toDouble()
         : double.tryParse(price.toString()) ?? 0;
 
+    final stockCount = stock is num ? stock.toInt() : int.tryParse('$stock') ?? 0;
+    final (stockLabel, stockColour) = stockCount <= 0
+        ? ('Imeisha', MkColors.danger)
+        : stockCount <= 5
+        ? ('Zimebaki $stockCount tu', MkColors.warning)
+        : ('$stockCount ${MkStrings.stockLeft}', MkColors.muted);
+
     return Card(
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(MkRadii.card),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 3,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(MkRadii.card),
-                ),
-                child: imageUrl != null
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (_, _, _) => const _ImagePlaceholder(),
-                      )
-                    : const _ImagePlaceholder(),
-              ),
+              flex: 5,
+              child: imageUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      placeholder: (_, _) => const _ImagePlaceholder(),
+                      errorWidget: (_, _, _) => const _ImagePlaceholder(),
+                    )
+                  : const _ImagePlaceholder(),
             ),
             Expanded(
-              flex: 2,
+              flex: 4,
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
+                      style: MkText.label.copyWith(height: 1.3),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    Text(
+                      mkMoney(parsedPrice),
+                      style: MkText.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
-                      'TZS ${parsedPrice.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        color: MkColors.charcoal,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                      stockLabel,
+                      style: MkText.caption.copyWith(
+                        color: stockColour,
+                        fontWeight: stockColour == MkColors.muted
+                            ? FontWeight.w400
+                            : FontWeight.w600,
                       ),
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.inventory_2_outlined,
-                          size: 14,
-                          color: Colors.grey[600],
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            '$stock ${MkStrings.stockLeft}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: MkColors.primary,
-                            borderRadius: BorderRadius.circular(9),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward,
-                            size: 17,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -126,10 +105,10 @@ class _ImagePlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[200],
-      child: const Center(
-        child: Icon(Icons.image, size: 40, color: Colors.grey),
+    return const ColoredBox(
+      color: MkColors.surfaceMuted,
+      child: Center(
+        child: Icon(Icons.image_outlined, size: 36, color: MkColors.muted),
       ),
     );
   }

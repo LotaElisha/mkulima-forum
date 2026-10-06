@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../core/format.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({super.key});
@@ -213,7 +214,7 @@ class _PosScreenState extends State<PosScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'TZS ${product['price'].toStringAsFixed(0)}',
+                                mkMoney(num.tryParse('${product['price']}')),
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -338,7 +339,7 @@ class _PosScreenState extends State<PosScreen> {
                         children: [
                           const Text('Total:', style: TextStyle(fontSize: 16)),
                           Text(
-                            'TZS ${cartTotal.toStringAsFixed(0)}',
+                            mkMoney(cartTotal),
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
@@ -421,7 +422,7 @@ class _CheckoutSheet extends StatelessWidget {
             const Text('Payment',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            Text('Total: TZS ${total.toStringAsFixed(0)}',
+            Text('Jumla: ${mkMoney(total)}',
                 style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 20),
             Wrap(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../services/api_service.dart';
+import '../core/format.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double amount;
@@ -56,7 +57,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'TSh ${widget.amount.toStringAsFixed(0)}',
+                      mkMoney(widget.amount),
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -265,7 +266,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Thibitisha malipo ya TSh ${chargedAmount.toStringAsFixed(0)} kwenye simu. Escrow itashikilia fedha baada ya mtoa huduma kuthibitisha malipo.',
+                  'Thibitisha malipo ya ${mkMoney(chargedAmount)} kwenye simu. Escrow itashikilia fedha baada ya mtoa huduma kuthibitisha malipo.',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
