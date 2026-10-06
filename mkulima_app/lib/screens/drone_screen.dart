@@ -75,7 +75,7 @@ class _DroneScreenState extends State<DroneScreen> {
                       const SizedBox(height: 8),
                       const Text(
                         'Puliza, piga picha, na fuatilia mimea yako kutoka juu',
-                        style: TextStyle(color: MkColors.muted, fontSize: 14),
+                        style: TextStyle(color: MkColors.muted, fontSize: 15),
                       ),
                     ],
                   ),

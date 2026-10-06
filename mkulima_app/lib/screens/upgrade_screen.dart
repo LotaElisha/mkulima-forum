@@ -115,14 +115,14 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
                     widget.serviceName,
                     style: const TextStyle(
                       color: MkColors.ink,
-                      fontSize: 28,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Boresha wasifu wako ili kupata ruhusa ya kutumia huduma hii shambani kwako.',
-                    style: TextStyle(color: MkColors.muted, fontSize: 14),
+                    style: TextStyle(color: MkColors.muted, fontSize: 15),
                   ),
                 ],
               ),

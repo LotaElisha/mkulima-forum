@@ -122,7 +122,7 @@ class _YieldScreenState extends State<YieldScreen> {
                   const SizedBox(height: 8),
                   const Text(
                     'Makadirio ya wastani wa kanda kwa mpango wa shamba lako',
-                    style: TextStyle(color: MkColors.muted, fontSize: 14),
+                    style: TextStyle(color: MkColors.muted, fontSize: 15),
                   ),
                 ],
               ),

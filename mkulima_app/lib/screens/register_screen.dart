@@ -99,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Text(
                       'Jiunge na jamii ya wakulima',
                       style: TextStyle(
-                        fontSize: 33,
+                        fontSize: 32,
                         height: 1.08,
                         fontWeight: FontWeight.w700,
                         color: MkColors.charcoal,

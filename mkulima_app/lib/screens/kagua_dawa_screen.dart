@@ -87,7 +87,7 @@ class KaguaDawaScreen extends StatelessWidget {
                 ),
                 title: Text(
                   '${item['text']}',
-                  style: const TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 15),
                 ),
               ),
             ),

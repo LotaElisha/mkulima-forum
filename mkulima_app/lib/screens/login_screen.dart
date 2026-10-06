@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Karibu Mkulima',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 34,
+                      fontSize: 32,
                       height: 1.1,
                       fontWeight: FontWeight.w700,
                       color: MkColors.charcoal,

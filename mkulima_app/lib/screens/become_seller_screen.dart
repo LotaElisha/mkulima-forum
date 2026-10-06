@@ -240,7 +240,7 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
     padding: const EdgeInsets.only(bottom: 8),
     child: Text(
       text,
-      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
     ),
   );
 }

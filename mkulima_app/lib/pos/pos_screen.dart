@@ -232,7 +232,7 @@ class _PosScreenState extends State<PosScreen> {
                               Text(
                                 mkMoney(num.tryParse('${product['price']}')),
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   color: MkColors.primary,
                                 ),

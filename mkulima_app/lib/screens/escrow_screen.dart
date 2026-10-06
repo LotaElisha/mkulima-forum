@@ -192,7 +192,7 @@ class _EscrowScreenState extends State<EscrowScreen> {
                         Text(
                           'Pesa zako hulindwa hadi bidhaa ikufikie. '
                           'Escrow huundwa moja kwa moja unapolipia oda.',
-                          style: TextStyle(color: MkColors.muted, fontSize: 14),
+                          style: TextStyle(color: MkColors.muted, fontSize: 15),
                         ),
                       ],
                     ),

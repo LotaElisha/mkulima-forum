@@ -430,7 +430,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
                   'Habari, $userName!',
                   style: const TextStyle(
                     color: MkColors.ink,
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -196,7 +196,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       Expanded(
                         child: Text(
                           '${item['quantity']}x ${item['product_snapshot']?['name'] ?? 'Bidhaa'}',
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 15),
                         ),
                       ),
                       Text(

@@ -494,7 +494,7 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
       textAlign: TextAlign.center,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       style: const TextStyle(
-        fontSize: 26,
+        fontSize: 24,
         letterSpacing: 10,
         fontWeight: FontWeight.bold,
       ),
@@ -717,7 +717,7 @@ class _InlineError extends StatelessWidget {
               message,
               style: const TextStyle(
                 color: MkColors.danger,
-                fontSize: 13.5,
+                fontSize: 13,
                 height: 1.4,
               ),
             ),

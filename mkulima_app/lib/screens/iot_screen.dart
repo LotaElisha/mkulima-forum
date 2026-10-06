@@ -99,7 +99,7 @@ class _IoTScreenState extends State<IoTScreen> {
                         const SizedBox(height: 8),
                         const Text(
                           'Fuatilia unyevu wa udongo, joto, na hali ya hewa kiotomatiki',
-                          style: TextStyle(color: MkColors.muted, fontSize: 14),
+                          style: TextStyle(color: MkColors.muted, fontSize: 15),
                         ),
                       ],
                     ),

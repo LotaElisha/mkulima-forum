@@ -174,7 +174,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
             const Spacer(),
             Text(
               value,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(title, style: TextStyle(fontSize: 13, color: MkColors.muted)),
