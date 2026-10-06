@@ -343,7 +343,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              user.phone,
+              user.phone.isNotEmpty ? user.phone : (user.email ?? ''),
               style: TextStyle(color: MkColors.muted, fontSize: 15),
             ),
             const SizedBox(height: 8),
@@ -352,7 +352,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Chip(
                   label: Text(
-                    user.role.toUpperCase(),
+                    _roleLabel(user.role),
                     style: const TextStyle(color: Colors.white, fontSize: 13),
                   ),
                   backgroundColor: MkColors.primary,
@@ -360,7 +360,7 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Chip(
                   label: Text(
-                    user.kycStatus.toUpperCase(),
+                    _kycChip(user.kycStatus),
                     // White on amber failed contrast; pale fills with dark
                     // text read in sunlight.
                     style: TextStyle(
@@ -411,6 +411,23 @@ class ProfileScreen extends StatelessWidget {
       await context.read<AuthProvider>().refreshUser();
     }
   }
+
+  static String _roleLabel(String role) => switch (role.toLowerCase()) {
+    'farmer' => 'Mkulima',
+    'buyer' => 'Mnunuzi',
+    'seller' => 'Muuzaji',
+    'agrodealer' => 'Muuzaji wa pembejeo',
+    'admin' || 'superadmin' => 'Msimamizi',
+    _ => role,
+  };
+
+  /// Short form of [_kycLabel] that fits beside the role chip at 360px.
+  static String _kycChip(String status) => switch (status.toLowerCase()) {
+    'verified' => 'Imethibitishwa',
+    'pending' => 'Inasubiri',
+    'rejected' => 'Imekataliwa',
+    _ => 'Haijathibitishwa',
+  };
 
   /// KYC status in words a farmer can act on, rather than PENDING in capitals.
   static String _kycLabel(String status) => switch (status.toLowerCase()) {

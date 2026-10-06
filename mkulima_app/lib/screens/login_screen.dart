@@ -151,16 +151,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => setState(() {
-                          _useOtp = true;
-                          _otpSent = false;
-                        }),
-                        child: const Text('Umesahau nenosiri?'),
-                      ),
-                    ),
                   ] else ...[
                     TextField(
                       controller: _phone,

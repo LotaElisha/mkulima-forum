@@ -161,6 +161,8 @@ ThemeData mkLightTheme() {
     ),
     scaffoldBackgroundColor: MkColors.surface,
     dividerColor: MkColors.border,
+    // M3 dividers read colorScheme.outlineVariant, not dividerColor.
+    dividerTheme: const DividerThemeData(color: MkColors.border, space: 1),
     appBarTheme: const AppBarTheme(
       elevation: 0,
       scrolledUnderElevation: 0,
