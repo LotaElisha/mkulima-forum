@@ -12,7 +12,8 @@ part of 'order.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Order _$OrderFromJson(Map<String, dynamic> json) {
   return _Order.fromJson(json);
@@ -44,18 +45,19 @@ abstract class $OrderCopyWith<$Res> {
   factory $OrderCopyWith(Order value, $Res Function(Order) then) =
       _$OrderCopyWithImpl<$Res, Order>;
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
-      @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
-      String buyerId,
-      @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
-      String sellerId,
-      List<OrderItem> items,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double total,
-      String status,
-      String? escrowId,
-      String? deliveryAddress,
-      DateTime? createdAt});
+  $Res call({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
+    @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
+    String buyerId,
+    @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
+    String sellerId,
+    List<OrderItem> items,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double total,
+    String status,
+    String? escrowId,
+    String? deliveryAddress,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -81,66 +83,71 @@ class _$OrderCopyWithImpl<$Res, $Val extends Order>
     Object? deliveryAddress = freezed,
     Object? createdAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      sellerId: null == sellerId
-          ? _value.sellerId
-          : sellerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItem>,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      escrowId: freezed == escrowId
-          ? _value.escrowId
-          : escrowId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      deliveryAddress: freezed == deliveryAddress
-          ? _value.deliveryAddress
-          : deliveryAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            buyerId: null == buyerId
+                ? _value.buyerId
+                : buyerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sellerId: null == sellerId
+                ? _value.sellerId
+                : sellerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            items: null == items
+                ? _value.items
+                : items // ignore: cast_nullable_to_non_nullable
+                      as List<OrderItem>,
+            total: null == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
+                      as double,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            escrowId: freezed == escrowId
+                ? _value.escrowId
+                : escrowId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            deliveryAddress: freezed == deliveryAddress
+                ? _value.deliveryAddress
+                : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$OrderImplCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$$OrderImplCopyWith(
-          _$OrderImpl value, $Res Function(_$OrderImpl) then) =
-      __$$OrderImplCopyWithImpl<$Res>;
+    _$OrderImpl value,
+    $Res Function(_$OrderImpl) then,
+  ) = __$$OrderImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
-      @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
-      String buyerId,
-      @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
-      String sellerId,
-      List<OrderItem> items,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double total,
-      String status,
-      String? escrowId,
-      String? deliveryAddress,
-      DateTime? createdAt});
+  $Res call({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
+    @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
+    String buyerId,
+    @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
+    String sellerId,
+    List<OrderItem> items,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double total,
+    String status,
+    String? escrowId,
+    String? deliveryAddress,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -148,8 +155,9 @@ class __$$OrderImplCopyWithImpl<$Res>
     extends _$OrderCopyWithImpl<$Res, _$OrderImpl>
     implements _$$OrderImplCopyWith<$Res> {
   __$$OrderImplCopyWithImpl(
-      _$OrderImpl _value, $Res Function(_$OrderImpl) _then)
-      : super(_value, _then);
+    _$OrderImpl _value,
+    $Res Function(_$OrderImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -164,64 +172,66 @@ class __$$OrderImplCopyWithImpl<$Res>
     Object? deliveryAddress = freezed,
     Object? createdAt = freezed,
   }) {
-    return _then(_$OrderImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      buyerId: null == buyerId
-          ? _value.buyerId
-          : buyerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      sellerId: null == sellerId
-          ? _value.sellerId
-          : sellerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItem>,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      escrowId: freezed == escrowId
-          ? _value.escrowId
-          : escrowId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      deliveryAddress: freezed == deliveryAddress
-          ? _value.deliveryAddress
-          : deliveryAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$OrderImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        buyerId: null == buyerId
+            ? _value.buyerId
+            : buyerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sellerId: null == sellerId
+            ? _value.sellerId
+            : sellerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        items: null == items
+            ? _value._items
+            : items // ignore: cast_nullable_to_non_nullable
+                  as List<OrderItem>,
+        total: null == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as double,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        escrowId: freezed == escrowId
+            ? _value.escrowId
+            : escrowId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        deliveryAddress: freezed == deliveryAddress
+            ? _value.deliveryAddress
+            : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$OrderImpl implements _Order {
-  const _$OrderImpl(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson) required this.id,
-      @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
-      required this.buyerId,
-      @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
-      required this.sellerId,
-      required final List<OrderItem> items,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required this.total,
-      this.status = 'pending',
-      this.escrowId,
-      this.deliveryAddress,
-      this.createdAt})
-      : _items = items;
+  const _$OrderImpl({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) required this.id,
+    @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
+    required this.buyerId,
+    @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
+    required this.sellerId,
+    required final List<OrderItem> items,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required this.total,
+    this.status = 'pending',
+    this.escrowId,
+    this.deliveryAddress,
+    this.createdAt,
+  }) : _items = items;
 
   factory _$OrderImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderImplFromJson(json);
@@ -284,16 +294,17 @@ class _$OrderImpl implements _Order {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      buyerId,
-      sellerId,
-      const DeepCollectionEquality().hash(_items),
-      total,
-      status,
-      escrowId,
-      deliveryAddress,
-      createdAt);
+    runtimeType,
+    id,
+    buyerId,
+    sellerId,
+    const DeepCollectionEquality().hash(_items),
+    total,
+    status,
+    escrowId,
+    deliveryAddress,
+    createdAt,
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -303,27 +314,25 @@ class _$OrderImpl implements _Order {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderImplToJson(
-      this,
-    );
+    return _$$OrderImplToJson(this);
   }
 }
 
 abstract class _Order implements Order {
-  const factory _Order(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson)
-      required final String id,
-      @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
-      required final String buyerId,
-      @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
-      required final String sellerId,
-      required final List<OrderItem> items,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required final double total,
-      final String status,
-      final String? escrowId,
-      final String? deliveryAddress,
-      final DateTime? createdAt}) = _$OrderImpl;
+  const factory _Order({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) required final String id,
+    @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
+    required final String buyerId,
+    @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
+    required final String sellerId,
+    required final List<OrderItem> items,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required final double total,
+    final String status,
+    final String? escrowId,
+    final String? deliveryAddress,
+    final DateTime? createdAt,
+  }) = _$OrderImpl;
 
   factory _Order.fromJson(Map<String, dynamic> json) = _$OrderImpl.fromJson;
 
@@ -380,13 +389,13 @@ abstract class $OrderItemCopyWith<$Res> {
   factory $OrderItemCopyWith(OrderItem value, $Res Function(OrderItem) then) =
       _$OrderItemCopyWithImpl<$Res, OrderItem>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
-      String productId,
-      int quantity,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double unitPrice,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      double subtotal});
+  $Res call({
+    @JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
+    String productId,
+    int quantity,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double unitPrice,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double subtotal,
+  });
 }
 
 /// @nodoc
@@ -407,24 +416,27 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
     Object? unitPrice = null,
     Object? subtotal = null,
   }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      subtotal: null == subtotal
-          ? _value.subtotal
-          : subtotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            quantity: null == quantity
+                ? _value.quantity
+                : quantity // ignore: cast_nullable_to_non_nullable
+                      as int,
+            unitPrice: null == unitPrice
+                ? _value.unitPrice
+                : unitPrice // ignore: cast_nullable_to_non_nullable
+                      as double,
+            subtotal: null == subtotal
+                ? _value.subtotal
+                : subtotal // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -432,17 +444,18 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
 abstract class _$$OrderItemImplCopyWith<$Res>
     implements $OrderItemCopyWith<$Res> {
   factory _$$OrderItemImplCopyWith(
-          _$OrderItemImpl value, $Res Function(_$OrderItemImpl) then) =
-      __$$OrderItemImplCopyWithImpl<$Res>;
+    _$OrderItemImpl value,
+    $Res Function(_$OrderItemImpl) then,
+  ) = __$$OrderItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
-      String productId,
-      int quantity,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double unitPrice,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      double subtotal});
+  $Res call({
+    @JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
+    String productId,
+    int quantity,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double unitPrice,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double subtotal,
+  });
 }
 
 /// @nodoc
@@ -450,8 +463,9 @@ class __$$OrderItemImplCopyWithImpl<$Res>
     extends _$OrderItemCopyWithImpl<$Res, _$OrderItemImpl>
     implements _$$OrderItemImplCopyWith<$Res> {
   __$$OrderItemImplCopyWithImpl(
-      _$OrderItemImpl _value, $Res Function(_$OrderItemImpl) _then)
-      : super(_value, _then);
+    _$OrderItemImpl _value,
+    $Res Function(_$OrderItemImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -461,38 +475,41 @@ class __$$OrderItemImplCopyWithImpl<$Res>
     Object? unitPrice = null,
     Object? subtotal = null,
   }) {
-    return _then(_$OrderItemImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      subtotal: null == subtotal
-          ? _value.subtotal
-          : subtotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$OrderItemImpl(
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        quantity: null == quantity
+            ? _value.quantity
+            : quantity // ignore: cast_nullable_to_non_nullable
+                  as int,
+        unitPrice: null == unitPrice
+            ? _value.unitPrice
+            : unitPrice // ignore: cast_nullable_to_non_nullable
+                  as double,
+        subtotal: null == subtotal
+            ? _value.subtotal
+            : subtotal // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$OrderItemImpl implements _OrderItem {
-  const _$OrderItemImpl(
-      {@JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
-      required this.productId,
-      required this.quantity,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required this.unitPrice,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required this.subtotal});
+  const _$OrderItemImpl({
+    @JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
+    required this.productId,
+    required this.quantity,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required this.unitPrice,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required this.subtotal,
+  });
 
   factory _$OrderItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderItemImplFromJson(json);
@@ -542,21 +559,20 @@ class _$OrderItemImpl implements _OrderItem {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderItemImplToJson(
-      this,
-    );
+    return _$$OrderItemImplToJson(this);
   }
 }
 
 abstract class _OrderItem implements OrderItem {
-  const factory _OrderItem(
-      {@JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
-      required final String productId,
-      required final int quantity,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required final double unitPrice,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required final double subtotal}) = _$OrderItemImpl;
+  const factory _OrderItem({
+    @JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
+    required final String productId,
+    required final int quantity,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required final double unitPrice,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required final double subtotal,
+  }) = _$OrderItemImpl;
 
   factory _OrderItem.fromJson(Map<String, dynamic> json) =
       _$OrderItemImpl.fromJson;

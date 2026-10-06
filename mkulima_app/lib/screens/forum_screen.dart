@@ -131,9 +131,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   border: i < _categories.length - 1
-                      ? const Border(
-                          bottom: BorderSide(color: MkColors.border),
-                        )
+                      ? const Border(bottom: BorderSide(color: MkColors.border))
                       : null,
                 ),
                 child: Row(
@@ -471,7 +469,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : Column(
               children: [
                 Expanded(
@@ -500,8 +498,8 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   Text(
                                     'Na: ${_thread!['user']?['name'] ?? 'Unknown'}',
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      color: MkColors.muted,
                                     ),
                                   ),
                                 ],
@@ -537,8 +535,8 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                     Text(
                                       'Na: ${reply['user']?['name'] ?? 'Unknown'}',
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
+                                        fontSize: 13,
+                                        color: MkColors.muted,
                                       ),
                                     ),
                                   ],

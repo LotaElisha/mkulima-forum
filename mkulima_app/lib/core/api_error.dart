@@ -47,23 +47,22 @@ class ApiError implements Exception {
 
   /// True when trying again in a moment is a sensible thing to offer.
   bool get isRetryable =>
-      isOffline || statusCode == 429 || (statusCode != null && statusCode! >= 500);
+      isOffline ||
+      statusCode == 429 ||
+      (statusCode != null && statusCode! >= 500);
 
   /// The first validation message for a field, if there is one.
   String? fieldError(String field) => fieldErrors[field]?.firstOrNull;
 
-  static const String _offline =
-      'Hakikisha una intaneti kisha ujaribu tena.';
+  static const String _offline = 'Hakikisha una intaneti kisha ujaribu tena.';
   static const String _serverDown =
       'Huduma haipatikani kwa sasa. Tafadhali jaribu tena baada ya muda mfupi.';
   static const String _serverError =
       'Kuna tatizo la mfumo. Tafadhali jaribu tena.';
-  static const String _forbidden =
-      'Huna ruhusa ya kutumia huduma hii.';
+  static const String _forbidden = 'Huna ruhusa ya kutumia huduma hii.';
   static const String _unauthorized =
       'Muda wa kuingia umeisha. Tafadhali ingia tena.';
-  static const String _notFound =
-      'Hatukupata kile ulichokitafuta.';
+  static const String _notFound = 'Hatukupata kile ulichokitafuta.';
   static const String _tooMany =
       'Umejaribu mara nyingi mno. Subiri kidogo kisha ujaribu tena.';
   static const String _unknown =
@@ -101,7 +100,8 @@ class ApiError implements Exception {
     // It is already translated per the user's preferred_language. It is NOT
     // preferred for 5xx, where the body is a stack trace or an HTML error
     // page and shows the user our internals.
-    final useServerMessage = serverMessage != null &&
+    final useServerMessage =
+        serverMessage != null &&
         status != null &&
         status < 500 &&
         status != 401 &&
@@ -185,8 +185,12 @@ class ApiError implements Exception {
   /// In debug this prints. In release it is the hook for whatever error
   /// tracker gets wired up - see GO_LIVE_CHECKLIST.md, which still lists
   /// error tracking as unconfigured.
-  static void _log(String kind, Object error, StackTrace? stack,
-      {String? requestId}) {
+  static void _log(
+    String kind,
+    Object error,
+    StackTrace? stack, {
+    String? requestId,
+  }) {
     if (!kDebugMode) return;
     final id = requestId == null ? '' : ' [request $requestId]';
     debugPrint('ApiError($kind)$id: $error');

@@ -24,12 +24,18 @@ class MkButton extends StatelessWidget {
         ? const SizedBox(
             height: 20,
             width: 20,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
           )
         : Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
+              if (icon != null) ...[
+                Icon(icon, size: 20),
+                const SizedBox(width: 8),
+              ],
               Text(label),
             ],
           );

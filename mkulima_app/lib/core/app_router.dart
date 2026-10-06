@@ -69,47 +69,95 @@ GoRouter buildAppRouter(AuthProvider auth) {
       return null;
     },
     routes: [
-      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
 
       // Core pillars
-      GoRoute(path: '/soko', builder: (context, state) => const MarketplaceScreen()),
+      GoRoute(
+        path: '/soko',
+        builder: (context, state) => const MarketplaceScreen(),
+      ),
       GoRoute(path: '/forum', builder: (context, state) => const ForumScreen()),
-      GoRoute(path: '/scanner', builder: (context, state) => const ScannerPage()),
-      GoRoute(path: '/weather', builder: (context, state) => const WeatherScreen()),
-      GoRoute(path: '/market-prices', builder: (context, state) => const MarketPricesScreen()),
-      GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
-      GoRoute(path: '/kagua-dawa', builder: (context, state) => const KaguaDawaScreen()),
+      GoRoute(
+        path: '/scanner',
+        builder: (context, state) => const ScannerPage(),
+      ),
+      GoRoute(
+        path: '/weather',
+        builder: (context, state) => const WeatherScreen(),
+      ),
+      GoRoute(
+        path: '/market-prices',
+        builder: (context, state) => const MarketPricesScreen(),
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => const SearchScreen(),
+      ),
+      GoRoute(
+        path: '/kagua-dawa',
+        builder: (context, state) => const KaguaDawaScreen(),
+      ),
 
       // Services
-      GoRoute(path: '/bot', builder: (context, state) => const MkulimaBotScreen()),
+      GoRoute(
+        path: '/bot',
+        builder: (context, state) => const MkulimaBotScreen(),
+      ),
 
       GoRoute(path: '/drone', builder: (context, state) => const DroneScreen()),
       GoRoute(path: '/iot', builder: (context, state) => const IoTScreen()),
       GoRoute(path: '/ivr', builder: (context, state) => const IvrScreen()),
       GoRoute(path: '/sms', builder: (context, state) => const SmsScreen()),
       GoRoute(path: '/yield', builder: (context, state) => const YieldScreen()),
-      GoRoute(path: '/farms', builder: (context, state) => const FarmManagementScreen()),
+      GoRoute(
+        path: '/farms',
+        builder: (context, state) => const FarmManagementScreen(),
+      ),
 
       // Protected (require login)
       GoRoute(path: '/cart', builder: (context, state) => const CartScreen()),
-      GoRoute(path: '/orders', builder: (context, state) => const OrdersScreen()),
-      GoRoute(path: '/wallet', builder: (context, state) => const WalletScreen()),
-      GoRoute(path: '/escrow', builder: (context, state) => const EscrowScreen()),
+      GoRoute(
+        path: '/orders',
+        builder: (context, state) => const OrdersScreen(),
+      ),
+      GoRoute(
+        path: '/wallet',
+        builder: (context, state) => const WalletScreen(),
+      ),
+      GoRoute(
+        path: '/escrow',
+        builder: (context, state) => const EscrowScreen(),
+      ),
       GoRoute(path: '/kyc', builder: (context, state) => const KycScreen()),
-      GoRoute(path: '/seller', builder: (context, state) => const SellerDashboardScreen()),
+      GoRoute(
+        path: '/seller',
+        builder: (context, state) => const SellerDashboardScreen(),
+      ),
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationsScreen(),
       ),
-      GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
-      GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
 
       // Account identities. Registered as a real route (not only a
       // Navigator.push from Profile) so the verification mail's deep link and

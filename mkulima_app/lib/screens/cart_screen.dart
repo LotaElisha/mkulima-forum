@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/auth_provider.dart';
@@ -14,11 +15,7 @@ class CartScreen extends StatelessWidget {
     final auth = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rukwama'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Rukwama')),
       body: cart.items.isEmpty
           ? Center(
               child: Column(
@@ -27,18 +24,18 @@ class CartScreen extends StatelessWidget {
                   Icon(
                     Icons.shopping_cart_outlined,
                     size: 80,
-                    color: Colors.grey[400],
+                    color: MkColors.muted,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Rukwama yako ni tupu',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: MkColors.muted),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2E7D32),
+                      backgroundColor: MkColors.primary,
                       foregroundColor: Colors.white,
                     ),
                     child: const Text('Endelea Kununua'),
@@ -64,12 +61,12 @@ class CartScreen extends StatelessWidget {
                                 width: 60,
                                 height: 60,
                                 decoration: BoxDecoration(
-                                  color: Colors.green[50],
+                                  color: MkColors.leafPale,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
                                   Icons.eco,
-                                  color: Color(0xFF2E7D32),
+                                  color: MkColors.primary,
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -86,7 +83,7 @@ class CartScreen extends StatelessWidget {
                                     Text(
                                       '${mkMoney(item.product.price)} / ${item.product.unit}',
                                       style: TextStyle(
-                                        color: Colors.grey[600],
+                                        color: MkColors.muted,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -145,7 +142,7 @@ class CartScreen extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF2E7D32),
+                                color: MkColors.primary,
                               ),
                             ),
                           ],
@@ -165,14 +162,13 @@ class CartScreen extends StatelessWidget {
                               if (!context.mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => PaymentScreen(
-                                    amount: cart.total,
-                                  ),
+                                  builder: (_) =>
+                                      PaymentScreen(amount: cart.total),
                                 ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2E7D32),
+                              backgroundColor: MkColors.primary,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),

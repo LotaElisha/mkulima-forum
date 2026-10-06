@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
@@ -116,7 +117,10 @@ class _EscrowScreenState extends State<EscrowScreen> {
 
     try {
       final api = context.read<ApiService>();
-      await api.post('/payments/escrows/$uuid/refund', data: {'reason': reason});
+      await api.post(
+        '/payments/escrows/$uuid/refund',
+        data: {'reason': reason},
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Ombi la refund limewasilishwa')),
@@ -136,16 +140,12 @@ class _EscrowScreenState extends State<EscrowScreen> {
 
     if (!auth.isAuthenticated) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Mkulima Escrow'),
-          backgroundColor: MkColors.primary,
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('Mkulima Escrow')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.security, size: 64, color: Colors.grey),
+              const Icon(Icons.security, size: 64, color: MkColors.muted),
               const SizedBox(height: 16),
               const Text('Ingia kuona escrow zako'),
               const SizedBox(height: 16),
@@ -160,13 +160,9 @@ class _EscrowScreenState extends State<EscrowScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mkulima Escrow'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Mkulima Escrow')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : RefreshIndicator(
               onRefresh: _loadEscrows,
               child: ListView(
@@ -175,29 +171,28 @@ class _EscrowScreenState extends State<EscrowScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF4CAF50), MkColors.primary],
-                      ),
+                      color: MkColors.surface,
+                      border: Border.all(color: MkColors.border),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.security, size: 48, color: Colors.white),
+                        Icon(Icons.security, size: 48, color: MkColors.primary),
                         SizedBox(height: 12),
                         Text(
                           'Mkulima Escrow',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: MkColors.ink,
                           ),
                         ),
                         SizedBox(height: 8),
                         Text(
                           'Pesa zako hulindwa hadi bidhaa ikufikie. '
                           'Escrow huundwa moja kwa moja unapolipia oda.',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                          style: TextStyle(color: MkColors.muted, fontSize: 14),
                         ),
                       ],
                     ),
@@ -215,8 +210,11 @@ class _EscrowScreenState extends State<EscrowScreen> {
                         child: Center(
                           child: Column(
                             children: [
-                              const Icon(Icons.cloud_off,
-                                  size: 48, color: Colors.grey),
+                              const Icon(
+                                Icons.cloud_off,
+                                size: 48,
+                                color: MkColors.muted,
+                              ),
                               const SizedBox(height: 12),
                               Text(_error!),
                               const SizedBox(height: 12),
@@ -236,15 +234,20 @@ class _EscrowScreenState extends State<EscrowScreen> {
                         child: Center(
                           child: Column(
                             children: [
-                              Icon(Icons.folder_open,
-                                  size: 48, color: Colors.grey),
+                              Icon(
+                                Icons.folder_open,
+                                size: 48,
+                                color: MkColors.muted,
+                              ),
                               SizedBox(height: 12),
                               Text('Huna escrow yoyote'),
                               SizedBox(height: 4),
                               Text(
                                 'Escrow huundwa unapolipia oda sokoni.',
-                                style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: MkColors.muted,
+                                ),
                               ),
                             ],
                           ),
@@ -252,11 +255,13 @@ class _EscrowScreenState extends State<EscrowScreen> {
                       ),
                     )
                   else
-                    ..._escrows.map((escrow) => _EscrowCard(
-                          escrow: escrow,
-                          onConfirm: _confirmDelivery,
-                          onRefund: _requestRefund,
-                        )),
+                    ..._escrows.map(
+                      (escrow) => _EscrowCard(
+                        escrow: escrow,
+                        onConfirm: _confirmDelivery,
+                        onRefund: _requestRefund,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -279,18 +284,18 @@ class _EscrowCard extends StatelessWidget {
     switch (status) {
       case 'released':
       case 'finalized':
-        return Colors.green;
+        return MkColors.primary;
       case 'held':
-        return Colors.orange;
+        return MkColors.warning;
       case 'pending':
-        return Colors.blueGrey;
+        return MkColors.info;
       case 'disputed':
       case 'failed':
-        return Colors.red;
+        return MkColors.danger;
       case 'refunded':
-        return Colors.blue;
+        return MkColors.info;
       default:
-        return Colors.grey;
+        return MkColors.muted;
     }
   }
 
@@ -320,7 +325,8 @@ class _EscrowCard extends StatelessWidget {
     final status = (escrow['status'] ?? '').toString();
     final uuid = (escrow['uuid'] ?? '').toString();
     final reference =
-        (escrow['reference'] ?? (uuid.length >= 8 ? uuid.substring(0, 8) : uuid))
+        (escrow['reference'] ??
+                (uuid.length >= 8 ? uuid.substring(0, 8) : uuid))
             .toString();
     final isBuying = escrow['direction'] == 'buying';
     final amount = escrow['amount']?.toString() ?? '0';
@@ -349,7 +355,7 @@ class _EscrowCard extends StatelessWidget {
                 Chip(
                   label: Text(
                     _statusLabel(status),
-                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
                   ),
                   backgroundColor: _statusColor(status),
                 ),
@@ -358,7 +364,7 @@ class _EscrowCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               isBuying ? 'Unanunua' : 'Unauza',
-              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+              style: TextStyle(color: MkColors.muted, fontSize: 13),
             ),
             const SizedBox(height: 12),
             Row(
@@ -381,8 +387,10 @@ class _EscrowCard extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () => onRefund(uuid),
-                        child: const Text('Omba Refund',
-                            style: TextStyle(color: Colors.red)),
+                        child: const Text(
+                          'Omba Refund',
+                          style: TextStyle(color: MkColors.danger),
+                        ),
                       ),
                     ],
                   ),

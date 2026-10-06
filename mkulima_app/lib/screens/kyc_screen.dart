@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 
@@ -13,7 +15,6 @@ class _KycScreenState extends State<KycScreen> {
   String? _kycStatus;
   bool _isLoading = true;
   bool _isSubmitting = false;
-
 
   final _idNumberController = TextEditingController();
   final _fullNameController = TextEditingController();
@@ -115,15 +116,11 @@ class _KycScreenState extends State<KycScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: MkListSkeleton());
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('KYC Verification'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('KYC Verification')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -144,10 +141,10 @@ class _KycScreenState extends State<KycScreen> {
                               ? Icons.pending
                               : Icons.warning,
                           color: _kycStatus == 'verified'
-                              ? Colors.green
+                              ? MkColors.primary
                               : _kycStatus == 'pending'
-                              ? Colors.orange
-                              : Colors.red,
+                              ? MkColors.warning
+                              : MkColors.danger,
                           size: 40,
                         ),
                         const SizedBox(width: 16),
@@ -168,7 +165,7 @@ class _KycScreenState extends State<KycScreen> {
                                     : _kycStatus == 'pending'
                                     ? 'Maombi yako yanasubiri ukaguzi'
                                     : 'Tafadhali thibitisha utambulisho wako',
-                                style: TextStyle(color: Colors.grey[600]),
+                                style: TextStyle(color: MkColors.muted),
                               ),
                             ],
                           ),
@@ -259,7 +256,7 @@ class _KycScreenState extends State<KycScreen> {
                 child: ElevatedButton(
                   onPressed: _isSubmitting ? null : _submitKyc,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2E7D32),
+                    backgroundColor: MkColors.primary,
                     foregroundColor: Colors.white,
                   ),
                   child: _isSubmitting
@@ -279,7 +276,11 @@ class _KycScreenState extends State<KycScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 32),
-                    Icon(Icons.hourglass_top, size: 64, color: Colors.orange),
+                    Icon(
+                      Icons.hourglass_top,
+                      size: 64,
+                      color: MkColors.warning,
+                    ),
                     SizedBox(height: 16),
                     Text(
                       'Maombi yako yanasubiri ukaguzi',
@@ -288,7 +289,7 @@ class _KycScreenState extends State<KycScreen> {
                     SizedBox(height: 8),
                     Text(
                       'Utapata arifa baada ya kukamilika',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: MkColors.muted),
                     ),
                   ],
                 ),

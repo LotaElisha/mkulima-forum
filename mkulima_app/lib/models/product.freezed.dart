@@ -12,7 +12,8 @@ part of 'product.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Product _$ProductFromJson(Map<String, dynamic> json) {
   return _Product.fromJson(json);
@@ -48,21 +49,22 @@ abstract class $ProductCopyWith<$Res> {
   factory $ProductCopyWith(Product value, $Res Function(Product) then) =
       _$ProductCopyWithImpl<$Res, Product>;
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
-      String name,
-      String description,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double price,
-      @JsonKey(name: 'stock_quantity') int stock,
-      @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
-      String categoryId,
-      @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
-      String sellerId,
-      String unit,
-      List<String>? images,
-      int minOrder,
-      bool isAvailable,
-      DateTime? createdAt});
+  $Res call({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
+    String name,
+    String description,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double price,
+    @JsonKey(name: 'stock_quantity') int stock,
+    @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
+    String categoryId,
+    @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
+    String sellerId,
+    String unit,
+    List<String>? images,
+    int minOrder,
+    bool isAvailable,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -91,81 +93,86 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? isAvailable = null,
     Object? createdAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
-              as double,
-      stock: null == stock
-          ? _value.stock
-          : stock // ignore: cast_nullable_to_non_nullable
-              as int,
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
-      sellerId: null == sellerId
-          ? _value.sellerId
-          : sellerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      unit: null == unit
-          ? _value.unit
-          : unit // ignore: cast_nullable_to_non_nullable
-              as String,
-      images: freezed == images
-          ? _value.images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      minOrder: null == minOrder
-          ? _value.minOrder
-          : minOrder // ignore: cast_nullable_to_non_nullable
-              as int,
-      isAvailable: null == isAvailable
-          ? _value.isAvailable
-          : isAvailable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: null == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String,
+            price: null == price
+                ? _value.price
+                : price // ignore: cast_nullable_to_non_nullable
+                      as double,
+            stock: null == stock
+                ? _value.stock
+                : stock // ignore: cast_nullable_to_non_nullable
+                      as int,
+            categoryId: null == categoryId
+                ? _value.categoryId
+                : categoryId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sellerId: null == sellerId
+                ? _value.sellerId
+                : sellerId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            unit: null == unit
+                ? _value.unit
+                : unit // ignore: cast_nullable_to_non_nullable
+                      as String,
+            images: freezed == images
+                ? _value.images
+                : images // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            minOrder: null == minOrder
+                ? _value.minOrder
+                : minOrder // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isAvailable: null == isAvailable
+                ? _value.isAvailable
+                : isAvailable // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
   factory _$$ProductImplCopyWith(
-          _$ProductImpl value, $Res Function(_$ProductImpl) then) =
-      __$$ProductImplCopyWithImpl<$Res>;
+    _$ProductImpl value,
+    $Res Function(_$ProductImpl) then,
+  ) = __$$ProductImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
-      String name,
-      String description,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double price,
-      @JsonKey(name: 'stock_quantity') int stock,
-      @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
-      String categoryId,
-      @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
-      String sellerId,
-      String unit,
-      List<String>? images,
-      int minOrder,
-      bool isAvailable,
-      DateTime? createdAt});
+  $Res call({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) String id,
+    String name,
+    String description,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) double price,
+    @JsonKey(name: 'stock_quantity') int stock,
+    @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
+    String categoryId,
+    @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
+    String sellerId,
+    String unit,
+    List<String>? images,
+    int minOrder,
+    bool isAvailable,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -173,8 +180,9 @@ class __$$ProductImplCopyWithImpl<$Res>
     extends _$ProductCopyWithImpl<$Res, _$ProductImpl>
     implements _$$ProductImplCopyWith<$Res> {
   __$$ProductImplCopyWithImpl(
-      _$ProductImpl _value, $Res Function(_$ProductImpl) _then)
-      : super(_value, _then);
+    _$ProductImpl _value,
+    $Res Function(_$ProductImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -192,79 +200,81 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? isAvailable = null,
     Object? createdAt = freezed,
   }) {
-    return _then(_$ProductImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
-              as double,
-      stock: null == stock
-          ? _value.stock
-          : stock // ignore: cast_nullable_to_non_nullable
-              as int,
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
-      sellerId: null == sellerId
-          ? _value.sellerId
-          : sellerId // ignore: cast_nullable_to_non_nullable
-              as String,
-      unit: null == unit
-          ? _value.unit
-          : unit // ignore: cast_nullable_to_non_nullable
-              as String,
-      images: freezed == images
-          ? _value._images
-          : images // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      minOrder: null == minOrder
-          ? _value.minOrder
-          : minOrder // ignore: cast_nullable_to_non_nullable
-              as int,
-      isAvailable: null == isAvailable
-          ? _value.isAvailable
-          : isAvailable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$ProductImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: null == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String,
+        price: null == price
+            ? _value.price
+            : price // ignore: cast_nullable_to_non_nullable
+                  as double,
+        stock: null == stock
+            ? _value.stock
+            : stock // ignore: cast_nullable_to_non_nullable
+                  as int,
+        categoryId: null == categoryId
+            ? _value.categoryId
+            : categoryId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sellerId: null == sellerId
+            ? _value.sellerId
+            : sellerId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        unit: null == unit
+            ? _value.unit
+            : unit // ignore: cast_nullable_to_non_nullable
+                  as String,
+        images: freezed == images
+            ? _value._images
+            : images // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        minOrder: null == minOrder
+            ? _value.minOrder
+            : minOrder // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isAvailable: null == isAvailable
+            ? _value.isAvailable
+            : isAvailable // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ProductImpl implements _Product {
-  const _$ProductImpl(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson) required this.id,
-      required this.name,
-      required this.description,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required this.price,
-      @JsonKey(name: 'stock_quantity') required this.stock,
-      @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
-      required this.categoryId,
-      @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
-      required this.sellerId,
-      required this.unit,
-      final List<String>? images,
-      this.minOrder = 0,
-      this.isAvailable = true,
-      this.createdAt})
-      : _images = images;
+  const _$ProductImpl({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) required this.id,
+    required this.name,
+    required this.description,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required this.price,
+    @JsonKey(name: 'stock_quantity') required this.stock,
+    @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
+    required this.categoryId,
+    @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
+    required this.sellerId,
+    required this.unit,
+    final List<String>? images,
+    this.minOrder = 0,
+    this.isAvailable = true,
+    this.createdAt,
+  }) : _images = images;
 
   factory _$ProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductImplFromJson(json);
@@ -342,19 +352,20 @@ class _$ProductImpl implements _Product {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      description,
-      price,
-      stock,
-      categoryId,
-      sellerId,
-      unit,
-      const DeepCollectionEquality().hash(_images),
-      minOrder,
-      isAvailable,
-      createdAt);
+    runtimeType,
+    id,
+    name,
+    description,
+    price,
+    stock,
+    categoryId,
+    sellerId,
+    unit,
+    const DeepCollectionEquality().hash(_images),
+    minOrder,
+    isAvailable,
+    createdAt,
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -364,30 +375,28 @@ class _$ProductImpl implements _Product {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ProductImplToJson(
-      this,
-    );
+    return _$$ProductImplToJson(this);
   }
 }
 
 abstract class _Product implements Product {
-  const factory _Product(
-      {@JsonKey(fromJson: _idFromJson, toJson: _idToJson)
-      required final String id,
-      required final String name,
-      required final String description,
-      @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
-      required final double price,
-      @JsonKey(name: 'stock_quantity') required final int stock,
-      @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
-      required final String categoryId,
-      @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
-      required final String sellerId,
-      required final String unit,
-      final List<String>? images,
-      final int minOrder,
-      final bool isAvailable,
-      final DateTime? createdAt}) = _$ProductImpl;
+  const factory _Product({
+    @JsonKey(fromJson: _idFromJson, toJson: _idToJson) required final String id,
+    required final String name,
+    required final String description,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required final double price,
+    @JsonKey(name: 'stock_quantity') required final int stock,
+    @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
+    required final String categoryId,
+    @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
+    required final String sellerId,
+    required final String unit,
+    final List<String>? images,
+    final int minOrder,
+    final bool isAvailable,
+    final DateTime? createdAt,
+  }) = _$ProductImpl;
 
   factory _Product.fromJson(Map<String, dynamic> json) = _$ProductImpl.fromJson;
 

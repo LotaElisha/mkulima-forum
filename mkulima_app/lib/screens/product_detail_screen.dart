@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../providers/auth_provider.dart';
@@ -21,8 +22,6 @@ class ProductDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(product.name),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
         actions: [
           Stack(
             alignment: Alignment.center,
@@ -42,14 +41,14 @@ class ProductDetailScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
-                      color: Colors.red,
+                      color: MkColors.danger,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       '${cart.itemCount}',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -68,7 +67,7 @@ class ProductDetailScreen extends StatelessWidget {
               height: 250,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: MkColors.border,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: _buildProductImage(),
@@ -86,22 +85,22 @@ class ProductDetailScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.green[700],
+                color: MkColors.primary,
               ),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.inventory_2, size: 16, color: Colors.grey[600]),
+                Icon(Icons.inventory_2, size: 16, color: MkColors.muted),
                 const SizedBox(width: 4),
                 Text(
                   'Stock: ${product.stock} ${product.unit}',
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: MkColors.muted),
                 ),
                 const SizedBox(width: 16),
-                Icon(Icons.local_shipping, size: 16, color: Colors.grey[600]),
+                Icon(Icons.local_shipping, size: 16, color: MkColors.muted),
                 const SizedBox(width: 4),
-                Text('Escrow', style: TextStyle(color: Colors.grey[600])),
+                Text('Escrow', style: TextStyle(color: MkColors.muted)),
               ],
             ),
             const SizedBox(height: 20),
@@ -112,7 +111,7 @@ class ProductDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               product.description,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              style: TextStyle(fontSize: 16, color: MkColors.muted),
             ),
             const SizedBox(height: 32),
             if (!isInCart)
@@ -135,8 +134,8 @@ class ProductDetailScreen extends StatelessWidget {
                         label: const Text('Ongeza Rukwama'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF2E7D32),
-                          side: const BorderSide(color: Color(0xFF2E7D32)),
+                          foregroundColor: MkColors.primary,
+                          side: const BorderSide(color: MkColors.primary),
                         ),
                       ),
                     ),
@@ -157,9 +156,8 @@ class ProductDetailScreen extends StatelessWidget {
                             }
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) => PaymentScreen(
-                                  amount: product.price,
-                                ),
+                                builder: (_) =>
+                                    PaymentScreen(amount: product.price),
                               ),
                             );
                           }
@@ -167,7 +165,7 @@ class ProductDetailScreen extends StatelessWidget {
                         icon: const Icon(Icons.payment),
                         label: const Text('Nunua Sasa'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2E7D32),
+                          backgroundColor: MkColors.primary,
                           foregroundColor: Colors.white,
                         ),
                       ),
@@ -181,22 +179,19 @@ class ProductDetailScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.green[50],
+                      color: MkColors.leafPale,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF2E7D32)),
+                      border: Border.all(color: MkColors.primary),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.check_circle,
-                          color: Color(0xFF2E7D32),
-                        ),
+                        const Icon(Icons.check_circle, color: MkColors.primary),
                         const SizedBox(width: 8),
                         Text(
                           'Ipo kwenye rukwama ($quantity)',
                           style: const TextStyle(
-                            color: Color(0xFF2E7D32),
+                            color: MkColors.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -216,7 +211,7 @@ class ProductDetailScreen extends StatelessWidget {
                       icon: const Icon(Icons.shopping_cart_checkout),
                       label: const Text('Tazama Rukwama'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2E7D32),
+                        backgroundColor: MkColors.primary,
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -252,7 +247,7 @@ class ProductDetailScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.eco, size: 80, color: Colors.green[300]),
+          Icon(Icons.eco, size: 80, color: MkColors.primary),
           const SizedBox(height: 8),
           Text(
             product.categoryId == '1'
@@ -269,7 +264,7 @@ class ProductDetailScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.green[400],
+              color: MkColors.primary,
             ),
           ),
         ],

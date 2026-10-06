@@ -12,7 +12,8 @@ part of 'farm.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Farm _$FarmFromJson(Map<String, dynamic> json) {
   return _Farm.fromJson(json);
@@ -47,18 +48,19 @@ abstract class $FarmCopyWith<$Res> {
   factory $FarmCopyWith(Farm value, $Res Function(Farm) then) =
       _$FarmCopyWithImpl<$Res, Farm>;
   @useResult
-  $Res call(
-      {String uuid,
-      String name,
-      String location,
-      @JsonKey(name: 'size_acres') double sizeAcres,
-      @JsonKey(name: 'crop_type') String cropType,
-      @JsonKey(name: 'soil_type') String? soilType,
-      @JsonKey(name: 'planting_date') String? plantingDate,
-      @JsonKey(name: 'harvest_expected_date') String? harvestExpectedDate,
-      String status,
-      String? notes,
-      List<FarmActivity> activities});
+  $Res call({
+    String uuid,
+    String name,
+    String location,
+    @JsonKey(name: 'size_acres') double sizeAcres,
+    @JsonKey(name: 'crop_type') String cropType,
+    @JsonKey(name: 'soil_type') String? soilType,
+    @JsonKey(name: 'planting_date') String? plantingDate,
+    @JsonKey(name: 'harvest_expected_date') String? harvestExpectedDate,
+    String status,
+    String? notes,
+    List<FarmActivity> activities,
+  });
 }
 
 /// @nodoc
@@ -86,74 +88,79 @@ class _$FarmCopyWithImpl<$Res, $Val extends Farm>
     Object? notes = freezed,
     Object? activities = null,
   }) {
-    return _then(_value.copyWith(
-      uuid: null == uuid
-          ? _value.uuid
-          : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as String,
-      sizeAcres: null == sizeAcres
-          ? _value.sizeAcres
-          : sizeAcres // ignore: cast_nullable_to_non_nullable
-              as double,
-      cropType: null == cropType
-          ? _value.cropType
-          : cropType // ignore: cast_nullable_to_non_nullable
-              as String,
-      soilType: freezed == soilType
-          ? _value.soilType
-          : soilType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      plantingDate: freezed == plantingDate
-          ? _value.plantingDate
-          : plantingDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      harvestExpectedDate: freezed == harvestExpectedDate
-          ? _value.harvestExpectedDate
-          : harvestExpectedDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      activities: null == activities
-          ? _value.activities
-          : activities // ignore: cast_nullable_to_non_nullable
-              as List<FarmActivity>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            uuid: null == uuid
+                ? _value.uuid
+                : uuid // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            location: null == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sizeAcres: null == sizeAcres
+                ? _value.sizeAcres
+                : sizeAcres // ignore: cast_nullable_to_non_nullable
+                      as double,
+            cropType: null == cropType
+                ? _value.cropType
+                : cropType // ignore: cast_nullable_to_non_nullable
+                      as String,
+            soilType: freezed == soilType
+                ? _value.soilType
+                : soilType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            plantingDate: freezed == plantingDate
+                ? _value.plantingDate
+                : plantingDate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            harvestExpectedDate: freezed == harvestExpectedDate
+                ? _value.harvestExpectedDate
+                : harvestExpectedDate // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            activities: null == activities
+                ? _value.activities
+                : activities // ignore: cast_nullable_to_non_nullable
+                      as List<FarmActivity>,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$FarmImplCopyWith<$Res> implements $FarmCopyWith<$Res> {
   factory _$$FarmImplCopyWith(
-          _$FarmImpl value, $Res Function(_$FarmImpl) then) =
-      __$$FarmImplCopyWithImpl<$Res>;
+    _$FarmImpl value,
+    $Res Function(_$FarmImpl) then,
+  ) = __$$FarmImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String uuid,
-      String name,
-      String location,
-      @JsonKey(name: 'size_acres') double sizeAcres,
-      @JsonKey(name: 'crop_type') String cropType,
-      @JsonKey(name: 'soil_type') String? soilType,
-      @JsonKey(name: 'planting_date') String? plantingDate,
-      @JsonKey(name: 'harvest_expected_date') String? harvestExpectedDate,
-      String status,
-      String? notes,
-      List<FarmActivity> activities});
+  $Res call({
+    String uuid,
+    String name,
+    String location,
+    @JsonKey(name: 'size_acres') double sizeAcres,
+    @JsonKey(name: 'crop_type') String cropType,
+    @JsonKey(name: 'soil_type') String? soilType,
+    @JsonKey(name: 'planting_date') String? plantingDate,
+    @JsonKey(name: 'harvest_expected_date') String? harvestExpectedDate,
+    String status,
+    String? notes,
+    List<FarmActivity> activities,
+  });
 }
 
 /// @nodoc
@@ -161,7 +168,7 @@ class __$$FarmImplCopyWithImpl<$Res>
     extends _$FarmCopyWithImpl<$Res, _$FarmImpl>
     implements _$$FarmImplCopyWith<$Res> {
   __$$FarmImplCopyWithImpl(_$FarmImpl _value, $Res Function(_$FarmImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -178,71 +185,73 @@ class __$$FarmImplCopyWithImpl<$Res>
     Object? notes = freezed,
     Object? activities = null,
   }) {
-    return _then(_$FarmImpl(
-      uuid: null == uuid
-          ? _value.uuid
-          : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      location: null == location
-          ? _value.location
-          : location // ignore: cast_nullable_to_non_nullable
-              as String,
-      sizeAcres: null == sizeAcres
-          ? _value.sizeAcres
-          : sizeAcres // ignore: cast_nullable_to_non_nullable
-              as double,
-      cropType: null == cropType
-          ? _value.cropType
-          : cropType // ignore: cast_nullable_to_non_nullable
-              as String,
-      soilType: freezed == soilType
-          ? _value.soilType
-          : soilType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      plantingDate: freezed == plantingDate
-          ? _value.plantingDate
-          : plantingDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      harvestExpectedDate: freezed == harvestExpectedDate
-          ? _value.harvestExpectedDate
-          : harvestExpectedDate // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      activities: null == activities
-          ? _value._activities
-          : activities // ignore: cast_nullable_to_non_nullable
-              as List<FarmActivity>,
-    ));
+    return _then(
+      _$FarmImpl(
+        uuid: null == uuid
+            ? _value.uuid
+            : uuid // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        location: null == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sizeAcres: null == sizeAcres
+            ? _value.sizeAcres
+            : sizeAcres // ignore: cast_nullable_to_non_nullable
+                  as double,
+        cropType: null == cropType
+            ? _value.cropType
+            : cropType // ignore: cast_nullable_to_non_nullable
+                  as String,
+        soilType: freezed == soilType
+            ? _value.soilType
+            : soilType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        plantingDate: freezed == plantingDate
+            ? _value.plantingDate
+            : plantingDate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        harvestExpectedDate: freezed == harvestExpectedDate
+            ? _value.harvestExpectedDate
+            : harvestExpectedDate // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        activities: null == activities
+            ? _value._activities
+            : activities // ignore: cast_nullable_to_non_nullable
+                  as List<FarmActivity>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$FarmImpl implements _Farm {
-  const _$FarmImpl(
-      {required this.uuid,
-      required this.name,
-      required this.location,
-      @JsonKey(name: 'size_acres') required this.sizeAcres,
-      @JsonKey(name: 'crop_type') required this.cropType,
-      @JsonKey(name: 'soil_type') this.soilType,
-      @JsonKey(name: 'planting_date') this.plantingDate,
-      @JsonKey(name: 'harvest_expected_date') this.harvestExpectedDate,
-      this.status = 'active',
-      this.notes,
-      final List<FarmActivity> activities = const []})
-      : _activities = activities;
+  const _$FarmImpl({
+    required this.uuid,
+    required this.name,
+    required this.location,
+    @JsonKey(name: 'size_acres') required this.sizeAcres,
+    @JsonKey(name: 'crop_type') required this.cropType,
+    @JsonKey(name: 'soil_type') this.soilType,
+    @JsonKey(name: 'planting_date') this.plantingDate,
+    @JsonKey(name: 'harvest_expected_date') this.harvestExpectedDate,
+    this.status = 'active',
+    this.notes,
+    final List<FarmActivity> activities = const [],
+  }) : _activities = activities;
 
   factory _$FarmImpl.fromJson(Map<String, dynamic> json) =>
       _$$FarmImplFromJson(json);
@@ -308,25 +317,28 @@ class _$FarmImpl implements _Farm {
                 other.harvestExpectedDate == harvestExpectedDate) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.notes, notes) || other.notes == notes) &&
-            const DeepCollectionEquality()
-                .equals(other._activities, _activities));
+            const DeepCollectionEquality().equals(
+              other._activities,
+              _activities,
+            ));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      uuid,
-      name,
-      location,
-      sizeAcres,
-      cropType,
-      soilType,
-      plantingDate,
-      harvestExpectedDate,
-      status,
-      notes,
-      const DeepCollectionEquality().hash(_activities));
+    runtimeType,
+    uuid,
+    name,
+    location,
+    sizeAcres,
+    cropType,
+    soilType,
+    plantingDate,
+    harvestExpectedDate,
+    status,
+    notes,
+    const DeepCollectionEquality().hash(_activities),
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -336,25 +348,24 @@ class _$FarmImpl implements _Farm {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$FarmImplToJson(
-      this,
-    );
+    return _$$FarmImplToJson(this);
   }
 }
 
 abstract class _Farm implements Farm {
-  const factory _Farm(
-      {required final String uuid,
-      required final String name,
-      required final String location,
-      @JsonKey(name: 'size_acres') required final double sizeAcres,
-      @JsonKey(name: 'crop_type') required final String cropType,
-      @JsonKey(name: 'soil_type') final String? soilType,
-      @JsonKey(name: 'planting_date') final String? plantingDate,
-      @JsonKey(name: 'harvest_expected_date') final String? harvestExpectedDate,
-      final String status,
-      final String? notes,
-      final List<FarmActivity> activities}) = _$FarmImpl;
+  const factory _Farm({
+    required final String uuid,
+    required final String name,
+    required final String location,
+    @JsonKey(name: 'size_acres') required final double sizeAcres,
+    @JsonKey(name: 'crop_type') required final String cropType,
+    @JsonKey(name: 'soil_type') final String? soilType,
+    @JsonKey(name: 'planting_date') final String? plantingDate,
+    @JsonKey(name: 'harvest_expected_date') final String? harvestExpectedDate,
+    final String status,
+    final String? notes,
+    final List<FarmActivity> activities,
+  }) = _$FarmImpl;
 
   factory _Farm.fromJson(Map<String, dynamic> json) = _$FarmImpl.fromJson;
 
@@ -415,15 +426,17 @@ mixin _$FarmActivity {
 /// @nodoc
 abstract class $FarmActivityCopyWith<$Res> {
   factory $FarmActivityCopyWith(
-          FarmActivity value, $Res Function(FarmActivity) then) =
-      _$FarmActivityCopyWithImpl<$Res, FarmActivity>;
+    FarmActivity value,
+    $Res Function(FarmActivity) then,
+  ) = _$FarmActivityCopyWithImpl<$Res, FarmActivity>;
   @useResult
-  $Res call(
-      {String uuid,
-      @JsonKey(name: 'activity_type') String activityType,
-      @JsonKey(name: 'activity_date') String activityDate,
-      @JsonKey(name: 'cost_tzs') double costTzs,
-      String? notes});
+  $Res call({
+    String uuid,
+    @JsonKey(name: 'activity_type') String activityType,
+    @JsonKey(name: 'activity_date') String activityDate,
+    @JsonKey(name: 'cost_tzs') double costTzs,
+    String? notes,
+  });
 }
 
 /// @nodoc
@@ -445,28 +458,31 @@ class _$FarmActivityCopyWithImpl<$Res, $Val extends FarmActivity>
     Object? costTzs = null,
     Object? notes = freezed,
   }) {
-    return _then(_value.copyWith(
-      uuid: null == uuid
-          ? _value.uuid
-          : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
-      activityType: null == activityType
-          ? _value.activityType
-          : activityType // ignore: cast_nullable_to_non_nullable
-              as String,
-      activityDate: null == activityDate
-          ? _value.activityDate
-          : activityDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      costTzs: null == costTzs
-          ? _value.costTzs
-          : costTzs // ignore: cast_nullable_to_non_nullable
-              as double,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            uuid: null == uuid
+                ? _value.uuid
+                : uuid // ignore: cast_nullable_to_non_nullable
+                      as String,
+            activityType: null == activityType
+                ? _value.activityType
+                : activityType // ignore: cast_nullable_to_non_nullable
+                      as String,
+            activityDate: null == activityDate
+                ? _value.activityDate
+                : activityDate // ignore: cast_nullable_to_non_nullable
+                      as String,
+            costTzs: null == costTzs
+                ? _value.costTzs
+                : costTzs // ignore: cast_nullable_to_non_nullable
+                      as double,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -474,16 +490,18 @@ class _$FarmActivityCopyWithImpl<$Res, $Val extends FarmActivity>
 abstract class _$$FarmActivityImplCopyWith<$Res>
     implements $FarmActivityCopyWith<$Res> {
   factory _$$FarmActivityImplCopyWith(
-          _$FarmActivityImpl value, $Res Function(_$FarmActivityImpl) then) =
-      __$$FarmActivityImplCopyWithImpl<$Res>;
+    _$FarmActivityImpl value,
+    $Res Function(_$FarmActivityImpl) then,
+  ) = __$$FarmActivityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String uuid,
-      @JsonKey(name: 'activity_type') String activityType,
-      @JsonKey(name: 'activity_date') String activityDate,
-      @JsonKey(name: 'cost_tzs') double costTzs,
-      String? notes});
+  $Res call({
+    String uuid,
+    @JsonKey(name: 'activity_type') String activityType,
+    @JsonKey(name: 'activity_date') String activityDate,
+    @JsonKey(name: 'cost_tzs') double costTzs,
+    String? notes,
+  });
 }
 
 /// @nodoc
@@ -491,8 +509,9 @@ class __$$FarmActivityImplCopyWithImpl<$Res>
     extends _$FarmActivityCopyWithImpl<$Res, _$FarmActivityImpl>
     implements _$$FarmActivityImplCopyWith<$Res> {
   __$$FarmActivityImplCopyWithImpl(
-      _$FarmActivityImpl _value, $Res Function(_$FarmActivityImpl) _then)
-      : super(_value, _then);
+    _$FarmActivityImpl _value,
+    $Res Function(_$FarmActivityImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -503,40 +522,43 @@ class __$$FarmActivityImplCopyWithImpl<$Res>
     Object? costTzs = null,
     Object? notes = freezed,
   }) {
-    return _then(_$FarmActivityImpl(
-      uuid: null == uuid
-          ? _value.uuid
-          : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
-      activityType: null == activityType
-          ? _value.activityType
-          : activityType // ignore: cast_nullable_to_non_nullable
-              as String,
-      activityDate: null == activityDate
-          ? _value.activityDate
-          : activityDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      costTzs: null == costTzs
-          ? _value.costTzs
-          : costTzs // ignore: cast_nullable_to_non_nullable
-              as double,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$FarmActivityImpl(
+        uuid: null == uuid
+            ? _value.uuid
+            : uuid // ignore: cast_nullable_to_non_nullable
+                  as String,
+        activityType: null == activityType
+            ? _value.activityType
+            : activityType // ignore: cast_nullable_to_non_nullable
+                  as String,
+        activityDate: null == activityDate
+            ? _value.activityDate
+            : activityDate // ignore: cast_nullable_to_non_nullable
+                  as String,
+        costTzs: null == costTzs
+            ? _value.costTzs
+            : costTzs // ignore: cast_nullable_to_non_nullable
+                  as double,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$FarmActivityImpl implements _FarmActivity {
-  const _$FarmActivityImpl(
-      {required this.uuid,
-      @JsonKey(name: 'activity_type') required this.activityType,
-      @JsonKey(name: 'activity_date') required this.activityDate,
-      @JsonKey(name: 'cost_tzs') this.costTzs = 0.0,
-      this.notes});
+  const _$FarmActivityImpl({
+    required this.uuid,
+    @JsonKey(name: 'activity_type') required this.activityType,
+    @JsonKey(name: 'activity_date') required this.activityDate,
+    @JsonKey(name: 'cost_tzs') this.costTzs = 0.0,
+    this.notes,
+  });
 
   factory _$FarmActivityImpl.fromJson(Map<String, dynamic> json) =>
       _$$FarmActivityImplFromJson(json);
@@ -577,7 +599,13 @@ class _$FarmActivityImpl implements _FarmActivity {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, uuid, activityType, activityDate, costTzs, notes);
+    runtimeType,
+    uuid,
+    activityType,
+    activityDate,
+    costTzs,
+    notes,
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -587,19 +615,18 @@ class _$FarmActivityImpl implements _FarmActivity {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$FarmActivityImplToJson(
-      this,
-    );
+    return _$$FarmActivityImplToJson(this);
   }
 }
 
 abstract class _FarmActivity implements FarmActivity {
-  const factory _FarmActivity(
-      {required final String uuid,
-      @JsonKey(name: 'activity_type') required final String activityType,
-      @JsonKey(name: 'activity_date') required final String activityDate,
-      @JsonKey(name: 'cost_tzs') final double costTzs,
-      final String? notes}) = _$FarmActivityImpl;
+  const factory _FarmActivity({
+    required final String uuid,
+    @JsonKey(name: 'activity_type') required final String activityType,
+    @JsonKey(name: 'activity_date') required final String activityDate,
+    @JsonKey(name: 'cost_tzs') final double costTzs,
+    final String? notes,
+  }) = _$FarmActivityImpl;
 
   factory _FarmActivity.fromJson(Map<String, dynamic> json) =
       _$FarmActivityImpl.fromJson;

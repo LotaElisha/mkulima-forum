@@ -216,7 +216,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
   /// A social sign-in failure the user can read.
   ///
   /// The provider SDKs put configuration diagnostics in their exception

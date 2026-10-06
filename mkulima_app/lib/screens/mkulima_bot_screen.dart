@@ -48,8 +48,10 @@ class _MkulimaBotScreenState extends State<MkulimaBotScreen> {
 
     final auth = Provider.of<AuthProvider>(context, listen: false);
     if (!auth.isAuthenticated) {
-      final ok = await AuthProvider.requireAuth(context,
-          action: 'kuzungumza na Mkulima AI');
+      final ok = await AuthProvider.requireAuth(
+        context,
+        action: 'kuzungumza na Mkulima AI',
+      );
       if (!ok || !mounted) return;
     }
 
@@ -73,10 +75,7 @@ class _MkulimaBotScreenState extends State<MkulimaBotScreen> {
       });
     } catch (e) {
       setState(() {
-        _messages.add(const _ChatMessage(
-          'model',
-          MkStrings.botUnavailable,
-        ));
+        _messages.add(const _ChatMessage('model', MkStrings.botUnavailable));
         _isSending = false;
       });
     }
@@ -133,8 +132,10 @@ class _MkulimaBotScreenState extends State<MkulimaBotScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                   SizedBox(width: 8),
-                  Text(MkStrings.botThinking,
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    MkStrings.botThinking,
+                    style: TextStyle(fontSize: 13, color: MkColors.muted),
+                  ),
                 ],
               ),
             ),
@@ -161,10 +162,12 @@ class _MkulimaBotScreenState extends State<MkulimaBotScreen> {
             runSpacing: 8,
             alignment: WrapAlignment.center,
             children: _suggestedPrompts
-                .map((p) => ActionChip(
-                      label: Text(p, style: const TextStyle(fontSize: 12)),
-                      onPressed: () => _send(p),
-                    ))
+                .map(
+                  (p) => ActionChip(
+                    label: Text(p, style: const TextStyle(fontSize: 13)),
+                    onPressed: () => _send(p),
+                  ),
+                )
                 .toList(),
           ),
         ],
@@ -238,8 +241,10 @@ class _MkulimaBotScreenState extends State<MkulimaBotScreen> {
                 decoration: const InputDecoration(
                   hintText: MkStrings.botHint,
                   border: OutlineInputBorder(),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                 ),
               ),
             ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../core/theme.dart';
 import '../services/api_service.dart';
+import '../core/format.dart';
 
 /// Bei za Masoko — real recorded market prices with filters.
 /// Every price shows the date it was recorded; entries older than 14 days
@@ -49,11 +51,14 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
     });
     try {
       final api = context.read<ApiService>();
-      final response = await api.get('/market-prices', queryParameters: {
-        'latest': 1,
-        if (_commodity != null) 'commodity': _commodity,
-        if (_region != null) 'region': _region,
-      });
+      final response = await api.get(
+        '/market-prices',
+        queryParameters: {
+          'latest': 1,
+          if (_commodity != null) 'commodity': _commodity,
+          if (_region != null) 'region': _region,
+        },
+      );
       setState(() {
         _prices = response.data['data'] ?? [];
         _isLoading = false;
@@ -69,11 +74,7 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bei za Masoko'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Bei za Masoko')),
       body: Column(
         children: [
           // Filters
@@ -88,13 +89,19 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Zao',
                       border: OutlineInputBorder(),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
                     items: [
                       const DropdownMenuItem(value: null, child: Text('Yote')),
-                      ..._commodities.map((c) => DropdownMenuItem(
-                          value: c.toString(), child: Text(c.toString()))),
+                      ..._commodities.map(
+                        (c) => DropdownMenuItem(
+                          value: c.toString(),
+                          child: Text(c.toString()),
+                        ),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() => _commodity = value);
@@ -110,13 +117,19 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
                     decoration: const InputDecoration(
                       labelText: 'Mkoa',
                       border: OutlineInputBorder(),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
                     items: [
                       const DropdownMenuItem(value: null, child: Text('Yote')),
-                      ..._regions.map((r) => DropdownMenuItem(
-                          value: r.toString(), child: Text(r.toString()))),
+                      ..._regions.map(
+                        (r) => DropdownMenuItem(
+                          value: r.toString(),
+                          child: Text(r.toString()),
+                        ),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() => _region = value);
@@ -130,40 +143,47 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
 
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const MkListSkeleton()
                 : RefreshIndicator(
                     onRefresh: _loadPrices,
                     child: _failed
                         ? ListView(
                             children: const [
                               SizedBox(height: 120),
-                              Icon(Icons.cloud_off,
-                                  size: 64, color: Colors.grey),
+                              Icon(
+                                Icons.cloud_off,
+                                size: 64,
+                                color: MkColors.muted,
+                              ),
                               SizedBox(height: 12),
                               Center(
-                                  child: Text(
-                                      'Imeshindikana kupakia bei. Vuta chini kujaribu tena.')),
+                                child: Text(
+                                  'Imeshindikana kupakia bei. Vuta chini kujaribu tena.',
+                                ),
+                              ),
                             ],
                           )
                         : _prices.isEmpty
-                            ? ListView(
-                                children: const [
-                                  SizedBox(height: 120),
-                                  Icon(Icons.price_change_outlined,
-                                      size: 64, color: Colors.grey),
-                                  SizedBox(height: 12),
-                                  Center(
-                                      child: Text(
-                                          'Hakuna bei zilizorekodiwa bado.')),
-                                ],
-                              )
-                            : ListView.builder(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                itemCount: _prices.length,
-                                itemBuilder: (context, index) =>
-                                    _PriceCard(price: _prices[index]),
+                        ? ListView(
+                            children: const [
+                              SizedBox(height: 120),
+                              Icon(
+                                Icons.price_change_outlined,
+                                size: 64,
+                                color: MkColors.muted,
                               ),
+                              SizedBox(height: 12),
+                              Center(
+                                child: Text('Hakuna bei zilizorekodiwa bado.'),
+                              ),
+                            ],
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            itemCount: _prices.length,
+                            itemBuilder: (context, index) =>
+                                _PriceCard(price: _prices[index]),
+                          ),
                   ),
           ),
         ],
@@ -183,9 +203,9 @@ class _PriceCard extends StatelessWidget {
     final isStale = price['is_stale'] == true;
 
     final (trendIcon, trendColor) = switch (trend) {
-      'up' => (Icons.trending_up, Colors.green),
-      'down' => (Icons.trending_down, Colors.red),
-      _ => (Icons.trending_flat, Colors.grey),
+      'up' => (Icons.trending_up, MkColors.primary),
+      'down' => (Icons.trending_down, MkColors.danger),
+      _ => (Icons.trending_flat, MkColors.muted),
     };
 
     return Card(
@@ -201,7 +221,9 @@ class _PriceCard extends StatelessWidget {
                   child: Text(
                     '${price['commodity']}',
                     style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Icon(trendIcon, color: trendColor, size: 20),
@@ -209,15 +231,15 @@ class _PriceCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${price['market']}, ${price['region']}',
-              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+              [price['market'], price['region']].whereType<Object>().join(', '),
+              style: TextStyle(color: MkColors.muted, fontSize: 13),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'TZS ${price['min_price']} – ${price['max_price']} / ${price['unit']}',
+                  'TSh ${mkAmount(num.tryParse('${price['min_price']}'))} – ${mkAmount(num.tryParse('${price['max_price']}'))} / ${price['unit']}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: MkColors.primary,
@@ -226,14 +248,18 @@ class _PriceCard extends StatelessWidget {
                 Row(
                   children: [
                     if (isStale) ...[
-                      Icon(Icons.history, size: 14, color: Colors.amber[800]),
+                      Icon(
+                        Icons.history,
+                        size: 14,
+                        color: MkColors.onAccentSoft,
+                      ),
                       const SizedBox(width: 4),
                     ],
                     Text(
                       '${price['price_date']}',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: isStale ? Colors.amber[800] : Colors.grey[600],
+                        fontSize: 13,
+                        color: isStale ? MkColors.onAccentSoft : MkColors.muted,
                       ),
                     ),
                   ],
@@ -245,7 +271,7 @@ class _PriceCard extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   'Chanzo: ${price['source']}',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                  style: TextStyle(fontSize: 13, color: MkColors.muted),
                 ),
               ),
           ],

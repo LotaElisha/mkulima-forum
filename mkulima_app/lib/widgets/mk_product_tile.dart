@@ -31,7 +31,9 @@ class MkProductTile extends StatelessWidget {
         ? price.toDouble()
         : double.tryParse(price.toString()) ?? 0;
 
-    final stockCount = stock is num ? stock.toInt() : int.tryParse('$stock') ?? 0;
+    final stockCount = stock is num
+        ? stock.toInt()
+        : int.tryParse('$stock') ?? 0;
     final (stockLabel, stockColour) = stockCount <= 0
         ? ('Imeisha', MkColors.danger)
         : stockCount <= 5

@@ -61,7 +61,9 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MkColors.primary,
+      // White like every other screen: the old full-bleed green splash was
+      // the largest green field in the app.
+      backgroundColor: MkColors.surface,
       body: Center(
         child: AnimatedBuilder(
           animation: _controller,
@@ -77,15 +79,8 @@ class _SplashScreenState extends State<SplashScreen>
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: MkColors.leafPale,
                         borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
                       ),
                       child: const Center(child: MkulimaLogo(size: 76)),
                     ),
@@ -93,10 +88,10 @@ class _SplashScreenState extends State<SplashScreen>
                     const Text(
                       'MkulimaForum',
                       style: TextStyle(
-                        fontSize: 36,
+                        fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: MkColors.surface,
-                        letterSpacing: 1,
+                        color: MkColors.ink,
+                        letterSpacing: -.3,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -104,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
                       'Soko la Kilimo kwa Wote',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xCCFFFFFF),
+                        color: MkColors.muted,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -114,10 +109,10 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 40,
                       child: CircularProgressIndicator(
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                          Colors.white,
+                          MkColors.primary,
                         ),
                         strokeWidth: 3,
-                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        backgroundColor: MkColors.leafPale,
                       ),
                     ),
                   ],

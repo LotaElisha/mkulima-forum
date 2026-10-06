@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
@@ -43,16 +44,12 @@ class _IoTScreenState extends State<IoTScreen> {
 
     if (!auth.isAuthenticated) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Vifaa vya IoT'),
-          backgroundColor: MkColors.primary,
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('Vifaa vya IoT')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.sensors, size: 64, color: Colors.grey),
+              const Icon(Icons.sensors, size: 64, color: MkColors.muted),
               const SizedBox(height: 16),
               const Text('Ingia kuona vifaa vyako'),
               const SizedBox(height: 16),
@@ -67,13 +64,9 @@ class _IoTScreenState extends State<IoTScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vifaa vya IoT'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Vifaa vya IoT')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : RefreshIndicator(
               onRefresh: _loadSensors,
               child: ListView(
@@ -82,9 +75,8 @@ class _IoTScreenState extends State<IoTScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF1976D2), Color(0xFF0D47A1)],
-                      ),
+                      color: MkColors.surface,
+                      border: Border.all(color: MkColors.border),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
@@ -93,7 +85,7 @@ class _IoTScreenState extends State<IoTScreen> {
                         const Icon(
                           Icons.sensors,
                           size: 48,
-                          color: Colors.white,
+                          color: MkColors.primary,
                         ),
                         const SizedBox(height: 12),
                         const Text(
@@ -101,13 +93,13 @@ class _IoTScreenState extends State<IoTScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: MkColors.ink,
                           ),
                         ),
                         const SizedBox(height: 8),
                         const Text(
                           'Fuatilia unyevu wa udongo, joto, na hali ya hewa kiotomatiki',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                          style: TextStyle(color: MkColors.muted, fontSize: 14),
                         ),
                       ],
                     ),
@@ -155,7 +147,7 @@ class _IoTScreenState extends State<IoTScreen> {
                               Icon(
                                 Icons.sensors_off,
                                 size: 48,
-                                color: Colors.grey,
+                                color: MkColors.muted,
                               ),
                               SizedBox(height: 12),
                               Text('Huna vifaa vilivyounganishwa'),
@@ -199,7 +191,7 @@ class _SensorCard extends StatelessWidget {
                       width: 12,
                       height: 12,
                       decoration: BoxDecoration(
-                        color: isOnline ? Colors.green : Colors.red,
+                        color: isOnline ? MkColors.primary : MkColors.danger,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -216,13 +208,13 @@ class _SensorCard extends StatelessWidget {
                 Chip(
                   label: Text('${sensor['battery']}%'),
                   backgroundColor: sensor['battery'] > 20
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : Colors.red.withValues(alpha: 0.1),
+                      ? MkColors.primary.withValues(alpha: 0.1)
+                      : MkColors.danger.withValues(alpha: 0.1),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(sensor['location'], style: TextStyle(color: Colors.grey[600])),
+            Text(sensor['location'], style: TextStyle(color: MkColors.muted)),
             const SizedBox(height: 16),
             if (lastReading.isNotEmpty) ...[
               const Text(
@@ -239,28 +231,28 @@ class _SensorCard extends StatelessWidget {
                       icon: Icons.water_drop,
                       label: 'Unyevu',
                       value: '${lastReading['moisture']}%',
-                      color: Colors.blue,
+                      color: MkColors.primary,
                     ),
                   if (lastReading['temperature'] != null)
                     _ReadingChip(
                       icon: Icons.thermostat,
                       label: 'Joto',
                       value: '${lastReading['temperature']}°C',
-                      color: Colors.orange,
+                      color: MkColors.warning,
                     ),
                   if (lastReading['humidity'] != null)
                     _ReadingChip(
                       icon: Icons.water,
                       label: 'Unyevu Hewa',
                       value: '${lastReading['humidity']}%',
-                      color: Colors.teal,
+                      color: MkColors.primary,
                     ),
                   if (lastReading['ph'] != null)
                     _ReadingChip(
                       icon: Icons.science,
                       label: 'pH',
                       value: '${lastReading['ph']}',
-                      color: Colors.purple,
+                      color: MkColors.primary,
                     ),
                 ],
               ),
@@ -284,7 +276,7 @@ class _SensorCard extends StatelessWidget {
                       margin: const EdgeInsets.only(right: 8),
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: MkColors.surfaceMuted,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
@@ -293,8 +285,8 @@ class _SensorCard extends StatelessWidget {
                           Text(
                             reading['time'],
                             style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
+                              fontSize: 13,
+                              color: MkColors.muted,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -303,7 +295,7 @@ class _SensorCard extends StatelessWidget {
                               '${reading['moisture']}%',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue,
+                                color: MkColors.primary,
                               ),
                             ),
                           if (reading['temp'] != null)
@@ -311,7 +303,7 @@ class _SensorCard extends StatelessWidget {
                               '${reading['temp']}°C',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.orange,
+                                color: MkColors.warning,
                               ),
                             ),
                         ],

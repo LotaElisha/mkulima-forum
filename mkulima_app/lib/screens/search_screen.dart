@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../core/theme.dart';
 import '../services/api_service.dart';
 import 'product_detail_screen.dart';
 import 'forum_screen.dart';
 import 'market_prices_screen.dart';
+import '../core/format.dart';
 
 /// Global search — one box that finds products, discussions, experts,
 /// service providers and market prices, in Swahili or English (the API
@@ -56,8 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     try {
       final api = context.read<ApiService>();
-      final response =
-          await api.get('/search', queryParameters: {'q': query});
+      final response = await api.get('/search', queryParameters: {'q': query});
       if (!mounted) return;
       setState(() {
         _results = response.data['results'] as Map<String, dynamic>?;
@@ -79,7 +80,9 @@ class _SearchScreenState extends State<SearchScreen> {
       final product = await api.getProduct(uuid);
       if (!mounted) return;
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => ProductDetailScreen(product: product)),
+        MaterialPageRoute(
+          builder: (_) => ProductDetailScreen(product: product),
+        ),
       );
     } catch (_) {
       if (!mounted) return;
@@ -91,31 +94,32 @@ class _SearchScreenState extends State<SearchScreen> {
 
   bool get _isEmpty {
     if (_results == null) return false;
-    return _results!.values
-        .every((group) => group is List && group.isEmpty);
+    return _results!.values.every((group) => group is List && group.isEmpty);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
         title: TextField(
           controller: _controller,
           autofocus: true,
           onChanged: _onChanged,
           textInputAction: TextInputAction.search,
           onSubmitted: (v) => _search(v.trim()),
-          style: const TextStyle(color: Colors.white),
-          cursorColor: Colors.white,
+          style: MkText.body,
+          cursorColor: MkColors.primary,
           decoration: InputDecoration(
             hintText: 'Tafuta bidhaa, mijadala, bei, wataalamu...',
-            hintStyle: const TextStyle(color: Colors.white60, fontSize: 15),
+            hintStyle: MkText.bodyMuted,
+            filled: false,
             border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
             suffixIcon: _controller.text.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.clear, color: Colors.white70),
+                    tooltip: 'Futa',
+                    icon: const Icon(Icons.clear, color: MkColors.muted),
                     onPressed: () {
                       _controller.clear();
                       _search('');
@@ -131,7 +135,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const MkListSkeleton();
     }
 
     if (_failed) {
@@ -148,7 +152,8 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_results == null) {
       return _CenteredNote(
         icon: Icons.search,
-        text: 'Andika neno — kwa Kiswahili au Kiingereza.\n'
+        text:
+            'Andika neno — kwa Kiswahili au Kiingereza.\n'
             'Mfano: "mahindi" au "maize" vinaleta matokeo yale yale.',
       );
     }
@@ -158,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
         padding: const EdgeInsets.all(24),
         children: [
           const SizedBox(height: 40),
-          const Icon(Icons.search_off, size: 56, color: Colors.grey),
+          const Icon(Icons.search_off, size: 56, color: MkColors.muted),
           const SizedBox(height: 12),
           const Center(child: Text('Hakuna matokeo. Jaribu maneno haya:')),
           const SizedBox(height: 16),
@@ -167,13 +172,15 @@ class _SearchScreenState extends State<SearchScreen> {
             runSpacing: 8,
             alignment: WrapAlignment.center,
             children: _suggestions
-                .map((s) => ActionChip(
-                      label: Text(s.toString()),
-                      onPressed: () {
-                        _controller.text = s.toString();
-                        _search(s.toString());
-                      },
-                    ))
+                .map(
+                  (s) => ActionChip(
+                    label: Text(s.toString()),
+                    onPressed: () {
+                      _controller.text = s.toString();
+                      _search(s.toString());
+                    },
+                  ),
+                )
                 .toList(),
           ),
         ],
@@ -191,93 +198,124 @@ class _SearchScreenState extends State<SearchScreen> {
       children: [
         if (products.isNotEmpty) ...[
           const _GroupHeader('Bidhaa Sokoni'),
-          ...products.map((p) => Card(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: const Icon(Icons.store_outlined,
-                      color: MkColors.primary),
-                  title: Row(
-                    children: [
-                      Flexible(
-                        child: Text('${p['name']}',
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                      if (p['is_verified'] == true) ...[
-                        const SizedBox(width: 6),
-                        const Icon(Icons.verified,
-                            size: 15, color: Colors.blue),
-                      ],
-                    ],
-                  ),
-                  subtitle: Text(
-                      '${p['currency']} ${p['price']} / ${p['unit']}'),
-                  onTap: () => _openProduct('${p['uuid']}'),
+          ...products.map(
+            (p) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.store_outlined,
+                  color: MkColors.primary,
                 ),
-              )),
+                title: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        '${p['name']}',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (p['is_verified'] == true) ...[
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.verified,
+                        size: 15,
+                        color: MkColors.primary,
+                      ),
+                    ],
+                  ],
+                ),
+                subtitle: Text('${p['currency']} ${p['price']} / ${p['unit']}'),
+                onTap: () => _openProduct('${p['uuid']}'),
+              ),
+            ),
+          ),
         ],
         if (threads.isNotEmpty) ...[
           const _GroupHeader('Mijadala Jukwaani'),
-          ...threads.map((t) => Card(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: const Icon(Icons.forum_outlined,
-                      color: Colors.teal),
-                  title: Text('${t['title']}',
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
-                  subtitle: Text('${t['snippet'] ?? ''}',
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ThreadDetailScreen(
-                        threadId: '${t['uuid']}',
-                        threadTitle: '${t['title']}',
-                      ),
+          ...threads.map(
+            (t) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.forum_outlined,
+                  color: MkColors.primary,
+                ),
+                title: Text(
+                  '${t['title']}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Text(
+                  '${t['snippet'] ?? ''}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ThreadDetailScreen(
+                      threadId: '${t['uuid']}',
+                      threadTitle: '${t['title']}',
                     ),
                   ),
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
         if (experts.isNotEmpty) ...[
           const _GroupHeader('Wataalamu Waliothibitishwa'),
-          ...experts.map((e) => Card(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading:
-                      const Icon(Icons.verified_user, color: Colors.indigo),
-                  title: Text('${e['name']}'),
-                  subtitle: Text('${e['expert_title'] ?? 'Mtaalamu'}'),
+          ...experts.map(
+            (e) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.verified_user,
+                  color: MkColors.primary,
                 ),
-              )),
+                title: Text('${e['name']}'),
+                subtitle: Text('${e['expert_title'] ?? 'Mtaalamu'}'),
+              ),
+            ),
+          ),
         ],
         if (providers.isNotEmpty) ...[
           const _GroupHeader('Watoa Huduma'),
-          ...providers.map((sp) => Card(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: const Icon(Icons.handyman_outlined,
-                      color: Colors.brown),
-                  title: Text('${sp['business_name'] ?? sp['service_type']}'),
-                  subtitle: Text(
-                      '${sp['service_type']} · ${sp['region']} · ⭐ ${sp['rating']}'),
+          ...providers.map(
+            (sp) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.handyman_outlined,
+                  color: MkColors.primary,
                 ),
-              )),
+                title: Text('${sp['business_name'] ?? sp['service_type']}'),
+                subtitle: Text(
+                  '${sp['service_type']} · ${sp['region']} · ⭐ ${sp['rating']}',
+                ),
+              ),
+            ),
+          ),
         ],
         if (prices.isNotEmpty) ...[
           const _GroupHeader('Bei za Masoko'),
-          ...prices.map((p) => Card(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: const Icon(Icons.price_change_outlined,
-                      color: Colors.deepOrange),
-                  title: Text('${p['commodity']} — ${p['market']}'),
-                  subtitle: Text(
-                      'TZS ${p['avg_price']} / ${p['unit']} · ${p['price_date']}'),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (_) => const MarketPricesScreen()),
-                  ),
+          ...prices.map(
+            (p) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.price_change_outlined,
+                  color: MkColors.warning,
                 ),
-              )),
+                title: Text('${p['commodity']} — ${p['market']}'),
+                subtitle: Text(
+                  '${mkMoney(num.tryParse('${p['avg_price']}'))} / ${p['unit']} · ${p['price_date']}',
+                ),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MarketPricesScreen()),
+                ),
+              ),
+            ),
+          ),
         ],
         const SizedBox(height: 24),
       ],
@@ -321,11 +359,13 @@ class _CenteredNote extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 56, color: Colors.grey),
+            Icon(icon, size: 56, color: MkColors.muted),
             const SizedBox(height: 14),
-            Text(text,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey[700])),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: MkColors.muted),
+            ),
             if (action != null) ...[const SizedBox(height: 8), action!],
           ],
         ),

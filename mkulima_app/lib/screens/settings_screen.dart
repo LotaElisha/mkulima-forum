@@ -262,11 +262,7 @@ class _SectionTitle extends StatelessWidget {
     padding: const EdgeInsets.only(bottom: 10),
     child: Text(
       title,
-      style: const TextStyle(
-        fontFamily: 'serif',
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     ),
   );
 }

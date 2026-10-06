@@ -21,13 +21,15 @@ class SocialAuthConfig {
   /// client is matched by package name and SHA-1 fingerprint instead and is
   /// never named in code. Passing the Android id here is the single most
   /// common way this breaks.
-  static const String googleServerClientId =
-      String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+  static const String googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+  );
 
   /// Apple **Services ID** (e.g. app.mkulimaforum.signin), not the bundle id.
   /// Only needed for the Android/web flow; native iOS uses the bundle id.
-  static const String appleServiceId =
-      String.fromEnvironment('APPLE_SERVICE_ID');
+  static const String appleServiceId = String.fromEnvironment(
+    'APPLE_SERVICE_ID',
+  );
 
   static bool get isGoogleConfigured => googleServerClientId.isNotEmpty;
 

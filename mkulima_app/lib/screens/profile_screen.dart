@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
@@ -34,7 +35,7 @@ class ProfileScreen extends StatelessWidget {
     }
 
     if (user == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const MkListSkeleton();
     }
 
     return RefreshIndicator(
@@ -55,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.badge_outlined,
               title: 'Barua pepe na Simu',
               subtitle: 'Thibitisha na unganisha namba yako',
-              color: Colors.green,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const AccountIdentitiesScreen()),
             ),
             const SizedBox(height: 16),
@@ -64,14 +65,14 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.account_balance_wallet,
               title: 'Mkulima Pay',
               subtitle: 'Lipia na uweke pesa',
-              color: Colors.green,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const WalletScreen()),
             ),
             _buildMenuItem(
               icon: Icons.shopping_bag,
               title: 'Maagizo Yangu',
               subtitle: 'Fuatilia ununuzi wako',
-              color: Colors.indigo,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const OrdersScreen()),
             ),
             const SizedBox(height: 16),
@@ -80,21 +81,21 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.wb_sunny,
               title: 'Hali ya Hewa',
               subtitle: 'Tahmini na arifa za hali ya hewa',
-              color: Colors.orange,
+              color: MkColors.warning,
               onTap: () => _navigate(context, const WeatherScreen()),
             ),
             _buildMenuItem(
               icon: Icons.psychology,
               title: 'Mkulima AI',
               subtitle: 'Msaidizi wako wa kilimo wa AI',
-              color: Colors.blue,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const MkulimaBotScreen()),
             ),
             _buildMenuItem(
               icon: Icons.camera_alt,
               title: 'Kagua Mimea',
               subtitle: 'Piga picha ugundue ugonjwa',
-              color: Colors.red,
+              color: MkColors.danger,
               onTap: () => _navigate(context, const ScannerScreen()),
             ),
             const SizedBox(height: 16),
@@ -103,21 +104,21 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.message,
               title: 'SMS/USSD',
               subtitle: 'Tuma ujumbe mfupi',
-              color: Colors.blue,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const SmsScreen()),
             ),
             _buildMenuItem(
               icon: Icons.phone_in_talk,
               title: 'Simu ya Kupiga',
               subtitle: 'IVR msaada wa sauti',
-              color: Colors.purple,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const IvrScreen()),
             ),
             _buildMenuItem(
               icon: Icons.notifications,
               title: 'Arifa Zangu',
               subtitle: 'Taarifa muhimu',
-              color: Colors.amber,
+              color: MkColors.warning,
               // The badge was hardcoded to '3' for every account, every time.
               // A count that is not a count is worse than no count: it sends
               // farmers to an empty screen looking for three things.
@@ -140,7 +141,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.dashboard,
                 title: 'Dashibodi ya Muuzaji',
                 subtitle: 'Onesha mauzo na bidhaa',
-                color: Colors.green,
+                color: MkColors.primary,
                 onTap: () => _navigate(context, const SellerDashboardScreen()),
               ),
               // Seller identity checks belong to the business, not to the
@@ -149,7 +150,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.verified_user,
                 title: 'Uthibitisho wa Muuzaji',
                 subtitle: _kycLabel(user.kycStatus),
-                color: Colors.green,
+                color: MkColors.primary,
                 onTap: () => _navigate(context, const KycScreen()),
               ),
             ] else
@@ -167,7 +168,7 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.flight_takeoff,
               title: 'Huduma za Drone',
               subtitle: 'Puliza, piga picha, fuatilia',
-              color: Colors.indigo,
+              color: MkColors.primary,
               badge: 'Inakuja',
               onTap: () => _showComingSoon(
                 context,
@@ -179,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.sensors,
               title: 'Vifaa vya IoT',
               subtitle: 'Fuatilia udongo na hali ya hewa',
-              color: Colors.blue,
+              color: MkColors.primary,
               badge: 'Inakuja',
               onTap: () => _showComingSoon(
                 context,
@@ -191,14 +192,14 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.calculate,
               title: 'Kadiria Mavuno',
               subtitle: 'AI inakadiria mavuno yako',
-              color: Colors.orange,
+              color: MkColors.warning,
               onTap: () => _navigate(context, const YieldScreen()),
             ),
             _buildMenuItem(
               icon: Icons.security,
               title: 'Mkulima Escrow',
               subtitle: 'Linda malipo yako',
-              color: Colors.green,
+              color: MkColors.primary,
               onTap: () => _navigate(context, const EscrowScreen()),
             ),
             const SizedBox(height: 16),
@@ -207,7 +208,7 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.settings,
               title: 'Mipangilio',
               subtitle: 'Weka upendeleo wa programu',
-              color: Colors.grey,
+              color: MkColors.muted,
               onTap: () => _navigate(context, const SettingsScreen()),
             ),
             _buildMenuItem(
@@ -232,7 +233,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: const Icon(Icons.logout),
                 label: const Text('Toka'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red[700],
+                  backgroundColor: MkColors.danger,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -273,7 +274,7 @@ class ProfileScreen extends StatelessWidget {
             Text(
               'Ingia ili uweze kuangalia wasifu wako, maagizo, na zaidi.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: MkColors.muted),
             ),
             const SizedBox(height: 32),
             SizedBox(
@@ -325,25 +326,25 @@ class ProfileScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundColor: MkColors.primary,
+              backgroundColor: MkColors.leafPale,
               child: Text(
                 user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
-                style: const TextStyle(fontSize: 36, color: MkColors.charcoal),
+                style: const TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                  color: MkColors.primaryDark,
+                ),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               user.name,
-              style: const TextStyle(
-                fontFamily: 'serif',
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
               user.phone,
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              style: TextStyle(color: MkColors.muted, fontSize: 14),
             ),
             const SizedBox(height: 8),
             Row(
@@ -352,7 +353,7 @@ class ProfileScreen extends StatelessWidget {
                 Chip(
                   label: Text(
                     user.role.toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
                   ),
                   backgroundColor: MkColors.primary,
                 ),
@@ -360,11 +361,20 @@ class ProfileScreen extends StatelessWidget {
                 Chip(
                   label: Text(
                     user.kycStatus.toUpperCase(),
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    // White on amber failed contrast; pale fills with dark
+                    // text read in sunlight.
+                    style: TextStyle(
+                      color: user.kycStatus == 'verified'
+                          ? MkColors.primaryDark
+                          : MkColors.onAccentSoft,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                  side: BorderSide.none,
                   backgroundColor: user.kycStatus == 'verified'
-                      ? MkColors.leafGreen
-                      : MkColors.accent,
+                      ? MkColors.leafPale
+                      : MkColors.accentSoft,
                 ),
               ],
             ),
@@ -385,20 +395,18 @@ class ProfileScreen extends StatelessWidget {
             fontSize: 16,
             fontWeight: FontWeight.bold,
             color: MkColors.charcoal,
-            fontFamily: 'serif',
           ),
         ),
       ),
     );
   }
 
-
   /// Opens the seller application, then lets the profile rebuild from the
   /// refreshed account state rather than guessing what changed.
   Future<void> _startSellerApplication(BuildContext context) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const BecomeSellerScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const BecomeSellerScreen()));
     if (context.mounted) {
       await context.read<AuthProvider>().refreshUser();
     }
@@ -406,11 +414,11 @@ class ProfileScreen extends StatelessWidget {
 
   /// KYC status in words a farmer can act on, rather than PENDING in capitals.
   static String _kycLabel(String status) => switch (status.toLowerCase()) {
-        'verified' => 'Imethibitishwa',
-        'pending' => 'Inasubiri kupitiwa',
-        'rejected' => 'Haikukubaliwa — tuma tena',
-        _ => 'Bado hujatuma nyaraka',
-      };
+    'verified' => 'Imethibitishwa',
+    'pending' => 'Inasubiri kupitiwa',
+    'rejected' => 'Haikukubaliwa — tuma tena',
+    _ => 'Bado hujatuma nyaraka',
+  };
 
   Widget _buildMenuItem({
     required IconData icon,
@@ -426,14 +434,14 @@ class ProfileScreen extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color == Colors.green || color == MkColors.leafGreen
+            color: color == MkColors.primary || color == MkColors.leafGreen
                 ? MkColors.leafGreen.withValues(alpha: 0.12)
                 : MkColors.accentSoft,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            color: color == Colors.green || color == MkColors.leafGreen
+            color: color == MkColors.primary || color == MkColors.leafGreen
                 ? MkColors.leafGreen
                 : MkColors.charcoal,
           ),
@@ -454,7 +462,7 @@ class ProfileScreen extends StatelessWidget {
                   badge,
                   style: const TextStyle(
                     color: MkColors.muted,
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../widgets/mk_error_state.dart';
+import '../core/theme.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
@@ -53,16 +56,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     if (!auth.isAuthenticated) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Oda Zangu'),
-          backgroundColor: const Color(0xFF2E7D32),
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('Oda Zangu')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock_outline, size: 64, color: Colors.grey[400]),
+              Icon(Icons.lock_outline, size: 64, color: MkColors.muted),
               const SizedBox(height: 16),
               const Text('Ingia kuona oda zako'),
               const SizedBox(height: 16),
@@ -75,7 +74,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   if (ok) _loadOrders();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Ingia'),
@@ -89,30 +88,14 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Oda Zangu'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _loadOrders),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : _error != null
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, size: 64, color: Colors.red[300]),
-                  const SizedBox(height: 16),
-                  Text('Kosa: $_error'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _loadOrders,
-                    child: const Text('Jaribu Tena'),
-                  ),
-                ],
-              ),
-            )
+          ? MkErrorState(message: _error, onRetry: _loadOrders)
           : _orders.isEmpty
           ? Center(
               child: Column(
@@ -121,18 +104,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   Icon(
                     Icons.shopping_bag_outlined,
                     size: 80,
-                    color: Colors.grey[400],
+                    color: MkColors.muted,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Huna oda zozote',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: MkColors.muted),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2E7D32),
+                      backgroundColor: MkColors.primary,
                       foregroundColor: Colors.white,
                     ),
                     child: const Text('Nunua Sasa'),
@@ -191,7 +174,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     style: TextStyle(
                       color: statusColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -207,7 +190,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       const Icon(
                         Icons.check_circle,
                         size: 16,
-                        color: Color(0xFF2E7D32),
+                        color: MkColors.primary,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -234,7 +217,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: Color(0xFF2E7D32),
+                    color: MkColors.primary,
                   ),
                 ),
               ],
@@ -242,7 +225,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
             const SizedBox(height: 8),
             Text(
               'Tarehe: ${order['created_at'] ?? 'N/A'}',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 13, color: MkColors.muted),
             ),
             if (status == 'pending') ...[
               const SizedBox(height: 12),
@@ -292,7 +275,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   DropdownMenuItem(value: 'mpesa', child: Text('M-Pesa')),
                   DropdownMenuItem(value: 'tigopesa', child: Text('Tigo Pesa')),
                 ],
-                onChanged: (value) => setDialogState(() => method = value ?? 'mpesa'),
+                onChanged: (value) =>
+                    setDialogState(() => method = value ?? 'mpesa'),
                 decoration: const InputDecoration(labelText: 'Njia ya malipo'),
               ),
               const SizedBox(height: 12),
@@ -327,7 +311,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
     phoneController.dispose();
     if (!RegExp(r'^255[0-9]{9}$').hasMatch(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Weka namba ya tarakimu 12 inayoanza na 255.')),
+        const SnackBar(
+          content: Text('Weka namba ya tarakimu 12 inayoanza na 255.'),
+        ),
       );
       return;
     }
@@ -342,15 +328,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ombi la malipo limetumwa kwenye simu yako.')),
+          const SnackBar(
+            content: Text('Ombi la malipo limetumwa kwenye simu yako.'),
+          ),
         );
         await _loadOrders();
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(ApiService.formatError(error))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(ApiService.formatError(error))));
       }
     }
   }
@@ -358,17 +346,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
   Color _statusColor(String status) {
     switch (status) {
       case 'pending':
-        return Colors.orange;
+        return MkColors.warning;
       case 'confirmed':
-        return Colors.blue;
+        return MkColors.info;
       case 'shipped':
-        return Colors.purple;
+        return MkColors.info;
       case 'delivered':
-        return Colors.green;
+        return MkColors.primary;
       case 'cancelled':
-        return Colors.red;
+        return MkColors.danger;
       default:
-        return Colors.grey;
+        return MkColors.muted;
     }
   }
 

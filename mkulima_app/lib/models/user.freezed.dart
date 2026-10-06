@@ -12,7 +12,8 @@ part of 'user.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 User _$UserFromJson(Map<String, dynamic> json) {
   return _User.fromJson(json);
@@ -41,17 +42,18 @@ abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res, User>;
   @useResult
-  $Res call(
-      {String uuid,
-      String name,
-      String phone,
-      String? email,
-      String role,
-      String kycStatus,
-      String preferredLanguage,
-      String? avatar,
-      String? countryCode,
-      DateTime? createdAt});
+  $Res call({
+    String uuid,
+    String name,
+    String phone,
+    String? email,
+    String role,
+    String kycStatus,
+    String preferredLanguage,
+    String? avatar,
+    String? countryCode,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -78,69 +80,74 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? countryCode = freezed,
     Object? createdAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      uuid: null == uuid
-          ? _value.uuid
-          : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      role: null == role
-          ? _value.role
-          : role // ignore: cast_nullable_to_non_nullable
-              as String,
-      kycStatus: null == kycStatus
-          ? _value.kycStatus
-          : kycStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      preferredLanguage: null == preferredLanguage
-          ? _value.preferredLanguage
-          : preferredLanguage // ignore: cast_nullable_to_non_nullable
-              as String,
-      avatar: freezed == avatar
-          ? _value.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String?,
-      countryCode: freezed == countryCode
-          ? _value.countryCode
-          : countryCode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            uuid: null == uuid
+                ? _value.uuid
+                : uuid // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            email: freezed == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            role: null == role
+                ? _value.role
+                : role // ignore: cast_nullable_to_non_nullable
+                      as String,
+            kycStatus: null == kycStatus
+                ? _value.kycStatus
+                : kycStatus // ignore: cast_nullable_to_non_nullable
+                      as String,
+            preferredLanguage: null == preferredLanguage
+                ? _value.preferredLanguage
+                : preferredLanguage // ignore: cast_nullable_to_non_nullable
+                      as String,
+            avatar: freezed == avatar
+                ? _value.avatar
+                : avatar // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            countryCode: freezed == countryCode
+                ? _value.countryCode
+                : countryCode // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$UserImplCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$$UserImplCopyWith(
-          _$UserImpl value, $Res Function(_$UserImpl) then) =
-      __$$UserImplCopyWithImpl<$Res>;
+    _$UserImpl value,
+    $Res Function(_$UserImpl) then,
+  ) = __$$UserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String uuid,
-      String name,
-      String phone,
-      String? email,
-      String role,
-      String kycStatus,
-      String preferredLanguage,
-      String? avatar,
-      String? countryCode,
-      DateTime? createdAt});
+  $Res call({
+    String uuid,
+    String name,
+    String phone,
+    String? email,
+    String role,
+    String kycStatus,
+    String preferredLanguage,
+    String? avatar,
+    String? countryCode,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -148,7 +155,7 @@ class __$$UserImplCopyWithImpl<$Res>
     extends _$UserCopyWithImpl<$Res, _$UserImpl>
     implements _$$UserImplCopyWith<$Res> {
   __$$UserImplCopyWithImpl(_$UserImpl _value, $Res Function(_$UserImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -164,65 +171,68 @@ class __$$UserImplCopyWithImpl<$Res>
     Object? countryCode = freezed,
     Object? createdAt = freezed,
   }) {
-    return _then(_$UserImpl(
-      uuid: null == uuid
-          ? _value.uuid
-          : uuid // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      role: null == role
-          ? _value.role
-          : role // ignore: cast_nullable_to_non_nullable
-              as String,
-      kycStatus: null == kycStatus
-          ? _value.kycStatus
-          : kycStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      preferredLanguage: null == preferredLanguage
-          ? _value.preferredLanguage
-          : preferredLanguage // ignore: cast_nullable_to_non_nullable
-              as String,
-      avatar: freezed == avatar
-          ? _value.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String?,
-      countryCode: freezed == countryCode
-          ? _value.countryCode
-          : countryCode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$UserImpl(
+        uuid: null == uuid
+            ? _value.uuid
+            : uuid // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        email: freezed == email
+            ? _value.email
+            : email // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        role: null == role
+            ? _value.role
+            : role // ignore: cast_nullable_to_non_nullable
+                  as String,
+        kycStatus: null == kycStatus
+            ? _value.kycStatus
+            : kycStatus // ignore: cast_nullable_to_non_nullable
+                  as String,
+        preferredLanguage: null == preferredLanguage
+            ? _value.preferredLanguage
+            : preferredLanguage // ignore: cast_nullable_to_non_nullable
+                  as String,
+        avatar: freezed == avatar
+            ? _value.avatar
+            : avatar // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        countryCode: freezed == countryCode
+            ? _value.countryCode
+            : countryCode // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$UserImpl implements _User {
-  const _$UserImpl(
-      {required this.uuid,
-      required this.name,
-      this.phone = '',
-      this.email,
-      required this.role,
-      this.kycStatus = 'pending',
-      this.preferredLanguage = 'sw',
-      this.avatar,
-      this.countryCode,
-      this.createdAt});
+  const _$UserImpl({
+    required this.uuid,
+    required this.name,
+    this.phone = '',
+    this.email,
+    required this.role,
+    this.kycStatus = 'pending',
+    this.preferredLanguage = 'sw',
+    this.avatar,
+    this.countryCode,
+    this.createdAt,
+  });
 
   factory _$UserImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserImplFromJson(json);
@@ -279,8 +289,19 @@ class _$UserImpl implements _User {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, uuid, name, phone, email, role,
-      kycStatus, preferredLanguage, avatar, countryCode, createdAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    uuid,
+    name,
+    phone,
+    email,
+    role,
+    kycStatus,
+    preferredLanguage,
+    avatar,
+    countryCode,
+    createdAt,
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -290,24 +311,23 @@ class _$UserImpl implements _User {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$UserImplToJson(
-      this,
-    );
+    return _$$UserImplToJson(this);
   }
 }
 
 abstract class _User implements User {
-  const factory _User(
-      {required final String uuid,
-      required final String name,
-      final String phone,
-      final String? email,
-      required final String role,
-      final String kycStatus,
-      final String preferredLanguage,
-      final String? avatar,
-      final String? countryCode,
-      final DateTime? createdAt}) = _$UserImpl;
+  const factory _User({
+    required final String uuid,
+    required final String name,
+    final String phone,
+    final String? email,
+    required final String role,
+    final String kycStatus,
+    final String preferredLanguage,
+    final String? avatar,
+    final String? countryCode,
+    final DateTime? createdAt,
+  }) = _$UserImpl;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$UserImpl.fromJson;
 

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../widgets/mk_error_state.dart';
+import '../core/theme.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
@@ -54,16 +57,12 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
 
     if (!auth.isAuthenticated) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Dashibodi ya Muuzaji'),
-          backgroundColor: const Color(0xFF2E7D32),
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('Dashibodi ya Muuzaji')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock_outline, size: 64, color: Colors.grey[400]),
+              Icon(Icons.lock_outline, size: 64, color: MkColors.muted),
               const SizedBox(height: 16),
               const Text('Ingia kuona dashibodi yako'),
               const SizedBox(height: 16),
@@ -76,7 +75,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
                   if (ok) _loadDashboard();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Ingia'),
@@ -90,8 +89,6 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashibodi ya Muuzaji'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -100,23 +97,9 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : _error != null
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, size: 64, color: Colors.red[300]),
-                  const SizedBox(height: 16),
-                  Text('Kosa: $_error'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _loadDashboard,
-                    child: const Text('Jaribu Tena'),
-                  ),
-                ],
-              ),
-            )
+          ? MkErrorState(message: _error, onRetry: _loadDashboard)
           : RefreshIndicator(
               onRefresh: _loadDashboard,
               child: SingleChildScrollView(
@@ -156,25 +139,25 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           'Bidhaa',
           '${stats['total_products'] ?? 0}',
           Icons.inventory,
-          Colors.blue,
+          MkColors.primary,
         ),
         _statCard(
           'Oda',
           '${stats['total_orders'] ?? 0}',
           Icons.shopping_bag,
-          Colors.orange,
+          MkColors.warning,
         ),
         _statCard(
           'Mapato',
           'TSh ${_money(stats['total_revenue'])}',
           Icons.attach_money,
-          Colors.green,
+          MkColors.primary,
         ),
         _statCard(
           'Mwezi Huu',
           'TSh ${_money(stats['monthly_revenue'])}',
           Icons.trending_up,
-          Colors.purple,
+          MkColors.primary,
         ),
       ],
     );
@@ -194,10 +177,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
-            ),
+            Text(title, style: TextStyle(fontSize: 13, color: MkColors.muted)),
           ],
         ),
       ),
@@ -212,11 +192,11 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
           child: Center(
             child: Column(
               children: [
-                Icon(Icons.inbox, size: 48, color: Colors.grey[400]),
+                Icon(Icons.inbox, size: 48, color: MkColors.muted),
                 const SizedBox(height: 8),
                 Text(
                   'Hakuna oda za hivi karibuni',
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: MkColors.muted),
                 ),
               ],
             ),
@@ -236,9 +216,7 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
               backgroundColor: statusColor.withValues(alpha: 0.2),
               child: Icon(Icons.shopping_bag, color: statusColor),
             ),
-            title: Text(
-              'Oda #${_shortId(order['uuid'])}',
-            ),
+            title: Text('Oda #${_shortId(order['uuid'])}'),
             subtitle: Text(
               '${order['buyer_name'] ?? 'Unknown'} - ${order['items_count'] ?? 0} items',
             ),
@@ -267,17 +245,17 @@ class _SellerDashboardScreenState extends State<SellerDashboardScreen> {
   Color _statusColor(String status) {
     switch (status) {
       case 'pending':
-        return Colors.orange;
+        return MkColors.warning;
       case 'confirmed':
-        return Colors.blue;
+        return MkColors.info;
       case 'shipped':
-        return Colors.purple;
+        return MkColors.info;
       case 'delivered':
-        return Colors.green;
+        return MkColors.primary;
       case 'cancelled':
-        return Colors.red;
+        return MkColors.danger;
       default:
-        return Colors.grey;
+        return MkColors.muted;
     }
   }
 }

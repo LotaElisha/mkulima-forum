@@ -9,10 +9,13 @@ class Product with _$Product {
     @JsonKey(fromJson: _idFromJson, toJson: _idToJson) required String id,
     required String name,
     required String description,
-    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) required double price,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required double price,
     @JsonKey(name: 'stock_quantity') required int stock,
-    @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson) required String categoryId,
-    @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson) required String sellerId,
+    @JsonKey(name: 'category_id', fromJson: _idFromJson, toJson: _idToJson)
+    required String categoryId,
+    @JsonKey(name: 'user_id', fromJson: _idFromJson, toJson: _idToJson)
+    required String sellerId,
     required String unit,
     List<String>? images,
     @Default(0) int minOrder,
@@ -36,4 +39,5 @@ double _priceFromJson(dynamic price) {
   if (price is String) return double.tryParse(price) ?? 0.0;
   return 0.0;
 }
+
 dynamic _priceToJson(double price) => price;

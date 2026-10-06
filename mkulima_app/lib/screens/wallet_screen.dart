@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
+import '../core/format.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -44,11 +47,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
     if (auth.user == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Mkulima Pay'),
-          backgroundColor: const Color(0xFF2E7D32),
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('Mkulima Pay')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +55,7 @@ class _WalletScreenState extends State<WalletScreen> {
               const Icon(
                 Icons.account_balance_wallet,
                 size: 64,
-                color: Colors.grey,
+                color: MkColors.muted,
               ),
               const SizedBox(height: 16),
               const Text('Tafadhali ingia kwanza'),
@@ -64,7 +63,7 @@ class _WalletScreenState extends State<WalletScreen> {
               ElevatedButton(
                 onPressed: () => AuthProvider.requireAuth(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Ingia'),
@@ -76,13 +75,9 @@ class _WalletScreenState extends State<WalletScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mkulima Pay'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Mkulima Pay')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : RefreshIndicator(
               onRefresh: _loadData,
               child: SingleChildScrollView(
@@ -94,19 +89,9 @@ class _WalletScreenState extends State<WalletScreen> {
                       margin: const EdgeInsets.all(16),
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: MkColors.surface,
+                        border: Border.all(color: MkColors.border),
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.green.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,15 +99,17 @@ class _WalletScreenState extends State<WalletScreen> {
                           const Text(
                             'Salio Lako',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: MkColors.muted,
                               fontSize: 16,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'TZS ${_balance?['balance'] ?? '0.00'}',
+                            mkMoney(
+                              num.tryParse('${_balance?['balance'] ?? 0}'),
+                            ),
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: MkColors.ink,
                               fontSize: 36,
                               fontWeight: FontWeight.bold,
                             ),
@@ -172,7 +159,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         child: Center(
                           child: Text(
                             'Huna miamala yoyote',
-                            style: TextStyle(color: Colors.grey),
+                            style: TextStyle(color: MkColors.muted),
                           ),
                         ),
                       )
@@ -187,21 +174,25 @@ class _WalletScreenState extends State<WalletScreen> {
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundColor: isIncoming
-                                  ? Colors.green[100]
-                                  : Colors.red[100],
+                                  ? MkColors.leafPale
+                                  : MkColors.dangerSoft,
                               child: Icon(
                                 isIncoming
                                     ? Icons.arrow_downward
                                     : Icons.arrow_upward,
-                                color: isIncoming ? Colors.green : Colors.red,
+                                color: isIncoming
+                                    ? MkColors.primary
+                                    : MkColors.danger,
                               ),
                             ),
                             title: Text(tx['description'] ?? 'Transaction'),
                             subtitle: Text(tx['created_at'] ?? ''),
                             trailing: Text(
-                              '${isIncoming ? '+' : ''}TZS ${tx['amount']}',
+                              '${isIncoming ? '+' : ''}${mkMoney(num.tryParse('${tx['amount']}'))}',
                               style: TextStyle(
-                                color: isIncoming ? Colors.green : Colors.red,
+                                color: isIncoming
+                                    ? MkColors.primary
+                                    : MkColors.danger,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -279,7 +270,9 @@ class _WalletScreenState extends State<WalletScreen> {
                   amount < 100) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Weka namba 255XXXXXXXXX na kiasi cha angalau TZS 100.'),
+                    content: Text(
+                      'Weka namba 255XXXXXXXXX na kiasi cha angalau TZS 100.',
+                    ),
                   ),
                 );
                 return;
@@ -302,9 +295,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 }
               }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2E7D32),
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: MkColors.primary),
             child: const Text('Tuma'),
           ),
         ],
@@ -331,16 +322,20 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
+          color: MkColors.leafPale,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           children: [
-            Icon(icon, color: Colors.white),
+            Icon(icon, color: MkColors.primary),
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(color: Colors.white, fontSize: 12),
+              style: const TextStyle(
+                color: MkColors.primaryDark,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

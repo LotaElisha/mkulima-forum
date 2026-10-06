@@ -13,12 +13,7 @@ class MkSkeleton extends StatelessWidget {
   final double height;
   final double radius;
 
-  const MkSkeleton({
-    super.key,
-    this.width,
-    this.height = 14,
-    this.radius = 8,
-  });
+  const MkSkeleton({super.key, this.width, this.height = 14, this.radius = 8});
 
   @override
   Widget build(BuildContext context) {

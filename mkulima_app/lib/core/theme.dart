@@ -35,6 +35,7 @@ class MkColors {
 
   // ── Ink ───────────────────────────────────────────────────────────
   static const Color ink = Color(0xFF0F1511);
+
   /// Darkened from #626D66 so 13px captions clear 4.5:1 on white with room
   /// to spare in direct sunlight (about 6:1).
   static const Color muted = Color(0xFF5A645E);
@@ -48,7 +49,16 @@ class MkColors {
   // ── Semantic ──────────────────────────────────────────────────────
   static const Color danger = Color(0xFFB3261E);
   static const Color success = Color(0xFF1B7A3E);
-  static const Color warning = Color(0xFFB26A00);
+
+  /// Darkened from #B26A00, which was about 4:1 on white and failed at 13px.
+  static const Color warning = Color(0xFF9A5B00);
+
+  /// Status only (an order in transit, a payment being processed): the one
+  /// non-green hue, and blue rather than a second green so it differs from
+  /// success in lightness and hue for colour-blind readers.
+  static const Color info = Color(0xFF2257A8);
+  static const Color infoSoft = Color(0xFFE8EFFA);
+  static const Color dangerSoft = Color(0xFFFCEDEC);
 
   /// Text that sits on [accentSoft], e.g. the offline banner. Amber text on
   /// pale amber fails contrast; this brown passes at 13px.

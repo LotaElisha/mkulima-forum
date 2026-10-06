@@ -52,11 +52,7 @@ class _HomeTabState extends State<HomeTab> {
 
     // Each block loads independently, so a slow price feed never holds up
     // the discussions, and a failure hides only its own section.
-    await Future.wait([
-      _loadThreads(api),
-      _loadWeather(api),
-      _loadPrices(api),
-    ]);
+    await Future.wait([_loadThreads(api), _loadWeather(api), _loadPrices(api)]);
   }
 
   Future<void> _loadThreads(ApiService api) async {

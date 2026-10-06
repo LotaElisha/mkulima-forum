@@ -99,7 +99,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const Text(
                       'Jiunge na jamii ya wakulima',
                       style: TextStyle(
-                        fontFamily: 'serif',
                         fontSize: 33,
                         height: 1.08,
                         fontWeight: FontWeight.w700,
@@ -242,7 +241,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Text(
                               'AU JISAJILI NA',
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 13,
                                 color: MkColors.muted,
                               ),
                             ),
@@ -261,8 +260,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onPressed: auth.isLoading
                                   ? null
                                   : () async => _finish(
-                                        await auth.signInWithGoogle(role: _role),
-                                      ),
+                                      await auth.signInWithGoogle(role: _role),
+                                    ),
                               icon: const Icon(Icons.g_mobiledata, size: 25),
                               label: const Text('Google'),
                             ),
@@ -276,8 +275,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               onPressed: auth.isLoading
                                   ? null
                                   : () async => _finish(
-                                        await auth.signInWithApple(role: _role),
-                                      ),
+                                      await auth.signInWithApple(role: _role),
+                                    ),
                               icon: const Icon(Icons.apple),
                               label: const Text('Apple'),
                             ),

@@ -102,7 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Karibu Mkulima',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'serif',
                       fontSize: 34,
                       height: 1.1,
                       fontWeight: FontWeight.w700,
@@ -410,7 +409,7 @@ class _DividerLabel extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12),
         child: Text(
           'AU ENDELEA NA',
-          style: TextStyle(fontSize: 11, color: MkColors.muted),
+          style: TextStyle(fontSize: 13, color: MkColors.muted),
         ),
       ),
       Expanded(child: Divider()),
@@ -440,5 +439,4 @@ class _ErrorMessage extends StatelessWidget {
       ],
     ),
   );
-
 }

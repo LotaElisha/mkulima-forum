@@ -7,11 +7,7 @@ class LoginModal extends StatefulWidget {
   final String? action;
   final VoidCallback? onLoginSuccess;
 
-  const LoginModal({
-    super.key,
-    this.action,
-    this.onLoginSuccess,
-  });
+  const LoginModal({super.key, this.action, this.onLoginSuccess});
 
   @override
   State<LoginModal> createState() => _LoginModalState();
@@ -87,14 +83,14 @@ class _LoginModalState extends State<LoginModal> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: MkColors.danger),
     );
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -120,7 +116,7 @@ class _LoginModalState extends State<LoginModal> {
               width: 45,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: MkColors.border,
                 borderRadius: BorderRadius.circular(2.5),
               ),
             ),
@@ -153,14 +149,14 @@ class _LoginModalState extends State<LoginModal> {
                           ? 'Ingia ili uendelee'
                           : 'Ingia kwenye akaunti',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (widget.action != null) ...[
                       const SizedBox(height: 4),
                       Text(
                         'Unatakiwa kuingia ili ${widget.action}.',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        style: TextStyle(color: MkColors.muted, fontSize: 13),
                       ),
                     ],
                   ],
@@ -174,7 +170,7 @@ class _LoginModalState extends State<LoginModal> {
 
           Text(
             'Weka namba yako ya simu ya mkononi ili upate kodi ya uthibitisho (OTP) ya kuingia.',
-            style: TextStyle(color: Colors.grey[600], fontSize: 13, height: 1.3),
+            style: TextStyle(color: MkColors.muted, fontSize: 13, height: 1.3),
           ),
           const SizedBox(height: 20),
 
@@ -188,10 +184,10 @@ class _LoginModalState extends State<LoginModal> {
               hintText: '2557XXXXXXXX',
               prefixIcon: const Icon(Icons.phone),
               filled: true,
-              fillColor: Colors.grey[50],
+              fillColor: MkColors.surfaceMuted,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+                borderSide: BorderSide(color: MkColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -213,14 +209,17 @@ class _LoginModalState extends State<LoginModal> {
                 hintText: 'Ingiza namba 6 za siri',
                 prefixIcon: const Icon(Icons.password),
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: MkColors.surfaceMuted,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
+                  borderSide: BorderSide(color: MkColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: MkColors.primary, width: 2),
+                  borderSide: const BorderSide(
+                    color: MkColors.primary,
+                    width: 2,
+                  ),
                 ),
               ),
             ),
@@ -254,7 +253,9 @@ class _LoginModalState extends State<LoginModal> {
                       ),
                     )
                   : Text(
-                      _otpSent ? 'Thibitisha na Uingie' : 'Pata Kodi ya Uthibitisho',
+                      _otpSent
+                          ? 'Thibitisha na Uingie'
+                          : 'Pata Kodi ya Uthibitisho',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
             ),
@@ -268,9 +269,7 @@ class _LoginModalState extends State<LoginModal> {
             height: 48,
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey[600],
-              ),
+              style: TextButton.styleFrom(foregroundColor: MkColors.muted),
               child: const Text('Ghairi na Rudi nyuma'),
             ),
           ),

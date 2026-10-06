@@ -69,16 +69,12 @@ class _YieldScreenState extends State<YieldScreen> {
 
     if (!auth.isAuthenticated) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Kadiria Mavuno'),
-          backgroundColor: MkColors.primary,
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('Kadiria Mavuno')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.calculate, size: 64, color: Colors.grey),
+              const Icon(Icons.calculate, size: 64, color: MkColors.muted),
               const SizedBox(height: 16),
               const Text('Ingia kutumia kadiria mavuno'),
               const SizedBox(height: 16),
@@ -93,11 +89,7 @@ class _YieldScreenState extends State<YieldScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kadiria Mavuno'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Kadiria Mavuno')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -106,28 +98,31 @@ class _YieldScreenState extends State<YieldScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF9800), Color(0xFFF57C00)],
-                ),
+                color: MkColors.surface,
+                border: Border.all(color: MkColors.border),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.calculate, size: 48, color: Colors.white),
+                  const Icon(
+                    Icons.calculate,
+                    size: 48,
+                    color: MkColors.primary,
+                  ),
                   const SizedBox(height: 12),
                   const Text(
                     'Kadiria Mavuno yako',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: MkColors.ink,
                     ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'Makadirio ya wastani wa kanda kwa mpango wa shamba lako',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(color: MkColors.muted, fontSize: 14),
                   ),
                 ],
               ),
@@ -221,13 +216,13 @@ class _YieldScreenState extends State<YieldScreen> {
                       icon: Icons.inventory,
                       value: '${yield['total']}',
                       label: '${yield['unit']} za mavuno',
-                      color: Colors.green,
+                      color: MkColors.primary,
                     ),
                     _ResultItem(
                       icon: Icons.attach_money,
                       value: '${revenue['total']}',
-                      label: 'TZS mapato',
-                      color: Colors.orange,
+                      label: 'Mapato (TSh)',
+                      color: MkColors.warning,
                     ),
                   ],
                 ),
@@ -238,13 +233,17 @@ class _YieldScreenState extends State<YieldScreen> {
         if (disclaimer != null) ...[
           const SizedBox(height: 16),
           Card(
-            color: Colors.amber[50],
+            color: MkColors.accentSoft,
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline, color: Colors.amber[800], size: 20),
+                  Icon(
+                    Icons.info_outline,
+                    color: MkColors.onAccentSoft,
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -289,7 +288,7 @@ class _ResultItem extends StatelessWidget {
             color: color,
           ),
         ),
-        Text(label, style: TextStyle(color: Colors.grey[600])),
+        Text(label, style: TextStyle(color: MkColors.muted)),
       ],
     );
   }

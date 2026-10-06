@@ -32,5 +32,6 @@ class FarmActivity with _$FarmActivity {
     String? notes,
   }) = _FarmActivity;
 
-  factory FarmActivity.fromJson(Map<String, dynamic> json) => _$FarmActivityFromJson(json);
+  factory FarmActivity.fromJson(Map<String, dynamic> json) =>
+      _$FarmActivityFromJson(json);
 }
