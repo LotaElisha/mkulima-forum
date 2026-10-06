@@ -13,9 +13,14 @@ import 'cart_screen.dart';
 import 'notifications_screen.dart';
 import 'login_modal.dart';
 
-/// App shell. The AI Plant Scanner is the flagship feature: it owns the
-/// center-docked FAB (reachable from every tab), a permanent App Bar action,
-/// and the homepage hero — always one tap away.
+/// App shell: a plain five-slot bottom bar — Nyumbani, Soko, Kagua, Jukwaa,
+/// Wasifu.
+///
+/// The AI Plant Scanner keeps the centre slot, drawn as the one filled green
+/// control in the bar, but it is an ordinary destination now rather than a
+/// notched floating button. The notch needed an 80px clearance hack on every
+/// tab, and the scanner was reachable three ways at once (FAB, app-bar action,
+/// Home hero); it is now the bar slot plus the Home card.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -24,12 +29,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  /// Index into [_screens]: 0 Home, 1 Soko, 2 Jukwaa, 3 Wasifu. Kept stable
+  /// because [HomeTab.onSwitchTab] callers pass these numbers.
   int _currentIndex = 0;
+
+  /// Bar slot 2 is the scanner, which opens a page instead of a tab.
+  static const _scannerSlot = 2;
+
+  int get _selectedSlot =>
+      _currentIndex >= _scannerSlot ? _currentIndex + 1 : _currentIndex;
 
   void _openScanner() {
     Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (_) => const ScannerPage()));
+  }
+
+  void _onSlotSelected(int slot) {
+    if (slot == _scannerSlot) {
+      _openScanner();
+      return;
+    }
+    setState(() => _currentIndex = slot > _scannerSlot ? slot - 1 : slot);
+  }
+
+  void _openNotifications(AuthProvider auth) {
+    if (!auth.isAuthenticated) {
+      LoginModal.show(context);
+      return;
+    }
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const NotificationsScreen()));
   }
 
   @override
@@ -45,8 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     const titles = [
       MkStrings.titleHome,
-      MkStrings.titleMarket,
-      MkStrings.titleForum,
+      MkStrings.navMarket,
+      MkStrings.navForum,
       MkStrings.titleProfile,
     ];
 
@@ -55,227 +86,111 @@ class _HomeScreenState extends State<HomeScreen> {
           ? null
           : AppBar(
               title: Text(titles[_currentIndex]),
-              backgroundColor: MkColors.surface,
-              foregroundColor: MkColors.charcoal,
-              elevation: 0,
               actions: [
-                // Flagship: AI Plant Scanner — always visible, brand accent color.
+                if (_currentIndex == 1) const _CartAction(),
                 IconButton(
-                  tooltip: MkStrings.scannerTooltip,
-                  onPressed: _openScanner,
-                  icon: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: MkColors.primary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.center_focus_strong,
-                      size: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                if (_currentIndex == 1)
-                  Consumer<CartProvider>(
-                    builder: (context, cart, child) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.shopping_cart),
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const CartScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          if (cart.itemCount > 0)
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text(
-                                  '${cart.itemCount}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                IconButton(
+                  tooltip: 'Arifa',
                   icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () {
-                    if (!auth.isAuthenticated) {
-                      LoginModal.show(context);
-                      return;
-                    }
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const NotificationsScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () => _openNotifications(auth),
                 ),
                 if (!auth.isAuthenticated)
                   TextButton(
                     onPressed: () => LoginModal.show(context),
-                    child: const Text(
-                      MkStrings.navLogin,
-                      style: TextStyle(color: MkColors.charcoal),
-                    ),
+                    child: const Text(MkStrings.navLogin),
                   ),
+                const SizedBox(width: 4),
               ],
             ),
       body: screens[_currentIndex],
-
-      // Flagship center action: one-tap AI Plant Scanner from any tab.
-      floatingActionButton: SizedBox(
-        width: 64,
-        height: 64,
-        child: FloatingActionButton(
-          onPressed: _openScanner,
-          tooltip: MkStrings.scannerTooltip,
-          // The scanner is the flagship action, so it takes the brand green.
-          // It was amber on a charcoal bar, which read as a warning rather
-          // than as the main thing to press.
-          backgroundColor: MkColors.primary,
-          foregroundColor: Colors.white,
-          shape: const CircleBorder(),
-          elevation: 4,
-          child: const Icon(Icons.center_focus_strong, size: 32),
+      bottomNavigationBar: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: MkColors.border)),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        // White bar with a hairline, matching the 90%-white direction. A solid
-        // dark slab across the bottom of every screen fought the white canvas
-        // above it and made the amber FAB the loudest thing on the page.
-        color: MkColors.surface,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        padding: EdgeInsets.zero,
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: MkColors.border)),
-          ),
-          height: 66,
-          child: Row(
-            children: [
-              _NavItem(
-                icon: Icons.home_outlined,
-                selectedIcon: Icons.home,
-                label: MkStrings.navHome,
-                selected: _currentIndex == 0,
-                onTap: () => setState(() => _currentIndex = 0),
-              ),
-              _NavItem(
-                icon: Icons.store_outlined,
-                selectedIcon: Icons.store,
-                label: MkStrings.navMarket,
-                selected: _currentIndex == 1,
-                onTap: () => setState(() => _currentIndex = 1),
-              ),
-              // Center gap for the docked scan FAB + its label.
-              const Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 38),
-                  child: Text(
-                    MkStrings.navScanner,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: MkColors.primary,
-                    ),
-                  ),
-                ),
-              ),
-              _NavItem(
-                icon: Icons.forum_outlined,
-                selectedIcon: Icons.forum,
-                label: MkStrings.navForum,
-                selected: _currentIndex == 2,
-                onTap: () => setState(() => _currentIndex = 2),
-              ),
-              _NavItem(
-                icon: Icons.person_outline,
-                selectedIcon: Icons.person,
-                label: MkStrings.navProfile,
-                selected: _currentIndex == 3,
-                onTap: () => setState(() => _currentIndex = 3),
-              ),
-            ],
-          ),
+        child: NavigationBar(
+          selectedIndex: _selectedSlot,
+          onDestinationSelected: _onSlotSelected,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: MkStrings.navHome,
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.storefront_outlined),
+              selectedIcon: Icon(Icons.storefront),
+              label: MkStrings.navMarket,
+            ),
+            NavigationDestination(
+              icon: _ScanIcon(),
+              label: MkStrings.navScanner,
+              tooltip: MkStrings.scannerTooltip,
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.forum_outlined),
+              selectedIcon: Icon(Icons.forum),
+              label: MkStrings.navForum,
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person),
+              label: MkStrings.navProfile,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.selectedIcon,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
+/// The scanner slot's icon: the only filled green control in the bar, so the
+/// flagship action stands out without a floating button.
+class _ScanIcon extends StatelessWidget {
+  const _ScanIcon();
 
   @override
   Widget build(BuildContext context) {
-    // Selected is brand green on white; unselected is muted ink. The bar used
-    // to be amber-on-charcoal, where the unselected state was white at 62%
-    // opacity — under 3:1 against the bar behind it, so on a phone in daylight
-    // three of the five tabs were barely visible.
-    final color = selected ? MkColors.primary : MkColors.muted;
-
-    return Expanded(
-      child: Semantics(
-        selected: selected,
-        button: true,
-        label: label,
-        child: InkWell(
-          onTap: onTap,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(selected ? selectedIcon : icon, color: color, size: 25),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11.5,
-                  color: color,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return Container(
+      width: 48,
+      height: 34,
+      decoration: BoxDecoration(
+        color: MkColors.primary,
+        borderRadius: BorderRadius.circular(12),
       ),
+      child: const Icon(
+        Icons.photo_camera_outlined,
+        color: Colors.white,
+        size: 22,
+      ),
+    );
+  }
+}
+
+class _CartAction extends StatelessWidget {
+  const _CartAction();
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<CartProvider>(
+      builder: (context, cart, child) {
+        final count = cart.itemCount;
+        return IconButton(
+          tooltip: count > 0 ? 'Kikapu, bidhaa $count' : 'Kikapu',
+          onPressed: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const CartScreen())),
+          icon: Badge(
+            isLabelVisible: count > 0,
+            backgroundColor: MkColors.primary,
+            textColor: Colors.white,
+            textStyle: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+            label: Text('$count'),
+            child: const Icon(Icons.shopping_cart_outlined),
+          ),
+        );
+      },
     );
   }
 }

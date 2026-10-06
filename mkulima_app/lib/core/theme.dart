@@ -35,7 +35,9 @@ class MkColors {
 
   // ── Ink ───────────────────────────────────────────────────────────
   static const Color ink = Color(0xFF0F1511);
-  static const Color muted = Color(0xFF626D66);
+  /// Darkened from #626D66 so 13px captions clear 4.5:1 on white with room
+  /// to spare in direct sunlight (about 6:1).
+  static const Color muted = Color(0xFF5A645E);
 
   // ── Surfaces: white first ─────────────────────────────────────────
   static const Color surface = Color(0xFFFFFFFF);
@@ -47,14 +49,82 @@ class MkColors {
   static const Color danger = Color(0xFFB3261E);
   static const Color success = Color(0xFF1B7A3E);
   static const Color warning = Color(0xFFB26A00);
+
+  /// Text that sits on [accentSoft], e.g. the offline banner. Amber text on
+  /// pale amber fails contrast; this brown passes at 13px.
+  static const Color onAccentSoft = Color(0xFF5C3A00);
+
+  /// Skeleton placeholder fill.
+  static const Color skeleton = Color(0xFFEDF1EE);
+  static const Color dangerBorder = Color(0xFFF2C9C5);
+}
+
+/// The type scale. Six sizes, nothing below 13. Screens use these rather than
+/// ad-hoc `fontSize:` values so Swahili strings, which run long, get the same
+/// treatment everywhere and nothing drops under the 13px floor.
+class MkText {
+  MkText._();
+
+  static const TextStyle page = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -.3,
+    color: MkColors.ink,
+  );
+  static const TextStyle section = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    color: MkColors.ink,
+  );
+  static const TextStyle title = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+    height: 1.35,
+    color: MkColors.ink,
+  );
+  static const TextStyle body = TextStyle(
+    fontSize: 15,
+    height: 1.45,
+    color: MkColors.ink,
+  );
+  static const TextStyle bodyMuted = TextStyle(
+    fontSize: 15,
+    height: 1.45,
+    color: MkColors.muted,
+  );
+  static const TextStyle label = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    color: MkColors.ink,
+  );
+  static const TextStyle caption = TextStyle(
+    fontSize: 13,
+    height: 1.35,
+    color: MkColors.muted,
+  );
 }
 
 class MkRadii {
   MkRadii._();
-  static const double card = 18;
+  static const double card = 16;
   static const double button = 14;
   static const double sheet = 24;
 }
+
+/// Material's defaults put several text roles at 11-12px (labelSmall,
+/// bodySmall, the navigation bar labels). Every role is pinned at 13 or above.
+const TextTheme _mkTextTheme = TextTheme(
+  headlineSmall: MkText.page,
+  titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+  titleMedium: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+  titleSmall: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+  bodyLarge: TextStyle(fontSize: 16, height: 1.45),
+  bodyMedium: TextStyle(fontSize: 15, height: 1.45),
+  bodySmall: TextStyle(fontSize: 13, height: 1.35),
+  labelLarge: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+  labelMedium: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+  labelSmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+);
 
 ThemeData mkLightTheme() {
   const scheme = ColorScheme.light(
@@ -75,6 +145,10 @@ ThemeData mkLightTheme() {
     colorScheme: scheme,
     useMaterial3: true,
     fontFamily: 'Roboto',
+    textTheme: _mkTextTheme.apply(
+      bodyColor: MkColors.ink,
+      displayColor: MkColors.ink,
+    ),
     scaffoldBackgroundColor: MkColors.surface,
     dividerColor: MkColors.border,
     appBarTheme: const AppBarTheme(
@@ -84,12 +158,7 @@ ThemeData mkLightTheme() {
       backgroundColor: MkColors.surface,
       foregroundColor: MkColors.ink,
       surfaceTintColor: Colors.transparent,
-      titleTextStyle: TextStyle(
-        color: MkColors.ink,
-        fontSize: 20,
-        fontWeight: FontWeight.w800,
-        letterSpacing: -.3,
-      ),
+      titleTextStyle: MkText.page,
     ),
     cardTheme: CardThemeData(
       color: MkColors.surfaceRaised,
@@ -105,8 +174,8 @@ ThemeData mkLightTheme() {
       style: FilledButton.styleFrom(
         backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
-        minimumSize: const Size(48, 52),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        minimumSize: const Size(48, 48),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MkRadii.button),
         ),
@@ -117,8 +186,8 @@ ThemeData mkLightTheme() {
         elevation: 0,
         backgroundColor: MkColors.primary,
         foregroundColor: Colors.white,
-        minimumSize: const Size(48, 52),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        minimumSize: const Size(48, 48),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MkRadii.button),
         ),
@@ -126,17 +195,26 @@ ThemeData mkLightTheme() {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: MkColors.ink,
-        side: const BorderSide(color: MkColors.border, width: 1.5),
-        minimumSize: const Size(48, 52),
+        foregroundColor: MkColors.primaryDark,
+        side: const BorderSide(color: MkColors.primary, width: 1.5),
+        minimumSize: const Size(48, 48),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MkRadii.button),
         ),
       ),
     ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: MkColors.primary,
+        minimumSize: const Size(44, 44),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: MkColors.surface,
+      hintStyle: const TextStyle(color: MkColors.muted, fontSize: 15),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -153,7 +231,12 @@ ThemeData mkLightTheme() {
     ),
     chipTheme: ChipThemeData(
       backgroundColor: MkColors.surfaceMuted,
+      // Pale-leaf selection with ink text: a dark-green fill would need the
+      // label colour to flip with state, and green-on-green has shipped once.
       selectedColor: MkColors.leafPale,
+      checkmarkColor: MkColors.primaryDark,
+      labelStyle: const TextStyle(fontSize: 15, color: MkColors.ink),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       side: const BorderSide(color: MkColors.border),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
     ),
@@ -168,10 +251,35 @@ ThemeData mkLightTheme() {
     ),
     // Farmers use this on low-cost devices, often outdoors and one-handed.
     materialTapTargetSize: MaterialTapTargetSize.padded,
-    navigationBarTheme: const NavigationBarThemeData(
+    navigationBarTheme: NavigationBarThemeData(
       backgroundColor: MkColors.surfaceRaised,
+      surfaceTintColor: Colors.transparent,
       indicatorColor: MkColors.leafPale,
       elevation: 0,
+      height: 72,
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => TextStyle(
+          fontSize: 13,
+          fontWeight: states.contains(WidgetState.selected)
+              ? FontWeight.w700
+              : FontWeight.w500,
+          color: states.contains(WidgetState.selected)
+              ? MkColors.primaryDark
+              : MkColors.muted,
+        ),
+      ),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          size: 24,
+          color: states.contains(WidgetState.selected)
+              ? MkColors.primaryDark
+              : MkColors.muted,
+        ),
+      ),
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      contentTextStyle: TextStyle(fontSize: 15, color: Colors.white),
     ),
   );
 }
@@ -185,6 +293,7 @@ ThemeData mkDarkTheme() {
     colorScheme: scheme,
     useMaterial3: true,
     fontFamily: 'Roboto',
+    textTheme: _mkTextTheme,
     scaffoldBackgroundColor: const Color(0xFF0E1211),
     appBarTheme: const AppBarTheme(elevation: 0, centerTitle: false),
     cardTheme: CardThemeData(
