@@ -9,6 +9,17 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+// connectivity_plus, flutter_secure_storage and sign_in_with_apple still
+// compile against API 34, which androidx.core 1.15 refuses. Compiling every
+// plugin against the app's compileSdk changes nothing at runtime (that is
+// minSdk/targetSdk) and avoids major-version plugin upgrades.
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.library")) {
+            project.android.compileSdk = 36
+        }
+    }
+}
 subprojects {
     project.evaluationDependsOn(":app")
     configurations.configureEach {
