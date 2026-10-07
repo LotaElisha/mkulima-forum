@@ -7,48 +7,68 @@
 
 @section('head_extra')
 <style>
-  .contact-grid { display:grid; grid-template-columns:0.42fr 0.58fr; gap:56px; align-items:start; }
-  @media(max-width:860px){ .contact-grid{ grid-template-columns:1fr; } }
+  /* Tokens, buttons, form fields, header and footer come from layouts/public.blade.php. */
+  .contact-grid { display:grid; grid-template-columns:minmax(0,.42fr) minmax(0,.58fr); gap:40px; align-items:start; }
+  @media(max-width:860px){ .contact-grid{ grid-template-columns:minmax(0,1fr); gap:20px; } }
+  .contact-grid > * { min-width:0; }
   .contact-info-card {
-    background:linear-gradient(145deg,var(--forest-dark),#0A2A10); color:#fff;
-    border-radius:var(--radius-2xl); padding:44px; position:sticky; top:calc(var(--nav-h) + 20px);
+    background:var(--surface-soft); border:1px solid var(--border-light);
+    border-radius:var(--radius-xl); padding:32px; position:sticky; top:calc(var(--nav-h) + 20px);
   }
-  .c-info-item { display:flex; align-items:flex-start; gap:14px; margin-bottom:24px; }
-  .c-info-icon { width:42px; height:42px; border-radius:12px; background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
-  .c-info-label { font-size:.72rem; font-weight:700; color:var(--sun-gold); text-transform:uppercase; letter-spacing:.1em; margin-bottom:4px; }
-  .c-info-value { font-size:.92rem; color:rgba(255,255,255,.9); }
-  .c-divider { height:1px; background:rgba(255,255,255,.12); margin:20px 0; }
-  .contact-form-card { background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-2xl); padding:44px; }
-  .form-group { display:flex; flex-direction:column; gap:6px; }
-  .form-group label { font-size:.88rem; font-weight:700; color:var(--ink-dark); }
-  .form-group input, .form-group select, .form-group textarea {
-    padding:12px 16px; border:1.5px solid var(--border-light); border-radius:10px;
-    font-family:inherit; font-size:.9rem; color:var(--ink-dark); background:var(--cream-bg);
-    transition:border-color .2s ease; outline:none;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--forest-mid); background:#fff; }
-  .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  @media(max-width:620px){ .form-grid-2{ grid-template-columns:1fr; } }
-  .faq-item { border:1px solid var(--border-light); border-radius:14px; overflow:hidden; }
+  .c-info-title { font-size:20px; font-weight:700; color:var(--ink-dark); margin-bottom:20px; }
+  .c-info-item { display:flex; align-items:flex-start; gap:14px; margin-bottom:18px; }
+  .c-info-item > div:last-child { min-width:0; }
+  .c-info-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .c-info-label { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+  .c-info-value { font-size:15px; overflow-wrap:anywhere; }
+  .c-divider { height:1px; margin:20px 0; }
+  .c-dept-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; }
+  .c-dept { margin-bottom:12px; }
+  .c-dept-name { font-size:15px; font-weight:600; color:var(--ink-dark); }
+  .c-dept-mail { font-size:14px; color:var(--forest-dark); overflow-wrap:anywhere; }
+  .c-note { font-size:14px; line-height:1.6; overflow-wrap:anywhere; }
+
+  .contact-form-card { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:36px; }
+  .c-form-title { font-size:20px; font-weight:700; color:var(--ink-dark); margin-bottom:20px; }
+  .contact-form { display:flex; flex-direction:column; gap:4px; }
+  .contact-form .form-group select { max-width:100%; text-overflow:ellipsis; }
+  .contact-form textarea { resize:vertical; }
+  .optional { color:var(--ink-muted); font-weight:400; }
+  .form-grid-2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
+  @media(max-width:620px){ .form-grid-2{ grid-template-columns:minmax(0,1fr); gap:0; } }
+  .cf-result { display:none; padding:14px 18px; border-radius:12px; font-size:15px; font-weight:600; }
+
+  /* FAQ */
+  .faq-band { background:var(--surface-soft); border-top:1px solid var(--border-light); padding:72px 0; }
+  .faq-list { display:flex; flex-direction:column; gap:10px; }
+  .faq-item { background:#fff; border:1px solid var(--border-light); border-radius:14px; overflow:hidden; }
   .faq-q {
-    width:100%; text-align:left; padding:18px 22px; background:var(--surface-card); border:none;
-    font-family:inherit; font-size:1rem; font-weight:700; color:var(--ink-dark);
-    cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px;
+    width:100%; min-height:56px; text-align:left; padding:16px 20px; background:#fff; border:none;
+    font-family:inherit; font-size:16px; font-weight:600; color:var(--ink-dark);
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
     transition:background .15s;
   }
-  .faq-q:hover { background:var(--leaf-pale); }
-  .faq-q svg { width:18px; height:18px; flex-shrink:0; transition:transform .25s; color:var(--ink-muted); }
+  .faq-q:hover { background:var(--surface-soft); }
+  .faq-q svg { width:18px; height:18px; flex-shrink:0; transition:transform .25s; color:var(--forest-mid); }
   .faq-item.open .faq-q svg { transform:rotate(180deg); }
-  .faq-a { display:none; padding:4px 22px 18px; font-size:.92rem; color:var(--ink-muted); line-height:1.7; }
+  .faq-a { display:none; padding:0 20px 18px; font-size:15px; color:var(--ink-muted); line-height:1.65; }
   .faq-item.open .faq-a { display:block; }
+
+  @media (max-width:860px) { .contact-info-card { position:static; } }
+  @media (max-width:700px) {
+    .contact-form-card, .contact-info-card { border-radius:14px; }
+    .faq-band { padding:44px 0; }
+    .faq-q { padding:14px 16px; font-size:15px; }
+    .faq-a { padding:0 16px 16px; }
+  }
 </style>
 @endsection
 
 @section('content')
 
 {{-- Hero --}}
-<section class="page-hero" style="padding-bottom:60px;">
-  <div class="wrap fade-up" style="max-width:640px;">
+<section class="page-hero">
+  <div class="wrap fade-up">
     <span class="eyebrow" data-i18n="contact_eyebrow">WASILIANA NASI</span>
     <h1 class="page-title" data-i18n="contact_title">Tutakaribisha Kushikana Nawe</h1>
     <p class="section-lead" data-i18n="contact_sub">Iwe ni ushirikiano, uwekezaji, msaada kwa wakulima, maswali ya vyombo vya habari, au maswali ya kiufundi — tuko hapa.</p>
@@ -56,15 +76,15 @@
 </section>
 
 {{-- Contact Grid --}}
-<section style="padding-top:0;">
+<section>
   <div class="wrap">
     <div class="contact-grid">
       {{-- Left info panel --}}
       <div class="contact-info-card fade-up">
-        <h3 style="font-size:1.3rem; font-weight:800; color:#fff; margin-bottom:24px;" data-i18n="c_info_title">Njia za Kuwasiliana</h3>
+        <h3 class="c-info-title" data-i18n="c_info_title">Njia za Kuwasiliana</h3>
 
         <div class="c-info-item">
-          <div class="c-info-icon">✉️</div>
+          <div class="c-info-icon"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></div>
           <div>
             <div class="c-info-label" data-i18n="c_label_email">Barua Pepe</div>
             <div class="c-info-value">{{ $settings['contact_email'] ?? 'hello@mkulimaforum.app' }}</div>
@@ -72,7 +92,7 @@
         </div>
 
         <div class="c-info-item">
-          <div class="c-info-icon">🌐</div>
+          <div class="c-info-icon"><x-icon name="globe" /></div>
           <div>
             <div class="c-info-label" data-i18n="c_label_web">Wavuti</div>
             <div class="c-info-value">mkulimaforum.app</div>
@@ -80,7 +100,7 @@
         </div>
 
         <div class="c-info-item">
-          <div class="c-info-icon">📍</div>
+          <div class="c-info-icon"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div>
             <div class="c-info-label" data-i18n="c_label_location">Mahali Tulipo</div>
             <div class="c-info-value" data-i18n="c_location_val">Tanzania 🇹🇿 — Afrika Mashariki 🌍</div>
@@ -89,7 +109,7 @@
 
         <div class="c-divider"></div>
 
-        <h4 style="font-size:.82rem; font-weight:800; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:16px;" data-i18n="c_dept_title">IDARA</h4>
+        <h4 class="c-dept-title" data-i18n="c_dept_title">IDARA</h4>
 
         @foreach([
           ['🤝','Ushirikiano','Partnerships','partnerships@mkulimaforum.app'],
@@ -97,24 +117,24 @@
           ['📰','Vyombo vya Habari','Press & Media','press@mkulimaforum.app'],
           ['🔧','Msaada wa Kiufundi','Technical Support','support@mkulimaforum.app'],
         ] as $dept)
-        <div style="margin-bottom:14px;">
-          <div style="font-size:.8rem; font-weight:700; color:rgba(255,255,255,.65);" data-i18n="dept_{{ $loop->index }}">{{ $dept[0] }} {{ $dept[1] }}</div>
-          <div style="font-size:.82rem; color:var(--sun-gold);">{{ $dept[3] }}</div>
+        <div class="c-dept">
+          <div class="c-dept-name" data-i18n="dept_{{ $loop->index }}">{{ $dept[0] }} {{ $dept[1] }}</div>
+          <div class="c-dept-mail">{{ $dept[3] }}</div>
         </div>
         @endforeach
 
         <div class="c-divider"></div>
 
-        <p style="font-size:.8rem; color:rgba(255,255,255,.55); line-height:1.65;" data-i18n="c_response_note">
+        <p class="c-note" data-i18n="c_response_note">
           Tunajibu barua pepe zote ndani ya siku 2 za kazi. Kwa maswali ya dharura ya kiufundi, tuma kwenye support@mkulimaforum.app.
         </p>
       </div>
 
       {{-- Right form --}}
       <div class="contact-form-card fade-up">
-        <h3 style="font-size:1.3rem; font-weight:800; color:var(--ink-dark); margin-bottom:24px;" data-i18n="c_form_title">Tuma Ujumbe Wako</h3>
+        <h3 class="c-form-title" data-i18n="c_form_title">Tuma Ujumbe Wako</h3>
 
-        <form id="contactForm" onsubmit="handleContactForm(event)" style="display:flex; flex-direction:column; gap:18px;">
+        <form id="contactForm" class="contact-form" onsubmit="handleContactForm(event)">
           <div class="form-grid-2">
             <div class="form-group">
               <label for="cf_name" data-i18n="cf_name">Jina Lako Kamili</label>
@@ -141,7 +161,7 @@
           </div>
 
           <div class="form-group">
-            <label for="cf_org" data-i18n="cf_org">Shirika / Kampuni <span style="color:var(--ink-faint); font-weight:400;">(si lazima)</span></label>
+            <label for="cf_org" data-i18n="cf_org">Shirika / Kampuni <span class="optional">(si lazima)</span></label>
             <input id="cf_org" type="text" data-i18n-ph="cf_org_ph" placeholder="Shirika lako (si lazima)">
           </div>
 
@@ -150,11 +170,11 @@
             <textarea id="cf_message" rows="5" required data-i18n-ph="cf_msg_ph" placeholder="Andika ujumbe wako hapa..."></textarea>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-lg" style="justify-content:center;" id="cf_submit_btn" data-i18n="cf_submit">
+          <button type="submit" class="btn btn-primary btn-lg" id="cf_submit_btn" data-i18n="cf_submit">
             ✉️ Tuma Ujumbe
           </button>
 
-          <div id="cf_result" style="display:none; padding:14px 18px; border-radius:10px; font-size:.9rem; font-weight:600;"></div>
+          <div id="cf_result" class="cf-result"></div>
         </form>
       </div>
     </div>
@@ -162,10 +182,11 @@
 </section>
 
 {{-- FAQ --}}
-<section style="background:var(--leaf-pale); padding:72px 0;">
-  <div class="wrap" style="max-width:760px;">
+<section class="faq-band">
+  <div class="wrap-sm">
     <span class="eyebrow" data-i18n="faq_eyebrow">MASWALI YANAYOULIZWA MARA KWA MARA</span>
-    <h2 class="section-title" style="margin-bottom:32px;" data-i18n="faq_title">Maswali ya Kawaida</h2>
+    <h2 class="section-title" style="margin-bottom:24px;" data-i18n="faq_title">Maswali ya Kawaida</h2>
+    <div class="faq-list">
 
     @foreach([
       ['faq0','Je, MkulimaForum ni bure kuitumia?','Is MkulimaForum free to use?','Ndiyo — sehemu za msingi za mfumo (utambuzi wa magonjwa, Mkulima AI, jamii, hali ya hewa) zinaweza kutumiwa bila malipo. Huduma za malipo (masoko, pembejeo) zina ada ndogo.','Yes — the core features (plant diagnosis, Mkulima AI, community, weather) are free to use. Paid services (marketplace, inputs) carry a small fee.'],
@@ -182,6 +203,7 @@
       <div class="faq-a" data-i18n="{{ $faq[0] }}_a">{{ $faq[3] }}</div>
     </div>
     @endforeach
+    </div>
   </div>
 </section>
 

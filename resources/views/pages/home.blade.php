@@ -5,170 +5,114 @@
 
 @section('head_extra')
 <style>
-  /* This page used to re-import Google Fonts and re-declare the whole :root
-     token set in cream, overriding the design system in the layout. A page
-     that redefines its own palette is how a product ends up with three
-     different greens; the tokens now come from layouts/public.blade.php only. */
-  #site-header { background:rgba(255,255,255,.97); border-color:var(--border-light); }
-  .nav-links a:hover,.nav-links a.active,.nav-dropdown-trigger:hover { background:var(--leaf-pale); color:var(--forest-dark); }
-  .nav-links a.active { box-shadow:inset 0 -2px var(--forest-mid); border-radius:0; }
-  .lang-pill { background:#fff; border-color:var(--border-mid); }
-  .lang-btn.active { background:var(--forest-mid); color:#fff; box-shadow:none; }
-  /* Inline SVG icons (see resources/views/components/icon.blade.php).
-     These replaced a remote ligature font whose failure mode was printing
-     the icon's own name on screen. */
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php.
+     This block only lays out the home page's own sections. */
   .ico { width:1.15em; height:1.15em; vertical-align:-.2em; flex:none; stroke-width:2; }
 
-  .editorial-hero { min-height:650px; position:relative; overflow:hidden; border-bottom:1px solid var(--border-light); }
+  /* Hero: copy on white, photograph to the right (below the copy on phones). */
+  .editorial-hero { min-height:620px; position:relative; overflow:hidden; border-bottom:1px solid var(--border-light); }
   .hero-art { position:absolute; inset:0; background:url('/images/home/hero-composite.webp') right center/auto 92% no-repeat; }
-  .hero-art::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,var(--cream-bg) 0%,rgba(255,253,248,.98) 35%,rgba(255,253,248,.55) 48%,transparent 66%); }
-  .editorial-hero .wrap { min-height:650px; display:flex; align-items:center; position:relative; z-index:2; }
-  .hero-copy { width:min(48%,550px); padding:48px 0; }
-  .hero-kicker { display:inline-flex; align-items:center; padding:7px 16px; border:1px solid #87a57a; border-radius:999px; color:var(--forest-mid); font-size:.74rem; font-weight:800; letter-spacing:.15em; text-transform:uppercase; margin-bottom:22px; background:rgba(255,253,248,.72); }
-  .editorial-title { color:var(--ink-dark); font-size:clamp(2rem,5.4vw,4.4rem); font-weight:800; letter-spacing:-.035em; line-height:.99; max-width:720px; margin-bottom:24px; }
-  .hero-summary { font-size:1.02rem; max-width:34rem; line-height:1.72; margin-bottom:24px; color:var(--ink-body); }
-  .benefit-list { display:grid; gap:11px; list-style:none; margin:0 0 30px; }
-  .benefit-list li { display:flex; align-items:center; gap:10px; font-size:.9rem; color:var(--ink-body); }
-  .benefit-list .ico { color:var(--forest-mid); width:19px; height:19px; margin-top:2px; }
-  .hero-actions { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
-  .text-link { font-weight:700; color:var(--ink-dark); border-bottom:1px solid var(--ink-dark); padding-bottom:2px; }
-  .availability { display:flex; gap:8px; margin-top:26px; align-items:center; flex-wrap:wrap; }
-  .availability small { width:100%; color:var(--ink-faint); margin-bottom:2px; }
-  .store-pill { border:1px solid var(--border-mid); padding:6px 10px; border-radius:6px; background:rgba(255,255,255,.8); font-size:.76rem; color:var(--ink-body); }
+  .hero-art::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,#fff 0%,#fff 36%,rgba(255,255,255,.6) 48%,transparent 64%); }
+  .editorial-hero .wrap { min-height:620px; display:flex; align-items:center; position:relative; z-index:2; }
+  .hero-copy { width:min(48%,540px); padding:48px 0; }
+  .hero-kicker { display:inline-flex; align-items:center; min-height:32px; padding:0 14px; border-radius:999px; background:var(--leaf-pale); color:var(--forest-dark); font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:20px; }
+  .editorial-title { color:var(--ink-dark); font-size:clamp(34px,4.8vw,56px); font-weight:800; letter-spacing:-.03em; line-height:1.06; max-width:640px; margin-bottom:20px; }
+  .hero-summary { font-size:17px; max-width:34rem; line-height:1.65; margin-bottom:22px; color:var(--ink-body); }
+  .benefit-list { display:grid; gap:10px; list-style:none; margin:0 0 28px; }
+  .benefit-list li { display:flex; align-items:center; gap:10px; font-size:15px; color:var(--ink-body); }
+  .benefit-list .ico { color:var(--forest-mid); width:20px; height:20px; }
+  .hero-actions { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .availability { display:flex; gap:8px; margin-top:24px; align-items:center; flex-wrap:wrap; }
+  .availability small { width:100%; font-size:13px; color:var(--ink-muted); margin-bottom:2px; }
+  .store-pill { display:inline-flex; align-items:center; min-height:32px; border:1px solid var(--border-light); padding:0 12px; border-radius:999px; background:#fff; font-size:13px; color:var(--ink-body); }
 
-  .story-band { border-bottom:1px solid var(--border-light); background:#fcf8ef; padding:30px 0; }
-  .story-grid { max-width:980px; margin:auto; display:grid; grid-template-columns:390px 1fr; align-items:center; gap:52px; }
+  /* Testimonial */
+  .story-band { border-bottom:1px solid var(--border-light); background:#fff; padding:40px 0; }
+  .story-grid { max-width:980px; margin:auto; display:grid; grid-template-columns:380px 1fr; align-items:center; gap:48px; padding:0 24px; }
   .story-image { position:relative; }
-  .story-image img { width:100%; height:170px; object-fit:cover; border-radius:12px; }
-  .story-proof { position:absolute; left:-26px; bottom:20px; background:var(--forest-mid); color:#fff; padding:14px 18px; border-radius:10px; width:132px; }
-  .story-proof small { display:block; font-size:.64rem; font-weight:800; letter-spacing:.12em; }
-  .story-proof strong { display:block; font-family:inherit; font-size:1.35rem; font-weight:800; }
-  .story-proof span { display:block; font-size:.62rem; line-height:1.35; opacity:.84; }
-  blockquote { font-family:inherit; font-size:clamp(1.3rem,2.2vw,1.75rem); line-height:1.34; color:var(--ink-dark); }
-  .quote-by { margin-top:18px; font-size:.84rem; color:var(--ink-muted); }
+  .story-image img { width:100%; height:180px; object-fit:cover; border-radius:16px; }
+  .story-proof { position:absolute; left:-20px; bottom:18px; background:#fff; border:1px solid var(--border-light); box-shadow:var(--shadow-md); padding:12px 16px; border-radius:14px; width:150px; }
+  .story-proof small { display:block; font-size:13px; font-weight:700; letter-spacing:.06em; color:var(--forest-mid); }
+  .story-proof strong { display:block; font-size:24px; font-weight:800; color:var(--ink-dark); line-height:1.2; }
+  .story-proof span { display:block; font-size:13px; line-height:1.35; color:var(--ink-muted); }
+  blockquote { font-size:clamp(20px,2.2vw,26px); font-weight:600; line-height:1.4; color:var(--ink-dark); letter-spacing:-.01em; }
+  .quote-by { margin-top:14px; font-size:15px; color:var(--ink-muted); }
 
-  .journey { padding:84px 0 92px; background:var(--cream-bg); }
-  .journey-head { max-width:900px; margin:0 auto 44px; }
-  .journey-head .eyebrow { color:var(--forest-mid); }
-  .journey-title { font-family:inherit; font-size:clamp(2.25rem,4vw,3.25rem); font-weight:400; color:var(--ink-dark); margin-bottom:8px; }
-  .journey-steps { max-width:1100px; margin:auto; display:grid; grid-template-columns:repeat(3,1fr); }
-  .journey-step { padding:0 38px; border-right:1px solid #e3d7c4; }
-  .journey-step:first-child { padding-left:0; }
-  .journey-step:last-child { border:0; padding-right:0; }
-  .step-number { font-family:inherit; font-weight:800; color:var(--leaf-bright); font-size:3rem; line-height:1; display:block; margin-bottom:15px; }
-  .journey-step h3 { color:var(--ink-dark); font-family:inherit; font-size:1.35rem; font-weight:800; margin-bottom:10px; }
-  .journey-step p { font-size:.88rem; line-height:1.65; min-height:76px; }
-  .journey-step img { width:100%; height:175px; object-fit:cover; border-radius:10px; margin-top:20px; }
-  .journey-step:nth-child(2) img { object-position:center; }
+  /* Three steps */
+  .journey { padding:80px 0; background:#fff; }
+  .journey-head { max-width:1100px; margin:0 auto 40px; }
+  .journey-title { font-size:clamp(26px,3.2vw,36px); font-weight:700; color:var(--ink-dark); margin-bottom:8px; letter-spacing:-.02em; }
+  .journey-head p { color:var(--ink-muted); font-size:17px; }
+  .journey-steps { max-width:1100px; margin:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .journey-step { border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; }
+  .step-number { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; background:var(--leaf-pale); color:var(--forest-dark); font-weight:800; font-size:16px; margin-bottom:16px; }
+  .journey-step h3 { font-size:19px; font-weight:700; margin-bottom:8px; }
+  .journey-step p { font-size:15px; line-height:1.6; color:var(--ink-muted); flex:1; }
+  .journey-step img { width:100%; height:170px; object-fit:cover; border-radius:12px; margin-top:18px; }
   .journey-step:nth-child(3) img { object-position:center 40%; }
-  .journey-close { text-align:center; font-family:inherit; font-size:1.15rem; color:var(--ink-dark); margin-top:42px; }
-  .journey-close span { display:block; font-family:'Plus Jakarta Sans',sans-serif; color:var(--forest-mid); font-size:.9rem; font-weight:700; margin-top:5px; }
+  .journey-close { text-align:center; font-size:17px; font-weight:600; color:var(--ink-dark); margin-top:36px; }
+  .journey-close span { display:block; color:var(--forest-mid); font-size:15px; font-weight:600; margin-top:4px; }
 
-  .light-capabilities { background:#fffaf0; border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:72px 0; }
-  .cap-head { display:flex; justify-content:space-between; gap:30px; align-items:end; margin-bottom:34px; }
-  .cap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); }
-  .cap-item { padding:28px 24px; border-right:1px solid var(--border-light); }
-  .cap-item:last-child { border:0; }
-  .cap-item .ico { color:var(--forest-mid); width:26px; height:26px; margin-bottom:12px; display:block; }
-  .cap-item h3 { font-size:1rem; color:var(--ink-dark); margin-bottom:7px; }
-  .cap-item p { font-size:.82rem; line-height:1.55; color:var(--ink-muted); }
-  .final-cta { padding:72px 0; text-align:center; background:#fff; }
-  .final-cta h2 { font-family:inherit; font-size:clamp(1.6rem,4vw,2.6rem); font-weight:800; color:var(--ink-dark); margin-bottom:12px; }
-  .final-cta p { max-width:560px; margin:0 auto 26px; color:var(--ink-muted); }
+  /* Capabilities */
+  .light-capabilities { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:72px 0; }
+  .cap-head { display:flex; justify-content:space-between; gap:30px; align-items:end; margin-bottom:28px; }
+  .cap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .cap-item { padding:24px; background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); }
+  .cap-item .ico { color:var(--forest-mid); width:24px; height:24px; margin-bottom:14px; display:block; }
+  .cap-item h3 { font-size:17px; margin-bottom:6px; }
+  .cap-item p { font-size:15px; line-height:1.55; color:var(--ink-muted); }
+
+  .final-cta { padding:80px 0; text-align:center; background:#fff; }
+  .final-cta h2 { font-size:clamp(26px,3.6vw,38px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
+  .final-cta p { max-width:540px; margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
+  .final-cta .btn { width:auto; }
 
   @media(max-width:900px) {
-    .editorial-hero.hero-section { min-height:auto; padding-top:420px; }
-    .hero-art { inset:0 0 auto; height:470px; background-position:65% center; }
-    .hero-art::before { background:linear-gradient(0deg,var(--cream-bg),transparent 55%); }
-    .editorial-hero .wrap { min-height:auto; }
-    .hero-copy { width:100%; padding:50px 0 64px; }
-    .story-grid { grid-template-columns:1fr; padding:0 28px; gap:34px; }
-    .story-proof { left:14px; }
-    .journey-steps { grid-template-columns:1fr; gap:42px; }
-    .journey-step,.journey-step:first-child,.journey-step:last-child { padding:0; border:0; }
-    .journey-step p { min-height:0; }
-    .journey-step img { height:240px; }
+    .story-grid { grid-template-columns:1fr; gap:28px; }
+    .story-proof { left:12px; }
+    .journey-steps { grid-template-columns:1fr; gap:12px; }
     .cap-grid { grid-template-columns:1fr 1fr; }
-    .cap-item:nth-child(2) { border-right:0; }
-    .cap-item:nth-child(-n+2) { border-bottom:1px solid var(--border-light); }
-  }
-  @media(max-width:580px) {
-    .editorial-hero.hero-section { padding-top:315px; }
-    .hero-art { height:350px; background-position:61% center; }
-    .editorial-title { font-size:2.8rem; }
-    .hero-copy { padding-top:30px; }
-    .story-band { padding:34px 0; }
-    .story-grid { padding:0 24px; }
-    .story-image img { height:190px; }
-    .journey { padding:64px 0; }
-    .cap-head { align-items:start; flex-direction:column; }
-    .cap-grid { grid-template-columns:1fr; }
-    .cap-item { border-right:0; border-bottom:1px solid var(--border-light); }
-    .cap-item:last-child { border-bottom:0; }
   }
 
-  /* ── Mobile hero legibility ─────────────────────────────────────────── */
-  @media (max-width:700px) {
-    /* The desktop hero fades the photograph out horizontally, from the left
-       edge across to 66%. On a phone the copy sits directly on top of the
-       image instead, so the headline was reading over a farmer's face and a
-       phone screen. Below 700px the artwork moves behind a vertical scrim and
-       drops to the lower half of the block, which keeps the photograph in the
-       design without putting text on top of it. */
-    /* Rather than fade a photograph out from under the copy — which still
-       left body text sitting over a face — the artwork is confined to a band
-       below the hero copy. Text on white, image as image. */
-    .hero-art {
-      top: auto !important; height: 190px !important;
-      background-position: center 62% !important;
-      background-size: cover !important;
-      border-radius: 16px;
-      margin: 0 18px 0;
-      left: 0; right: 0; width: auto;
-      position: relative !important;
-      order: 2;
-    }
-    .hero-art::before { display: none !important; }
-    .editorial-hero {
-      display: flex !important; flex-direction: column;
-      overflow: visible !important;
-    }
-    .editorial-hero .wrap { order: 1; }
-    .hero-copy { width: 100% !important; }
-    .editorial-title { font-size: 30px !important; line-height: 1.14 !important; }
-    .hero-summary { font-size: 15.5px; margin-bottom: 18px; }
-    .benefit-list { gap: 8px; margin-bottom: 20px; }
-    .benefit-list li { font-size: 14.5px; }
-    .hero-actions { gap: 12px; }
-  }
-
-  /* ── Mobile quick access ────────────────────────────────────────────── */
+  /* Phones: photograph sits in its own band below the copy, never under text. */
   .quick-access { display:none; }
   @media (max-width:700px) {
-    .quick-access {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
-      padding:0 18px 8px; margin-top:-8px;
-    }
-    .qa-tile {
-      display:flex; flex-direction:column; align-items:center; gap:5px;
-      padding:14px 6px 12px; min-height:96px;
-      background:#fff; border:1px solid var(--border-light); border-radius:14px;
-      text-align:center; transition:border-color .15s, background .15s;
-    }
-    .qa-tile:active { background:var(--leaf-pale); border-color:var(--forest-light); }
-    .qa-ico {
-      width:38px; height:38px; border-radius:11px; display:grid; place-items:center;
-      background:var(--leaf-pale); color:var(--forest-mid);
-    }
-    .qa-label { font-size:12px; font-weight:700; color:var(--ink-dark); line-height:1.2; letter-spacing:-.01em; }
-    .qa-sub   { font-size:11.5px; color:var(--ink-muted); line-height:1.2; }
+    .editorial-hero { display:flex; flex-direction:column; overflow:visible; min-height:0; }
+    .editorial-hero .wrap { order:1; min-height:0; }
+    .hero-art { position:relative; order:2; inset:auto; height:190px; margin:0 16px 20px; border-radius:16px; background-size:cover; background-position:center 62%; }
+    .hero-art::before { display:none; }
+    .hero-copy { width:100%; padding:24px 0 20px; }
+    .editorial-title { font-size:30px; line-height:1.14; }
+    .hero-summary { font-size:16px; margin-bottom:16px; }
+    .benefit-list { gap:8px; margin-bottom:20px; }
+    .hero-actions { gap:4px; }
+    .availability { margin-top:16px; }
 
-    /* The three journey images are decorative repeats of the hero art. At
-       full height they added roughly 900px to the page on their own. */
-    .journey-step img { height:132px; object-fit:cover; object-position:center; aspect-ratio:auto; }
-    .journey-step { padding-bottom:4px; }
-    .journey-close { margin-top:22px !important; font-size:15px; }
-    .story-image img { height:150px !important; }
+    /* The main services within one tap of landing. */
+    .quick-access { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:20px 16px 4px; }
+    .qa-tile {
+      display:flex; flex-direction:column; align-items:center; gap:6px;
+      padding:14px 4px 12px; min-height:104px;
+      background:#fff; border:1px solid var(--border-light); border-radius:14px; text-align:center;
+    }
+    .qa-tile:active { background:var(--leaf-pale); border-color:var(--forest-mid); }
+    .qa-ico { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:var(--leaf-pale); color:var(--forest-mid); }
+    .qa-label { font-size:13px; font-weight:700; color:var(--ink-dark); line-height:1.2; }
+    .qa-sub   { font-size:13px; color:var(--ink-muted); line-height:1.2; }
+
+    .story-band { padding:28px 0; }
+    .story-grid { padding:0 16px; }
+    .story-image img { height:160px; }
+    .journey { padding:44px 0; }
+    .journey-step { padding:18px; }
+    .journey-step img { height:150px; }
+    .journey-close { margin-top:20px; font-size:16px; }
+    .light-capabilities { padding:44px 0; }
+    .cap-head { align-items:start; flex-direction:column; gap:4px; }
+    .cap-grid { grid-template-columns:1fr; gap:10px; }
+    .cap-item { padding:18px; }
+    .final-cta { padding:48px 0; }
+    .final-cta .btn { width:100%; }
   }
 </style>
 @endsection
@@ -189,7 +133,7 @@
           <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_4">Jumuiya ya wakulima na ushauri</span></li>
         </ul>
         <div class="hero-actions">
-          <a href="/download" class="btn btn-gold"><x-icon name="download" class="ico" /><span data-i18n="download_app">Pakua App ya Mkulima</span></a>
+          <a href="/download" class="btn btn-primary"><x-icon name="download" class="ico" /><span data-i18n="download_app">Pakua App ya Mkulima</span></a>
           <a href="/pitch-deck" class="text-link" data-i18n="view_pitch">Tazama Pitch Deck →</a>
         </div>
         <div class="availability" aria-label="App availability">
@@ -284,7 +228,7 @@
     </div>
   </section>
 
-  <section class="final-cta" aria-labelledby="cta-title"><div class="wrap"><span class="eyebrow">ANZA LEO</span><h2 id="cta-title">Kilimo bora kiko mikononi mwako.</h2><p>Pakua MkulimaForum na upate maarifa, masoko na msaada unaohitaji kila siku.</p><a href="/download" class="btn btn-gold btn-lg"><x-icon name="download" class="ico" /> Pakua App ya Mkulima</a></div></section>
+  <section class="final-cta" aria-labelledby="cta-title"><div class="wrap"><span class="eyebrow">ANZA LEO</span><h2 id="cta-title">Kilimo bora kiko mikononi mwako.</h2><p>Pakua MkulimaForum na upate maarifa, masoko na msaada unaohitaji kila siku.</p><a href="/download" class="btn btn-primary btn-lg"><x-icon name="download" class="ico" /> Pakua App ya Mkulima</a></div></section>
 </div>
 @endsection
 

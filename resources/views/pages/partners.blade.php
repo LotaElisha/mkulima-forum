@@ -7,43 +7,58 @@
 
 @section('head_extra')
 <style>
-  .partner-cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-  @media(max-width:960px){ .partner-cat-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:560px) { .partner-cat-grid{ grid-template-columns:1fr; } }
-  .partner-cat-card {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-xl);
-    padding:32px; transition:all .25s ease;
-  }
-  .partner-cat-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:var(--border-mid); }
-  .partner-cat-card h3 { font-size:1.1rem; font-weight:800; color:var(--ink-dark); margin-bottom:10px; }
-  .partner-cat-card p  { font-size:.88rem; color:var(--ink-muted); line-height:1.65; }
-  .partner-cat-card .examples {
-    margin-top:14px; display:flex; flex-wrap:wrap; gap:6px;
-  }
-  .tech-eco-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  @media(max-width:900px){ .tech-eco-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:540px){ .tech-eco-grid{ grid-template-columns:1fr; } }
-  .tech-eco-card {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-lg);
-    padding:24px; text-align:center; transition:all .22s ease;
-  }
-  .tech-eco-card:hover { box-shadow:var(--shadow-md); }
-  .tech-eco-card .tech-name { font-size:.9rem; font-weight:800; color:var(--ink-dark); margin-top:10px; }
-  .tech-eco-card .tech-role { font-size:.75rem; color:var(--ink-muted); margin-top:4px; }
-  .partner-form { background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-2xl); padding:48px; }
-  .form-group { display:flex; flex-direction:column; gap:6px; }
-  .form-group label { font-size:.88rem; font-weight:700; color:var(--ink-dark); }
-  .form-group input, .form-group select, .form-group textarea {
-    padding:12px 16px; border:1.5px solid var(--border-light); border-radius:10px;
-    font-family:inherit; font-size:.9rem; color:var(--ink-dark); background:var(--cream-bg);
-    transition:border-color .2s ease; outline:none;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--forest-mid); background:#fff; }
-  .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  @media(max-width:640px){ .form-grid-2{ grid-template-columns:1fr; } }
+  /* Tokens, buttons, forms, header and footer come from layouts/public.blade.php.
+     This block only lays out the partners page's own sections. */
+  .ico { width:1.15em; height:1.15em; flex:none; stroke-width:2; }
+  .hero-inner { max-width:720px; }
+  .center-head { text-align:center; margin-bottom:40px; }
+  .center-head .section-lead { margin:0 auto; }
+
+  /* Partner categories */
+  .partner-cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .partner-cat-card { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:28px; display:flex; flex-direction:column; }
+  .partner-cat-card h3 { font-size:18px; font-weight:700; color:var(--ink-dark); margin-bottom:8px; }
+  .partner-cat-card p { font-size:15px; color:var(--ink-muted); line-height:1.6; }
+  .partner-cat-card .examples { margin-top:16px; display:flex; flex-wrap:wrap; gap:6px; }
+
+  /* Technology ecosystem */
+  .eco-band { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); }
+  .tech-eco-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .tech-eco-card { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:20px; display:flex; align-items:center; gap:14px; }
+  .tech-mark { width:44px; height:44px; border-radius:12px; background:var(--leaf-pale); color:var(--forest-dark); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; flex-shrink:0; }
+  .tech-eco-card .tech-name { font-size:16px; font-weight:700; color:var(--ink-dark); line-height:1.3; }
+  .tech-eco-card .tech-role { font-size:14px; color:var(--ink-muted); margin-top:2px; }
+  .eco-note { text-align:center; font-size:14px; color:var(--ink-muted); margin:24px auto 0; max-width:44rem; }
+
+  /* Become a partner */
   .grid-partner-form { display:grid; grid-template-columns:minmax(0,.45fr) minmax(0,.55fr); gap:56px; align-items:start; }
   .grid-partner-form > * { min-width:0; }
-  @media(max-width:860px){ .grid-partner-form{ grid-template-columns:1fr; } }
+  .bp-sub { color:var(--ink-muted); margin-bottom:24px; line-height:1.7; font-size:16px; }
+  .bp-options { display:flex; flex-direction:column; gap:10px; }
+  .bp-option { display:flex; align-items:center; gap:12px; min-height:52px; padding:12px 16px; background:#fff; border:1px solid var(--border-light); border-radius:12px; }
+  .bp-option .ico { color:var(--forest-mid); width:20px; height:20px; }
+  .bp-option span { font-size:15px; font-weight:600; color:var(--ink-dark); }
+  .partner-form { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:40px; }
+  .partner-form h3 { font-size:22px; font-weight:700; color:var(--ink-dark); margin-bottom:24px; }
+  .partner-form form { display:flex; flex-direction:column; gap:18px; }
+  .partner-form .form-group { margin-bottom:0; }
+  .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  #pf_result { font-size:15px; }
+
+  @media(max-width:960px){
+    .partner-cat-grid { grid-template-columns:repeat(2,1fr); }
+    .tech-eco-grid { grid-template-columns:repeat(2,1fr); }
+  }
+  @media(max-width:860px){ .grid-partner-form { grid-template-columns:1fr; gap:32px; } }
+  @media(max-width:700px){
+    .center-head { margin-bottom:24px; }
+    .partner-cat-grid, .tech-eco-grid { grid-template-columns:1fr; gap:10px; }
+    .partner-cat-card { padding:18px; }
+    .tech-eco-card { padding:14px 16px; }
+    .form-grid-2 { grid-template-columns:1fr; gap:18px; }
+    .partner-form h3 { font-size:20px; margin-bottom:18px; }
+    .partner-form .btn { white-space:normal; }
+  }
 </style>
 @endsection
 
@@ -51,34 +66,34 @@
 
 {{-- Hero --}}
 <section class="page-hero">
-  <div class="wrap fade-up" style="max-width:700px;">
+  <div class="wrap fade-up"><div class="hero-inner">
     <span class="eyebrow" data-i18n="partners_eyebrow">WASHIRIKA</span>
     <h1 class="page-title" data-i18n="partners_title">Tushirikiane Kubadilisha Kilimo</h1>
     <p class="section-lead" data-i18n="partners_sub">MkulimaForum imejengwa kushirikiana na mashirika yanayofanya kazi katika kilimo, teknolojia, fedha, utafiti, serikali, na maendeleo.</p>
-  </div>
+  </div></div>
 </section>
 
 {{-- Partner Categories --}}
 <section>
   <div class="wrap">
     <span class="eyebrow" data-i18n="pcat_eyebrow">AINA ZA WASHIRIKA</span>
-    <h2 class="section-title" style="margin-bottom:40px;" data-i18n="pcat_title">Tunashirikiana na Aina Hizi za Mashirika</h2>
+    <h2 class="section-title" style="margin-bottom:32px;" data-i18n="pcat_title">Tunashirikiana na Aina Hizi za Mashirika</h2>
     <div class="partner-cat-grid">
       @foreach([
-        ['🤖','Washirika wa Teknolojia','Technology Partners','Miundombinu ya AI, wingu, data, uunganisho, na vifaa.','AI infrastructure, cloud, data, connectivity, and hardware.','Gemini AI / Cloud / IoT / Connectivity','pc0'],
-        ['💳','Washirika wa Fedha','Financial Partners','Pesa za simu, benki, FinTech, na fedha za kilimo.','Mobile money, banks, FinTech, and agricultural finance.','M-Pesa / Tigo Pesa / CRDB / Agricultural Finance','pc1'],
-        ['🌾','Washirika wa Kilimo','Agricultural Partners','Wauzaji wa pembejeo, wazalishaji, wakusanyaji, wanunuzi wa mazao, na wataalamu.','Agro-dealers, input manufacturers, aggregators, buyers, and agronomists.','Agro-dealers / Input Manufacturers / Buyers','pc2'],
-        ['🏛️','Serikali na Usimamizi','Government & Regulatory','Wizara za kilimo, mamlaka za mitaa, wasimamizi, na huduma za ugani.','Agricultural ministries, local governments, regulators, and extension services.','MAFC / TFRA / TPHPA / Local Authorities','pc3'],
-        ['🌍','Washirika wa Maendeleo','Development Partners','NGO, misingi ya fedha, na mashirika ya kimataifa ya maendeleo.','NGOs, foundations, and international development agencies.','NGOs / Development Agencies / Foundations','pc4'],
-        ['🔬','Utafiti na Elimu','Research & Academia','Vyuo vikuu, taasisi za utafiti wa kilimo, na watafiti wa AI.','Universities, agricultural research institutes, and AI researchers.','SUA / UDSM / Research Institutes','pc5'],
+        ['globe','Washirika wa Teknolojia','Technology Partners','Miundombinu ya AI, wingu, data, uunganisho, na vifaa.','AI infrastructure, cloud, data, connectivity, and hardware.','Gemini AI / Cloud / IoT / Connectivity','pc0'],
+        ['chart','Washirika wa Fedha','Financial Partners','Pesa za simu, benki, FinTech, na fedha za kilimo.','Mobile money, banks, FinTech, and agricultural finance.','M-Pesa / Tigo Pesa / CRDB / Agricultural Finance','pc1'],
+        ['leaf','Washirika wa Kilimo','Agricultural Partners','Wauzaji wa pembejeo, wazalishaji, wakusanyaji, wanunuzi wa mazao, na wataalamu.','Agro-dealers, input manufacturers, aggregators, buyers, and agronomists.','Agro-dealers / Input Manufacturers / Buyers','pc2'],
+        ['verified','Serikali na Usimamizi','Government & Regulatory','Wizara za kilimo, mamlaka za mitaa, wasimamizi, na huduma za ugani.','Agricultural ministries, local governments, regulators, and extension services.','MAFC / TFRA / TPHPA / Local Authorities','pc3'],
+        ['groups','Washirika wa Maendeleo','Development Partners','NGO, misingi ya fedha, na mashirika ya kimataifa ya maendeleo.','NGOs, foundations, and international development agencies.','NGOs / Development Agencies / Foundations','pc4'],
+        ['book','Utafiti na Elimu','Research & Academia','Vyuo vikuu, taasisi za utafiti wa kilimo, na watafiti wa AI.','Universities, agricultural research institutes, and AI researchers.','SUA / UDSM / Research Institutes','pc5'],
       ] as $cat)
       <div class="partner-cat-card fade-up">
-        <div class="card-icon">{{ $cat[0] }}</div>
+        <div class="card-icon"><x-icon :name="$cat[0]" size="24" /></div>
         <h3 data-i18n="{{ $cat[6] }}_title">{{ $cat[1] }}</h3>
         <p data-i18n="{{ $cat[6] }}_desc">{{ $cat[3] }}</p>
         <div class="examples">
-          @foreach(explode(' / ', $cat[4]) as $ex)
-          <span class="tag" style="font-size:.72rem;">{{ trim($ex) }}</span>
+          @foreach(explode(' / ', $cat[5]) as $ex)
+          <span class="tag">{{ trim($ex) }}</span>
           @endforeach
         </div>
       </div>
@@ -88,12 +103,12 @@
 </section>
 
 {{-- Technology Ecosystem (NOT "Official Partners") --}}
-<section style="background:var(--leaf-pale); padding:80px 0;">
+<section class="eco-band">
   <div class="wrap">
-    <div style="text-align:center; margin-bottom:40px;">
+    <div class="center-head">
       <span class="eyebrow" data-i18n="eco_eyebrow">MFUMO WA TEKNOLOJIA</span>
       <h2 class="section-title" data-i18n="eco_title">Teknolojia Tunazotumia Kujenga</h2>
-      <p class="section-lead" style="text-align:center; margin:0 auto; max-width:40rem;" data-i18n="eco_sub">
+      <p class="section-lead" data-i18n="eco_sub">
         MkulimaForum imejengwa juu ya teknolojia za kisasa za dunia. Hizi ni teknolojia tunazotumia katika mfumo wetu — si lazima washirika rasmi.
       </p>
     </div>
@@ -109,13 +124,15 @@
         ['🔐','Sanctum','Auth & Security','S'],
       ] as $tech)
       <div class="tech-eco-card fade-up">
-        <div style="font-size:2rem;">{{ $tech[0] }}</div>
-        <div class="tech-name">{{ $tech[1] }}</div>
-        <div class="tech-role">{{ $tech[2] }}</div>
+        <div class="tech-mark" aria-hidden="true">{{ $tech[3] }}</div>
+        <div>
+          <div class="tech-name">{{ $tech[1] }}</div>
+          <div class="tech-role">{{ $tech[2] }}</div>
+        </div>
       </div>
       @endforeach
     </div>
-    <p style="text-align:center; font-size:.8rem; color:var(--ink-faint); margin-top:24px;" data-i18n="eco_note">
+    <p class="eco-note" data-i18n="eco_note">
       Google Gemini na bidhaa za Google ni teknolojia zinazotumika katika mfumo. Kutajwa kwao hapa hakumaanishi ushirikiano rasmi na Google.
     </p>
   </div>
@@ -128,8 +145,8 @@
       <div class="fade-up">
         <span class="eyebrow" data-i18n="bp_eyebrow">ANZA USHIRIKIANO</span>
         <h2 class="section-title" data-i18n="bp_title">Shirikiana na MkulimaForum</h2>
-        <p style="color:var(--ink-muted); margin-bottom:24px; line-height:1.7;" data-i18n="bp_sub">Tuna nafasi za ushirikiano katika maeneo mbalimbali. Chagua aina ya ushirikiano inayokufaa na tutawasiliana nawe.</p>
-        <div style="display:flex; flex-direction:column; gap:12px;">
+        <p class="bp-sub" data-i18n="bp_sub">Tuna nafasi za ushirikiano katika maeneo mbalimbali. Chagua aina ya ushirikiano inayokufaa na tutawasiliana nawe.</p>
+        <div class="bp-options">
           @foreach([
             ['💻','Ushirikiano wa Teknolojia','Technology Partnership'],
             ['📦','Ufikiaji wa Soko','Market Access'],
@@ -138,17 +155,17 @@
             ['🏪','Mtandao wa Wauzaji','Agro-dealer Network'],
             ['🏛️','Ushirikiano wa Serikali','Government Collaboration'],
           ] as $opt)
-          <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--leaf-pale); border-radius:10px; border:1px solid var(--border-light);">
-            <span style="font-size:1.2rem;">{{ $opt[0] }}</span>
-            <span style="font-size:.9rem; font-weight:700; color:var(--ink-dark);" data-i18n="bp_opt_{{ $loop->index }}">{{ $opt[1] }}</span>
+          <div class="bp-option">
+            <x-icon name="check-circle" />
+            <span data-i18n="bp_opt_{{ $loop->index }}">{{ $opt[1] }}</span>
           </div>
           @endforeach
         </div>
       </div>
 
       <div class="partner-form fade-up">
-        <h3 style="font-size:1.3rem; font-weight:800; color:var(--ink-dark); margin-bottom:24px;" data-i18n="form_title">Anza Mazungumzo ya Ushirikiano</h3>
-        <form id="partnerForm" onsubmit="handlePartnerForm(event)" style="display:flex; flex-direction:column; gap:18px;">
+        <h3 data-i18n="form_title">Anza Mazungumzo ya Ushirikiano</h3>
+        <form id="partnerForm" onsubmit="handlePartnerForm(event)">
           <div class="form-grid-2">
             <div class="form-group">
               <label for="pf_name" data-i18n="form_name">Jina Lako Kamili</label>

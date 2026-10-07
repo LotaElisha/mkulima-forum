@@ -7,47 +7,73 @@
 
 @section('head_extra')
 <style>
-  .tech-stack-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
-  @media(max-width:760px){ .tech-stack-grid{ grid-template-columns:1fr; } }
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php. */
+  .tech-stack-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+  @media(max-width:760px){ .tech-stack-grid{ grid-template-columns:minmax(0,1fr); gap:12px; } }
   .tech-card {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-xl);
-    padding:36px; transition:all .25s ease;
+    background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl);
+    padding:28px; transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .tech-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
-  .tech-card h3 { font-size:1.25rem; font-weight:800; color:var(--ink-dark); margin-bottom:12px; }
-  .tech-card p  { color:var(--ink-muted); line-height:1.75; font-size:.92rem; }
-  .tech-card .tech-tag-list { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
-  .arch-flow-container {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-2xl);
-    padding:48px; text-align:center;
-  }
-  .flow-row { display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; margin:12px 0; }
-  .flow-node { padding:12px 20px; border-radius:12px; font-size:.88rem; font-weight:700; border:1.5px solid var(--border-mid); color:var(--ink-dark); background:var(--cream-bg); }
-  .flow-node.farmer { background:var(--forest-dark); color:#fff; border-color:var(--forest-dark); font-size:1rem; padding:14px 28px; }
-  .flow-node.platform { background:var(--leaf-pale); color:var(--forest-mid); border-color:var(--leaf-green); }
-  .flow-node.ai { background:#EEF4FF; color:#3B5CC4; border-color:#B8CEFF; }
-  .flow-node.output { background:linear-gradient(135deg,var(--sun-gold),var(--sun-amber)); color:var(--forest-dark); border:none; }
-  .flow-arrow { font-size:1.8rem; color:var(--ink-faint); padding:0 8px; }
-  .flow-label { font-size:.75rem; font-weight:600; color:var(--ink-faint); margin:4px 0; }
-  .flow-branch { display:flex; align-items:flex-start; justify-content:center; gap:12px; flex-wrap:wrap; }
-  .google-ai-panel {
-    background:linear-gradient(145deg,#F0F4FF,#E4EAFF); border-radius:var(--radius-2xl);
-    padding:48px; border:1px solid #C0CEFF;
-  }
+  .tech-card:hover { border-color:var(--border-mid); box-shadow:var(--shadow-md); }
+  .tech-card-head { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  .tech-card-head .card-icon { margin:0; }
+  .tech-card h3 { font-size:19px; font-weight:700; color:var(--ink-dark); margin:0; }
+  .tech-card p  { color:var(--ink-muted); line-height:1.65; font-size:15px; }
+  .tech-card .tech-tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+
+  /* Gemini: a soft grey panel, not a coloured band */
+  .google-band { background:#fff; padding:0 0 80px; }
+  .google-ai-panel { background:var(--surface-soft); border:1px solid var(--border-light); border-radius:var(--radius-2xl); padding:48px; }
+  .google-head { text-align:center; margin-bottom:32px; }
   .google-gemini-badge {
-    display:inline-flex; align-items:center; gap:10px; padding:8px 20px;
-    background:#fff; border:1.5px solid #C0CEFF; border-radius:999px;
-    font-family:inherit; font-weight:800; font-size:.9rem;
+    display:inline-flex; align-items:center; gap:2px; min-height:40px; padding:6px 18px; margin:0 auto 20px;
+    background:#fff; border:1px solid var(--border-light); border-radius:999px; font-weight:700; font-size:15px;
   }
-  .g-letter { font-size:1.3rem; font-weight:900; }
-  .g-e { color:#4285F4; }
-  .g-o1 { color:#EA4335; }
-  .g-o2 { color:#FBBC05; }
-  .g-g { color:#34A853; }
-  .g-l { color:#4285F4; }
-  .g-i { color:#EA4335; }
-  .g-text { color:#1A1A2E; }
-  @media(max-width:760px){ .google-uses-grid{ grid-template-columns:1fr !important; } }
+  .g-letter { font-size:20px; font-weight:800; }
+  .g-e { color:#4285F4; } .g-o1 { color:#EA4335; } .g-o2 { color:#B37F00; } .g-g { color:#34A853; } .g-l { color:#4285F4; } .g-i { color:#EA4335; }
+  .g-text { color:var(--ink-dark); margin-left:6px; }
+  .google-uses-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+  .google-use { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:24px; }
+  .google-use h4 { font-size:17px; font-weight:700; color:var(--ink-dark); margin-bottom:6px; }
+  .google-use p { font-size:15px; color:var(--ink-muted); line-height:1.6; }
+  .google-note { text-align:center; font-size:13px; color:var(--ink-muted); margin:24px auto 0; max-width:48rem; line-height:1.55; }
+
+  /* Architecture flow */
+  .arch-flow-container { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-2xl); padding:40px 24px; text-align:center; }
+  .flow-row { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; margin:10px 0; }
+  .flow-node {
+    display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:10px 18px; border-radius:12px;
+    font-size:15px; font-weight:600; border:1px solid var(--border-mid); color:var(--ink-dark); background:#fff;
+  }
+  .flow-node.farmer { background:var(--leaf-pale); color:var(--forest-dark); border-color:var(--forest-mid); font-weight:700; font-size:16px; padding:12px 24px; }
+  .flow-node.platform { background:var(--leaf-pale); color:var(--forest-dark); border-color:var(--forest-mid); font-weight:700; padding:12px 28px; }
+  .flow-node.ai { background:var(--surface-soft); border-color:var(--border-light); }
+  .flow-node.output { background:var(--leaf-pale); color:var(--forest-dark); border:1.5px solid var(--forest-mid); font-weight:700; font-size:16px; padding:14px 28px; }
+  .flow-arrow { display:flex; justify-content:center; color:var(--forest-mid); margin-top:6px; }
+  .flow-label { font-size:13px; font-weight:600; color:var(--ink-muted); margin:2px 0; }
+
+  .soft-band { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:64px 0; }
+
+  .final-cta { padding:80px 0; text-align:center; background:#fff; }
+  .final-cta h2 { font-size:clamp(26px,3.6vw,36px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
+  .final-cta p { max-width:540px; margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
+  .btn-row { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+
+  @media(max-width:860px){ .google-uses-grid{ grid-template-columns:minmax(0,1fr); gap:12px; } }
+  @media(max-width:700px){
+    .tech-card { padding:18px; border-radius:14px; }
+    .tech-card:hover { box-shadow:none; }
+    .tech-card h3 { font-size:17px; }
+    .google-band { padding-bottom:44px; }
+    .google-ai-panel { padding:24px 16px; border-radius:16px; }
+    .google-use { padding:18px; }
+    .arch-flow-container { padding:24px 12px; border-radius:16px; }
+    .flow-node { font-size:14px; padding:8px 12px; }
+    .flow-node.output { font-size:15px; padding:12px 16px; }
+    .soft-band { padding:44px 0; }
+    .final-cta { padding:48px 0; }
+    .final-cta p { font-size:16px; }
+  }
 </style>
 @endsection
 
@@ -55,7 +81,7 @@
 
 {{-- Hero --}}
 <section class="page-hero">
-  <div class="wrap fade-up" style="max-width:700px;">
+  <div class="wrap fade-up">
     <span class="eyebrow" data-i18n="tech_eyebrow">TEKNOLOJIA</span>
     <h1 class="page-title" data-i18n="tech_title">AI Iliyojengwa kwa Hali Halisi ya Kilimo</h1>
     <p class="section-lead" data-i18n="tech_sub">Tunatumia teknolojia za kisasa za ulimwengu na kuzirekebisha kwa hali ya wakulima wa Tanzania na Afrika Mashariki — bila kuacha wale wanaoishi mbali na mtandao.</p>
@@ -66,7 +92,7 @@
 <section>
   <div class="wrap">
     <span class="eyebrow" data-i18n="stack_eyebrow">NGUZO ZA TEKNOLOJIA</span>
-    <h2 class="section-title" style="margin-bottom:40px;" data-i18n="stack_title">Teknolojia Inayofanya Kazi Nyuma ya Pazia</h2>
+    <h2 class="section-title" style="margin-bottom:32px;" data-i18n="stack_title">Teknolojia Inayofanya Kazi Nyuma ya Pazia</h2>
     <div class="tech-stack-grid">
       @foreach([
         ['🤖','Gemini Cloud AI','Gemini Cloud AI','Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Gemini 3 Flash inashughulikia utambuzi wa haraka wa magonjwa ya mimea, maswali ya Mkulima AI, na utafutaji wa soko. Gemini 3 Pro inashughulikia ushauri wa hali ya hewa na mazao kwa kutumia Google Search Grounding.','Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima AI queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.','tc0',['Gemini 3 Flash','Gemini 3 Pro','Google AI Studio']],
@@ -79,9 +105,9 @@
         ['📱','Mfumo wa App ya Simu','Mobile App Platform','App ya MkulimaForum imejengwa kwa Flutter, inayoruhusu kutolewa kwa Android na iOS kutoka msingi mmoja wa msimbo. Imeboreshwa kwa simu za android za bei ya chini zinazotumika zaidi Tanzania.','MkulimaForum app is built with Flutter, enabling Android and iOS deployment from a single codebase. Optimized for lower-end Android devices common among Tanzanian smallholder farmers.','tc7',['Flutter','Android','iOS','Material 3']],
       ] as $t)
       <div class="tech-card fade-up">
-        <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
-          <div class="card-icon" style="margin:0;">{{ $t[0] }}</div>
-          <h3 style="margin:0;" data-i18n="{{ $t[5] }}_title">{{ $t[1] }}</h3>
+        <div class="tech-card-head">
+          <div class="card-icon">@if($t[0] === '🤖')<x-icon name="globe" :size="22" />@elseif($t[0] === '🧠')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>@elseif($t[0] === '👁️')<x-icon name="scan" :size="22" />@elseif($t[0] === '📴')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h.01"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M5 12.9a10 10 0 0 1 5.2-2.7"/><path d="M19 12.9a10 10 0 0 0-2.1-1.5"/><path d="M2 8.8a15 15 0 0 1 4.2-2.6"/><path d="M22 8.8A15 15 0 0 0 11 4.6"/><path d="m2 2 20 20"/></svg>@elseif($t[0] === '🗄️')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>@elseif($t[0] === '💳')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>@elseif($t[0] === '🔐')<x-icon name="shield" :size="22" />@elseif($t[0] === '📱')<x-icon name="phone" :size="22" />@endif</div>
+          <h3 data-i18n="{{ $t[5] }}_title">{{ $t[1] }}</h3>
         </div>
         <p data-i18n="{{ $t[5] }}_desc">{{ $t[3] }}</p>
         <div class="tech-tag-list">
@@ -96,36 +122,36 @@
 </section>
 
 {{-- Google AI Section --}}
-<section style="background:var(--leaf-pale); padding:80px 0;">
+<section class="google-band">
   <div class="wrap">
     <div class="google-ai-panel fade-up">
-      <div style="text-align:center; margin-bottom:36px;">
-        <div class="google-gemini-badge" style="margin:0 auto 20px;">
+      <div class="google-head">
+        <div class="google-gemini-badge">
           <span class="g-letter g-g">G</span><span class="g-letter g-e">e</span><span class="g-letter g-o1">m</span><span class="g-letter g-o2">i</span><span class="g-letter g-g">n</span><span class="g-letter g-l">i</span>
-          <span class="g-text" style="margin-left:6px; font-size:.95rem;">3 Flash &amp; Pro</span>
+          <span class="g-text">3 Flash &amp; Pro</span>
         </div>
-        <span class="eyebrow" style="color:#3B5CC4;" data-i18n="google_eyebrow">TEKNOLOJIA YA GOOGLE AI</span>
+        <span class="eyebrow" style="display:block;" data-i18n="google_eyebrow">TEKNOLOJIA YA GOOGLE AI</span>
         <h2 class="section-title" data-i18n="google_title">Jinsi Tunavyotumia Gemini AI</h2>
         <p class="section-lead" style="text-align:center; margin:0 auto; max-width:44rem;" data-i18n="google_sub">
           MkulimaForum inatumia mifano ya Gemini ya Google katika mtiririko mbalimbali wa AI. Toleo la awali la mfumo wetu lilibuniwa kwa kutumia Google AI Studio.
         </p>
       </div>
 
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;" class="google-uses-grid">
+      <div class="google-uses-grid">
         @foreach([
           ['⚡','Gemini 3 Flash','AI Plant Scanner, Mkulima AI mazungumzo, Utafutaji wa Soko','Gemini 3 Flash','AI Plant Scanner, Mkulima AI conversations, Smart Marketplace Search','gc0'],
           ['🔍','Gemini 3 Pro + Grounding','Ushauri wa Hali ya Hewa na Mazao ukitumia Google Search Grounding','Gemini 3 Pro + Grounding','Weather & Crop Advisory Engine using real-time Google Search Grounding','gc1'],
           ['🛠️','Google AI Studio','Ubunifu wa kwanza na majaribio ya mfano wa AI ya MkulimaForum','Google AI Studio','Used for initial AI prototype development and model experimentation','gc2'],
         ] as $g)
-        <div style="background:rgba(255,255,255,.8); border-radius:var(--radius-lg); padding:24px; border:1px solid rgba(192,206,255,.5);">
-          <div style="font-size:1.8rem; margin-bottom:12px;">{{ $g[0] }}</div>
-          <h4 style="font-size:1rem; font-weight:800; color:#1A1A3E; margin-bottom:8px;" data-i18n="{{ $g[5] }}_title">{{ $g[1] }}</h4>
-          <p style="font-size:.85rem; color:#444; line-height:1.65;" data-i18n="{{ $g[5] }}_desc">{{ $g[2] }}</p>
+        <div class="google-use">
+          <div class="card-icon">@if($g[0] === '⚡')<x-icon name="sun" :size="22" />@elseif($g[0] === '🔍')<x-icon name="search" :size="22" />@elseif($g[0] === '🛠️')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>@endif</div>
+          <h4 data-i18n="{{ $g[5] }}_title">{{ $g[1] }}</h4>
+          <p data-i18n="{{ $g[5] }}_desc">{{ $g[2] }}</p>
         </div>
         @endforeach
       </div>
 
-      <p style="text-align:center; font-size:.78rem; color:#666; margin-top:28px; font-style:italic;" data-i18n="google_note">
+      <p class="google-note" data-i18n="google_note">
         Teknolojia za Google zinazotajwa hapa (Gemini, Google AI Studio) zinawakilisha zana tunazotumia katika ujenzi wa mfumo. Hii haikusudiwa kuwakilisha ushirikiano rasmi au uidhinisho wowote na Google.
       </p>
     </div>
@@ -135,7 +161,7 @@
 {{-- AI Architecture Flow --}}
 <section>
   <div class="wrap">
-    <div style="text-align:center; margin-bottom:40px;">
+    <div style="text-align:center; margin-bottom:32px;">
       <span class="eyebrow" data-i18n="arch_eyebrow">MTIRIRIKO WA AI</span>
       <h2 class="section-title" data-i18n="arch_title">Jinsi AI Inavyofikia Mkulima</h2>
     </div>
@@ -145,46 +171,46 @@
       <div class="flow-row">
         <div class="flow-node farmer">👨‍🌾 <span data-i18n="arch_farmer">Mkulima</span></div>
       </div>
-      <div style="text-align:center; font-size:2rem; color:var(--leaf-green); line-height:1;">↓</div>
+      <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
       <div class="flow-label" data-i18n="arch_via">Kupitia</div>
 
       {{-- Channels --}}
-      <div class="flow-row" style="gap:12px;">
+      <div class="flow-row">
         <div class="flow-node">📱 <span data-i18n="arch_app">App ya Simu</span></div>
         <div class="flow-node">🌐 <span data-i18n="arch_web">Wavuti</span></div>
         <div class="flow-node">📲 SMS / USSD</div>
       </div>
-      <div style="text-align:center; font-size:2rem; color:var(--leaf-green); line-height:1;">↓</div>
+      <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
       <div class="flow-label" data-i18n="arch_platform">MkulimaForum Platform (Laravel API + Flutter)</div>
 
       {{-- Platform --}}
       <div class="flow-row">
-        <div class="flow-node platform" style="padding:14px 32px;">MkulimaForum Platform</div>
+        <div class="flow-node platform">MkulimaForum Platform</div>
       </div>
-      <div style="text-align:center; font-size:2rem; color:var(--leaf-green); line-height:1;">↓</div>
+      <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
       <div class="flow-label" data-i18n="arch_routed">Inaelekeza kwa</div>
 
       {{-- AI Layer --}}
-      <div class="flow-row" style="gap:12px; flex-wrap:wrap;">
+      <div class="flow-row">
         <div class="flow-node ai">🤖 Gemini 3 Flash</div>
         <div class="flow-node ai">🔍 Gemini 3 Pro + Search</div>
-        <div class="flow-node ai" style="background:#F0FFF4; color:var(--forest-mid); border-color:var(--leaf-green);">🧠 Gemma 2B (Offline)</div>
-        <div class="flow-node" style="background:#FFF8F0; color:#E07B39; border-color:#FFD4A8;">📊 Agri Knowledge Base</div>
-        <div class="flow-node" style="background:#F0F8FF; color:#4A90D9; border-color:#C0DEFF;">⛅ Weather Data</div>
-        <div class="flow-node" style="background:#FFF0F0; color:#C0392B; border-color:#FFCCC8;">🛒 Market Data</div>
+        <div class="flow-node ai">🧠 Gemma 2B (Offline)</div>
+        <div class="flow-node ai">📊 Agri Knowledge Base</div>
+        <div class="flow-node ai">⛅ Weather Data</div>
+        <div class="flow-node ai">🛒 Market Data</div>
       </div>
-      <div style="text-align:center; font-size:2rem; color:var(--sun-gold); line-height:1; margin-top:4px;">↓</div>
+      <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
 
       {{-- Output --}}
       <div class="flow-row">
-        <div class="flow-node output" style="font-size:1rem; padding:16px 36px;" data-i18n="arch_output">✅ Ushauri unaoweza kutumika kwa Mkulima</div>
+        <div class="flow-node output" data-i18n="arch_output">✅ Ushauri unaoweza kutumika kwa Mkulima</div>
       </div>
     </div>
   </div>
 </section>
 
 {{-- Privacy & Responsibility --}}
-<section style="background:var(--leaf-pale); padding:64px 0;">
+<section class="soft-band">
   <div class="wrap" style="max-width:700px; text-align:center;">
     <span class="eyebrow" data-i18n="privacy_eyebrow">FARAGHA NA UWAJIBIKAJI</span>
     <h2 class="section-title" data-i18n="privacy_title">AI Inayowajibika</h2>
@@ -194,13 +220,13 @@
 </section>
 
 {{-- CTA --}}
-<section style="background:linear-gradient(135deg,#0E4220,var(--forest-dark)); color:#fff; padding:72px 0;">
-  <div class="wrap" style="text-align:center; max-width:560px;">
-    <h2 style="font-size:clamp(1.8rem,4vw,2.4rem); font-weight:900; color:#fff; margin-bottom:14px;" data-i18n="t_cta_title">Una Swali Kuhusu Teknolojia Yetu?</h2>
-    <p style="color:rgba(255,255,255,.82); margin-bottom:28px;" data-i18n="t_cta_sub">Tupo tayari kuzungumza na watafiti, washirika wa teknolojia, na watengenezaji wa mfumo kuhusu mfumo wetu wa AI.</p>
-    <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
-      <a href="/contact" class="btn btn-gold btn-lg" data-i18n="t_cta_contact">Wasiliana Nasi →</a>
-      <a href="/pitch-deck" class="btn btn-ghost btn-lg" data-i18n="t_cta_pitch">📊 Pitch Deck</a>
+<section class="final-cta">
+  <div class="wrap">
+    <h2 data-i18n="t_cta_title">Una Swali Kuhusu Teknolojia Yetu?</h2>
+    <p data-i18n="t_cta_sub">Tupo tayari kuzungumza na watafiti, washirika wa teknolojia, na watengenezaji wa mfumo kuhusu mfumo wetu wa AI.</p>
+    <div class="btn-row">
+      <a href="/contact" class="btn btn-primary btn-lg" data-i18n="t_cta_contact">Wasiliana Nasi →</a>
+      <a href="/pitch-deck" class="btn btn-outline btn-lg" data-i18n="t_cta_pitch">📊 Pitch Deck</a>
     </div>
   </div>
 </section>

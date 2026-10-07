@@ -7,62 +7,98 @@
 
 @section('head_extra')
 <style>
-  .sol-hero-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
-  @media(max-width:780px){ .sol-hero-grid{ grid-template-columns:1fr; } }
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php.
+     This block only lays out the solutions page's own sections. */
+  .ico { width:1.15em; height:1.15em; flex:none; stroke-width:2; }
+  .sol-hero-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; }
+  .sol-hero-grid > * { min-width:0; }
+  .hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:28px; }
+  .hero-chips { display:flex; flex-wrap:wrap; gap:10px; padding:24px; background:var(--surface-soft); border:1px solid var(--border-light); border-radius:var(--radius-xl); }
+  .hero-chips .tag { background:#fff; padding:8px 14px; font-size:14px; }
 
+  /* One row per solution: copy on one side, a soft illustration panel on the other */
   .solution-row {
-    display:grid; grid-template-columns:0.42fr 0.58fr; gap:56px; align-items:start;
+    display:grid; grid-template-columns:0.5fr 0.5fr; gap:56px; align-items:center;
     padding:64px 0; border-bottom:1px solid var(--border-light);
   }
-  .solution-row.reverse { grid-template-columns:0.58fr 0.42fr; }
+  .solution-row > * { min-width:0; }
   .solution-row.reverse .sol-info { order:2; }
   .solution-row.reverse .sol-visual { order:1; }
-  @media(max-width:860px){ .solution-row,.solution-row.reverse { grid-template-columns:1fr; } .solution-row.reverse .sol-info,.solution-row.reverse .sol-visual { order:unset; } }
-
-  .sol-number { font-family:inherit; font-size:5rem; font-weight:900; color:var(--leaf-pale); line-height:1; margin-bottom:8px; }
-  .sol-info h2 { font-size:clamp(1.6rem,3vw,2.2rem); font-weight:900; color:var(--ink-dark); margin-bottom:14px; }
-  .sol-info p  { color:var(--ink-muted); line-height:1.75; margin-bottom:20px; }
-  .sol-tags    { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
-  .sol-cap-list { list-style:none; display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
-  .sol-cap-list li { display:flex; align-items:center; gap:10px; font-size:.9rem; color:var(--ink-body); font-weight:600; }
-  .sol-cap-list li::before { content:'✓'; color:var(--leaf-green); font-weight:900; flex-shrink:0; }
+  .sol-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .sol-head .card-icon { margin-bottom:0; }
+  .sol-number { display:inline-flex; align-items:center; min-height:28px; padding:0 10px; border-radius:999px; background:var(--leaf-pale); color:var(--forest-dark); font-size:13px; font-weight:700; letter-spacing:.06em; }
+  .sol-info h2 { font-size:clamp(24px,3vw,32px); font-weight:800; color:var(--ink-dark); margin-bottom:12px; letter-spacing:-.02em; }
+  .sol-info > p { color:var(--ink-muted); font-size:16px; line-height:1.7; margin-bottom:20px; }
+  .sol-tags { display:flex; flex-wrap:wrap; gap:8px; }
+  .sol-cap-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:24px; }
+  .sol-cap-list li { display:flex; align-items:flex-start; gap:10px; font-size:15px; color:var(--ink-body); font-weight:500; line-height:1.5; }
+  .sol-cap-list li::before {
+    content:''; flex-shrink:0; width:18px; height:18px; margin-top:2px; border-radius:50%;
+    background:var(--leaf-pale) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B7A3E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat;
+  }
 
   .sol-visual {
-    background:linear-gradient(145deg, var(--leaf-pale), #E1F0D8); border-radius:var(--radius-2xl);
-    padding:40px; min-height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    border:1px solid var(--border-mid); text-align:center; position:relative; overflow:hidden;
+    background:var(--surface-soft); border:1px solid var(--border-light); border-radius:var(--radius-xl);
+    padding:40px; min-height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
   }
-  .sol-visual .sol-icon { font-size:4.5rem; margin-bottom:16px; }
-  .sol-visual h4 { font-size:1.1rem; font-weight:800; color:var(--forest-dark); }
-  .sol-visual p  { font-size:.85rem; color:var(--ink-muted); margin-top:6px; max-width:200px; }
+  .sol-icon { width:72px; height:72px; border-radius:20px; background:#fff; border:1px solid var(--border-light); color:var(--forest-mid); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .sol-icon .ico { width:32px; height:32px; }
+  .sol-visual h4 { font-size:18px; font-weight:700; color:var(--ink-dark); }
+  .sol-visual p { font-size:15px; color:var(--ink-muted); margin-top:6px; max-width:260px; line-height:1.5; }
+  .sol-mock { margin-top:20px; background:#fff; border:1px solid var(--border-light); border-radius:12px; padding:14px 16px; width:100%; max-width:340px; text-align:left; }
+  .sol-mock-label { font-size:13px; font-weight:700; letter-spacing:.04em; color:var(--forest-mid); margin-bottom:6px; }
+  .sol-mock-title { font-size:15px; color:var(--ink-dark); font-weight:700; }
+  .sol-mock-meta { font-size:13px; color:var(--ink-muted); margin-top:3px; }
+  .chat-mock { width:100%; max-width:340px; margin-top:16px; display:flex; flex-direction:column; gap:8px; }
+  .chat-bubble { border-radius:14px 14px 14px 4px; padding:10px 14px; font-size:14px; line-height:1.5; text-align:left; max-width:88%; }
+  .chat-bubble.user { background:#fff; border:1px solid var(--border-light); color:var(--ink-dark); }
+  .chat-bubble.bot { background:var(--forest-mid); color:#fff; border-radius:14px 14px 4px 14px; align-self:flex-end; }
 
-  /* Architecture flow */
-  .arch-flow { display:flex; align-items:center; gap:0; flex-wrap:wrap; justify-content:center; margin:32px 0; }
-  .arch-node { padding:12px 20px; background:var(--surface-card); border:1px solid var(--border-mid); border-radius:12px; font-size:.85rem; font-weight:700; color:var(--ink-dark); text-align:center; }
-  .arch-node.primary { background:var(--forest-dark); color:#fff; }
-  .arch-node.accent  { background:var(--leaf-pale); color:var(--forest-mid); border-color:var(--border-mid); }
-  .arch-arrow { font-size:1.4rem; color:var(--leaf-green); padding:0 8px; }
+  /* Closing call to action */
+  .final-cta { padding:80px 0; text-align:center; background:#fff; border-top:1px solid var(--border-light); }
+  .final-cta .wrap { max-width:640px; }
+  .final-cta h2 { font-size:clamp(26px,3.6vw,38px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
+  .final-cta p { margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
+  .cta-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+
+  @media(max-width:860px){
+    .solution-row { grid-template-columns:1fr; gap:24px; }
+    .solution-row.reverse .sol-info, .solution-row.reverse .sol-visual { order:unset; }
+    .sol-hero-grid { grid-template-columns:1fr; gap:28px; }
+  }
+  @media(max-width:700px){
+    .hero-actions { margin-top:20px; }
+    .hero-chips { padding:16px; gap:8px; }
+    .sol-info > p { font-size:15px; margin-bottom:16px; }
+    .sol-cap-list { margin-bottom:18px; }
+    .sol-visual { padding:24px 18px; min-height:0; }
+    .sol-icon { width:56px; height:56px; border-radius:16px; margin-bottom:12px; }
+    .sol-icon .ico { width:26px; height:26px; }
+    .final-cta { padding:48px 0; }
+    .final-cta p { font-size:16px; }
+  }
 </style>
 @endsection
 
 @section('content')
 
 {{-- Hero --}}
-<section class="page-hero" style="padding-bottom:60px;">
+<section class="page-hero">
   <div class="wrap">
     <div class="sol-hero-grid fade-up">
       <div>
         <span class="eyebrow" data-i18n="sol_eyebrow">MOJA. TISA. KARIBU.</span>
         <h1 class="page-title" data-i18n="sol_title">Jukwaa Moja. Suluhisho Nyingi za Kilimo.</h1>
         <p class="section-lead" data-i18n="sol_sub">Kuanzia utambuzi wa magonjwa hadi masoko, fedha, maarifa, na ufikio wa nje ya mtandao.</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:28px;">
+        <div class="hero-actions">
           <a href="/contact" class="btn btn-primary btn-lg" data-i18n="sol_partner_btn">Shirikiana Nasi</a>
           <a href="/technology" class="btn btn-outline btn-lg" data-i18n="sol_tech_btn">Teknolojia Yetu →</a>
         </div>
       </div>
-      <div style="display:flex; flex-wrap:wrap; gap:12px; padding:20px; background:var(--surface-card); border-radius:var(--radius-2xl); border:1px solid var(--border-light);">
+      <div class="hero-chips">
         @foreach(['📷 Plant Scanner','🤖 Mkulima AI','🛒 Soko','🛡️ Kagua','⛅ Hali ya Hewa','📱 Offline AI','👥 Jamii','📈 Masoko'] as $chip)
-        <span class="tag" style="font-size:.85rem; padding:8px 14px;">{{ $chip }}</span>
+        <span class="tag">{{ $chip }}</span>
         @endforeach
       </div>
     </div>
@@ -77,8 +113,10 @@
   {{-- Solution 01: AI Plant Scanner --}}
   <div class="solution-row" id="plant-scanner">
     <div class="sol-info fade-up">
-      <div class="sol-number">01</div>
-      <div class="card-icon">📷</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="scan" size="24" /></div>
+        <span class="sol-number">01</span>
+      </div>
       <h2 data-i18n="s1_title">AI Plant Scanner</h2>
       <p data-i18n="s1_desc">Wakulima wanapiga picha ya mazao yaliyoathirika na kupata utambuzi wa ugonjwa au wadudu kwa msaada wa AI, pamoja na mapendekezo ya matibabu yanayoweza kutumika.</p>
       <ul class="sol-cap-list">
@@ -94,13 +132,13 @@
       </div>
     </div>
     <div class="sol-visual fade-up">
-      <div class="sol-icon">📷</div>
+      <div class="sol-icon"><x-icon name="scan" /></div>
       <h4 data-i18n="s1_visual_title">Mkulima AI Vision</h4>
       <p data-i18n="s1_visual_sub">Inachambua picha ya mmea kwa muda wa sekunde 1–3</p>
-      <div style="margin-top:20px; background:rgba(255,255,255,.8); border-radius:12px; padding:14px; width:100%; border:1px solid var(--border-light);">
-        <div style="font-size:.72rem; font-weight:700; color:var(--forest-mid); margin-bottom:6px;">⚡ MATOKEO YA AI</div>
-        <div style="font-size:.82rem; color:var(--ink-dark); font-weight:700;">Kutu ya Majani — Leaf Rust</div>
-        <div style="font-size:.75rem; color:var(--ink-muted); margin-top:3px;">Uhakika: 94.7% • TFRA Tiba: Fungicide Z4</div>
+      <div class="sol-mock">
+        <div class="sol-mock-label">⚡ MATOKEO YA AI</div>
+        <div class="sol-mock-title">Kutu ya Majani — Leaf Rust</div>
+        <div class="sol-mock-meta">Uhakika: 94.7% • TFRA Tiba: Fungicide Z4</div>
       </div>
     </div>
   </div>
@@ -108,8 +146,10 @@
   {{-- Solution 02: Mkulima AI --}}
   <div class="solution-row reverse" id="mkulima-bot">
     <div class="sol-info fade-up">
-      <div class="sol-number">02</div>
-      <div class="card-icon">🤖</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="book" size="24" /></div>
+        <span class="sol-number">02</span>
+      </div>
       <h2 data-i18n="s2_title">Mkulima AI</h2>
       <p data-i18n="s2_desc">Msaidizi wako wa kilimo wa AI 24/7 unaounga mkono Kiswahili na Kiingereza. Uliza maswali yoyote ya kilimo kupitia mazungumzo ya maandishi au sauti.</p>
       <ul class="sol-cap-list">
@@ -125,12 +165,12 @@
         <span class="tag">Virtual Agronomist</span>
       </div>
     </div>
-    <div class="sol-visual fade-up" style="background:linear-gradient(145deg,#F0F8FF,#E4F0FF);">
-      <div class="sol-icon">🤖</div>
+    <div class="sol-visual fade-up">
+      <div class="sol-icon"><x-icon name="book" /></div>
       <h4 data-i18n="s2_visual_title">Mazungumzo ya AI</h4>
-      <div style="width:100%; margin-top:16px; display:flex; flex-direction:column; gap:8px;">
-        <div style="background:var(--leaf-pale); border-radius:12px 12px 12px 4px; padding:10px 14px; font-size:.78rem; color:var(--ink-dark); text-align:left;">Jinsi ya kuzuia wadudu wa mahindi?</div>
-        <div style="background:var(--forest-dark); border-radius:12px 12px 4px 12px; padding:10px 14px; font-size:.78rem; color:#fff; text-align:left;">Tumia Thiamethoxam au Chlorpyrifos kwenye msimu wa mapema. Angalia kila wiki 1 wiki 2...</div>
+      <div class="chat-mock">
+        <div class="chat-bubble user">Jinsi ya kuzuia wadudu wa mahindi?</div>
+        <div class="chat-bubble bot">Tumia Thiamethoxam au Chlorpyrifos kwenye msimu wa mapema. Angalia kila wiki 1 wiki 2...</div>
       </div>
     </div>
   </div>
@@ -138,8 +178,10 @@
   {{-- Solution 03: Marketplace --}}
   <div class="solution-row" id="marketplace">
     <div class="sol-info fade-up">
-      <div class="sol-number">03</div>
-      <div class="card-icon">🛒</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="storefront" size="24" /></div>
+        <span class="sol-number">03</span>
+      </div>
       <h2 data-i18n="s3_title">Soko la Pembejeo na Mazao</h2>
       <p data-i18n="s3_desc">Unganisha wakulima, wauzaji wa pembejeo, wanunuzi, wakusanyaji, na wasambazaji wa pembejeo katika soko moja salama.</p>
       <ul class="sol-cap-list">
@@ -156,7 +198,7 @@
       </div>
     </div>
     <div class="sol-visual fade-up">
-      <div class="sol-icon">🛒</div>
+      <div class="sol-icon"><x-icon name="storefront" /></div>
       <h4 data-i18n="s3_visual_title">Mkulima Escrow</h4>
       <p data-i18n="s3_visual_sub">Malipo yote yanalindwa hadi bidhaa iwasilishwe</p>
     </div>
@@ -165,8 +207,10 @@
   {{-- Solution 04: Input Verification --}}
   <div class="solution-row reverse" id="input-verify">
     <div class="sol-info fade-up">
-      <div class="sol-number">04</div>
-      <div class="card-icon">🛡️</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="verified" size="24" /></div>
+        <span class="sol-number">04</span>
+      </div>
       <h2 data-i18n="s4_title">Kagua Pembejeo za Kilimo</h2>
       <p data-i18n="s4_desc">Saidia wakulima kuthibitisha bidhaa za kilimo na kupunguza mfiduo wa pembejeo feki zinazosababisha hasara kubwa za mazao.</p>
       <ul class="sol-cap-list">
@@ -182,8 +226,8 @@
         <span class="tag">Community Reports</span>
       </div>
     </div>
-    <div class="sol-visual fade-up" style="background:linear-gradient(145deg,#FFF8F0,#FFE8CC);">
-      <div class="sol-icon">🛡️</div>
+    <div class="sol-visual fade-up">
+      <div class="sol-icon"><x-icon name="verified" /></div>
       <h4 data-i18n="s4_visual_title">Ulinzi wa Pembejeo</h4>
       <p data-i18n="s4_visual_sub">Funika wakulima dhidi ya bidhaa feki</p>
     </div>
@@ -192,8 +236,10 @@
   {{-- Solution 05: Weather --}}
   <div class="solution-row" id="weather">
     <div class="sol-info fade-up">
-      <div class="sol-number">05</div>
-      <div class="card-icon">⛅</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="sun" size="24" /></div>
+        <span class="sol-number">05</span>
+      </div>
       <h2 data-i18n="s5_title">Hali ya Hewa na Ujasiriamali wa Mazao</h2>
       <p data-i18n="s5_desc">Toa hali ya hewa ya eneo maalum na ushauri wa mazao unaotumia Mkulima AI Weather pamoja na Google Search Grounding kwa data ya hewa ya wakati halisi.</p>
       <ul class="sol-cap-list">
@@ -208,8 +254,8 @@
         <span class="tag">Real-time Data</span>
       </div>
     </div>
-    <div class="sol-visual fade-up" style="background:linear-gradient(145deg,#EEF4FF,#D8E8FF);">
-      <div class="sol-icon">⛅</div>
+    <div class="sol-visual fade-up">
+      <div class="sol-icon"><x-icon name="sun" /></div>
       <h4 data-i18n="s5_visual_title">Mkulima AI Weather Grounded</h4>
       <p data-i18n="s5_visual_sub">Utabiri wa wakati halisi kwa Google Search</p>
     </div>
@@ -218,8 +264,10 @@
   {{-- Solution 06: Offline AI --}}
   <div class="solution-row reverse" id="offline">
     <div class="sol-info fade-up">
-      <div class="sol-number">06</div>
-      <div class="card-icon">📱</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="phone" size="24" /></div>
+        <span class="sol-number">06</span>
+      </div>
       <h2 data-i18n="s6_title">Akili ya Kilimo Bila Intaneti</h2>
       <p data-i18n="s6_desc">Unga mkono maeneo ya uunganisho mdogo kupitia SMS, USSD, maarifa yaliyohifadhiwa, na AI inayofanya kazi moja kwa moja kwenye simu.</p>
       <ul class="sol-cap-list">
@@ -235,13 +283,13 @@
         <span class="tag">USSD</span>
       </div>
     </div>
-    <div class="sol-visual fade-up" style="background:linear-gradient(145deg,#0F2D15,#1A4A22);">
-      <div class="sol-icon">📱</div>
-      <h4 style="color:#fff;" data-i18n="s6_visual_title">Offline-First Architecture</h4>
-      <p style="color:rgba(255,255,255,.7);" data-i18n="s6_visual_sub">Inafanya kazi hata bila intaneti kabisa</p>
-      <div style="margin-top:16px; background:rgba(255,255,255,.1); border-radius:10px; padding:12px; width:100%; border:1px solid rgba(255,255,255,.15);">
-        <div style="font-size:.72rem; color:var(--sun-amber); font-weight:700; margin-bottom:4px;">📲 SMS: 15500</div>
-        <div style="font-size:.78rem; color:#fff;">"BEI MAHINDI DODOMA"</div>
+    <div class="sol-visual fade-up">
+      <div class="sol-icon"><x-icon name="phone" /></div>
+      <h4 data-i18n="s6_visual_title">Offline-First Architecture</h4>
+      <p data-i18n="s6_visual_sub">Inafanya kazi hata bila intaneti kabisa</p>
+      <div class="sol-mock">
+        <div class="sol-mock-label">📲 SMS: 15500</div>
+        <div class="sol-mock-title">"BEI MAHINDI DODOMA"</div>
       </div>
     </div>
   </div>
@@ -249,8 +297,10 @@
   {{-- Solution 07: Community --}}
   <div class="solution-row" id="community">
     <div class="sol-info fade-up">
-      <div class="sol-number">07</div>
-      <div class="card-icon">👥</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="groups" size="24" /></div>
+        <span class="sol-number">07</span>
+      </div>
       <h2 data-i18n="s7_title">Jamii ya Wakulima</h2>
       <p data-i18n="s7_desc">Mfumo wa kushiriki maarifa unaounganisha wakulima, wataalamu wa kilimo, na vikundi vya kikanda vya kilimo.</p>
       <ul class="sol-cap-list">
@@ -265,7 +315,7 @@
       </div>
     </div>
     <div class="sol-visual fade-up">
-      <div class="sol-icon">👥</div>
+      <div class="sol-icon"><x-icon name="groups" /></div>
       <h4 data-i18n="s7_visual_title">Jamii Inayounganisha</h4>
       <p data-i18n="s7_visual_sub">Wakulima wanaosaidiana kwa maarifa</p>
     </div>
@@ -274,8 +324,10 @@
   {{-- Solution 08: Market Intelligence --}}
   <div class="solution-row reverse" style="border-bottom:none;" id="market-intel">
     <div class="sol-info fade-up">
-      <div class="sol-number">08</div>
-      <div class="card-icon">📈</div>
+      <div class="sol-head">
+        <div class="card-icon"><x-icon name="chart" size="24" /></div>
+        <span class="sol-number">08</span>
+      </div>
       <h2 data-i18n="s8_title">Ujasiriamali wa Soko</h2>
       <p data-i18n="s8_desc">Toa bei za mazao, mahitaji ya wanunuzi, mwenendo wa masoko, na mipango ya mavuno kusaidia wakulima kupata zaidi kwa mazao yao.</p>
       <ul class="sol-cap-list">
@@ -290,8 +342,8 @@
         <span class="tag">Price Trends</span>
       </div>
     </div>
-    <div class="sol-visual fade-up" style="background:linear-gradient(145deg,#FFF8E1,#FFF0B8);">
-      <div class="sol-icon">📈</div>
+    <div class="sol-visual fade-up">
+      <div class="sol-icon"><x-icon name="chart" /></div>
       <h4 data-i18n="s8_visual_title">Taarifa za Soko</h4>
       <p data-i18n="s8_visual_sub">Maamuzi bora ya kuuza mazao</p>
     </div>
@@ -300,13 +352,13 @@
 </div>{{-- /wrap --}}
 
 {{-- Platform CTA --}}
-<section style="background:linear-gradient(135deg,#0E4220,var(--forest-dark)); color:#fff; padding:80px 0; margin-top:40px;">
-  <div class="wrap" style="text-align:center; max-width:600px;">
-    <h2 style="font-size:clamp(1.8rem,4vw,2.6rem); font-weight:900; color:#fff; margin-bottom:16px;" data-i18n="sol_cta_title">Anza Kutumia Mfumo Wetu</h2>
-    <p style="color:rgba(255,255,255,.82); margin-bottom:32px;" data-i18n="sol_cta_sub">Pakua app ya MkulimaForum au wasiliana nasi kwa ushirikiano wa kibiashara au teknolojia.</p>
-    <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
-      <a href="/download" class="btn btn-gold btn-lg" data-i18n="sol_dl_btn">⬇️ Pakua App</a>
-      <a href="/contact" class="btn btn-ghost btn-lg" data-i18n="sol_contact_btn">Wasiliana Nasi →</a>
+<section class="final-cta">
+  <div class="wrap">
+    <h2 data-i18n="sol_cta_title">Anza Kutumia Mfumo Wetu</h2>
+    <p data-i18n="sol_cta_sub">Pakua app ya MkulimaForum au wasiliana nasi kwa ushirikiano wa kibiashara au teknolojia.</p>
+    <div class="cta-actions">
+      <a href="/download" class="btn btn-primary btn-lg" data-i18n="sol_dl_btn">⬇️ Pakua App</a>
+      <a href="/contact" class="btn btn-outline btn-lg" data-i18n="sol_contact_btn">Wasiliana Nasi →</a>
     </div>
   </div>
 </section>
