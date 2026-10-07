@@ -77,3 +77,39 @@ jobs:
           path: mkulima_app/mkulima-forum-*.apk
           if-no-files-found: error
           retention-days: 30
+
+  # Installs the APK on an emulator, opens it, walks the main tabs and fails
+  # on any crash. Screenshots are uploaded as an artifact and also printed to
+  # the log as small base64 PNGs between MKSHOT markers, so they can be read
+  # from the log alone.
+  smoke:
+    needs: apk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: mkulima-forum-apk
+          path: apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Install Pillow for log screenshots
+        run: python3 -m pip install --quiet pillow
+      - name: Run on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          script: bash .github/scripts/apk-smoke.sh apk/*.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: apk-smoke-screens
+          path: smoke/
+          retention-days: 14
