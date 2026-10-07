@@ -7,21 +7,22 @@ part of 'farm.dart';
 // **************************************************************************
 
 _$FarmImpl _$$FarmImplFromJson(Map<String, dynamic> json) => _$FarmImpl(
-      uuid: json['uuid'] as String,
-      name: json['name'] as String,
-      location: json['location'] as String,
-      sizeAcres: (json['size_acres'] as num).toDouble(),
-      cropType: json['crop_type'] as String,
-      soilType: json['soil_type'] as String?,
-      plantingDate: json['planting_date'] as String?,
-      harvestExpectedDate: json['harvest_expected_date'] as String?,
-      status: json['status'] as String? ?? 'active',
-      notes: json['notes'] as String?,
-      activities: (json['activities'] as List<dynamic>?)
-              ?.map((e) => FarmActivity.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-    );
+  uuid: json['uuid'] as String,
+  name: json['name'] as String,
+  location: json['location'] as String,
+  sizeAcres: (json['size_acres'] as num).toDouble(),
+  cropType: json['crop_type'] as String,
+  soilType: json['soil_type'] as String?,
+  plantingDate: json['planting_date'] as String?,
+  harvestExpectedDate: json['harvest_expected_date'] as String?,
+  status: json['status'] as String? ?? 'active',
+  notes: json['notes'] as String?,
+  activities:
+      (json['activities'] as List<dynamic>?)
+          ?.map((e) => FarmActivity.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+);
 
 Map<String, dynamic> _$$FarmImplToJson(_$FarmImpl instance) =>
     <String, dynamic>{

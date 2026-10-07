@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 
@@ -67,8 +68,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hali ya Hewa'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.location_on_outlined),
@@ -84,7 +83,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : RefreshIndicator(
               onRefresh: _loadWeather,
               child: SingleChildScrollView(
@@ -100,20 +99,26 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           if (_isStale)
                             Container(
                               width: double.infinity,
-                              color: Colors.amber[100],
+                              color: MkColors.accentSoft,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.history,
-                                      size: 16, color: Colors.amber[900]),
+                                  Icon(
+                                    Icons.history,
+                                    size: 16,
+                                    color: MkColors.onAccentSoft,
+                                  ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       'Taarifa za awali — mtandao haupatikani kwa sasa.',
                                       style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.amber[900]),
+                                        fontSize: 13,
+                                        color: MkColors.onAccentSoft,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -125,11 +130,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             margin: const EdgeInsets.all(16),
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF42A5F5), Color(0xFF1976D2)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
+                              color: MkColors.surface,
+                              border: Border.all(color: MkColors.border),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Column(
@@ -137,7 +139,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 Text(
                                   _report?['location']?.toString() ?? _location,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: MkColors.ink,
                                     fontSize: 20,
                                   ),
                                 ),
@@ -146,14 +148,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     _conditionIcon(
-                                        _current?['description']?.toString(),
-                                        size: 64,
-                                        color: Colors.white),
+                                      _current?['description']?.toString(),
+                                      size: 64,
+                                      color: MkColors.warning,
+                                    ),
                                     const SizedBox(width: 16),
                                     Text(
                                       '${_current?['temperature'] ?? '--'}°C',
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: MkColors.ink,
                                         fontSize: 48,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -164,7 +167,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 Text(
                                   _current?['description']?.toString() ?? '',
                                   style: const TextStyle(
-                                    color: Colors.white70,
+                                    color: MkColors.muted,
                                     fontSize: 16,
                                   ),
                                 ),
@@ -217,22 +220,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               padding: EdgeInsets.all(16),
                               child: Text(
                                 'Tabiri haipatikani kwa sasa.',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(color: MkColors.muted),
                               ),
                             )
                           else
                             ...(_report!['forecast'] as List).map(
                               (day) => Card(
                                 margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 4),
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
                                 child: ListTile(
                                   leading: _conditionIcon(
-                                      day['description']?.toString()),
-                                  title: Text(day['day_name']?.toString() ??
-                                      day['date']?.toString() ??
-                                      ''),
-                                  subtitle:
-                                      Text(day['description']?.toString() ?? ''),
+                                    day['description']?.toString(),
+                                  ),
+                                  title: Text(
+                                    day['day_name']?.toString() ??
+                                        day['date']?.toString() ??
+                                        '',
+                                  ),
+                                  subtitle: Text(
+                                    day['description']?.toString() ?? '',
+                                  ),
                                   trailing: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -240,11 +249,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                       Text(
                                         '${_round(day['temp_max'])}° / ${_round(day['temp_min'])}°',
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                       Text(
                                         'Mvua: ${_round(day['rain_chance'])}%',
-                                        style: const TextStyle(fontSize: 12),
+                                        style: const TextStyle(fontSize: 13),
                                       ),
                                     ],
                                   ),
@@ -271,16 +281,22 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           ...((_report?['advisory'] as List?) ?? []).map(
                             (advice) => Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 4),
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
                               child: Card(
-                                color: Colors.green[50],
+                                color: MkColors.leafPale,
                                 child: ListTile(
-                                  leading: const Icon(Icons.eco,
-                                      color: MkColors.primary),
+                                  leading: const Icon(
+                                    Icons.eco,
+                                    color: MkColors.primary,
+                                  ),
                                   title: Text(
-                                      advice['title']?.toString() ?? ''),
+                                    advice['title']?.toString() ?? '',
+                                  ),
                                   subtitle: Text(
-                                      advice['message']?.toString() ?? ''),
+                                    advice['message']?.toString() ?? '',
+                                  ),
                                 ),
                               ),
                             ),
@@ -299,24 +315,23 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return n == null ? value.toString() : n.round().toString();
   }
 
-  Widget _conditionIcon(String? description,
-      {double size = 32, Color? color}) {
+  Widget _conditionIcon(String? description, {double size = 32, Color? color}) {
     final desc = (description ?? '').toLowerCase();
     IconData icon;
     Color defaultColor;
 
     if (desc.contains('rain') || desc.contains('drizzle')) {
       icon = Icons.water_drop;
-      defaultColor = Colors.blue;
+      defaultColor = MkColors.primary;
     } else if (desc.contains('thunder') || desc.contains('storm')) {
       icon = Icons.flash_on;
-      defaultColor = Colors.purple;
+      defaultColor = MkColors.primary;
     } else if (desc.contains('cloud')) {
       icon = Icons.cloud;
-      defaultColor = Colors.grey;
+      defaultColor = MkColors.muted;
     } else {
       icon = Icons.wb_sunny;
-      defaultColor = Colors.orange;
+      defaultColor = MkColors.warning;
     }
 
     return Icon(icon, color: color ?? defaultColor, size: size);
@@ -341,7 +356,7 @@ class _UnavailableState extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 80),
-          const Icon(Icons.cloud_off, size: 72, color: Colors.grey),
+          const Icon(Icons.cloud_off, size: 72, color: MkColors.muted),
           const SizedBox(height: 16),
           Text(
             message ??
@@ -380,12 +395,19 @@ class _WeatherDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white70, size: 24),
+        Icon(icon, color: MkColors.muted, size: 24),
         const SizedBox(height: 4),
-        Text(value,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold)),
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+        Text(
+          value,
+          style: const TextStyle(
+            color: MkColors.ink,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: MkColors.muted, fontSize: 13),
+        ),
       ],
     );
   }

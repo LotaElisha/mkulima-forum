@@ -7,42 +7,67 @@
 
 @section('head_extra')
 <style>
-  .impact-area-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-  @media(max-width:960px){ .impact-area-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:560px)  { .impact-area-grid{ grid-template-columns:1fr; } }
-  .impact-card {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-xl);
-    padding:32px; transition:all .25s ease; border-top:4px solid transparent;
-  }
-  .impact-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
-  .impact-card.color-0 { border-top-color: var(--leaf-green); }
-  .impact-card.color-1 { border-top-color: var(--sun-gold); }
-  .impact-card.color-2 { border-top-color: #4A90D9; }
-  .impact-card.color-3 { border-top-color: #E07B39; }
-  .impact-card.color-4 { border-top-color: #9B59B6; }
-  .impact-card.color-5 { border-top-color: #27AE60; }
-  .metric-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0; }
-  @media(max-width:960px){ .metric-grid{ grid-template-columns:repeat(3,1fr); } }
-  @media(max-width:560px) { .metric-grid{ grid-template-columns:1fr 1fr; } }
-  .metric-cell {
-    padding:32px 20px; text-align:center; border-right:1px solid var(--border-light);
-    border-bottom:1px solid var(--border-light);
-  }
-  .metric-cell:nth-child(5n){ border-right:none; }
-  .metric-num { font-family:inherit; font-size:2.2rem; font-weight:900; color:var(--forest-dark); }
-  .metric-label { font-size:.78rem; font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
-  .metric-note { font-size:.68rem; color:var(--ink-faint); margin-top:4px; font-style:italic; }
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php.
+     This block only lays out the impact page's own sections. */
+  .ico { width:1.15em; height:1.15em; flex:none; stroke-width:2; }
+  .hero-inner { max-width:720px; }
+  .center-head { text-align:center; margin-bottom:40px; }
+  .center-head .section-lead { margin:0 auto; }
 
-  .region-map {
-    background:linear-gradient(145deg, #EFF7E9, #D6EEC8); border-radius:var(--radius-2xl);
-    padding:48px; text-align:center; border:1px solid var(--border-mid);
+  /* Impact areas */
+  .impact-area-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .impact-card { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:28px; }
+  .impact-card h3 { font-size:18px; font-weight:700; color:var(--ink-dark); margin-bottom:8px; }
+  .impact-card p { font-size:15px; color:var(--ink-muted); line-height:1.6; }
+
+  /* Metrics */
+  .metrics-band { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); }
+  .metric-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+  .metric-cell { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:24px 16px; text-align:center; display:flex; flex-direction:column; align-items:center; }
+  .metric-cell .card-icon { margin-bottom:12px; }
+  .metric-num { font-size:32px; font-weight:800; color:var(--forest-dark); line-height:1.2; }
+  .metric-label { font-size:13px; font-weight:700; color:var(--ink-body); text-transform:uppercase; letter-spacing:.06em; margin-top:6px; line-height:1.4; }
+  .metric-note { font-size:13px; color:var(--ink-muted); margin-top:6px; line-height:1.4; }
+  .metrics-foot { text-align:center; font-size:14px; color:var(--ink-muted); margin-top:20px; }
+
+  /* Regions */
+  .region-map { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:48px; text-align:center; }
+  .region-map > p { color:var(--ink-muted); max-width:36rem; margin:0 auto 8px; font-size:16px; }
+  .region-chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:24px; }
+  .region-chip { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; background:var(--surface-soft); border:1px solid var(--border-light); border-radius:999px; font-size:14px; font-weight:600; color:var(--ink-body); }
+  .region-chip::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--forest-mid); flex-shrink:0; }
+  .region-map .map-note { margin-top:20px; font-size:14px; color:var(--ink-muted); }
+
+  /* Methodology */
+  .method-band { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); }
+  .method-band .wrap { max-width:760px; text-align:center; }
+  .method-band .section-lead { margin:0 auto 24px; }
+
+  /* Closing call to action */
+  .final-cta { padding:80px 0; text-align:center; background:#fff; }
+  .final-cta .wrap { max-width:640px; }
+  .final-cta h2 { font-size:clamp(26px,3.6vw,38px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
+  .final-cta p { margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
+  .cta-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+
+  @media(max-width:960px){
+    .impact-area-grid { grid-template-columns:repeat(2,1fr); }
+    .metric-grid { grid-template-columns:repeat(3,1fr); }
   }
-  .region-chips { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:20px; }
-  .region-chip {
-    padding:8px 16px; background:var(--surface-card); border:1px solid var(--border-light); border-radius:999px;
-    font-size:.85rem; font-weight:600; color:var(--ink-body); display:flex; align-items:center; gap:6px;
+  @media(max-width:700px){
+    .center-head { margin-bottom:24px; }
+    .impact-area-grid { grid-template-columns:1fr; gap:10px; }
+    .impact-card { padding:18px; }
+    .metric-grid { grid-template-columns:1fr 1fr; gap:10px; }
+    .metric-cell { padding:16px 10px; }
+    .metric-cell:last-child { grid-column:1 / -1; }
+    .metric-num { font-size:26px; }
+    .region-map { padding:24px 16px; }
+    .region-map > p { font-size:15px; }
+    .final-cta { padding:48px 0; }
+    .final-cta p { font-size:16px; }
+    .cta-actions .btn { white-space:normal; }
   }
-  .region-chip.active { background:var(--forest-dark); color:#fff; border-color:var(--forest-dark); }
 </style>
 @endsection
 
@@ -50,29 +75,29 @@
 
 {{-- Hero --}}
 <section class="page-hero">
-  <div class="wrap fade-up" style="max-width:680px;">
+  <div class="wrap fade-up"><div class="hero-inner">
     <span class="eyebrow" data-i18n="impact_eyebrow">ATHARI YETU</span>
     <h1 class="page-title" data-i18n="impact_title">Teknolojia Inayounda Mabadiliko ya Kweli ya Kilimo</h1>
     <p class="section-lead" data-i18n="impact_sub">MkulimaForum iliundwa kuunda athari ya moja kwa moja ya kuonekana kwa maisha ya wakulima wadogo wadogo Tanzania na Afrika Mashariki.</p>
-  </div>
+  </div></div>
 </section>
 
 {{-- Impact Areas --}}
 <section>
   <div class="wrap">
     <span class="eyebrow" data-i18n="ia_eyebrow">MAENEO YA ATHARI</span>
-    <h2 class="section-title" style="margin-bottom:40px;" data-i18n="ia_title">Tunaathiri Sehemu Sita Muhimu</h2>
+    <h2 class="section-title" style="margin-bottom:32px;" data-i18n="ia_title">Tunaathiri Sehemu Sita Muhimu</h2>
     <div class="impact-area-grid">
       @foreach([
-        ['📚','Upatikanaji wa Maarifa','Knowledge Access','Kuwasaidia wakulima kupata taarifa za kilimo zilizothibitishwa wakati wanapoihitaji zaidi.','Helping farmers access verified agronomic information when they need it most.','ia0'],
-        ['🛡️','Ulinzi wa Mazao','Crop Protection','Kutambua matatizo ya mazao mapema ili kupunguza hasara za mazao na gharama za kutibu.','Earlier identification of crop problems to reduce losses and treatment costs.','ia1'],
-        ['📊','Uwazi wa Masoko','Market Transparency','Kuboresha ufikiaji wa bei za masoko na wanunuzi ili wakulima wapate thamani nzuri.','Improved access to prices and buyers so farmers receive fair market value.','ia2'],
-        ['✅','Uaminifu wa Pembejeo','Input Trust','Kupunguza hatari ya pembejeo feki zinazosababisha kupoteza fedha na mazao.','Reducing the risk from counterfeit or unverified inputs causing financial loss.','ia3'],
-        ['📱','Ushirikishaji wa Kidijitali','Digital Inclusion','Kusaidia wakulima walio katika maeneo yenye mtandao mdogo kupata huduma za kilimo.','Supporting farmers with weak internet connections to access agricultural services.','ia4'],
-        ['💰','Mapato ya Mkulima','Farmer Income','Kuwasaidia wakulima kufanya maamuzi bora ya uzalishaji na kuuza ili kupata zaidi.','Helping farmers make better production and selling decisions to earn more.','ia5'],
+        ['book','Upatikanaji wa Maarifa','Knowledge Access','Kuwasaidia wakulima kupata taarifa za kilimo zilizothibitishwa wakati wanapoihitaji zaidi.','Helping farmers access verified agronomic information when they need it most.','ia0'],
+        ['shield','Ulinzi wa Mazao','Crop Protection','Kutambua matatizo ya mazao mapema ili kupunguza hasara za mazao na gharama za kutibu.','Earlier identification of crop problems to reduce losses and treatment costs.','ia1'],
+        ['search','Uwazi wa Masoko','Market Transparency','Kuboresha ufikiaji wa bei za masoko na wanunuzi ili wakulima wapate thamani nzuri.','Improved access to prices and buyers so farmers receive fair market value.','ia2'],
+        ['verified','Uaminifu wa Pembejeo','Input Trust','Kupunguza hatari ya pembejeo feki zinazosababisha kupoteza fedha na mazao.','Reducing the risk from counterfeit or unverified inputs causing financial loss.','ia3'],
+        ['phone','Ushirikishaji wa Kidijitali','Digital Inclusion','Kusaidia wakulima walio katika maeneo yenye mtandao mdogo kupata huduma za kilimo.','Supporting farmers with weak internet connections to access agricultural services.','ia4'],
+        ['chart','Mapato ya Mkulima','Farmer Income','Kuwasaidia wakulima kufanya maamuzi bora ya uzalishaji na kuuza ili kupata zaidi.','Helping farmers make better production and selling decisions to earn more.','ia5'],
       ] as $i => $area)
-      <div class="impact-card color-{{ $i }} fade-up">
-        <div class="card-icon">{{ $area[0] }}</div>
+      <div class="impact-card fade-up">
+        <div class="card-icon"><x-icon :name="$area[0]" size="24" /></div>
         <h3 data-i18n="{{ $area[5] }}_title">{{ $area[1] }}</h3>
         <p data-i18n="{{ $area[5] }}_desc">{{ $area[3] }}</p>
       </div>
@@ -82,28 +107,28 @@
 </section>
 
 {{-- Impact Metrics --}}
-<section style="background:var(--surface-card); border-top:1px solid var(--border-light); padding:80px 0;">
+<section class="metrics-band">
   <div class="wrap">
-    <div style="text-align:center; margin-bottom:48px;">
+    <div class="center-head">
       <span class="eyebrow" data-i18n="metrics_eyebrow">VIPIMO VYA ATHARI</span>
       <h2 class="section-title" data-i18n="metrics_title">Tunafuatilia Kutoka Uzinduzi</h2>
-      <p class="section-lead" style="margin:0 auto; text-align:center;" data-i18n="metrics_sub">Takwimu zifuatazo zitatokana na data halisi ya mfumo. Zinaanza kuhesabu tangu uzinduzi.</p>
+      <p class="section-lead" data-i18n="metrics_sub">Takwimu zifuatazo zitatokana na data halisi ya mfumo. Zinaanza kuhesabu tangu uzinduzi.</p>
     </div>
-    <div style="border:1px solid var(--border-light); border-radius:var(--radius-xl); overflow:hidden;">
+    <div>
       <div class="metric-grid">
         @php
           $impactMetrics = [
-            ['key'=>'metric_farmers','sw'=>'Wakulima Waliojisajili','en'=>'Farmers Registered','icon'=>'👨‍🌾'],
-            ['key'=>'metric_scans','sw'=>'Plant Scans Zilizofanywa','en'=>'Plant Scans Completed','icon'=>'📷'],
-            ['key'=>'metric_queries','sw'=>'Maswali ya AI Yalijibiwa','en'=>'AI Queries Answered','icon'=>'🤖'],
-            ['key'=>'metric_regions','sw'=>'Mikoa Iliyofikiwa','en'=>'Regions Reached','icon'=>'🗺️'],
-            ['key'=>'metric_markets','sw'=>'Miamala ya Soko','en'=>'Marketplace Transactions','icon'=>'🛒'],
+            ['key'=>'metric_farmers','sw'=>'Wakulima Waliojisajili','en'=>'Farmers Registered','icon'=>'groups'],
+            ['key'=>'metric_scans','sw'=>'Plant Scans Zilizofanywa','en'=>'Plant Scans Completed','icon'=>'scan'],
+            ['key'=>'metric_queries','sw'=>'Maswali ya AI Yalijibiwa','en'=>'AI Queries Answered','icon'=>'book'],
+            ['key'=>'metric_regions','sw'=>'Mikoa Iliyofikiwa','en'=>'Regions Reached','icon'=>'globe'],
+            ['key'=>'metric_markets','sw'=>'Miamala ya Soko','en'=>'Marketplace Transactions','icon'=>'storefront'],
           ];
         @endphp
         @foreach($impactMetrics as $m)
           @php $val = $settings[$m['key']] ?? null; @endphp
           <div class="metric-cell fade-up">
-            <div style="font-size:2rem; margin-bottom:8px;">{{ $m['icon'] }}</div>
+            <div class="card-icon"><x-icon :name="$m['icon']" size="24" /></div>
             <div class="metric-num">{{ $val ?? '—' }}</div>
             <div class="metric-label" data-i18n="im_{{ $m['key'] }}">{{ $m['sw'] }}</div>
             @if(!$val)
@@ -113,7 +138,7 @@
         @endforeach
       </div>
     </div>
-    <p style="text-align:center; font-size:.82rem; color:var(--ink-faint); margin-top:16px;" data-i18n="metrics_note">
+    <p class="metrics-foot" data-i18n="metrics_note">
       Vipimo hivi vinaonekana wakati wa uzinduzi rasmi wa mfumo na kusasishwa moja kwa moja.
     </p>
   </div>
@@ -125,24 +150,24 @@
     <div class="region-map fade-up">
       <span class="eyebrow">MIKOA YA TANZANIA</span>
       <h2 class="section-title" data-i18n="map_title">Maeneo ya Athari ya MkulimaForum</h2>
-      <p style="color:var(--ink-muted); max-width:36rem; margin:0 auto 8px; font-size:.92rem;" data-i18n="map_sub">Tunaendelea kupanua mfumo wetu Tanzania kote. Mikoa hii itatimia data ya kweli kutoka uzinduzi.</p>
+      <p data-i18n="map_sub">Tunaendelea kupanua mfumo wetu Tanzania kote. Mikoa hii itatimia data ya kweli kutoka uzinduzi.</p>
 
       <div class="region-chips">
         @foreach(['Dodoma','Arusha','Dar es Salaam','Morogoro','Mbeya','Iringa','Kilimanjaro','Manyara','Tanga','Mwanza','Mara','Tabora','Shinyanga','Singida','Rukwa','Ruvuma','Lindi','Mtwara','Kagera','Kigoma'] as $region)
-        <div class="region-chip">📍 {{ $region }}</div>
+        <div class="region-chip">{{ $region }}</div>
         @endforeach
       </div>
-      <p style="margin-top:20px; font-size:.78rem; color:var(--ink-faint);" data-i18n="map_note">Ramani kamili ya athari itapatikana baada ya uzinduzi rasmi.</p>
+      <p class="map-note" data-i18n="map_note">Ramani kamili ya athari itapatikana baada ya uzinduzi rasmi.</p>
     </div>
   </div>
 </section>
 
 {{-- Methodology --}}
-<section style="background:var(--leaf-pale); padding:72px 0;">
-  <div class="wrap" style="max-width:760px; text-align:center;">
+<section class="method-band">
+  <div class="wrap">
     <span class="eyebrow" data-i18n="method_eyebrow">MBINU YETU</span>
     <h2 class="section-title" data-i18n="method_title">Tunakusudia Kupima Athari Kwa Uwazi</h2>
-    <p class="section-lead" style="text-align:center; margin:0 auto 24px;" data-i18n="method_desc">
+    <p class="section-lead" data-i18n="method_desc">
       MkulimaForum inaamini katika uwazi wa data. Vipimo vyetu vya athari vitatokana na data halisi ya mfumo — si makadirio au takwimu zilizobuniwa. Tunaendelea kushirikiana na washirika wa utafiti kufuatilia athari ya muda mrefu kwa wakulima.
     </p>
     <a href="/contact" class="btn btn-primary" data-i18n="method_cta">Shirikiana na Utafiti Wetu →</a>
@@ -150,13 +175,13 @@
 </section>
 
 {{-- Investor CTA --}}
-<section style="background:linear-gradient(135deg,#0E4220,var(--forest-dark)); color:#fff; padding:80px 0;">
-  <div class="wrap" style="text-align:center; max-width:600px;">
-    <h2 style="font-size:clamp(1.8rem,4vw,2.6rem); font-weight:900; color:#fff; margin-bottom:14px;" data-i18n="inv_title">Wekezaji: Unatafuta Athari ya Kweli?</h2>
-    <p style="color:rgba(255,255,255,.82); margin-bottom:28px;" data-i18n="inv_sub">Tazama Pitch Deck yetu yenye maelezo ya muundo wa biashara, mkakati wa ukuaji, na athari tunazotarajiwa kwa wakulima wa Afrika Mashariki.</p>
-    <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
-      <a href="/pitch-deck" class="btn btn-gold btn-lg" data-i18n="inv_pitch_btn">📊 Tazama Pitch Deck</a>
-      <a href="/contact" class="btn btn-ghost btn-lg" data-i18n="inv_contact_btn">Wasiliana Nasi →</a>
+<section class="final-cta">
+  <div class="wrap">
+    <h2 data-i18n="inv_title">Wekezaji: Unatafuta Athari ya Kweli?</h2>
+    <p data-i18n="inv_sub">Tazama Pitch Deck yetu yenye maelezo ya muundo wa biashara, mkakati wa ukuaji, na athari tunazotarajiwa kwa wakulima wa Afrika Mashariki.</p>
+    <div class="cta-actions">
+      <a href="/pitch-deck" class="btn btn-primary btn-lg" data-i18n="inv_pitch_btn">📊 Tazama Pitch Deck</a>
+      <a href="/contact" class="btn btn-outline btn-lg" data-i18n="inv_contact_btn">Wasiliana Nasi →</a>
     </div>
   </div>
 </section>

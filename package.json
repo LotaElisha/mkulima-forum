@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build && mkdir -p dist && cp -r public/build/* dist/ && php artisan mkulima:export-landing dist/index.html",
+        "build": "vite build && node scripts/build-dist.mjs",
         "dev": "vite"
     },
     "devDependencies": {

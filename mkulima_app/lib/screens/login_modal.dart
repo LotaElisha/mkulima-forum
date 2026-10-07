@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../core/theme.dart';
+import 'register_screen.dart';
 
 class LoginModal extends StatefulWidget {
   final String? action;
   final VoidCallback? onLoginSuccess;
 
-  const LoginModal({
-    super.key,
-    this.action,
-    this.onLoginSuccess,
-  });
+  const LoginModal({super.key, this.action, this.onLoginSuccess});
 
   @override
   State<LoginModal> createState() => _LoginModalState();
@@ -28,16 +25,45 @@ class LoginModal extends StatefulWidget {
 }
 
 class _LoginModalState extends State<LoginModal> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
+  // Email is the default: phone/OTP stays dark until an SMS provider is
+  // credentialled (auth.otp_enabled), so it cannot be the only way in.
+  bool _usePhone = false;
+  bool _showPassword = false;
   bool _otpSent = false;
   bool _isLoading = false;
 
   @override
   void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loginWithEmail() async {
+    final email = _emailController.text.trim();
+    if (!email.contains('@') || _passwordController.text.isEmpty) {
+      _showError('Weka barua pepe na nenosiri sahihi');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final success = await auth.loginWithEmail(email, _passwordController.text);
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (success) {
+      widget.onLoginSuccess?.call();
+      Navigator.of(context).pop(true);
+    } else {
+      _showError(auth.error ?? 'Imeshindwa kuingia');
+    }
   }
 
   Future<void> _requestOtp() async {
@@ -51,6 +77,7 @@ class _LoginModalState extends State<LoginModal> {
 
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final success = await auth.requestOtp(phone, 'login');
+    if (!mounted) return;
 
     setState(() => _isLoading = false);
 
@@ -74,6 +101,7 @@ class _LoginModalState extends State<LoginModal> {
       code: _otpController.text.trim(),
       purpose: 'login',
     );
+    if (!mounted) return;
 
     setState(() => _isLoading = false);
 
@@ -87,14 +115,14 @@ class _LoginModalState extends State<LoginModal> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: MkColors.danger),
     );
   }
 
   void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -120,7 +148,7 @@ class _LoginModalState extends State<LoginModal> {
               width: 45,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: MkColors.border,
                 borderRadius: BorderRadius.circular(2.5),
               ),
             ),
@@ -134,7 +162,7 @@ class _LoginModalState extends State<LoginModal> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: MkColors.primary.withValues(alpha: 0.1),
+                  color: MkColors.leafPale,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -153,14 +181,14 @@ class _LoginModalState extends State<LoginModal> {
                           ? 'Ingia ili uendelee'
                           : 'Ingia kwenye akaunti',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (widget.action != null) ...[
                       const SizedBox(height: 4),
                       Text(
                         'Unatakiwa kuingia ili ${widget.action}.',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        style: TextStyle(color: MkColors.muted, fontSize: 13),
                       ),
                     ],
                   ],
@@ -169,98 +197,140 @@ class _LoginModalState extends State<LoginModal> {
             ],
           ),
           const SizedBox(height: 24),
-          const Divider(height: 1),
-          const SizedBox(height: 24),
-
-          Text(
-            'Weka namba yako ya simu ya mkononi ili upate kodi ya uthibitisho (OTP) ya kuingia.',
-            style: TextStyle(color: Colors.grey[600], fontSize: 13, height: 1.3),
-          ),
-          const SizedBox(height: 20),
-
-          // Phone input
-          TextField(
-            controller: _phoneController,
-            keyboardType: TextInputType.phone,
-            enabled: !_otpSent && !_isLoading,
-            decoration: InputDecoration(
-              labelText: 'Namba ya Simu',
-              hintText: '2557XXXXXXXX',
-              prefixIcon: const Icon(Icons.phone),
-              filled: true,
-              fillColor: Colors.grey[50],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: MkColors.primary, width: 2),
-              ),
-            ),
-          ),
-
-          // OTP input
-          if (_otpSent) ...[
-            const SizedBox(height: 16),
+          if (!_usePhone) ...[
             TextField(
-              controller: _otpController,
-              keyboardType: TextInputType.number,
-              maxLength: 6,
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.email],
               enabled: !_isLoading,
+              decoration: const InputDecoration(
+                labelText: 'Barua pepe',
+                hintText: 'jina@example.com',
+                prefixIcon: Icon(Icons.mail_outline),
+              ),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _passwordController,
+              obscureText: !_showPassword,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.password],
+              enabled: !_isLoading,
+              onSubmitted: (_) => _loginWithEmail(),
               decoration: InputDecoration(
-                labelText: 'OTP Code',
-                hintText: 'Ingiza namba 6 za siri',
-                prefixIcon: const Icon(Icons.password),
-                filled: true,
-                fillColor: Colors.grey[50],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: MkColors.primary, width: 2),
+                labelText: 'Nenosiri',
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  tooltip: _showPassword
+                      ? 'Ficha nenosiri'
+                      : 'Onyesha nenosiri',
+                  onPressed: () =>
+                      setState(() => _showPassword = !_showPassword),
+                  icon: Icon(
+                    _showPassword ? Icons.visibility_off : Icons.visibility,
+                  ),
                 ),
               ),
             ),
+          ] else ...[
+            const Text(
+              'Weka namba yako ya simu upate kodi ya uthibitisho (OTP).',
+              style: TextStyle(
+                color: MkColors.muted,
+                fontSize: 15,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              enabled: !_otpSent && !_isLoading,
+              decoration: const InputDecoration(
+                labelText: 'Namba ya simu',
+                hintText: '2557XXXXXXXX',
+                prefixIcon: Icon(Icons.phone_outlined),
+              ),
+            ),
+            if (_otpSent) ...[
+              const SizedBox(height: 14),
+              TextField(
+                controller: _otpController,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                enabled: !_isLoading,
+                decoration: const InputDecoration(
+                  labelText: 'Namba ya uthibitisho',
+                  hintText: 'Tarakimu 6',
+                  prefixIcon: Icon(Icons.password_outlined),
+                ),
+              ),
+            ],
           ],
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
-          // Action button
           SizedBox(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
+            height: 48,
+            child: FilledButton(
               onPressed: _isLoading
                   ? null
-                  : (_otpSent ? _verifyOtp : _requestOtp),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MkColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-              ),
+                  : (!_usePhone
+                        ? _loginWithEmail
+                        : (_otpSent ? _verifyOtp : _requestOtp)),
               child: _isLoading
                   ? const SizedBox(
-                      width: 24,
-                      height: 24,
+                      width: 22,
+                      height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        color: Colors.white,
                       ),
                     )
                   : Text(
-                      _otpSent ? 'Thibitisha na Uingie' : 'Pata Kodi ya Uthibitisho',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      !_usePhone
+                          ? 'Ingia'
+                          : (_otpSent
+                                ? 'Thibitisha na uingie'
+                                : 'Pata kodi ya uthibitisho'),
                     ),
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () => setState(() {
+                        _usePhone = !_usePhone;
+                        _otpSent = false;
+                      }),
+                child: Text(
+                  _usePhone ? 'Tumia barua pepe' : 'Tumia namba ya simu',
+                ),
+              ),
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        final navigator = Navigator.of(context);
+                        navigator.pop(false);
+                        navigator.push(
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterScreen(),
+                          ),
+                        );
+                      },
+                child: const Text('Fungua akaunti'),
+              ),
+            ],
+          ),
 
           // Cancel button
           SizedBox(
@@ -268,9 +338,7 @@ class _LoginModalState extends State<LoginModal> {
             height: 48,
             child: TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey[600],
-              ),
+              style: TextButton.styleFrom(foregroundColor: MkColors.muted),
               child: const Text('Ghairi na Rudi nyuma'),
             ),
           ),

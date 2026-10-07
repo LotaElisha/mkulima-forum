@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
 
-/// Forum thread list tile: title, snippet, reply/view/upvote counts,
-/// optional region chip and expert badge.
+/// Forum thread row: author, title, snippet, then reply and upvote counts,
+/// region and an expert badge. Rows are separated by hairlines rather than
+/// boxed in cards, so a long list reads as one feed on a narrow screen.
 class MkThreadTile extends StatelessWidget {
   final Map<String, dynamic> thread;
   final VoidCallback onTap;
@@ -13,75 +14,130 @@ class MkThreadTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final region = thread['region']?.toString();
-    final isExpert = thread['user']?['is_verified_expert'] == true;
+    final region = thread['region']?.toString() ?? '';
+    final user = thread['user'];
+    final author = user?['name']?.toString() ?? '';
+    final isExpert = user?['is_verified_expert'] == true;
+    final body = thread['body']?.toString() ?? '';
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        title: Text(
-          thread['title'] ?? '',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: MkColors.border)),
         ),
-        subtitle: Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (author.isNotEmpty || isExpert)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    if (author.isNotEmpty)
+                      Text(
+                        author,
+                        style: MkText.caption.copyWith(
+                          color: MkColors.ink,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    if (isExpert) const _ExpertBadge(),
+                  ],
+                ),
+              ),
             Text(
-              thread['body'] ?? '',
-              maxLines: 2,
+              thread['title'] ?? '',
+              style: MkText.title,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4),
-            Row(
+            if (body.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                body,
+                style: MkText.bodyMuted,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 14,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                _CountIcon(Icons.comment, thread['reply_count']),
-                const SizedBox(width: 12),
-                _CountIcon(Icons.remove_red_eye, thread['view_count']),
-                const SizedBox(width: 12),
-                _CountIcon(Icons.thumb_up_outlined, thread['upvote_count']),
-                if (region != null && region.isNotEmpty) ...[
-                  const SizedBox(width: 12),
-                  Icon(Icons.place, size: 14, color: Colors.grey[600]),
-                  Text(
-                    region,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
-                if (isExpert) ...[
-                  const SizedBox(width: 12),
-                  const Icon(Icons.verified, size: 14, color: MkColors.primary),
-                  const Text(
-                    ' ${MkStrings.expertBadge}',
-                    style: TextStyle(fontSize: 12, color: MkColors.primary),
-                  ),
-                ],
+                _Count(
+                  Icons.chat_bubble_outline,
+                  thread['reply_count'],
+                  'Majibu',
+                ),
+                _Count(
+                  Icons.thumb_up_outlined,
+                  thread['upvote_count'],
+                  MkStrings.upvote,
+                ),
+                if (region.isNotEmpty)
+                  _Count(Icons.place_outlined, null, region),
               ],
             ),
           ],
         ),
-        isThreeLine: true,
-        onTap: onTap,
       ),
     );
   }
 }
 
-class _CountIcon extends StatelessWidget {
-  final IconData icon;
-  final dynamic count;
-
-  const _CountIcon(this.icon, this.count);
+class _ExpertBadge extends StatelessWidget {
+  const _ExpertBadge();
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: MkColors.leafPale,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.verified, size: 14, color: MkColors.primaryDark),
+          SizedBox(width: 4),
+          Text(
+            MkStrings.expertBadge,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: MkColors.primaryDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Count extends StatelessWidget {
+  final IconData icon;
+  final dynamic count;
+  final String label;
+
+  const _Count(this.icon, this.count, this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    final text = count == null ? label : '$label ${count ?? 0}';
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: Colors.grey[600]),
-        Text(
-          ' ${count ?? 0}',
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-        ),
+        Icon(icon, size: 16, color: MkColors.muted),
+        const SizedBox(width: 4),
+        Text(text, style: MkText.caption),
       ],
     );
   }

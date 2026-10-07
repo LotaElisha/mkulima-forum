@@ -20,20 +20,27 @@
   <meta name="robots" content="noindex, nofollow">
   <title>@yield('title', 'MkulimaForum')</title>
   <style>
+    /* Same values as the public layout's design system (and the farmer app's
+       MkColors), so sign-in reads as the same product. Names are kept because
+       the auth screens and leaving.blade.php reference them. */
     :root{
-      --green-700:#1B5E20; --green-600:#2E7D32; --green-500:#3D8B41;
-      --green-50:#F1F8F2;  --green-100:#DCEDDF;
-      --ink:#101613; --ink-body:#3C4640; --ink-muted:#66716A;
-      --line:#E3E8E4; --line-strong:#CBD4CD;
-      --surface:#FFFFFF; --surface-sunken:#F7F9F7;
+      --green-700:#14532D;  /* primary dark  (--forest-dark) */
+      --green-600:#1B7A3E;  /* primary       (--forest-mid)  */
+      --green-500:#1B7A3E;
+      --green-50:#EEF7F0;   /* leaf pale     (--leaf-pale)   */
+      --green-100:#D7EBDD;  /* focus ring */
+      --ink:#0F1511; --ink-body:#2E3631; --ink-muted:#5A645E;
+      --line:#E5EAE6; --line-strong:#CDD6CF;
+      --surface:#FFFFFF; --surface-sunken:#F4F7F4;  /* surface soft */
+      --warn:#9A5B00;
       --danger:#B3261E; --danger-bg:#FDECEA;
-      --ok:#1B5E20; --ok-bg:#E8F5E9;
-      --r-sm:10px; --r-md:14px; --r-lg:20px;
+      --ok:#14532D; --ok-bg:#EEF7F0;
+      --r-sm:10px; --r-md:14px; --r-lg:16px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{-webkit-text-size-adjust:100%}
     body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-family:Roboto,-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
       background:var(--surface); color:var(--ink-body);
       line-height:1.55; -webkit-font-smoothing:antialiased;
       min-height:100dvh; display:flex; flex-direction:column;
@@ -65,7 +72,7 @@
     @media(min-width:520px){
       .auth-card{
         border:1px solid var(--line); border-radius:var(--r-lg);
-        padding:32px; box-shadow:0 1px 2px rgba(16,22,19,.04),0 8px 28px rgba(16,22,19,.06);
+        padding:32px; box-shadow:0 1px 2px rgba(15,21,17,.04);
       }
     }
 
@@ -94,7 +101,7 @@
       box-shadow:0 0 0 3px var(--green-100);
     }
     input[aria-invalid=true]{border-color:var(--danger)}
-    input::placeholder{color:#9AA39C}
+    input::placeholder{color:#7C867F}
     .has-toggle input{padding-right:52px}
     .toggle-visibility{
       position:absolute; right:4px; width:48px; height:48px;

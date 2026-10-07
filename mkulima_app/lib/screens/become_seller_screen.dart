@@ -79,13 +79,13 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
 
     try {
       final state = await context.read<ApiService>().submitSellerApplication(
-            businessName: _businessName.text.trim(),
-            businessType: _businessType,
-            region: _region.text.trim(),
-            district: _district.text.trim(),
-            contactPhone: _fullPhone,
-            description: _description.text.trim(),
-          );
+        businessName: _businessName.text.trim(),
+        businessType: _businessType,
+        region: _region.text.trim(),
+        district: _district.text.trim(),
+        contactPhone: _fullPhone,
+        description: _description.text.trim(),
+      );
       if (!mounted) return;
       // Refresh the account so the profile redraws with the pending state
       // before this screen closes.
@@ -137,9 +137,13 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
               DropdownButtonFormField<String>(
                 initialValue: _businessType,
                 items: _types.entries
-                    .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
+                    .map(
+                      (e) =>
+                          DropdownMenuItem(value: e.key, child: Text(e.value)),
+                    )
                     .toList(),
-                onChanged: (v) => setState(() => _businessType = v ?? 'agrodealer'),
+                onChanged: (v) =>
+                    setState(() => _businessType = v ?? 'agrodealer'),
               ),
               const SizedBox(height: 18),
 
@@ -160,7 +164,9 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
               TextFormField(
                 controller: _district,
                 textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(errorText: _fieldErrors['district']),
+                decoration: InputDecoration(
+                  errorText: _fieldErrors['district'],
+                ),
               ),
               const SizedBox(height: 18),
 
@@ -216,7 +222,11 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
                 'Maombi yako yatapitiwa na timu yetu. Tutakujulisha '
                 'yakishakubaliwa.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: MkColors.muted, fontSize: 13, height: 1.4),
+                style: TextStyle(
+                  color: MkColors.muted,
+                  fontSize: 13,
+                  height: 1.4,
+                ),
               ),
               const SizedBox(height: 24),
             ],
@@ -227,12 +237,12 @@ class _BecomeSellerScreenState extends State<BecomeSellerScreen> {
   }
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(
-          text,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      text,
+      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+    ),
+  );
 }
 
 class _IntroCard extends StatelessWidget {
@@ -303,7 +313,11 @@ class SellerStatusCard extends StatelessWidget {
   final SellerState state;
   final VoidCallback onApply;
 
-  const SellerStatusCard({super.key, required this.state, required this.onApply});
+  const SellerStatusCard({
+    super.key,
+    required this.state,
+    required this.onApply,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -371,11 +385,22 @@ class _Card extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                  ),
+                ),
                 const SizedBox(height: 6),
-                Text(body,
-                    style: const TextStyle(color: MkColors.muted, height: 1.4, fontSize: 13)),
+                Text(
+                  body,
+                  style: const TextStyle(
+                    color: MkColors.muted,
+                    height: 1.4,
+                    fontSize: 13,
+                  ),
+                ),
                 if (actionLabel != null && onAction != null) ...[
                   const SizedBox(height: 12),
                   SizedBox(

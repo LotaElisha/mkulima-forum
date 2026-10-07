@@ -19,7 +19,8 @@ class AccountIdentitiesScreen extends StatefulWidget {
   const AccountIdentitiesScreen({super.key});
 
   @override
-  State<AccountIdentitiesScreen> createState() => _AccountIdentitiesScreenState();
+  State<AccountIdentitiesScreen> createState() =>
+      _AccountIdentitiesScreenState();
 }
 
 class _AccountIdentitiesScreenState extends State<AccountIdentitiesScreen> {
@@ -55,9 +56,9 @@ class _AccountIdentitiesScreenState extends State<AccountIdentitiesScreen> {
   }
 
   Future<void> _startPhoneLink() async {
-    final linked = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => const LinkPhoneScreen()),
-    );
+    final linked = await Navigator.of(
+      context,
+    ).push<bool>(MaterialPageRoute(builder: (_) => const LinkPhoneScreen()));
     if (linked == true) {
       await _load();
       if (mounted) await context.read<AuthProvider>().refreshUser();
@@ -134,7 +135,9 @@ class _AccountIdentitiesScreenState extends State<AccountIdentitiesScreen> {
   Future<void> _resendVerification() async {
     try {
       await context.read<ApiService>().resendEmailVerification();
-      if (mounted) _toast('Kiungo cha kuthibitisha kimetumwa kwenye barua pepe yako.');
+      if (mounted) {
+        _toast('Kiungo cha kuthibitisha kimetumwa kwenye barua pepe yako.');
+      }
     } catch (error) {
       if (mounted) _toast(ApiService.formatError(error), isError: true);
     }
@@ -154,10 +157,7 @@ class _AccountIdentitiesScreenState extends State<AccountIdentitiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Njia za kuingia')),
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: _buildBody(),
-      ),
+      body: RefreshIndicator(onRefresh: _load, child: _buildBody()),
     );
   }
 
@@ -170,8 +170,12 @@ class _AccountIdentitiesScreenState extends State<AccountIdentitiesScreen> {
       return _ErrorState(message: _error!, onRetry: _load);
     }
 
-    final email = Map<String, dynamic>.from(_identities?['email'] as Map? ?? {});
-    final phone = Map<String, dynamic>.from(_identities?['phone'] as Map? ?? {});
+    final email = Map<String, dynamic>.from(
+      _identities?['email'] as Map? ?? {},
+    );
+    final phone = Map<String, dynamic>.from(
+      _identities?['phone'] as Map? ?? {},
+    );
     final social = List<dynamic>.from(_identities?['social'] as List? ?? []);
 
     return ListView(
@@ -194,7 +198,10 @@ class _AccountIdentitiesScreenState extends State<AccountIdentitiesScreen> {
           pending: email['pending'] as String?,
           action: email['verified'] == true
               ? null
-              : _IdentityAction(label: 'Tuma kiungo tena', onTap: _resendVerification),
+              : _IdentityAction(
+                  label: 'Tuma kiungo tena',
+                  onTap: _resendVerification,
+                ),
         ),
         const SizedBox(height: 12),
 
@@ -266,7 +273,8 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
   String? _error;
   int _resendIn = 0;
 
-  String get _fullPhone => '255${_phone.text.replaceAll(RegExp(r'\D'), '').replaceFirst(RegExp(r'^0+'), '')}';
+  String get _fullPhone =>
+      '255${_phone.text.replaceAll(RegExp(r'\D'), '').replaceFirst(RegExp(r'^0+'), '')}';
 
   bool get _phoneValid => RegExp(r'^255[0-9]{9}$').hasMatch(_fullPhone);
 
@@ -289,7 +297,9 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
     });
 
     try {
-      final result = await context.read<ApiService>().requestPhoneLink(_fullPhone);
+      final result = await context.read<ApiService>().requestPhoneLink(
+        _fullPhone,
+      );
       if (!mounted) return;
       setState(() {
         _codeSent = true;
@@ -335,7 +345,10 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
     });
 
     try {
-      await context.read<ApiService>().confirmPhoneLink(phone: _fullPhone, code: code);
+      await context.read<ApiService>().confirmPhoneLink(
+        phone: _fullPhone,
+        code: code,
+      );
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (error) {
@@ -356,7 +369,9 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_codeSent ? 'Thibitisha namba' : 'Ongeza namba ya simu')),
+      appBar: AppBar(
+        title: Text(_codeSent ? 'Thibitisha namba' : 'Ongeza namba ya simu'),
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -383,9 +398,14 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
               child: _busy
                   ? const SizedBox.square(
                       dimension: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
                     )
-                  : Text(_codeSent ? 'Thibitisha na uunganishe' : 'Tuma msimbo'),
+                  : Text(
+                      _codeSent ? 'Thibitisha na uunganishe' : 'Tuma msimbo',
+                    ),
             ),
 
             if (_codeSent) ...[
@@ -394,7 +414,9 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
                 child: TextButton(
                   onPressed: _resendIn > 0 || _busy ? null : _requestCode,
                   child: Text(
-                    _resendIn > 0 ? 'Tuma tena baada ya sekunde $_resendIn' : 'Tuma msimbo tena',
+                    _resendIn > 0
+                        ? 'Tuma tena baada ya sekunde $_resendIn'
+                        : 'Tuma msimbo tena',
                   ),
                 ),
               ),
@@ -428,11 +450,16 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
           decoration: BoxDecoration(
             color: MkColors.surfaceMuted,
             border: Border.all(color: MkColors.border),
-            borderRadius: const BorderRadius.horizontal(left: Radius.circular(14)),
+            borderRadius: const BorderRadius.horizontal(
+              left: Radius.circular(14),
+            ),
           ),
           child: const Text(
             '+255',
-            style: TextStyle(fontWeight: FontWeight.w600, color: MkColors.muted),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: MkColors.muted,
+            ),
           ),
         ),
         Expanded(
@@ -447,7 +474,9 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
               hintText: '712345678',
               counterText: '',
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.horizontal(right: Radius.circular(14)),
+                borderRadius: BorderRadius.horizontal(
+                  right: Radius.circular(14),
+                ),
               ),
             ),
           ),
@@ -464,7 +493,11 @@ class _LinkPhoneScreenState extends State<LinkPhoneScreen> {
       maxLength: 6,
       textAlign: TextAlign.center,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      style: const TextStyle(fontSize: 26, letterSpacing: 10, fontWeight: FontWeight.bold),
+      style: const TextStyle(
+        fontSize: 24,
+        letterSpacing: 10,
+        fontWeight: FontWeight.bold,
+      ),
       onChanged: (value) {
         setState(() => _error = null);
         if (value.length == 6) _confirm();
@@ -580,7 +613,9 @@ class _IdentityCard extends StatelessWidget {
                       )
                     : FilledButton(
                         onPressed: action!.onTap,
-                        style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                        ),
                         child: Text(action!.label),
                       ),
               ),
@@ -604,7 +639,9 @@ class _StatusChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: verified ? MkColors.leafPale : MkColors.surfaceMuted,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: verified ? MkColors.primary : MkColors.border),
+        border: Border.all(
+          color: verified ? MkColors.primary : MkColors.border,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -618,7 +655,7 @@ class _StatusChip extends StatelessWidget {
           Text(
             verified ? 'Imethibitishwa' : 'Haijathibitishwa',
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               color: verified ? MkColors.primary : MkColors.muted,
             ),
@@ -645,7 +682,11 @@ class _InlineNote extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12.5, color: MkColors.muted, height: 1.4),
+            style: const TextStyle(
+              fontSize: 13,
+              color: MkColors.muted,
+              height: 1.4,
+            ),
           ),
         ),
       ],
@@ -674,7 +715,11 @@ class _InlineError extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: MkColors.danger, fontSize: 13.5, height: 1.4),
+              style: const TextStyle(
+                color: MkColors.danger,
+                fontSize: 13,
+                height: 1.4,
+              ),
             ),
           ),
         ],

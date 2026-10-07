@@ -11,105 +11,165 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
   late final GeneratedColumn<double> price = GeneratedColumn<double>(
-      'price', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+    'price',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _stockMeta = const VerificationMeta('stock');
   @override
   late final GeneratedColumn<int> stock = GeneratedColumn<int>(
-      'stock', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _categoryIdMeta =
-      const VerificationMeta('categoryId');
+    'stock',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
   @override
   late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
-      'category_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _sellerIdMeta =
-      const VerificationMeta('sellerId');
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sellerIdMeta = const VerificationMeta(
+    'sellerId',
+  );
   @override
   late final GeneratedColumn<String> sellerId = GeneratedColumn<String>(
-      'seller_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'seller_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _unitMeta = const VerificationMeta('unit');
   @override
   late final GeneratedColumn<String> unit = GeneratedColumn<String>(
-      'unit', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'unit',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _imagesMeta = const VerificationMeta('images');
   @override
   late final GeneratedColumn<String> images = GeneratedColumn<String>(
-      'images', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _minOrderMeta =
-      const VerificationMeta('minOrder');
+    'images',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _minOrderMeta = const VerificationMeta(
+    'minOrder',
+  );
   @override
   late final GeneratedColumn<int> minOrder = GeneratedColumn<int>(
-      'min_order', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _isAvailableMeta =
-      const VerificationMeta('isAvailable');
+    'min_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _isAvailableMeta = const VerificationMeta(
+    'isAvailable',
+  );
   @override
   late final GeneratedColumn<bool> isAvailable = GeneratedColumn<bool>(
-      'is_available', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("is_available" IN (0, 1))'),
-      defaultValue: const Constant(true));
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+    'is_available',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_available" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _syncedAtMeta =
-      const VerificationMeta('syncedAt');
+    'created_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
-      'synced_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+    'synced_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        id,
-        name,
-        description,
-        price,
-        stock,
-        categoryId,
-        sellerId,
-        unit,
-        images,
-        minOrder,
-        isAvailable,
-        createdAt,
-        syncedAt
-      ];
+    id,
+    name,
+    description,
+    price,
+    stock,
+    categoryId,
+    sellerId,
+    unit,
+    images,
+    minOrder,
+    isAvailable,
+    createdAt,
+    syncedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'products';
   @override
-  VerificationContext validateIntegrity(Insertable<Product> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<Product> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -119,71 +179,95 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('description')) {
       context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
           _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
     if (data.containsKey('price')) {
       context.handle(
-          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
+        _priceMeta,
+        price.isAcceptableOrUnknown(data['price']!, _priceMeta),
+      );
     } else if (isInserting) {
       context.missing(_priceMeta);
     }
     if (data.containsKey('stock')) {
       context.handle(
-          _stockMeta, stock.isAcceptableOrUnknown(data['stock']!, _stockMeta));
+        _stockMeta,
+        stock.isAcceptableOrUnknown(data['stock']!, _stockMeta),
+      );
     } else if (isInserting) {
       context.missing(_stockMeta);
     }
     if (data.containsKey('category_id')) {
       context.handle(
-          _categoryIdMeta,
-          categoryId.isAcceptableOrUnknown(
-              data['category_id']!, _categoryIdMeta));
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_categoryIdMeta);
     }
     if (data.containsKey('seller_id')) {
-      context.handle(_sellerIdMeta,
-          sellerId.isAcceptableOrUnknown(data['seller_id']!, _sellerIdMeta));
+      context.handle(
+        _sellerIdMeta,
+        sellerId.isAcceptableOrUnknown(data['seller_id']!, _sellerIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_sellerIdMeta);
     }
     if (data.containsKey('unit')) {
       context.handle(
-          _unitMeta, unit.isAcceptableOrUnknown(data['unit']!, _unitMeta));
+        _unitMeta,
+        unit.isAcceptableOrUnknown(data['unit']!, _unitMeta),
+      );
     } else if (isInserting) {
       context.missing(_unitMeta);
     }
     if (data.containsKey('images')) {
-      context.handle(_imagesMeta,
-          images.isAcceptableOrUnknown(data['images']!, _imagesMeta));
+      context.handle(
+        _imagesMeta,
+        images.isAcceptableOrUnknown(data['images']!, _imagesMeta),
+      );
     }
     if (data.containsKey('min_order')) {
-      context.handle(_minOrderMeta,
-          minOrder.isAcceptableOrUnknown(data['min_order']!, _minOrderMeta));
+      context.handle(
+        _minOrderMeta,
+        minOrder.isAcceptableOrUnknown(data['min_order']!, _minOrderMeta),
+      );
     }
     if (data.containsKey('is_available')) {
       context.handle(
+        _isAvailableMeta,
+        isAvailable.isAcceptableOrUnknown(
+          data['is_available']!,
           _isAvailableMeta,
-          isAvailable.isAcceptableOrUnknown(
-              data['is_available']!, _isAvailableMeta));
+        ),
+      );
     }
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
     }
     if (data.containsKey('synced_at')) {
-      context.handle(_syncedAtMeta,
-          syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
     }
     return context;
   }
@@ -194,32 +278,58 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   Product map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Product(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      price: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
-      stock: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}stock'])!,
-      categoryId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}category_id'])!,
-      sellerId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}seller_id'])!,
-      unit: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}unit'])!,
-      images: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}images']),
-      minOrder: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}min_order'])!,
-      isAvailable: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_available'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
-      syncedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      price: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}price'],
+      )!,
+      stock: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}stock'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      )!,
+      sellerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_id'],
+      )!,
+      unit: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unit'],
+      )!,
+      images: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}images'],
+      ),
+      minOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}min_order'],
+      )!,
+      isAvailable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_available'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      ),
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      ),
     );
   }
 
@@ -243,20 +353,21 @@ class Product extends DataClass implements Insertable<Product> {
   final bool isAvailable;
   final DateTime? createdAt;
   final DateTime? syncedAt;
-  const Product(
-      {required this.id,
-      required this.name,
-      required this.description,
-      required this.price,
-      required this.stock,
-      required this.categoryId,
-      required this.sellerId,
-      required this.unit,
-      this.images,
-      required this.minOrder,
-      required this.isAvailable,
-      this.createdAt,
-      this.syncedAt});
+  const Product({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.stock,
+    required this.categoryId,
+    required this.sellerId,
+    required this.unit,
+    this.images,
+    required this.minOrder,
+    required this.isAvailable,
+    this.createdAt,
+    this.syncedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -292,8 +403,9 @@ class Product extends DataClass implements Insertable<Product> {
       categoryId: Value(categoryId),
       sellerId: Value(sellerId),
       unit: Value(unit),
-      images:
-          images == null && nullToAbsent ? const Value.absent() : Value(images),
+      images: images == null && nullToAbsent
+          ? const Value.absent()
+          : Value(images),
       minOrder: Value(minOrder),
       isAvailable: Value(isAvailable),
       createdAt: createdAt == null && nullToAbsent
@@ -305,8 +417,10 @@ class Product extends DataClass implements Insertable<Product> {
     );
   }
 
-  factory Product.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory Product.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Product(
       id: serializer.fromJson<String>(json['id']),
@@ -344,51 +458,54 @@ class Product extends DataClass implements Insertable<Product> {
     };
   }
 
-  Product copyWith(
-          {String? id,
-          String? name,
-          String? description,
-          double? price,
-          int? stock,
-          String? categoryId,
-          String? sellerId,
-          String? unit,
-          Value<String?> images = const Value.absent(),
-          int? minOrder,
-          bool? isAvailable,
-          Value<DateTime?> createdAt = const Value.absent(),
-          Value<DateTime?> syncedAt = const Value.absent()}) =>
-      Product(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        description: description ?? this.description,
-        price: price ?? this.price,
-        stock: stock ?? this.stock,
-        categoryId: categoryId ?? this.categoryId,
-        sellerId: sellerId ?? this.sellerId,
-        unit: unit ?? this.unit,
-        images: images.present ? images.value : this.images,
-        minOrder: minOrder ?? this.minOrder,
-        isAvailable: isAvailable ?? this.isAvailable,
-        createdAt: createdAt.present ? createdAt.value : this.createdAt,
-        syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
-      );
+  Product copyWith({
+    String? id,
+    String? name,
+    String? description,
+    double? price,
+    int? stock,
+    String? categoryId,
+    String? sellerId,
+    String? unit,
+    Value<String?> images = const Value.absent(),
+    int? minOrder,
+    bool? isAvailable,
+    Value<DateTime?> createdAt = const Value.absent(),
+    Value<DateTime?> syncedAt = const Value.absent(),
+  }) => Product(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    description: description ?? this.description,
+    price: price ?? this.price,
+    stock: stock ?? this.stock,
+    categoryId: categoryId ?? this.categoryId,
+    sellerId: sellerId ?? this.sellerId,
+    unit: unit ?? this.unit,
+    images: images.present ? images.value : this.images,
+    minOrder: minOrder ?? this.minOrder,
+    isAvailable: isAvailable ?? this.isAvailable,
+    createdAt: createdAt.present ? createdAt.value : this.createdAt,
+    syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
+  );
   Product copyWithCompanion(ProductsCompanion data) {
     return Product(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
-      description:
-          data.description.present ? data.description.value : this.description,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
       price: data.price.present ? data.price.value : this.price,
       stock: data.stock.present ? data.stock.value : this.stock,
-      categoryId:
-          data.categoryId.present ? data.categoryId.value : this.categoryId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
       sellerId: data.sellerId.present ? data.sellerId.value : this.sellerId,
       unit: data.unit.present ? data.unit.value : this.unit,
       images: data.images.present ? data.images.value : this.images,
       minOrder: data.minOrder.present ? data.minOrder.value : this.minOrder,
-      isAvailable:
-          data.isAvailable.present ? data.isAvailable.value : this.isAvailable,
+      isAvailable: data.isAvailable.present
+          ? data.isAvailable.value
+          : this.isAvailable,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
@@ -416,19 +533,20 @@ class Product extends DataClass implements Insertable<Product> {
 
   @override
   int get hashCode => Object.hash(
-      id,
-      name,
-      description,
-      price,
-      stock,
-      categoryId,
-      sellerId,
-      unit,
-      images,
-      minOrder,
-      isAvailable,
-      createdAt,
-      syncedAt);
+    id,
+    name,
+    description,
+    price,
+    stock,
+    categoryId,
+    sellerId,
+    unit,
+    images,
+    minOrder,
+    isAvailable,
+    createdAt,
+    syncedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -494,14 +612,14 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     this.createdAt = const Value.absent(),
     this.syncedAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        name = Value(name),
-        description = Value(description),
-        price = Value(price),
-        stock = Value(stock),
-        categoryId = Value(categoryId),
-        sellerId = Value(sellerId),
-        unit = Value(unit);
+  }) : id = Value(id),
+       name = Value(name),
+       description = Value(description),
+       price = Value(price),
+       stock = Value(stock),
+       categoryId = Value(categoryId),
+       sellerId = Value(sellerId),
+       unit = Value(unit);
   static Insertable<Product> custom({
     Expression<String>? id,
     Expression<String>? name,
@@ -536,21 +654,22 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     });
   }
 
-  ProductsCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? name,
-      Value<String>? description,
-      Value<double>? price,
-      Value<int>? stock,
-      Value<String>? categoryId,
-      Value<String>? sellerId,
-      Value<String>? unit,
-      Value<String?>? images,
-      Value<int>? minOrder,
-      Value<bool>? isAvailable,
-      Value<DateTime?>? createdAt,
-      Value<DateTime?>? syncedAt,
-      Value<int>? rowid}) {
+  ProductsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? description,
+    Value<double>? price,
+    Value<int>? stock,
+    Value<String>? categoryId,
+    Value<String>? sellerId,
+    Value<String>? unit,
+    Value<String?>? images,
+    Value<int>? minOrder,
+    Value<bool>? isAvailable,
+    Value<DateTime?>? createdAt,
+    Value<DateTime?>? syncedAt,
+    Value<int>? rowid,
+  }) {
     return ProductsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -647,86 +766,133 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
-      'id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _buyerIdMeta =
-      const VerificationMeta('buyerId');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _buyerIdMeta = const VerificationMeta(
+    'buyerId',
+  );
   @override
   late final GeneratedColumn<String> buyerId = GeneratedColumn<String>(
-      'buyer_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _sellerIdMeta =
-      const VerificationMeta('sellerId');
+    'buyer_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sellerIdMeta = const VerificationMeta(
+    'sellerId',
+  );
   @override
   late final GeneratedColumn<String> sellerId = GeneratedColumn<String>(
-      'seller_id', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'seller_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _itemsMeta = const VerificationMeta('items');
   @override
   late final GeneratedColumn<String> items = GeneratedColumn<String>(
-      'items', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'items',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
   late final GeneratedColumn<double> total = GeneratedColumn<double>(
-      'total', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+    'total',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _statusMeta = const VerificationMeta('status');
   @override
   late final GeneratedColumn<String> status = GeneratedColumn<String>(
-      'status', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant('pending'));
-  static const VerificationMeta _escrowIdMeta =
-      const VerificationMeta('escrowId');
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _escrowIdMeta = const VerificationMeta(
+    'escrowId',
+  );
   @override
   late final GeneratedColumn<String> escrowId = GeneratedColumn<String>(
-      'escrow_id', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _deliveryAddressMeta =
-      const VerificationMeta('deliveryAddress');
+    'escrow_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deliveryAddressMeta = const VerificationMeta(
+    'deliveryAddress',
+  );
   @override
   late final GeneratedColumn<String> deliveryAddress = GeneratedColumn<String>(
-      'delivery_address', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+    'delivery_address',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, true,
-      type: DriftSqlType.dateTime, requiredDuringInsert: false);
-  static const VerificationMeta _isSyncedMeta =
-      const VerificationMeta('isSynced');
+    'created_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isSyncedMeta = const VerificationMeta(
+    'isSynced',
+  );
   @override
   late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
-      'is_synced', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_synced" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'is_synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        id,
-        buyerId,
-        sellerId,
-        items,
-        total,
-        status,
-        escrowId,
-        deliveryAddress,
-        createdAt,
-        isSynced
-      ];
+    id,
+    buyerId,
+    sellerId,
+    items,
+    total,
+    status,
+    escrowId,
+    deliveryAddress,
+    createdAt,
+    isSynced,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'orders';
   @override
-  VerificationContext validateIntegrity(Insertable<Order> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<Order> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -735,50 +901,69 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
       context.missing(_idMeta);
     }
     if (data.containsKey('buyer_id')) {
-      context.handle(_buyerIdMeta,
-          buyerId.isAcceptableOrUnknown(data['buyer_id']!, _buyerIdMeta));
+      context.handle(
+        _buyerIdMeta,
+        buyerId.isAcceptableOrUnknown(data['buyer_id']!, _buyerIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_buyerIdMeta);
     }
     if (data.containsKey('seller_id')) {
-      context.handle(_sellerIdMeta,
-          sellerId.isAcceptableOrUnknown(data['seller_id']!, _sellerIdMeta));
+      context.handle(
+        _sellerIdMeta,
+        sellerId.isAcceptableOrUnknown(data['seller_id']!, _sellerIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_sellerIdMeta);
     }
     if (data.containsKey('items')) {
       context.handle(
-          _itemsMeta, items.isAcceptableOrUnknown(data['items']!, _itemsMeta));
+        _itemsMeta,
+        items.isAcceptableOrUnknown(data['items']!, _itemsMeta),
+      );
     } else if (isInserting) {
       context.missing(_itemsMeta);
     }
     if (data.containsKey('total')) {
       context.handle(
-          _totalMeta, total.isAcceptableOrUnknown(data['total']!, _totalMeta));
+        _totalMeta,
+        total.isAcceptableOrUnknown(data['total']!, _totalMeta),
+      );
     } else if (isInserting) {
       context.missing(_totalMeta);
     }
     if (data.containsKey('status')) {
-      context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
     }
     if (data.containsKey('escrow_id')) {
-      context.handle(_escrowIdMeta,
-          escrowId.isAcceptableOrUnknown(data['escrow_id']!, _escrowIdMeta));
+      context.handle(
+        _escrowIdMeta,
+        escrowId.isAcceptableOrUnknown(data['escrow_id']!, _escrowIdMeta),
+      );
     }
     if (data.containsKey('delivery_address')) {
       context.handle(
+        _deliveryAddressMeta,
+        deliveryAddress.isAcceptableOrUnknown(
+          data['delivery_address']!,
           _deliveryAddressMeta,
-          deliveryAddress.isAcceptableOrUnknown(
-              data['delivery_address']!, _deliveryAddressMeta));
+        ),
+      );
     }
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
     }
     if (data.containsKey('is_synced')) {
-      context.handle(_isSyncedMeta,
-          isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta));
+      context.handle(
+        _isSyncedMeta,
+        isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta),
+      );
     }
     return context;
   }
@@ -789,26 +974,46 @@ class $OrdersTable extends Orders with TableInfo<$OrdersTable, Order> {
   Order map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Order(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
-      buyerId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}buyer_id'])!,
-      sellerId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}seller_id'])!,
-      items: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}items'])!,
-      total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
-      status: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
-      escrowId: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}escrow_id']),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      buyerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}buyer_id'],
+      )!,
+      sellerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seller_id'],
+      )!,
+      items: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}items'],
+      )!,
+      total: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}total'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      escrowId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}escrow_id'],
+      ),
       deliveryAddress: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}delivery_address']),
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
-      isSynced: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_synced'])!,
+        DriftSqlType.string,
+        data['${effectivePrefix}delivery_address'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      ),
+      isSynced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_synced'],
+      )!,
     );
   }
 
@@ -829,17 +1034,18 @@ class Order extends DataClass implements Insertable<Order> {
   final String? deliveryAddress;
   final DateTime? createdAt;
   final bool isSynced;
-  const Order(
-      {required this.id,
-      required this.buyerId,
-      required this.sellerId,
-      required this.items,
-      required this.total,
-      required this.status,
-      this.escrowId,
-      this.deliveryAddress,
-      this.createdAt,
-      required this.isSynced});
+  const Order({
+    required this.id,
+    required this.buyerId,
+    required this.sellerId,
+    required this.items,
+    required this.total,
+    required this.status,
+    this.escrowId,
+    this.deliveryAddress,
+    this.createdAt,
+    required this.isSynced,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -883,8 +1089,10 @@ class Order extends DataClass implements Insertable<Order> {
     );
   }
 
-  factory Order.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory Order.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Order(
       id: serializer.fromJson<String>(json['id']),
@@ -916,31 +1124,31 @@ class Order extends DataClass implements Insertable<Order> {
     };
   }
 
-  Order copyWith(
-          {String? id,
-          String? buyerId,
-          String? sellerId,
-          String? items,
-          double? total,
-          String? status,
-          Value<String?> escrowId = const Value.absent(),
-          Value<String?> deliveryAddress = const Value.absent(),
-          Value<DateTime?> createdAt = const Value.absent(),
-          bool? isSynced}) =>
-      Order(
-        id: id ?? this.id,
-        buyerId: buyerId ?? this.buyerId,
-        sellerId: sellerId ?? this.sellerId,
-        items: items ?? this.items,
-        total: total ?? this.total,
-        status: status ?? this.status,
-        escrowId: escrowId.present ? escrowId.value : this.escrowId,
-        deliveryAddress: deliveryAddress.present
-            ? deliveryAddress.value
-            : this.deliveryAddress,
-        createdAt: createdAt.present ? createdAt.value : this.createdAt,
-        isSynced: isSynced ?? this.isSynced,
-      );
+  Order copyWith({
+    String? id,
+    String? buyerId,
+    String? sellerId,
+    String? items,
+    double? total,
+    String? status,
+    Value<String?> escrowId = const Value.absent(),
+    Value<String?> deliveryAddress = const Value.absent(),
+    Value<DateTime?> createdAt = const Value.absent(),
+    bool? isSynced,
+  }) => Order(
+    id: id ?? this.id,
+    buyerId: buyerId ?? this.buyerId,
+    sellerId: sellerId ?? this.sellerId,
+    items: items ?? this.items,
+    total: total ?? this.total,
+    status: status ?? this.status,
+    escrowId: escrowId.present ? escrowId.value : this.escrowId,
+    deliveryAddress: deliveryAddress.present
+        ? deliveryAddress.value
+        : this.deliveryAddress,
+    createdAt: createdAt.present ? createdAt.value : this.createdAt,
+    isSynced: isSynced ?? this.isSynced,
+  );
   Order copyWithCompanion(OrdersCompanion data) {
     return Order(
       id: data.id.present ? data.id.value : this.id,
@@ -976,8 +1184,18 @@ class Order extends DataClass implements Insertable<Order> {
   }
 
   @override
-  int get hashCode => Object.hash(id, buyerId, sellerId, items, total, status,
-      escrowId, deliveryAddress, createdAt, isSynced);
+  int get hashCode => Object.hash(
+    id,
+    buyerId,
+    sellerId,
+    items,
+    total,
+    status,
+    escrowId,
+    deliveryAddress,
+    createdAt,
+    isSynced,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1031,11 +1249,11 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     this.createdAt = const Value.absent(),
     this.isSynced = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        buyerId = Value(buyerId),
-        sellerId = Value(sellerId),
-        items = Value(items),
-        total = Value(total);
+  }) : id = Value(id),
+       buyerId = Value(buyerId),
+       sellerId = Value(sellerId),
+       items = Value(items),
+       total = Value(total);
   static Insertable<Order> custom({
     Expression<String>? id,
     Expression<String>? buyerId,
@@ -1064,18 +1282,19 @@ class OrdersCompanion extends UpdateCompanion<Order> {
     });
   }
 
-  OrdersCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? buyerId,
-      Value<String>? sellerId,
-      Value<String>? items,
-      Value<double>? total,
-      Value<String>? status,
-      Value<String?>? escrowId,
-      Value<String?>? deliveryAddress,
-      Value<DateTime?>? createdAt,
-      Value<bool>? isSynced,
-      Value<int>? rowid}) {
+  OrdersCompanion copyWith({
+    Value<String>? id,
+    Value<String>? buyerId,
+    Value<String>? sellerId,
+    Value<String>? items,
+    Value<double>? total,
+    Value<String>? status,
+    Value<String?>? escrowId,
+    Value<String?>? deliveryAddress,
+    Value<DateTime?>? createdAt,
+    Value<bool>? isSynced,
+    Value<int>? rowid,
+  }) {
     return OrdersCompanion(
       id: id ?? this.id,
       buyerId: buyerId ?? this.buyerId,
@@ -1157,91 +1376,144 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
   @override
   late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
-      'uuid', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'uuid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
   @override
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-      'phone', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'phone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String> email = GeneratedColumn<String>(
-      'email', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _roleMeta = const VerificationMeta('role');
   @override
   late final GeneratedColumn<String> role = GeneratedColumn<String>(
-      'role', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _tokenMeta = const VerificationMeta('token');
   @override
   late final GeneratedColumn<String> token = GeneratedColumn<String>(
-      'token', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _preferredLanguageMeta =
-      const VerificationMeta('preferredLanguage');
+    'token',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _preferredLanguageMeta = const VerificationMeta(
+    'preferredLanguage',
+  );
   @override
   late final GeneratedColumn<String> preferredLanguage =
-      GeneratedColumn<String>('preferred_language', aliasedName, false,
-          type: DriftSqlType.string,
-          requiredDuringInsert: false,
-          defaultValue: const Constant('sw'));
+      GeneratedColumn<String>(
+        'preferred_language',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('sw'),
+      );
   @override
-  List<GeneratedColumn> get $columns =>
-      [uuid, name, phone, email, role, token, preferredLanguage];
+  List<GeneratedColumn> get $columns => [
+    uuid,
+    name,
+    phone,
+    email,
+    role,
+    token,
+    preferredLanguage,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'users';
   @override
-  VerificationContext validateIntegrity(Insertable<User> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<User> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('uuid')) {
       context.handle(
-          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+        _uuidMeta,
+        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
+      );
     } else if (isInserting) {
       context.missing(_uuidMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('phone')) {
       context.handle(
-          _phoneMeta, phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta));
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
     } else if (isInserting) {
       context.missing(_phoneMeta);
     }
     if (data.containsKey('email')) {
       context.handle(
-          _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
     }
     if (data.containsKey('role')) {
       context.handle(
-          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
     } else if (isInserting) {
       context.missing(_roleMeta);
     }
     if (data.containsKey('token')) {
       context.handle(
-          _tokenMeta, token.isAcceptableOrUnknown(data['token']!, _tokenMeta));
+        _tokenMeta,
+        token.isAcceptableOrUnknown(data['token']!, _tokenMeta),
+      );
     }
     if (data.containsKey('preferred_language')) {
       context.handle(
+        _preferredLanguageMeta,
+        preferredLanguage.isAcceptableOrUnknown(
+          data['preferred_language']!,
           _preferredLanguageMeta,
-          preferredLanguage.isAcceptableOrUnknown(
-              data['preferred_language']!, _preferredLanguageMeta));
+        ),
+      );
     }
     return context;
   }
@@ -1252,20 +1524,34 @@ class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   User map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return User(
-      uuid: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}uuid'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      phone: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}phone'])!,
-      email: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}email']),
-      role: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
-      token: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}token']),
+      uuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uuid'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      token: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}token'],
+      ),
       preferredLanguage: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}preferred_language'])!,
+        DriftSqlType.string,
+        data['${effectivePrefix}preferred_language'],
+      )!,
     );
   }
 
@@ -1283,14 +1569,15 @@ class User extends DataClass implements Insertable<User> {
   final String role;
   final String? token;
   final String preferredLanguage;
-  const User(
-      {required this.uuid,
-      required this.name,
-      required this.phone,
-      this.email,
-      required this.role,
-      this.token,
-      required this.preferredLanguage});
+  const User({
+    required this.uuid,
+    required this.name,
+    required this.phone,
+    this.email,
+    required this.role,
+    this.token,
+    required this.preferredLanguage,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1313,17 +1600,21 @@ class User extends DataClass implements Insertable<User> {
       uuid: Value(uuid),
       name: Value(name),
       phone: Value(phone),
-      email:
-          email == null && nullToAbsent ? const Value.absent() : Value(email),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
       role: Value(role),
-      token:
-          token == null && nullToAbsent ? const Value.absent() : Value(token),
+      token: token == null && nullToAbsent
+          ? const Value.absent()
+          : Value(token),
       preferredLanguage: Value(preferredLanguage),
     );
   }
 
-  factory User.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory User.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return User(
       uuid: serializer.fromJson<String>(json['uuid']),
@@ -1349,23 +1640,23 @@ class User extends DataClass implements Insertable<User> {
     };
   }
 
-  User copyWith(
-          {String? uuid,
-          String? name,
-          String? phone,
-          Value<String?> email = const Value.absent(),
-          String? role,
-          Value<String?> token = const Value.absent(),
-          String? preferredLanguage}) =>
-      User(
-        uuid: uuid ?? this.uuid,
-        name: name ?? this.name,
-        phone: phone ?? this.phone,
-        email: email.present ? email.value : this.email,
-        role: role ?? this.role,
-        token: token.present ? token.value : this.token,
-        preferredLanguage: preferredLanguage ?? this.preferredLanguage,
-      );
+  User copyWith({
+    String? uuid,
+    String? name,
+    String? phone,
+    Value<String?> email = const Value.absent(),
+    String? role,
+    Value<String?> token = const Value.absent(),
+    String? preferredLanguage,
+  }) => User(
+    uuid: uuid ?? this.uuid,
+    name: name ?? this.name,
+    phone: phone ?? this.phone,
+    email: email.present ? email.value : this.email,
+    role: role ?? this.role,
+    token: token.present ? token.value : this.token,
+    preferredLanguage: preferredLanguage ?? this.preferredLanguage,
+  );
   User copyWithCompanion(UsersCompanion data) {
     return User(
       uuid: data.uuid.present ? data.uuid.value : this.uuid,
@@ -1438,10 +1729,10 @@ class UsersCompanion extends UpdateCompanion<User> {
     this.token = const Value.absent(),
     this.preferredLanguage = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : uuid = Value(uuid),
-        name = Value(name),
-        phone = Value(phone),
-        role = Value(role);
+  }) : uuid = Value(uuid),
+       name = Value(name),
+       phone = Value(phone),
+       role = Value(role);
   static Insertable<User> custom({
     Expression<String>? uuid,
     Expression<String>? name,
@@ -1464,15 +1755,16 @@ class UsersCompanion extends UpdateCompanion<User> {
     });
   }
 
-  UsersCompanion copyWith(
-      {Value<String>? uuid,
-      Value<String>? name,
-      Value<String>? phone,
-      Value<String?>? email,
-      Value<String>? role,
-      Value<String?>? token,
-      Value<String>? preferredLanguage,
-      Value<int>? rowid}) {
+  UsersCompanion copyWith({
+    Value<String>? uuid,
+    Value<String>? name,
+    Value<String>? phone,
+    Value<String?>? email,
+    Value<String>? role,
+    Value<String?>? token,
+    Value<String>? preferredLanguage,
+    Value<int>? rowid,
+  }) {
     return UsersCompanion(
       uuid: uuid ?? this.uuid,
       name: name ?? this.name,
@@ -1544,38 +1836,40 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [products, orders, users];
 }
 
-typedef $$ProductsTableCreateCompanionBuilder = ProductsCompanion Function({
-  required String id,
-  required String name,
-  required String description,
-  required double price,
-  required int stock,
-  required String categoryId,
-  required String sellerId,
-  required String unit,
-  Value<String?> images,
-  Value<int> minOrder,
-  Value<bool> isAvailable,
-  Value<DateTime?> createdAt,
-  Value<DateTime?> syncedAt,
-  Value<int> rowid,
-});
-typedef $$ProductsTableUpdateCompanionBuilder = ProductsCompanion Function({
-  Value<String> id,
-  Value<String> name,
-  Value<String> description,
-  Value<double> price,
-  Value<int> stock,
-  Value<String> categoryId,
-  Value<String> sellerId,
-  Value<String> unit,
-  Value<String?> images,
-  Value<int> minOrder,
-  Value<bool> isAvailable,
-  Value<DateTime?> createdAt,
-  Value<DateTime?> syncedAt,
-  Value<int> rowid,
-});
+typedef $$ProductsTableCreateCompanionBuilder =
+    ProductsCompanion Function({
+      required String id,
+      required String name,
+      required String description,
+      required double price,
+      required int stock,
+      required String categoryId,
+      required String sellerId,
+      required String unit,
+      Value<String?> images,
+      Value<int> minOrder,
+      Value<bool> isAvailable,
+      Value<DateTime?> createdAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$ProductsTableUpdateCompanionBuilder =
+    ProductsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> description,
+      Value<double> price,
+      Value<int> stock,
+      Value<String> categoryId,
+      Value<String> sellerId,
+      Value<String> unit,
+      Value<String?> images,
+      Value<int> minOrder,
+      Value<bool> isAvailable,
+      Value<DateTime?> createdAt,
+      Value<DateTime?> syncedAt,
+      Value<int> rowid,
+    });
 
 class $$ProductsTableFilterComposer
     extends Composer<_$LocalDatabase, $ProductsTable> {
@@ -1587,43 +1881,69 @@ class $$ProductsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<String> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get description => $composableBuilder(
-      column: $table.description, builder: (column) => ColumnFilters(column));
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<double> get price => $composableBuilder(
-      column: $table.price, builder: (column) => ColumnFilters(column));
+    column: $table.price,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get stock => $composableBuilder(
-      column: $table.stock, builder: (column) => ColumnFilters(column));
+    column: $table.stock,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get categoryId => $composableBuilder(
-      column: $table.categoryId, builder: (column) => ColumnFilters(column));
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get sellerId => $composableBuilder(
-      column: $table.sellerId, builder: (column) => ColumnFilters(column));
+    column: $table.sellerId,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get unit => $composableBuilder(
-      column: $table.unit, builder: (column) => ColumnFilters(column));
+    column: $table.unit,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get images => $composableBuilder(
-      column: $table.images, builder: (column) => ColumnFilters(column));
+    column: $table.images,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get minOrder => $composableBuilder(
-      column: $table.minOrder, builder: (column) => ColumnFilters(column));
+    column: $table.minOrder,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<bool> get isAvailable => $composableBuilder(
-      column: $table.isAvailable, builder: (column) => ColumnFilters(column));
+    column: $table.isAvailable,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<DateTime> get syncedAt => $composableBuilder(
-      column: $table.syncedAt, builder: (column) => ColumnFilters(column));
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$ProductsTableOrderingComposer
@@ -1636,43 +1956,69 @@ class $$ProductsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<String> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get description => $composableBuilder(
-      column: $table.description, builder: (column) => ColumnOrderings(column));
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<double> get price => $composableBuilder(
-      column: $table.price, builder: (column) => ColumnOrderings(column));
+    column: $table.price,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get stock => $composableBuilder(
-      column: $table.stock, builder: (column) => ColumnOrderings(column));
+    column: $table.stock,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get categoryId => $composableBuilder(
-      column: $table.categoryId, builder: (column) => ColumnOrderings(column));
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get sellerId => $composableBuilder(
-      column: $table.sellerId, builder: (column) => ColumnOrderings(column));
+    column: $table.sellerId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get unit => $composableBuilder(
-      column: $table.unit, builder: (column) => ColumnOrderings(column));
+    column: $table.unit,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get images => $composableBuilder(
-      column: $table.images, builder: (column) => ColumnOrderings(column));
+    column: $table.images,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get minOrder => $composableBuilder(
-      column: $table.minOrder, builder: (column) => ColumnOrderings(column));
+    column: $table.minOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get isAvailable => $composableBuilder(
-      column: $table.isAvailable, builder: (column) => ColumnOrderings(column));
+    column: $table.isAvailable,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
-      column: $table.syncedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ProductsTableAnnotationComposer
@@ -1691,7 +2037,9 @@ class $$ProductsTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
-      column: $table.description, builder: (column) => column);
+    column: $table.description,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get price =>
       $composableBuilder(column: $table.price, builder: (column) => column);
@@ -1700,7 +2048,9 @@ class $$ProductsTableAnnotationComposer
       $composableBuilder(column: $table.stock, builder: (column) => column);
 
   GeneratedColumn<String> get categoryId => $composableBuilder(
-      column: $table.categoryId, builder: (column) => column);
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get sellerId =>
       $composableBuilder(column: $table.sellerId, builder: (column) => column);
@@ -1715,7 +2065,9 @@ class $$ProductsTableAnnotationComposer
       $composableBuilder(column: $table.minOrder, builder: (column) => column);
 
   GeneratedColumn<bool> get isAvailable => $composableBuilder(
-      column: $table.isAvailable, builder: (column) => column);
+    column: $table.isAvailable,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1724,20 +2076,24 @@ class $$ProductsTableAnnotationComposer
       $composableBuilder(column: $table.syncedAt, builder: (column) => column);
 }
 
-class $$ProductsTableTableManager extends RootTableManager<
-    _$LocalDatabase,
-    $ProductsTable,
-    Product,
-    $$ProductsTableFilterComposer,
-    $$ProductsTableOrderingComposer,
-    $$ProductsTableAnnotationComposer,
-    $$ProductsTableCreateCompanionBuilder,
-    $$ProductsTableUpdateCompanionBuilder,
-    (Product, BaseReferences<_$LocalDatabase, $ProductsTable, Product>),
-    Product,
-    PrefetchHooks Function()> {
+class $$ProductsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $ProductsTable,
+          Product,
+          $$ProductsTableFilterComposer,
+          $$ProductsTableOrderingComposer,
+          $$ProductsTableAnnotationComposer,
+          $$ProductsTableCreateCompanionBuilder,
+          $$ProductsTableUpdateCompanionBuilder,
+          (Product, BaseReferences<_$LocalDatabase, $ProductsTable, Product>),
+          Product,
+          PrefetchHooks Function()
+        > {
   $$ProductsTableTableManager(_$LocalDatabase db, $ProductsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -1746,115 +2102,120 @@ class $$ProductsTableTableManager extends RootTableManager<
               $$ProductsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$ProductsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> description = const Value.absent(),
-            Value<double> price = const Value.absent(),
-            Value<int> stock = const Value.absent(),
-            Value<String> categoryId = const Value.absent(),
-            Value<String> sellerId = const Value.absent(),
-            Value<String> unit = const Value.absent(),
-            Value<String?> images = const Value.absent(),
-            Value<int> minOrder = const Value.absent(),
-            Value<bool> isAvailable = const Value.absent(),
-            Value<DateTime?> createdAt = const Value.absent(),
-            Value<DateTime?> syncedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              ProductsCompanion(
-            id: id,
-            name: name,
-            description: description,
-            price: price,
-            stock: stock,
-            categoryId: categoryId,
-            sellerId: sellerId,
-            unit: unit,
-            images: images,
-            minOrder: minOrder,
-            isAvailable: isAvailable,
-            createdAt: createdAt,
-            syncedAt: syncedAt,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String name,
-            required String description,
-            required double price,
-            required int stock,
-            required String categoryId,
-            required String sellerId,
-            required String unit,
-            Value<String?> images = const Value.absent(),
-            Value<int> minOrder = const Value.absent(),
-            Value<bool> isAvailable = const Value.absent(),
-            Value<DateTime?> createdAt = const Value.absent(),
-            Value<DateTime?> syncedAt = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              ProductsCompanion.insert(
-            id: id,
-            name: name,
-            description: description,
-            price: price,
-            stock: stock,
-            categoryId: categoryId,
-            sellerId: sellerId,
-            unit: unit,
-            images: images,
-            minOrder: minOrder,
-            isAvailable: isAvailable,
-            createdAt: createdAt,
-            syncedAt: syncedAt,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<double> price = const Value.absent(),
+                Value<int> stock = const Value.absent(),
+                Value<String> categoryId = const Value.absent(),
+                Value<String> sellerId = const Value.absent(),
+                Value<String> unit = const Value.absent(),
+                Value<String?> images = const Value.absent(),
+                Value<int> minOrder = const Value.absent(),
+                Value<bool> isAvailable = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProductsCompanion(
+                id: id,
+                name: name,
+                description: description,
+                price: price,
+                stock: stock,
+                categoryId: categoryId,
+                sellerId: sellerId,
+                unit: unit,
+                images: images,
+                minOrder: minOrder,
+                isAvailable: isAvailable,
+                createdAt: createdAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String description,
+                required double price,
+                required int stock,
+                required String categoryId,
+                required String sellerId,
+                required String unit,
+                Value<String?> images = const Value.absent(),
+                Value<int> minOrder = const Value.absent(),
+                Value<bool> isAvailable = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
+                Value<DateTime?> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ProductsCompanion.insert(
+                id: id,
+                name: name,
+                description: description,
+                price: price,
+                stock: stock,
+                categoryId: categoryId,
+                sellerId: sellerId,
+                unit: unit,
+                images: images,
+                minOrder: minOrder,
+                isAvailable: isAvailable,
+                createdAt: createdAt,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$ProductsTableProcessedTableManager = ProcessedTableManager<
-    _$LocalDatabase,
-    $ProductsTable,
-    Product,
-    $$ProductsTableFilterComposer,
-    $$ProductsTableOrderingComposer,
-    $$ProductsTableAnnotationComposer,
-    $$ProductsTableCreateCompanionBuilder,
-    $$ProductsTableUpdateCompanionBuilder,
-    (Product, BaseReferences<_$LocalDatabase, $ProductsTable, Product>),
-    Product,
-    PrefetchHooks Function()>;
-typedef $$OrdersTableCreateCompanionBuilder = OrdersCompanion Function({
-  required String id,
-  required String buyerId,
-  required String sellerId,
-  required String items,
-  required double total,
-  Value<String> status,
-  Value<String?> escrowId,
-  Value<String?> deliveryAddress,
-  Value<DateTime?> createdAt,
-  Value<bool> isSynced,
-  Value<int> rowid,
-});
-typedef $$OrdersTableUpdateCompanionBuilder = OrdersCompanion Function({
-  Value<String> id,
-  Value<String> buyerId,
-  Value<String> sellerId,
-  Value<String> items,
-  Value<double> total,
-  Value<String> status,
-  Value<String?> escrowId,
-  Value<String?> deliveryAddress,
-  Value<DateTime?> createdAt,
-  Value<bool> isSynced,
-  Value<int> rowid,
-});
+typedef $$ProductsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $ProductsTable,
+      Product,
+      $$ProductsTableFilterComposer,
+      $$ProductsTableOrderingComposer,
+      $$ProductsTableAnnotationComposer,
+      $$ProductsTableCreateCompanionBuilder,
+      $$ProductsTableUpdateCompanionBuilder,
+      (Product, BaseReferences<_$LocalDatabase, $ProductsTable, Product>),
+      Product,
+      PrefetchHooks Function()
+    >;
+typedef $$OrdersTableCreateCompanionBuilder =
+    OrdersCompanion Function({
+      required String id,
+      required String buyerId,
+      required String sellerId,
+      required String items,
+      required double total,
+      Value<String> status,
+      Value<String?> escrowId,
+      Value<String?> deliveryAddress,
+      Value<DateTime?> createdAt,
+      Value<bool> isSynced,
+      Value<int> rowid,
+    });
+typedef $$OrdersTableUpdateCompanionBuilder =
+    OrdersCompanion Function({
+      Value<String> id,
+      Value<String> buyerId,
+      Value<String> sellerId,
+      Value<String> items,
+      Value<double> total,
+      Value<String> status,
+      Value<String?> escrowId,
+      Value<String?> deliveryAddress,
+      Value<DateTime?> createdAt,
+      Value<bool> isSynced,
+      Value<int> rowid,
+    });
 
 class $$OrdersTableFilterComposer
     extends Composer<_$LocalDatabase, $OrdersTable> {
@@ -1866,35 +2227,54 @@ class $$OrdersTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<String> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get buyerId => $composableBuilder(
-      column: $table.buyerId, builder: (column) => ColumnFilters(column));
+    column: $table.buyerId,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get sellerId => $composableBuilder(
-      column: $table.sellerId, builder: (column) => ColumnFilters(column));
+    column: $table.sellerId,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get items => $composableBuilder(
-      column: $table.items, builder: (column) => ColumnFilters(column));
+    column: $table.items,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<double> get total => $composableBuilder(
-      column: $table.total, builder: (column) => ColumnFilters(column));
+    column: $table.total,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get status => $composableBuilder(
-      column: $table.status, builder: (column) => ColumnFilters(column));
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get escrowId => $composableBuilder(
-      column: $table.escrowId, builder: (column) => ColumnFilters(column));
+    column: $table.escrowId,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get deliveryAddress => $composableBuilder(
-      column: $table.deliveryAddress,
-      builder: (column) => ColumnFilters(column));
+    column: $table.deliveryAddress,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<bool> get isSynced => $composableBuilder(
-      column: $table.isSynced, builder: (column) => ColumnFilters(column));
+    column: $table.isSynced,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$OrdersTableOrderingComposer
@@ -1907,35 +2287,54 @@ class $$OrdersTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<String> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get buyerId => $composableBuilder(
-      column: $table.buyerId, builder: (column) => ColumnOrderings(column));
+    column: $table.buyerId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get sellerId => $composableBuilder(
-      column: $table.sellerId, builder: (column) => ColumnOrderings(column));
+    column: $table.sellerId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get items => $composableBuilder(
-      column: $table.items, builder: (column) => ColumnOrderings(column));
+    column: $table.items,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<double> get total => $composableBuilder(
-      column: $table.total, builder: (column) => ColumnOrderings(column));
+    column: $table.total,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get status => $composableBuilder(
-      column: $table.status, builder: (column) => ColumnOrderings(column));
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get escrowId => $composableBuilder(
-      column: $table.escrowId, builder: (column) => ColumnOrderings(column));
+    column: $table.escrowId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get deliveryAddress => $composableBuilder(
-      column: $table.deliveryAddress,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.deliveryAddress,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get isSynced => $composableBuilder(
-      column: $table.isSynced, builder: (column) => ColumnOrderings(column));
+    column: $table.isSynced,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$OrdersTableAnnotationComposer
@@ -1969,7 +2368,9 @@ class $$OrdersTableAnnotationComposer
       $composableBuilder(column: $table.escrowId, builder: (column) => column);
 
   GeneratedColumn<String> get deliveryAddress => $composableBuilder(
-      column: $table.deliveryAddress, builder: (column) => column);
+    column: $table.deliveryAddress,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -1978,20 +2379,24 @@ class $$OrdersTableAnnotationComposer
       $composableBuilder(column: $table.isSynced, builder: (column) => column);
 }
 
-class $$OrdersTableTableManager extends RootTableManager<
-    _$LocalDatabase,
-    $OrdersTable,
-    Order,
-    $$OrdersTableFilterComposer,
-    $$OrdersTableOrderingComposer,
-    $$OrdersTableAnnotationComposer,
-    $$OrdersTableCreateCompanionBuilder,
-    $$OrdersTableUpdateCompanionBuilder,
-    (Order, BaseReferences<_$LocalDatabase, $OrdersTable, Order>),
-    Order,
-    PrefetchHooks Function()> {
+class $$OrdersTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $OrdersTable,
+          Order,
+          $$OrdersTableFilterComposer,
+          $$OrdersTableOrderingComposer,
+          $$OrdersTableAnnotationComposer,
+          $$OrdersTableCreateCompanionBuilder,
+          $$OrdersTableUpdateCompanionBuilder,
+          (Order, BaseReferences<_$LocalDatabase, $OrdersTable, Order>),
+          Order,
+          PrefetchHooks Function()
+        > {
   $$OrdersTableTableManager(_$LocalDatabase db, $OrdersTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -2000,97 +2405,102 @@ class $$OrdersTableTableManager extends RootTableManager<
               $$OrdersTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$OrdersTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> id = const Value.absent(),
-            Value<String> buyerId = const Value.absent(),
-            Value<String> sellerId = const Value.absent(),
-            Value<String> items = const Value.absent(),
-            Value<double> total = const Value.absent(),
-            Value<String> status = const Value.absent(),
-            Value<String?> escrowId = const Value.absent(),
-            Value<String?> deliveryAddress = const Value.absent(),
-            Value<DateTime?> createdAt = const Value.absent(),
-            Value<bool> isSynced = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              OrdersCompanion(
-            id: id,
-            buyerId: buyerId,
-            sellerId: sellerId,
-            items: items,
-            total: total,
-            status: status,
-            escrowId: escrowId,
-            deliveryAddress: deliveryAddress,
-            createdAt: createdAt,
-            isSynced: isSynced,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String id,
-            required String buyerId,
-            required String sellerId,
-            required String items,
-            required double total,
-            Value<String> status = const Value.absent(),
-            Value<String?> escrowId = const Value.absent(),
-            Value<String?> deliveryAddress = const Value.absent(),
-            Value<DateTime?> createdAt = const Value.absent(),
-            Value<bool> isSynced = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              OrdersCompanion.insert(
-            id: id,
-            buyerId: buyerId,
-            sellerId: sellerId,
-            items: items,
-            total: total,
-            status: status,
-            escrowId: escrowId,
-            deliveryAddress: deliveryAddress,
-            createdAt: createdAt,
-            isSynced: isSynced,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> buyerId = const Value.absent(),
+                Value<String> sellerId = const Value.absent(),
+                Value<String> items = const Value.absent(),
+                Value<double> total = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> escrowId = const Value.absent(),
+                Value<String?> deliveryAddress = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OrdersCompanion(
+                id: id,
+                buyerId: buyerId,
+                sellerId: sellerId,
+                items: items,
+                total: total,
+                status: status,
+                escrowId: escrowId,
+                deliveryAddress: deliveryAddress,
+                createdAt: createdAt,
+                isSynced: isSynced,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String buyerId,
+                required String sellerId,
+                required String items,
+                required double total,
+                Value<String> status = const Value.absent(),
+                Value<String?> escrowId = const Value.absent(),
+                Value<String?> deliveryAddress = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
+                Value<bool> isSynced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OrdersCompanion.insert(
+                id: id,
+                buyerId: buyerId,
+                sellerId: sellerId,
+                items: items,
+                total: total,
+                status: status,
+                escrowId: escrowId,
+                deliveryAddress: deliveryAddress,
+                createdAt: createdAt,
+                isSynced: isSynced,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$OrdersTableProcessedTableManager = ProcessedTableManager<
-    _$LocalDatabase,
-    $OrdersTable,
-    Order,
-    $$OrdersTableFilterComposer,
-    $$OrdersTableOrderingComposer,
-    $$OrdersTableAnnotationComposer,
-    $$OrdersTableCreateCompanionBuilder,
-    $$OrdersTableUpdateCompanionBuilder,
-    (Order, BaseReferences<_$LocalDatabase, $OrdersTable, Order>),
-    Order,
-    PrefetchHooks Function()>;
-typedef $$UsersTableCreateCompanionBuilder = UsersCompanion Function({
-  required String uuid,
-  required String name,
-  required String phone,
-  Value<String?> email,
-  required String role,
-  Value<String?> token,
-  Value<String> preferredLanguage,
-  Value<int> rowid,
-});
-typedef $$UsersTableUpdateCompanionBuilder = UsersCompanion Function({
-  Value<String> uuid,
-  Value<String> name,
-  Value<String> phone,
-  Value<String?> email,
-  Value<String> role,
-  Value<String?> token,
-  Value<String> preferredLanguage,
-  Value<int> rowid,
-});
+typedef $$OrdersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $OrdersTable,
+      Order,
+      $$OrdersTableFilterComposer,
+      $$OrdersTableOrderingComposer,
+      $$OrdersTableAnnotationComposer,
+      $$OrdersTableCreateCompanionBuilder,
+      $$OrdersTableUpdateCompanionBuilder,
+      (Order, BaseReferences<_$LocalDatabase, $OrdersTable, Order>),
+      Order,
+      PrefetchHooks Function()
+    >;
+typedef $$UsersTableCreateCompanionBuilder =
+    UsersCompanion Function({
+      required String uuid,
+      required String name,
+      required String phone,
+      Value<String?> email,
+      required String role,
+      Value<String?> token,
+      Value<String> preferredLanguage,
+      Value<int> rowid,
+    });
+typedef $$UsersTableUpdateCompanionBuilder =
+    UsersCompanion Function({
+      Value<String> uuid,
+      Value<String> name,
+      Value<String> phone,
+      Value<String?> email,
+      Value<String> role,
+      Value<String?> token,
+      Value<String> preferredLanguage,
+      Value<int> rowid,
+    });
 
 class $$UsersTableFilterComposer
     extends Composer<_$LocalDatabase, $UsersTable> {
@@ -2102,26 +2512,39 @@ class $$UsersTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<String> get uuid => $composableBuilder(
-      column: $table.uuid, builder: (column) => ColumnFilters(column));
+    column: $table.uuid,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get phone => $composableBuilder(
-      column: $table.phone, builder: (column) => ColumnFilters(column));
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get email => $composableBuilder(
-      column: $table.email, builder: (column) => ColumnFilters(column));
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get role => $composableBuilder(
-      column: $table.role, builder: (column) => ColumnFilters(column));
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get token => $composableBuilder(
-      column: $table.token, builder: (column) => ColumnFilters(column));
+    column: $table.token,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get preferredLanguage => $composableBuilder(
-      column: $table.preferredLanguage,
-      builder: (column) => ColumnFilters(column));
+    column: $table.preferredLanguage,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$UsersTableOrderingComposer
@@ -2134,26 +2557,39 @@ class $$UsersTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<String> get uuid => $composableBuilder(
-      column: $table.uuid, builder: (column) => ColumnOrderings(column));
+    column: $table.uuid,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get phone => $composableBuilder(
-      column: $table.phone, builder: (column) => ColumnOrderings(column));
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get email => $composableBuilder(
-      column: $table.email, builder: (column) => ColumnOrderings(column));
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get role => $composableBuilder(
-      column: $table.role, builder: (column) => ColumnOrderings(column));
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get token => $composableBuilder(
-      column: $table.token, builder: (column) => ColumnOrderings(column));
+    column: $table.token,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get preferredLanguage => $composableBuilder(
-      column: $table.preferredLanguage,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.preferredLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UsersTableAnnotationComposer
@@ -2184,23 +2620,29 @@ class $$UsersTableAnnotationComposer
       $composableBuilder(column: $table.token, builder: (column) => column);
 
   GeneratedColumn<String> get preferredLanguage => $composableBuilder(
-      column: $table.preferredLanguage, builder: (column) => column);
+    column: $table.preferredLanguage,
+    builder: (column) => column,
+  );
 }
 
-class $$UsersTableTableManager extends RootTableManager<
-    _$LocalDatabase,
-    $UsersTable,
-    User,
-    $$UsersTableFilterComposer,
-    $$UsersTableOrderingComposer,
-    $$UsersTableAnnotationComposer,
-    $$UsersTableCreateCompanionBuilder,
-    $$UsersTableUpdateCompanionBuilder,
-    (User, BaseReferences<_$LocalDatabase, $UsersTable, User>),
-    User,
-    PrefetchHooks Function()> {
+class $$UsersTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $UsersTable,
+          User,
+          $$UsersTableFilterComposer,
+          $$UsersTableOrderingComposer,
+          $$UsersTableAnnotationComposer,
+          $$UsersTableCreateCompanionBuilder,
+          $$UsersTableUpdateCompanionBuilder,
+          (User, BaseReferences<_$LocalDatabase, $UsersTable, User>),
+          User,
+          PrefetchHooks Function()
+        > {
   $$UsersTableTableManager(_$LocalDatabase db, $UsersTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -2209,65 +2651,68 @@ class $$UsersTableTableManager extends RootTableManager<
               $$UsersTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$UsersTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> uuid = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> phone = const Value.absent(),
-            Value<String?> email = const Value.absent(),
-            Value<String> role = const Value.absent(),
-            Value<String?> token = const Value.absent(),
-            Value<String> preferredLanguage = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              UsersCompanion(
-            uuid: uuid,
-            name: name,
-            phone: phone,
-            email: email,
-            role: role,
-            token: token,
-            preferredLanguage: preferredLanguage,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String uuid,
-            required String name,
-            required String phone,
-            Value<String?> email = const Value.absent(),
-            required String role,
-            Value<String?> token = const Value.absent(),
-            Value<String> preferredLanguage = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              UsersCompanion.insert(
-            uuid: uuid,
-            name: name,
-            phone: phone,
-            email: email,
-            role: role,
-            token: token,
-            preferredLanguage: preferredLanguage,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<String> uuid = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> phone = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String?> token = const Value.absent(),
+                Value<String> preferredLanguage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UsersCompanion(
+                uuid: uuid,
+                name: name,
+                phone: phone,
+                email: email,
+                role: role,
+                token: token,
+                preferredLanguage: preferredLanguage,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uuid,
+                required String name,
+                required String phone,
+                Value<String?> email = const Value.absent(),
+                required String role,
+                Value<String?> token = const Value.absent(),
+                Value<String> preferredLanguage = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UsersCompanion.insert(
+                uuid: uuid,
+                name: name,
+                phone: phone,
+                email: email,
+                role: role,
+                token: token,
+                preferredLanguage: preferredLanguage,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$UsersTableProcessedTableManager = ProcessedTableManager<
-    _$LocalDatabase,
-    $UsersTable,
-    User,
-    $$UsersTableFilterComposer,
-    $$UsersTableOrderingComposer,
-    $$UsersTableAnnotationComposer,
-    $$UsersTableCreateCompanionBuilder,
-    $$UsersTableUpdateCompanionBuilder,
-    (User, BaseReferences<_$LocalDatabase, $UsersTable, User>),
-    User,
-    PrefetchHooks Function()>;
+typedef $$UsersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $UsersTable,
+      User,
+      $$UsersTableFilterComposer,
+      $$UsersTableOrderingComposer,
+      $$UsersTableAnnotationComposer,
+      $$UsersTableCreateCompanionBuilder,
+      $$UsersTableUpdateCompanionBuilder,
+      (User, BaseReferences<_$LocalDatabase, $UsersTable, User>),
+      User,
+      PrefetchHooks Function()
+    >;
 
 class $LocalDatabaseManager {
   final _$LocalDatabase _db;

@@ -190,7 +190,7 @@ class AuthProvider extends ChangeNotifier {
       final token = response['token'];
       final userData = response['user'];
       _user = User.fromJson(userData);
-      _seller = SellerState.fromAnywhere(response.data);
+      _seller = SellerState.fromAnywhere(response);
 
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
@@ -215,7 +215,6 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
-
 
   /// A social sign-in failure the user can read.
   ///
@@ -309,7 +308,7 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'];
       final userData = response.data['user'];
       _user = User.fromJson(userData);
-      _seller = SellerState.fromAnywhere(response.data);
+      _seller = SellerState.fromAnywhere(response);
 
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
@@ -447,7 +446,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await _api.post(path, data: data);
       final token = response.data['token'] as String;
       _user = User.fromJson(response.data['user']);
-      _seller = SellerState.fromAnywhere(response.data);
+      _seller = SellerState.fromAnywhere(response);
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
       await _db.saveUser(_user!, token);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
@@ -27,11 +28,11 @@ class _SmsScreenState extends State<SmsScreen> {
     final message = _messageController.text.trim();
 
     if (!RegExp(r'^255[0-9]{9}$').hasMatch(phone) || message.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(
-        content: Text('Weka namba ya tarakimu 12 inayoanza na 255 na ujumbe'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Weka namba ya tarakimu 12 inayoanza na 255 na ujumbe'),
+        ),
+      );
       return;
     }
 
@@ -62,23 +63,19 @@ class _SmsScreenState extends State<SmsScreen> {
 
     if (auth.user == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('SMS'),
-          backgroundColor: const Color(0xFF2E7D32),
-          foregroundColor: Colors.white,
-        ),
+        appBar: AppBar(title: const Text('SMS')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.sms, size: 64, color: Colors.grey),
+              const Icon(Icons.sms, size: 64, color: MkColors.muted),
               const SizedBox(height: 16),
               const Text('Tafadhali ingia kwanza'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => AuthProvider.requireAuth(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Ingia'),
@@ -90,11 +87,7 @@ class _SmsScreenState extends State<SmsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SMS'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('SMS')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -137,7 +130,7 @@ class _SmsScreenState extends State<SmsScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _sendSms,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -199,7 +192,7 @@ class _ServiceCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF2E7D32)),
+        leading: Icon(icon, color: MkColors.primary),
         title: Text(title),
         subtitle: Text(description),
       ),

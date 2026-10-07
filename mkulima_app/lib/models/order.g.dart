@@ -7,20 +7,20 @@ part of 'order.dart';
 // **************************************************************************
 
 _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
-      id: _idFromJson(json['id']),
-      buyerId: _idFromJson(json['buyer_id']),
-      sellerId: _idFromJson(json['seller_id']),
-      items: (json['items'] as List<dynamic>)
-          .map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      total: _priceFromJson(json['total']),
-      status: json['status'] as String? ?? 'pending',
-      escrowId: json['escrowId'] as String?,
-      deliveryAddress: json['deliveryAddress'] as String?,
-      createdAt: json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String),
-    );
+  id: _idFromJson(json['id']),
+  buyerId: _idFromJson(json['buyer_id']),
+  sellerId: _idFromJson(json['seller_id']),
+  items: (json['items'] as List<dynamic>)
+      .map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  total: _priceFromJson(json['total']),
+  status: json['status'] as String? ?? 'pending',
+  escrowId: json['escrowId'] as String?,
+  deliveryAddress: json['deliveryAddress'] as String?,
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
+);
 
 Map<String, dynamic> _$$OrderImplToJson(_$OrderImpl instance) =>
     <String, dynamic>{

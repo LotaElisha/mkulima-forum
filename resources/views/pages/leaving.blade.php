@@ -37,7 +37,7 @@
   .leaving-mark{
     width:52px; height:52px; margin:0 auto 18px; border-radius:15px;
     display:grid; place-items:center;
-    background:#FCF1E4; color:#A85B06;
+    background:var(--surface-sunken); border:1px solid var(--line); color:var(--warn);
   }
   .auth-card h1, .auth-card .lead{ text-align:center; }
   .destination{
@@ -46,7 +46,7 @@
     border-radius:var(--r-md); padding:14px 16px; margin-bottom:22px;
   }
   .destination-label{
-    font-size:.75rem; font-weight:700; letter-spacing:.1em;
+    font-size:.8125rem; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; color:var(--ink-muted);
   }
   .destination-host{

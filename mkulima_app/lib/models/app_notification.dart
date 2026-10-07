@@ -40,19 +40,21 @@ class AppNotification {
       type: _string(json['type'], fallback: 'system'),
       read: _bool(json['read']),
       createdAt: _dateTime(json['created_at']),
-      data: json['data'] is Map ? Map<String, dynamic>.from(json['data']) : null,
+      data: json['data'] is Map
+          ? Map<String, dynamic>.from(json['data'])
+          : null,
     );
   }
 
   AppNotification copyWith({bool? read}) => AppNotification(
-        id: id,
-        title: title,
-        message: message,
-        type: type,
-        read: read ?? this.read,
-        createdAt: createdAt,
-        data: data,
-      );
+    id: id,
+    title: title,
+    message: message,
+    type: type,
+    read: read ?? this.read,
+    createdAt: createdAt,
+    data: data,
+  );
 
   static String _string(dynamic value, {String fallback = ''}) {
     if (value == null) return fallback;
@@ -88,8 +90,10 @@ class NotificationFeed {
 
   const NotificationFeed({required this.items, required this.unreadCount});
 
-  static const NotificationFeed empty =
-      NotificationFeed(items: [], unreadCount: 0);
+  static const NotificationFeed empty = NotificationFeed(
+    items: [],
+    unreadCount: 0,
+  );
 
   bool get isEmpty => items.isEmpty;
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../services/api_service.dart';
+import '../core/format.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double amount;
@@ -35,11 +36,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Malipo'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Malipo')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -56,7 +53,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'TSh ${widget.amount.toStringAsFixed(0)}',
+                      mkMoney(widget.amount),
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -251,7 +248,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           builder: (_) => AlertDialog(
             title: const Row(
               children: [
-                Icon(Icons.check_circle, color: Colors.green),
+                Icon(Icons.check_circle, color: MkColors.primary),
                 SizedBox(width: 8),
                 Text('Umefanikiwa!'),
               ],
@@ -265,7 +262,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Thibitisha malipo ya TSh ${chargedAmount.toStringAsFixed(0)} kwenye simu. Escrow itashikilia fedha baada ya mtoa huduma kuthibitisha malipo.',
+                  'Thibitisha malipo ya ${mkMoney(chargedAmount)} kwenye simu. Escrow itashikilia fedha baada ya mtoa huduma kuthibitisha malipo.',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -291,9 +288,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isProcessing = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               _createdOrderId == null

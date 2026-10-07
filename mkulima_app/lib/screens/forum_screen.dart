@@ -5,6 +5,8 @@ import '../core/theme.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/mk_empty_state.dart';
+import '../widgets/mk_error_state.dart';
+import '../widgets/mk_skeleton.dart';
 import '../widgets/mk_thread_tile.dart';
 import 'login_modal.dart';
 
@@ -18,6 +20,7 @@ class ForumScreen extends StatefulWidget {
 class _ForumScreenState extends State<ForumScreen> {
   List<dynamic> _categories = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -26,6 +29,10 @@ class _ForumScreenState extends State<ForumScreen> {
   }
 
   Future<void> _loadCategories() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final categories = await api.getForumCategories();
@@ -36,7 +43,10 @@ class _ForumScreenState extends State<ForumScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _isLoading = false);
+      setState(() {
+        _error = ApiService.formatError(e);
+        _isLoading = false;
+      });
     }
   }
 
@@ -45,7 +55,15 @@ class _ForumScreenState extends State<ForumScreen> {
     final auth = Provider.of<AuthProvider>(context);
 
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const MkListSkeleton(rows: 6);
+    }
+
+    if (_error != null) {
+      return MkErrorState(
+        title: 'Imeshindwa kupakia Jukwaa',
+        message: _error,
+        onRetry: _loadCategories,
+      );
     }
 
     if (_categories.isEmpty) {
@@ -58,7 +76,8 @@ class _ForumScreenState extends State<ForumScreen> {
               hasScrollBody: false,
               child: MkEmptyState(
                 icon: Icons.forum_outlined,
-                title: MkStrings.emptyList,
+                title: 'Bado hakuna mada za majadiliano',
+                subtitle: 'Vuta chini kuonyesha upya baadaye.',
               ),
             ),
           ],
@@ -66,75 +85,92 @@ class _ForumScreenState extends State<ForumScreen> {
       );
     }
 
-    return Column(
-      children: [
-        if (!auth.isAuthenticated)
-          Container(
-            color: Colors.blue[50],
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Ingia ili uweze kuandika na kujibu mijadala',
-                    style: TextStyle(color: Colors.blue[700], fontSize: 13),
+    return RefreshIndicator(
+      onRefresh: _loadCategories,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+        children: [
+          if (!auth.isAuthenticated) ...[
+            Container(
+              padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+              decoration: BoxDecoration(
+                color: MkColors.surfaceMuted,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Ingia ili uweze kuuliza na kujibu maswali',
+                      style: MkText.body,
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () => LoginModal.show(context),
-                  child: const Text('Ingia'),
-                ),
-              ],
+                  TextButton(
+                    onPressed: () => LoginModal.show(context),
+                    child: const Text(MkStrings.navLogin),
+                  ),
+                ],
+              ),
             ),
-          ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: _loadCategories,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              itemCount: _categories.length,
-              itemBuilder: (context, index) {
-                final cat = _categories[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: MkColors.primary,
-                      child: Icon(
-                        _getIcon(cat['icon'] ?? 'forum'),
-                        color: Colors.white,
-                      ),
+            const SizedBox(height: 8),
+          ],
+          for (final (i, cat) in _categories.indexed)
+            InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ThreadsScreen(
+                      categoryId: cat['id']?.toString() ?? '',
+                      categoryName: cat['name'] ?? 'Jukwaa',
                     ),
-                    title: Text(
-                      cat['name'] ?? 'Category',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      cat['description'] ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => ThreadsScreen(
-                            categoryId: cat['id']?.toString() ?? '',
-                            categoryName: cat['name'] ?? 'Category',
-                          ),
-                        ),
-                      );
-                    },
                   ),
                 );
               },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  border: i < _categories.length - 1
+                      ? const Border(bottom: BorderSide(color: MkColors.border))
+                      : null,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: MkColors.leafPale,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        _getIcon(cat['icon'] ?? 'forum'),
+                        color: MkColors.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(cat['name'] ?? 'Jukwaa', style: MkText.label),
+                          if ((cat['description'] ?? '').toString().isNotEmpty)
+                            Text(
+                              cat['description'],
+                              style: MkText.caption,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right, color: MkColors.muted),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -175,6 +211,7 @@ class ThreadsScreen extends StatefulWidget {
 class _ThreadsScreenState extends State<ThreadsScreen> {
   List<dynamic> _threads = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -183,6 +220,7 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
   }
 
   Future<void> _loadThreads() async {
+    setState(() => _error = null);
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final threads = await api.getThreads(widget.categoryId);
@@ -193,7 +231,20 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _isLoading = false);
+      setState(() {
+        _error = ApiService.formatError(e);
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _startThread() async {
+    final ok = await AuthProvider.requireAuth(
+      context,
+      action: 'kuandika mada mpya',
+    );
+    if (ok && mounted) {
+      _showCreateThreadDialog();
     }
   }
 
@@ -281,16 +332,26 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.categoryName)),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton(rows: 5)
+          : _error != null
+          ? MkErrorState(
+              title: 'Imeshindwa kupakia mijadala',
+              message: _error,
+              onRetry: _loadThreads,
+            )
           : _threads.isEmpty
-          ? const MkEmptyState(
+          ? MkEmptyState(
               icon: Icons.chat_bubble_outline,
-              title: MkStrings.emptyList,
+              title: 'Bado hakuna mijadala hapa',
+              subtitle: 'Kuwa wa kwanza kuuliza swali kwenye mada hii.',
+              actionLabel: 'Uliza swali',
+              onAction: _startThread,
             )
           : RefreshIndicator(
               onRefresh: _loadThreads,
               child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+                // Bottom padding keeps the last thread clear of the button.
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
                 itemCount: _threads.length,
                 itemBuilder: (context, index) {
                   final thread = _threads[index];
@@ -310,19 +371,18 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
                 },
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final ok = await AuthProvider.requireAuth(
-            context,
-            action: 'kuandika mada mpya',
-          );
-          if (ok && context.mounted) {
-            _showCreateThreadDialog();
-          }
-        },
-        backgroundColor: MkColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: _threads.isEmpty
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _startThread,
+              backgroundColor: MkColors.primary,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.add),
+              label: const Text(
+                'Uliza swali',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              ),
+            ),
     );
   }
 }
@@ -409,7 +469,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : Column(
               children: [
                 Expanded(
@@ -438,8 +498,8 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   Text(
                                     'Na: ${_thread!['user']?['name'] ?? 'Unknown'}',
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                                      fontSize: 13,
+                                      color: MkColors.muted,
                                     ),
                                   ),
                                 ],
@@ -475,8 +535,8 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                     Text(
                                       'Na: ${reply['user']?['name'] ?? 'Unknown'}',
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
+                                        fontSize: 13,
+                                        color: MkColors.muted,
                                       ),
                                     ),
                                   ],

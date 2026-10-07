@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 
 import '../core/theme.dart';
@@ -146,7 +147,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const MkListSkeleton();
     }
 
     if (_error != null) {
@@ -237,7 +238,7 @@ class _NotificationCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               _relativeTime(notification.createdAt),
-              style: const TextStyle(fontSize: 12, color: MkColors.muted),
+              style: const TextStyle(fontSize: 13, color: MkColors.muted),
             ),
           ],
         ),
@@ -258,12 +259,12 @@ class _NotificationCard extends StatelessWidget {
   }
 
   static IconData _icon(String type) => switch (type) {
-        'order' => Icons.shopping_bag_outlined,
-        'forum' => Icons.forum_outlined,
-        'payment' => Icons.account_balance_wallet_outlined,
-        'system' => Icons.info_outline,
-        _ => Icons.notifications_none,
-      };
+    'order' => Icons.shopping_bag_outlined,
+    'forum' => Icons.forum_outlined,
+    'payment' => Icons.account_balance_wallet_outlined,
+    'system' => Icons.info_outline,
+    _ => Icons.notifications_none,
+  };
 
   /// Swahili relative time. The list used to print the raw ISO8601 string.
   static String _relativeTime(DateTime? time) {
@@ -277,7 +278,9 @@ class _NotificationCard extends StatelessWidget {
     if (diff.inDays == 1) return 'Jana';
     if (diff.inDays < 7) return 'Siku ${diff.inDays} zilizopita';
     if (diff.inDays < 30) return 'Wiki ${(diff.inDays / 7).floor()} zilizopita';
-    if (diff.inDays < 365) return 'Miezi ${(diff.inDays / 30).floor()} iliyopita';
+    if (diff.inDays < 365) {
+      return 'Miezi ${(diff.inDays / 30).floor()} iliyopita';
+    }
     return 'Zaidi ya mwaka mmoja uliopita';
   }
 }

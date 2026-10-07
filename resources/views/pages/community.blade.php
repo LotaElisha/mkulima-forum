@@ -7,23 +7,34 @@
 
 @section('head_extra')
 <style>
-  .comm-hero {
-    background: radial-gradient(circle at 70% 30%, #1B4D2E 0%, var(--forest-dark) 70%);
-    color:#fff; padding:80px 0; text-align:center;
-  }
-  .channel-card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php. */
+  .comm-hero { padding:72px 0 56px; text-align:center; background:#fff; }
+  .comm-title { font-size:clamp(30px,4.6vw,48px); font-weight:800; line-height:1.12; letter-spacing:-.025em; color:var(--ink-dark); margin:0 auto 16px; }
+  .comm-sub { font-size:17px; line-height:1.65; max-width:40rem; margin:0 auto; }
+
+  .channel-card-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
   @media(max-width:960px){ .channel-card-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:560px){ .channel-card-grid{ grid-template-columns:1fr; } }
+  @media(max-width:560px){ .channel-card-grid{ grid-template-columns:1fr; gap:12px; } }
+  .comm-status { grid-column:1/-1; text-align:center; padding:40px 16px; font-size:16px; color:var(--ink-muted); background:var(--surface-soft); border:1px solid var(--border-light); border-radius:var(--radius-xl); }
 
   .comm-card {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-xl);
-    padding:28px; transition:all .25s ease; display:flex; flex-direction:column; justify-content:space-between;
+    background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl);
+    padding:24px; display:flex; flex-direction:column; justify-content:space-between;
+    transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .comm-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:var(--border-mid); }
-  .comm-card-icon { font-size:2.4rem; margin-bottom:12px; }
-  .comm-card-title { font-size:1.15rem; font-weight:800; color:var(--ink-dark); margin-bottom:6px; }
-  .comm-card-desc { font-size:.88rem; color:var(--ink-muted); line-height:1.6; margin-bottom:20px; flex:1; }
-  .official-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; background:#E8F0FE; color:#1A73E8; font-size:.7rem; font-weight:800; text-transform:uppercase; margin-bottom:8px; }
+  .comm-card:hover { border-color:var(--border-mid); box-shadow:var(--shadow-md); }
+  .comm-card-icon { width:48px; height:48px; border-radius:14px; background:var(--leaf-pale); display:flex; align-items:center; justify-content:center; color:var(--forest-mid); margin-bottom:14px; }
+  .comm-card-title { font-size:18px; font-weight:700; color:var(--ink-dark); margin-bottom:6px; }
+  .comm-card-desc { font-size:15px; color:var(--ink-muted); line-height:1.6; margin-bottom:20px; flex:1; }
+  .comm-card .btn { width:100%; }
+  .official-tag { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:999px; background:var(--leaf-pale); color:var(--forest-dark); font-size:13px; font-weight:700; margin-bottom:12px; }
+
+  @media(max-width:700px){
+    .comm-title { font-size:28px; line-height:1.18; }
+    .comm-sub { font-size:16px; }
+    .comm-card { padding:18px; }
+    .comm-card:hover { box-shadow:none; }
+  }
 </style>
 @endsection
 
@@ -31,12 +42,12 @@
 
 {{-- Hero --}}
 <div class="comm-hero">
-  <div class="wrap fade-up" style="max-width:700px;">
-    <span class="badge dark" style="margin-bottom:16px;" data-i18n="c_hero_badge">JAMII YA MKULIMA FORUM</span>
-    <h1 style="font-size:clamp(2.2rem,5vw,3.4rem); font-weight:900; color:#fff; line-height:1.12; margin-bottom:16px;" data-i18n="c_hero_title">
+  <div class="wrap fade-up">
+    <span class="badge" style="margin-bottom:16px;" data-i18n="c_hero_badge">JAMII YA MKULIMA FORUM</span>
+    <h1 class="comm-title" data-i18n="c_hero_title">
       Jiunge na Mtandao wa Wakulima Tanzania
     </h1>
-    <p style="font-size:1.05rem; color:rgba(255,255,255,.9); line-height:1.7;" data-i18n="c_hero_sub">
+    <p class="comm-sub" data-i18n="c_hero_sub">
       Pata taarifa za masoko, tahadhari za kilimo, na ushauri wa kitaalamu kupitia WhatsApp Channels, vikundi vya WhatsApp, Telegram, na mitandao ya kijamii.
     </p>
   </div>
@@ -45,13 +56,13 @@
 {{-- Dynamic Community Directory Grid (B3 & B4) --}}
 <section>
   <div class="wrap">
-    <div style="text-align:center; margin-bottom:40px;">
+    <div style="text-align:center; margin-bottom:32px;">
       <span class="eyebrow" data-i18n="c_dir_eyebrow">DIREKTA YA JAMII</span>
       <h2 class="section-title" data-i18n="c_dir_title">Njia Rasmi na Vikundi vya Jamii</h2>
     </div>
 
     <div id="community_grid" class="channel-card-grid">
-      <div style="grid-column:1/-1; text-align:center; padding:40px;" data-i18n="c_loading">
+      <div class="comm-status" data-i18n="c_loading">
         ⏳ Inapakia vikundi na njia za jamii...
       </div>
     </div>
@@ -72,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const grid = document.getElementById('community_grid');
     if (!channels || channels.length === 0) {
-      grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--ink-muted);">Vikundi vinahuishwa. Rudi hivi karibuni!</div>';
+      grid.innerHTML = '<div class="comm-status">Vikundi vinahuishwa. Rudi hivi karibuni!</div>';
       return;
     }
 
@@ -102,10 +113,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         : (isSw ? '🔗 Jiunge Sasa' : '🔗 Join Channel');
 
       return `
-        <div class="comm-card fade-up">
+        <div class="comm-card">
           <div>
             ${officialBadge}
-            <div class="comm-card-icon">💬</div>
+            <div class="comm-card-icon"><svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></div>
             <h3 class="comm-card-title">${escapeHtml(c.name)}</h3>
             <p class="comm-card-desc">${escapeHtml(descText)}</p>
           </div>
@@ -116,8 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               rel="noopener"
               data-channel-uuid="${escapeHtml(c.uuid)}"
               data-channel-type="${escapeHtml(c.channel_type)}"
-              class="btn btn-primary btn-sm" 
-              style="width:100%; justify-content:center;"
+              class="btn btn-primary"
             >
               ${btnText}
             </a>

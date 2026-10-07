@@ -7,10 +7,13 @@ part 'order.g.dart';
 class Order with _$Order {
   const factory Order({
     @JsonKey(fromJson: _idFromJson, toJson: _idToJson) required String id,
-    @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson) required String buyerId,
-    @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson) required String sellerId,
+    @JsonKey(name: 'buyer_id', fromJson: _idFromJson, toJson: _idToJson)
+    required String buyerId,
+    @JsonKey(name: 'seller_id', fromJson: _idFromJson, toJson: _idToJson)
+    required String sellerId,
     required List<OrderItem> items,
-    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) required double total,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required double total,
     @Default('pending') String status,
     String? escrowId,
     String? deliveryAddress,
@@ -23,10 +26,13 @@ class Order with _$Order {
 @freezed
 class OrderItem with _$OrderItem {
   const factory OrderItem({
-    @JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson) required String productId,
+    @JsonKey(name: 'product_id', fromJson: _idFromJson, toJson: _idToJson)
+    required String productId,
     required int quantity,
-    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) required double unitPrice,
-    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson) required double subtotal,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required double unitPrice,
+    @JsonKey(fromJson: _priceFromJson, toJson: _priceToJson)
+    required double subtotal,
   }) = _OrderItem;
 
   factory OrderItem.fromJson(Map<String, dynamic> json) =>
@@ -45,4 +51,5 @@ double _priceFromJson(dynamic price) {
   if (price is String) return double.tryParse(price) ?? 0.0;
   return 0.0;
 }
+
 dynamic _priceToJson(double price) => price;

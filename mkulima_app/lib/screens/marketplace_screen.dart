@@ -5,9 +5,10 @@ import '../core/theme.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
 import '../widgets/mk_empty_state.dart';
+import '../widgets/mk_error_state.dart';
+import '../widgets/mk_skeleton.dart';
 import '../widgets/mk_product_tile.dart';
 import 'product_detail_screen.dart';
-import 'weather_screen.dart';
 
 class MarketplaceScreen extends StatefulWidget {
   const MarketplaceScreen({super.key});
@@ -21,8 +22,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   bool _isLoading = true;
   String? _error;
   String _searchQuery = '';
+  final _searchController = TextEditingController();
   String? _selectedCategory;
-  Map<String, dynamic>? _weather;
 
   final List<String> _categories = [
     'All',
@@ -38,7 +39,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   void initState() {
     super.initState();
     _loadProducts();
-    _loadWeather();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadProducts() async {
@@ -60,23 +66,6 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         _error = ApiService.formatError(e);
         _isLoading = false;
       });
-    }
-  }
-
-  Future<void> _loadWeather() async {
-    try {
-      final api = context.read<ApiService>();
-      final response = await api.getWeather();
-      if (!mounted) return;
-      setState(() {
-        // Only show the chip when real data is available — never a made-up
-        // default temperature.
-        _weather = response['available'] == true
-            ? response['current'] as Map<String, dynamic>?
-            : null;
-      });
-    } catch (e) {
-      // Weather is optional, ignore errors
     }
   }
 
@@ -107,97 +96,59 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // The shell's app bar already says "Soko", so the screen opens straight
+    // onto search and categories rather than repeating a large title.
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Soko la Mkulima',
-                          style: TextStyle(
-                            fontFamily: 'serif',
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'Nunua na uza kwa uaminifu',
-                          style: TextStyle(color: MkColors.muted),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (_weather != null)
-                    ActionChip(
-                      avatar: Icon(
-                        _getWeatherIcon(_weather!['description']?.toString()),
-                        size: 18,
-                      ),
-                      label: Text('${_weather!['temperature']}°C'),
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const WeatherScreen(),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                onChanged: (value) => setState(() => _searchQuery = value),
-                decoration: const InputDecoration(
-                  hintText: 'Tafuta mbegu, mazao, vifaa...',
-                  prefixIcon: Icon(Icons.search),
-                  suffixIcon: Icon(Icons.tune),
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          child: TextField(
+            controller: _searchController,
+            onChanged: (value) => setState(() => _searchQuery = value),
+            textInputAction: TextInputAction.search,
+            decoration: const InputDecoration(
+              hintText: 'Tafuta mbegu, mazao, vifaa...',
+              prefixIcon: Icon(Icons.search),
+              fillColor: MkColors.surfaceMuted,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 48,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            scrollDirection: Axis.horizontal,
+            itemCount: _categories.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final category = _categories[index];
+              final selected =
+                  _selectedCategory == category ||
+                  (category == 'All' && _selectedCategory == null);
+              return FilterChip(
+                label: Text(category == 'All' ? 'Zote' : category),
+                selected: selected,
+                showCheckmark: false,
+                side: BorderSide(
+                  color: selected ? MkColors.primary : MkColors.border,
                 ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 40,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _categories.length,
-                  itemBuilder: (context, index) {
-                    final category = _categories[index];
-                    final selected =
-                        _selectedCategory == category ||
-                        (category == 'All' && _selectedCategory == null);
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: FilterChip(
-                        label: Text(category == 'All' ? 'Zote' : category),
-                        selected: selected,
-                        onSelected: (_) => setState(
-                          () => _selectedCategory = category == 'All'
-                              ? null
-                              : category,
-                        ),
-                        selectedColor: MkColors.primary,
-                        checkmarkColor: Colors.white,
-                        labelStyle: TextStyle(
-                          color: selected ? Colors.white : MkColors.charcoal,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    );
-                  },
+                labelStyle: TextStyle(
+                  fontSize: 15,
+                  color: selected ? MkColors.primaryDark : MkColors.ink,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                 ),
-              ),
-            ],
+                onSelected: (_) => setState(
+                  () => _selectedCategory = category == 'All' ? null : category,
+                ),
+              );
+            },
           ),
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const SingleChildScrollView(child: MkGridSkeleton())
               : _error != null
               ? _buildErrorView()
               : _filteredProducts.isEmpty
@@ -208,36 +159,30 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     );
   }
 
-  IconData _getWeatherIcon(String? condition) {
-    // OpenWeather descriptions are phrases ("overcast clouds", "light rain"),
-    // so match by substring.
-    final desc = (condition ?? '').toLowerCase();
-    if (desc.contains('thunder') || desc.contains('storm')) {
-      return Icons.thunderstorm;
-    }
-    if (desc.contains('rain') || desc.contains('drizzle')) {
-      return Icons.water_drop;
-    }
-    if (desc.contains('cloud')) {
-      return Icons.wb_cloudy;
-    }
-    return Icons.wb_sunny;
-  }
-
   Widget _buildErrorView() {
-    return MkEmptyState(
-      icon: Icons.error_outline,
+    return MkErrorState(
       title: MkStrings.productsLoadFailed,
-      subtitle: _error,
-      actionLabel: MkStrings.retry,
-      onAction: _loadProducts,
+      message: _error,
+      onRetry: _loadProducts,
     );
   }
 
   Widget _buildEmptyView() {
-    return const MkEmptyState(
+    final filtering = _searchQuery.isNotEmpty || _selectedCategory != null;
+    return MkEmptyState(
       icon: Icons.search_off,
       title: MkStrings.noProductsFound,
+      subtitle: filtering
+          ? 'Jaribu neno jingine, au angalia aina zote.'
+          : 'Bidhaa za wauzaji zitaonekana hapa zikiwekwa sokoni.',
+      actionLabel: filtering ? 'Ona bidhaa zote' : null,
+      onAction: filtering
+          ? () => setState(() {
+              _searchController.clear();
+              _searchQuery = '';
+              _selectedCategory = null;
+            })
+          : null,
     );
   }
 
@@ -248,7 +193,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.66,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),

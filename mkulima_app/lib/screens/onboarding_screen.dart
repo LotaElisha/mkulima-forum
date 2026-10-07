@@ -93,7 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: _skip,
                   child: const Text(
                     'Ruka',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    style: TextStyle(color: MkColors.muted, fontSize: 16),
                   ),
                 ),
               ),
@@ -141,7 +141,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Text(
                           p['title'] as String,
                           style: const TextStyle(
-                            fontSize: 28,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: MkColors.charcoal,
                           ),
@@ -152,7 +152,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           p['subtitle'] as String,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.grey[600],
+                            color: MkColors.muted,
                             height: 1.5,
                           ),
                           textAlign: TextAlign.center,
@@ -177,7 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   decoration: BoxDecoration(
                     color: _currentPage == index
                         ? page['color'] as Color
-                        : Colors.grey[300],
+                        : MkColors.border,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

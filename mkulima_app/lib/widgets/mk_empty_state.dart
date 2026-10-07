@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-/// Standard empty/error/offline state used across all list screens.
+import '../core/theme.dart';
+
+/// Empty state used across list screens. The subtitle should say what to do
+/// next ("Ukinunua bidhaa sokoni, oda zako zitaonekana hapa"), not just that
+/// there is no data, and [actionLabel] should be that next step.
 class MkEmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -19,27 +23,33 @@ class MkEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 64, color: theme.colorScheme.outline),
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: MkColors.leafPale,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(icon, size: 30, color: MkColors.primary),
+            ),
             const SizedBox(height: 16),
-            Text(title,
-                style: theme.textTheme.titleMedium,
-                textAlign: TextAlign.center),
+            Text(title, style: MkText.title, textAlign: TextAlign.center),
             if (subtitle != null) ...[
               const SizedBox(height: 8),
-              Text(subtitle!,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: theme.colorScheme.outline),
-                  textAlign: TextAlign.center),
+              Text(
+                subtitle!,
+                style: MkText.bodyMuted,
+                textAlign: TextAlign.center,
+              ),
             ],
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               FilledButton(onPressed: onAction, child: Text(actionLabel!)),
             ],
           ],

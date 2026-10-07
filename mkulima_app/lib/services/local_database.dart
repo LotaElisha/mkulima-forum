@@ -68,20 +68,22 @@ class LocalDatabase extends _$LocalDatabase {
   Future<List<Product>> getAllProducts() => select(products).get();
 
   Future<void> insertProduct(dynamic product) async {
-    await into(products).insertOnConflictUpdate(ProductsCompanion(
-      id: Value(product.id),
-      name: Value(product.name),
-      description: Value(product.description),
-      price: Value(product.price),
-      stock: Value(product.stock),
-      categoryId: Value(product.categoryId),
-      sellerId: Value(product.sellerId),
-      unit: Value(product.unit),
-      images: Value(product.images?.join(',')),
-      minOrder: Value(product.minOrder ?? 0),
-      isAvailable: Value(product.isAvailable ?? true),
-      syncedAt: Value(DateTime.now()),
-    ));
+    await into(products).insertOnConflictUpdate(
+      ProductsCompanion(
+        id: Value(product.id),
+        name: Value(product.name),
+        description: Value(product.description),
+        price: Value(product.price),
+        stock: Value(product.stock),
+        categoryId: Value(product.categoryId),
+        sellerId: Value(product.sellerId),
+        unit: Value(product.unit),
+        images: Value(product.images?.join(',')),
+        minOrder: Value(product.minOrder ?? 0),
+        isAvailable: Value(product.isAvailable ?? true),
+        syncedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   Future<void> insertProducts(List<dynamic> productList) async {
@@ -96,35 +98,40 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   Future<void> insertOrder(dynamic order) async {
-    await into(orders).insert(OrdersCompanion(
-      id: Value(order.id),
-      buyerId: Value(order.buyerId),
-      sellerId: Value(order.sellerId),
-      items: Value('items'),
-      total: Value(order.total),
-      status: Value(order.status),
-      escrowId: Value(order.escrowId),
-      deliveryAddress: Value(order.deliveryAddress),
-      isSynced: const Value(false),
-    ));
+    await into(orders).insert(
+      OrdersCompanion(
+        id: Value(order.id),
+        buyerId: Value(order.buyerId),
+        sellerId: Value(order.sellerId),
+        items: Value('items'),
+        total: Value(order.total),
+        status: Value(order.status),
+        escrowId: Value(order.escrowId),
+        deliveryAddress: Value(order.deliveryAddress),
+        isSynced: const Value(false),
+      ),
+    );
   }
 
   Future<void> markOrderSynced(String orderId) async {
-    await (update(orders)..where((o) => o.id.equals(orderId)))
-        .write(const OrdersCompanion(isSynced: Value(true)));
+    await (update(orders)..where((o) => o.id.equals(orderId))).write(
+      const OrdersCompanion(isSynced: Value(true)),
+    );
   }
 
   // User operations
   Future<void> saveUser(dynamic user, String token) async {
-    await into(users).insertOnConflictUpdate(UsersCompanion(
-      uuid: Value(user.uuid),
-      name: Value(user.name),
-      phone: Value(user.phone),
-      email: Value(user.email),
-      role: Value(user.role),
-      token: Value(token),
-      preferredLanguage: Value(user.preferredLanguage),
-    ));
+    await into(users).insertOnConflictUpdate(
+      UsersCompanion(
+        uuid: Value(user.uuid),
+        name: Value(user.name),
+        phone: Value(user.phone),
+        email: Value(user.email),
+        role: Value(user.role),
+        token: Value(token),
+        preferredLanguage: Value(user.preferredLanguage),
+      ),
+    );
   }
 
   Future<dynamic> getCurrentUser() async {

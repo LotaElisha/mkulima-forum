@@ -7,29 +7,63 @@
 
 @section('head_extra')
 <style>
-  .story-category-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px; }
-  .cat-btn { padding:9px 18px; border-radius:999px; font-size:.85rem; font-weight:700; border:1.5px solid var(--border-mid); background:transparent; color:var(--ink-muted); cursor:pointer; transition:all .18s ease; }
-  .cat-btn:hover, .cat-btn.active { background:var(--forest-dark); color:#fff; border-color:var(--forest-dark); }
-  .stories-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php. */
+  .story-category-bar { display:flex; gap:8px; flex-wrap:wrap; }
+  .cat-btn {
+    display:inline-flex; align-items:center; min-height:44px; padding:10px 16px;
+    border-radius:999px; font-size:14px; font-weight:600;
+    border:1px solid var(--border-mid); background:#fff; color:var(--ink-body);
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .cat-btn:hover { background:var(--surface-soft); }
+  .cat-btn.active { background:var(--leaf-pale); color:var(--forest-dark); border-color:var(--forest-mid); }
+
+  /* Future CMS story cards */
+  .stories-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
   @media(max-width:960px){ .stories-grid{ grid-template-columns:repeat(2,1fr); } }
   @media(max-width:560px) { .stories-grid{ grid-template-columns:1fr; } }
-  .story-card {
-    background:var(--surface-card); border:1px solid var(--border-light); border-radius:var(--radius-xl);
-    overflow:hidden; transition:all .25s ease;
-  }
-  .story-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
-  .story-card-img { background:linear-gradient(145deg,var(--leaf-pale),#D6EEC8); height:180px; display:flex; align-items:center; justify-content:center; font-size:4rem; }
-  .story-card-body { padding:28px; }
-  .story-cat-badge { font-size:.7rem; font-weight:800; color:var(--forest-mid); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px; display:block; }
-  .story-quote { font-style:italic; color:var(--ink-body); line-height:1.7; font-size:.95rem; margin-bottom:16px; position:relative; padding-left:16px; border-left:3px solid var(--leaf-green); }
+  .story-card { background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); overflow:hidden; }
+  .story-card-img { background:var(--surface-soft); height:180px; display:flex; align-items:center; justify-content:center; font-size:48px; }
+  .story-card-body { padding:24px; }
+  .story-cat-badge { font-size:13px; font-weight:700; color:var(--forest-mid); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; display:block; }
+  .story-quote { color:var(--ink-body); line-height:1.65; font-size:15px; margin-bottom:16px; padding-left:14px; border-left:3px solid var(--forest-mid); }
   .story-person { display:flex; align-items:center; gap:12px; }
-  .story-avatar { width:40px; height:40px; border-radius:50%; background:var(--leaf-pale); display:flex; align-items:center; justify-content:center; font-size:1.2rem; border:2px solid var(--border-light); flex-shrink:0; }
-  .story-meta h4 { font-size:.88rem; font-weight:800; color:var(--ink-dark); }
-  .story-meta p  { font-size:.78rem; color:var(--ink-muted); }
+  .story-avatar { width:40px; height:40px; border-radius:50%; background:var(--leaf-pale); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .story-meta h4 { font-size:15px; font-weight:700; color:var(--ink-dark); }
+  .story-meta p  { font-size:13px; color:var(--ink-muted); }
 
-  .submit-story-panel { background:linear-gradient(145deg,var(--leaf-pale),#D6EEC8); border-radius:var(--radius-2xl); padding:56px; text-align:center; border:1.5px dashed var(--border-mid); }
-  .story-share-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
-  @media(max-width:760px){ .story-share-grid{ grid-template-columns:1fr; } }
+  /* Coming-soon panel */
+  .submit-story-panel { background:var(--surface-soft); border:1px solid var(--border-light); border-radius:var(--radius-2xl); padding:56px 40px; text-align:center; }
+  .soon-icon { width:64px; height:64px; margin:0 auto 20px; border-radius:16px; background:#fff; border:1px solid var(--border-light); color:var(--forest-mid); display:flex; align-items:center; justify-content:center; }
+  .soon-title { font-size:clamp(22px,3vw,28px); font-weight:800; color:var(--ink-dark); margin-bottom:12px; }
+  .soon-sub { color:var(--ink-muted); max-width:36rem; margin:0 auto 24px; font-size:16px; line-height:1.65; }
+  .btn-row { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+
+  /* Story format + share */
+  .story-share-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start; }
+  @media(max-width:760px){ .story-share-grid{ grid-template-columns:1fr; gap:36px; } }
+  .share-lead { color:var(--ink-muted); font-size:16px; margin-bottom:24px; line-height:1.65; }
+  .format-steps { display:flex; flex-direction:column; gap:12px; }
+  .format-step { display:flex; gap:16px; align-items:flex-start; padding:20px; background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); }
+  .format-step .card-icon { margin:0; }
+  .format-step h4 { font-size:16px; font-weight:700; color:var(--ink-dark); margin-bottom:4px; }
+  .format-step p { font-size:15px; color:var(--ink-muted); }
+  .share-actions { display:flex; flex-direction:column; gap:12px; }
+  .share-note { margin-top:20px; padding:16px; background:var(--surface-soft); border-radius:12px; border:1px solid var(--border-light); display:flex; gap:10px; align-items:flex-start; }
+  .share-note .ico { color:var(--forest-mid); margin-top:2px; }
+  .share-note p { font-size:14px; color:var(--ink-muted); line-height:1.55; }
+
+  /* Closing call to action: white, like the home page */
+  .final-cta { padding:80px 0; text-align:center; background:#fff; border-top:1px solid var(--border-light); }
+  .final-cta h2 { font-size:clamp(26px,3.6vw,36px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
+  .final-cta p { max-width:540px; margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
+
+  @media (max-width:700px) {
+    .submit-story-panel { padding-left:18px !important; padding-right:18px !important; border-radius:16px; }
+    .format-step { padding:16px; }
+    .final-cta { padding:48px 0; }
+    .final-cta p { font-size:16px; }
+  }
 </style>
 @endsection
 
@@ -37,9 +71,9 @@
 
 {{-- Hero --}}
 <section class="page-hero">
-  <div class="wrap fade-up" style="max-width:700px;">
+  <div class="wrap fade-up">
     <span class="eyebrow" data-i18n="stories_eyebrow">HADITHI ZA WAKULIMA</span>
-    <h1 class="page-title" data-i18n="stories_title" style="font-size:clamp(2.2rem,5vw,3.4rem);">
+    <h1 class="page-title" data-i18n="stories_title">
       Wakulima wa Kweli.<br>Changamoto za Kweli.<br>Maamuzi Bora.
     </h1>
     <p class="section-lead" data-i18n="stories_sub">Hadithi za kweli za wakulima ambao MkulimaForum imewasaidia kupata taarifa bora, kulinda mazao yao, na kupata mazao mazuri zaidi.</p>
@@ -47,7 +81,7 @@
 </section>
 
 {{-- Category Filter --}}
-<section style="padding-top:0; padding-bottom:20px;">
+<section style="padding-top:32px; padding-bottom:0;">
   <div class="wrap">
     <div class="story-category-bar">
       @foreach([
@@ -65,15 +99,15 @@
 </section>
 
 {{-- Coming-soon placeholder --}}
-<section style="padding-top:20px;">
+<section style="padding-top:20px; padding-bottom:0;">
   <div class="wrap">
     <div class="submit-story-panel fade-up">
-      <div style="font-size:4rem; margin-bottom:20px;">🌾</div>
-      <h2 style="font-size:1.8rem; font-weight:800; color:var(--forest-dark); margin-bottom:14px;" data-i18n="soon_title">Hadithi za Wakulima Zinakusanywa</h2>
-      <p style="color:var(--ink-muted); max-width:36rem; margin:0 auto 24px; font-size:1rem; line-height:1.7;" data-i18n="soon_sub">
+      <div class="soon-icon"><x-icon name="leaf" :size="30" /></div>
+      <h2 class="soon-title" data-i18n="soon_title">Hadithi za Wakulima Zinakusanywa</h2>
+      <p class="soon-sub" data-i18n="soon_sub">
         Tunakusanya na kuthibitisha hadithi halisi za wakulima wanaotumia MkulimaForum katika mazao yao ya kila siku. Hadithi zitaonekana hapa baada ya uthibitisho.
       </p>
-      <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+      <div class="btn-row">
         <a href="/contact" class="btn btn-primary" data-i18n="soon_share_btn">Shiriki Hadithi Yako</a>
         <a href="/solutions" class="btn btn-outline" data-i18n="soon_solutions_btn">Gundua Suluhisho Zetu →</a>
       </div>
@@ -109,32 +143,35 @@
       <div class="fade-up">
         <span class="eyebrow" data-i18n="format_eyebrow">MUUNDO WA HADITHI</span>
         <h2 class="section-title" data-i18n="format_title">Jinsi Tunavyoandika Hadithi</h2>
-        <p style="color:var(--ink-muted); margin-bottom:24px; line-height:1.7;" data-i18n="format_sub">Kila hadithi ya mkulima inaelezea safari ya kweli — changamoto, suluhisho, na matokeo.</p>
+        <p class="share-lead" data-i18n="format_sub">Kila hadithi ya mkulima inaelezea safari ya kweli — changamoto, suluhisho, na matokeo.</p>
+        <div class="format-steps">
         @foreach([
-          ['🔍','Changamoto','Challenge','Mkulima alikuwa anakabiliwa na nini.','What the farmer was facing.','f0'],
-          ['⚡','Suluhisho la MkulimaForum','MkulimaForum Solution','Kipengele gani kilisaidia.','Which feature helped.','f1'],
-          ['✅','Matokeo','Outcome','Nini kilimabadilika.','What changed.','f2'],
+          ['search','Changamoto','Challenge','Mkulima alikuwa anakabiliwa na nini.','What the farmer was facing.','f0'],
+          ['leaf','Suluhisho la MkulimaForum','MkulimaForum Solution','Kipengele gani kilisaidia.','Which feature helped.','f1'],
+          ['check-circle','Matokeo','Outcome','Nini kilimabadilika.','What changed.','f2'],
         ] as $step)
-        <div style="display:flex; gap:16px; margin-bottom:20px; padding:20px; background:var(--leaf-pale); border-radius:14px; border:1px solid var(--border-light);">
-          <div style="font-size:1.8rem; flex-shrink:0; width:48px; text-align:center;">{{ $step[0] }}</div>
+        <div class="format-step">
+          <div class="card-icon"><x-icon :name="$step[0]" :size="22" /></div>
           <div>
-            <h4 style="font-size:1rem; font-weight:800; color:var(--ink-dark); margin-bottom:4px;" data-i18n="{{ $step[5] }}_title">{{ $step[1] }}</h4>
-            <p style="font-size:.88rem; color:var(--ink-muted);" data-i18n="{{ $step[5] }}_desc">{{ $step[3] }}</p>
+            <h4 data-i18n="{{ $step[5] }}_title">{{ $step[1] }}</h4>
+            <p data-i18n="{{ $step[5] }}_desc">{{ $step[3] }}</p>
           </div>
         </div>
         @endforeach
+        </div>
       </div>
 
       <div class="fade-up">
         <span class="eyebrow" data-i18n="share_eyebrow">SHIRIKI HADITHI YAKO</span>
         <h2 class="section-title" data-i18n="share_title">Je, Unatumia MkulimaForum?</h2>
-        <p style="color:var(--ink-muted); margin-bottom:28px; line-height:1.7;" data-i18n="share_sub">Ungependa kushiriki uzoefu wako ili kuwasaidia wakulima wengine? Wasiliana nasi na hadithi yako.</p>
-        <div style="display:flex; flex-direction:column; gap:14px;">
+        <p class="share-lead" data-i18n="share_sub">Ungependa kushiriki uzoefu wako ili kuwasaidia wakulima wengine? Wasiliana nasi na hadithi yako.</p>
+        <div class="share-actions">
           <a href="/contact?type=story" class="btn btn-primary btn-lg" data-i18n="share_btn">🌾 Shiriki Hadithi Yangu</a>
           <a href="/solutions" class="btn btn-outline" data-i18n="share_solutions_btn">Gundua Suluhisho Zetu →</a>
         </div>
-        <div style="margin-top:24px; padding:16px; background:var(--leaf-pale); border-radius:12px; border:1px solid var(--border-light);">
-          <p style="font-size:.82rem; color:var(--ink-muted);" data-i18n="share_note">
+        <div class="share-note">
+          <x-icon name="shield" :size="18" />
+          <p data-i18n="share_note">
             Hadithi zote zinathibitishwa kabla ya kuchapishwa. Taarifa za kibinafsi zinalindwa na sera ya faragha ya MkulimaForum.
           </p>
         </div>
@@ -144,13 +181,13 @@
 </section>
 
 {{-- CTA --}}
-<section style="background:linear-gradient(135deg,#0E4220,var(--forest-dark)); color:#fff; padding:72px 0;">
-  <div class="wrap" style="text-align:center; max-width:580px;">
-    <h2 style="font-size:clamp(1.8rem,4vw,2.4rem); font-weight:900; color:#fff; margin-bottom:14px;" data-i18n="s_cta_title">Kuwa Sehemu ya Safari Yetu</h2>
-    <p style="color:rgba(255,255,255,.82); margin-bottom:28px;" data-i18n="s_cta_sub">Pakua app, anza kuitumia, na ushiriki uzoefu wako ili kusaidia wakulima wengine Tanzania.</p>
-    <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
-      <a href="/download" class="btn btn-gold btn-lg" data-i18n="s_cta_dl">⬇️ Pakua App</a>
-      <a href="/impact" class="btn btn-ghost btn-lg" data-i18n="s_cta_impact">Angalia Athari Zetu →</a>
+<section class="final-cta">
+  <div class="wrap">
+    <h2 data-i18n="s_cta_title">Kuwa Sehemu ya Safari Yetu</h2>
+    <p data-i18n="s_cta_sub">Pakua app, anza kuitumia, na ushiriki uzoefu wako ili kusaidia wakulima wengine Tanzania.</p>
+    <div class="btn-row">
+      <a href="/download" class="btn btn-primary btn-lg" data-i18n="s_cta_dl">⬇️ Pakua App</a>
+      <a href="/impact" class="btn btn-outline btn-lg" data-i18n="s_cta_impact">Angalia Athari Zetu →</a>
     </div>
   </div>
 </section>

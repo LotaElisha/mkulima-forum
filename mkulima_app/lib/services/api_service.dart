@@ -187,7 +187,6 @@ class ApiService {
     return SellerState.fromAnywhere(response.data);
   }
 
-
   // Marketplace APIs
   Future<List<Product>> getProducts({
     String? categoryId,
@@ -299,19 +298,24 @@ class ApiService {
     required String title,
     required String body,
   }) async {
-    final response = await _dio.post('/forum/threads', data: {
-      // Sent as the string the screen carries. Laravel's `exists` rule
-      // resolves a numeric string against the id column without complaint.
-      'forum_category_id': categoryId,
-      'title': title,
-      'body': body,
-    });
+    final response = await _dio.post(
+      '/forum/threads',
+      data: {
+        // Sent as the string the screen carries. Laravel's `exists` rule
+        // resolves a numeric string against the id column without complaint.
+        'forum_category_id': categoryId,
+        'title': title,
+        'body': body,
+      },
+    );
     return _asMap(response.data['thread'] ?? response.data);
   }
 
   Future<Map<String, dynamic>> getThread(String threadId) async {
     final response = await _dio.get('/forum/threads/$threadId');
-    return _asMap(response.data['thread'] ?? response.data['data'] ?? response.data);
+    return _asMap(
+      response.data['thread'] ?? response.data['data'] ?? response.data,
+    );
   }
 
   Future<void> createReply(String threadId, String body) async {
@@ -327,7 +331,9 @@ class ApiService {
       'image': MultipartFile.fromBytes(imageBytes, filename: filename),
     });
     final response = await _dio.post('/scanner/scan', data: formData);
-    return _asMap(response.data['scan'] ?? response.data['data'] ?? response.data);
+    return _asMap(
+      response.data['scan'] ?? response.data['data'] ?? response.data,
+    );
   }
 
   Future<List<dynamic>> getDiseaseHistory() async {
@@ -518,7 +524,6 @@ class ApiService {
     );
     return response.data;
   }
-
 
   /// Coerce a response body to a map without throwing.
   ///

@@ -56,34 +56,45 @@ class FeaturesScreen extends StatefulWidget {
 }
 
 class _FeaturesScreenState extends State<FeaturesScreen> {
-
   final List<ServiceItem> _miamalaServices = [
     const ServiceItem(
       icon: Icons.account_balance_wallet_outlined,
       name: 'Mkulima Pay',
       description: 'Hifadhi na lipia miamala kwa usalama shambani.',
       requiredPlan: 'Free',
-      color: Colors.green,
+      color: MkColors.primary,
       targetScreen: WalletScreen(),
-      benefits: ['Akaunti ya bure ya malipo', 'Tuma na upokee pesa za mazao', 'Miamala ya haraka bila makato'],
+      benefits: [
+        'Akaunti ya bure ya malipo',
+        'Tuma na upokee pesa za mazao',
+        'Miamala ya haraka bila makato',
+      ],
     ),
     const ServiceItem(
       icon: Icons.security_outlined,
       name: 'Mkulima Escrow',
       description: 'Linda malipo ya soko hadi bidhaa ifike.',
       requiredPlan: 'Pro',
-      color: Colors.teal,
+      color: MkColors.primary,
       targetScreen: EscrowScreen(),
-      benefits: ['Ulinzi dhidi ya utapeli wa mazao', 'Uamuzi wa haraka wa migogoro', 'Uhifadhi salama wa malipo'],
+      benefits: [
+        'Ulinzi dhidi ya utapeli wa mazao',
+        'Uamuzi wa haraka wa migogoro',
+        'Uhifadhi salama wa malipo',
+      ],
     ),
     const ServiceItem(
       icon: Icons.shopping_bag_outlined,
       name: 'Maagizo Yangu',
       description: 'Fuatilia na dhibiti maagizo yako yote ya soko.',
       requiredPlan: 'Free',
-      color: Colors.indigo,
+      color: MkColors.primary,
       targetScreen: OrdersScreen(),
-      benefits: ['Orodha kamili ya maagizo', 'Ufuatiliaji wa usafirishaji wa mizigo', 'Stakabadhi na kumbukumbu'],
+      benefits: [
+        'Orodha kamili ya maagizo',
+        'Ufuatiliaji wa usafirishaji wa mizigo',
+        'Stakabadhi na kumbukumbu',
+      ],
     ),
   ];
 
@@ -93,54 +104,80 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       name: 'Hali ya Hewa',
       description: 'Utabiri wa hali ya hewa ya shambani kwako.',
       requiredPlan: 'Free',
-      color: Colors.orange,
+      color: MkColors.warning,
       targetScreen: WeatherScreen(),
-      benefits: ['Utabiri wa siku 7', 'Tahadhari za ukame/mvua za ghafla', 'Ushauri wa kupanda mazao'],
+      benefits: [
+        'Utabiri wa siku 7',
+        'Tahadhari za ukame/mvua za ghafla',
+        'Ushauri wa kupanda mazao',
+      ],
     ),
     const ServiceItem(
       icon: Icons.verified_user_outlined,
       name: 'Kagua Dawa',
       description: 'Gundua dawa na mbolea feki kabla ya kununua.',
       requiredPlan: 'Free',
-      color: Colors.red,
+      color: MkColors.danger,
       targetScreen: KaguaDawaScreen(),
-      benefits: ['Orodha ya usajili ya TPHPA/TFRA', 'Kagua lebo kwa picha (AI)', 'Tahadhari za dawa feki mkoani kwako'],
+      benefits: [
+        'Orodha ya usajili ya TPHPA/TFRA',
+        'Kagua lebo kwa picha (AI)',
+        'Tahadhari za dawa feki mkoani kwako',
+      ],
     ),
     const ServiceItem(
       icon: Icons.price_change_outlined,
       name: 'Bei za Masoko',
       description: 'Bei halisi za mazao kwenye masoko makuu.',
       requiredPlan: 'Free',
-      color: Colors.teal,
+      color: MkColors.primary,
       targetScreen: MarketPricesScreen(),
-      benefits: ['Bei za chini na juu kwa kila soko', 'Mwenendo wa bei (inapanda/inashuka)', 'Tarehe ya bei kuonyeshwa wazi'],
+      benefits: [
+        'Bei za chini na juu kwa kila soko',
+        'Mwenendo wa bei (inapanda/inashuka)',
+        'Tarehe ya bei kuonyeshwa wazi',
+      ],
     ),
     const ServiceItem(
       icon: Icons.psychology_outlined,
       name: 'Mkulima AI',
-      description: 'Msaidizi wako wa kilimo wa AI — mazungumzo na ushauri wa haraka.',
+      description:
+          'Msaidizi wako wa kilimo wa AI — mazungumzo na ushauri wa haraka.',
       requiredPlan: 'Free',
-      color: Colors.blue,
+      color: MkColors.primary,
       targetScreen: MkulimaBotScreen(),
-      benefits: ['Mazungumzo yanayoendelea (kumbukumbu)', 'Msaada wa saa 24/7', 'Utambuzi wa magonjwa ya mazao', 'Ushauri wa mazao, mbolea na wadudu'],
+      benefits: [
+        'Mazungumzo yanayoendelea (kumbukumbu)',
+        'Msaada wa saa 24/7',
+        'Utambuzi wa magonjwa ya mazao',
+        'Ushauri wa mazao, mbolea na wadudu',
+      ],
     ),
     const ServiceItem(
       icon: Icons.center_focus_strong,
       name: 'Kagua Mimea',
       description: 'Piga picha ugundue magonjwa ya mazao.',
       requiredPlan: 'Free',
-      color: Colors.red,
+      color: MkColors.danger,
       targetScreen: ScannerPage(),
-      benefits: ['Ugunduzi wa haraka ndani ya sekunde', 'Ushauri wa dawa na kinga ya mmea', 'Historia ya magonjwa yaliyopita'],
+      benefits: [
+        'Ugunduzi wa haraka ndani ya sekunde',
+        'Ushauri wa dawa na kinga ya mmea',
+        'Historia ya magonjwa yaliyopita',
+      ],
     ),
     const ServiceItem(
       icon: Icons.calculate_outlined,
       name: 'Kadiria Mavuno',
       description: 'Hesabu na ukadiriaji wa mavuno ya msimu.',
       requiredPlan: 'Business',
-      color: Colors.amber,
+      color: MkColors.warning,
       targetScreen: YieldScreen(),
-      benefits: ['Ukadiriaji wa mazao kwa ekari', 'Uchambuzi wa gharama na faida', 'Ripoti ya mavuno kwa msimu'],
+      benefits: [
+        'Ukadiriaji wa mazao kwa ekari',
+        'Uchambuzi wa gharama na faida',
+        'Ripoti ya mavuno kwa msimu',
+      ],
     ),
   ];
 
@@ -150,20 +187,28 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       name: 'Drone za Shamba',
       description: 'Huduma za drone kwa ramani na upuliziaji.',
       requiredPlan: 'Enterprise',
-      color: Colors.purple,
+      color: MkColors.primary,
       targetScreen: DroneScreen(),
       comingSoon: true,
-      benefits: ['Upigaji picha na ramani ya shamba', 'Upuliziaji wa kisasa wa viatilifu', 'Ufuatiliaji wa ukuaji wa mazao'],
+      benefits: [
+        'Upigaji picha na ramani ya shamba',
+        'Upuliziaji wa kisasa wa viatilifu',
+        'Ufuatiliaji wa ukuaji wa mazao',
+      ],
     ),
     const ServiceItem(
       icon: Icons.sensors_outlined,
       name: 'Vifaa vya IoT',
       description: 'Sensors za kufuatilia udongo na unyevu.',
       requiredPlan: 'Business',
-      color: Colors.cyan,
+      color: MkColors.primary,
       targetScreen: IoTScreen(),
       comingSoon: true,
-      benefits: ['Vipimo vya unyevu wa udongo live', 'Kiwango cha joto cha udongo shambani', 'Taarifa za virutubisho vya NPK'],
+      benefits: [
+        'Vipimo vya unyevu wa udongo live',
+        'Kiwango cha joto cha udongo shambani',
+        'Taarifa za virutubisho vya NPK',
+      ],
     ),
   ];
 
@@ -173,53 +218,67 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       name: 'SMS na USSD',
       description: 'Huduma za kilimo bila internet kupitia simu.',
       requiredPlan: 'Free',
-      color: Colors.greenAccent,
+      color: MkColors.primary,
       targetScreen: SmsScreen(),
-      benefits: ['Ujumbe mfupi wa bei za soko', 'Miongozo ya kilimo kupitia USSD', 'Hali ya hewa bila bando'],
+      benefits: [
+        'Ujumbe mfupi wa bei za soko',
+        'Miongozo ya kilimo kupitia USSD',
+        'Hali ya hewa bila bando',
+      ],
     ),
     const ServiceItem(
       icon: Icons.phone_in_talk_outlined,
       name: 'Simu (IVR)',
       description: 'Msaada wa sauti shambani kupitia IVR.',
       requiredPlan: 'Free',
-      color: Colors.deepPurple,
+      color: MkColors.primary,
       targetScreen: IvrScreen(),
-      benefits: ['Masomo ya sauti kwa Kiswahili', 'Kuunganishwa na maafisa ugani', 'Ushauri wa kupiga bure'],
+      benefits: [
+        'Masomo ya sauti kwa Kiswahili',
+        'Kuunganishwa na maafisa ugani',
+        'Ushauri wa kupiga bure',
+      ],
     ),
     const ServiceItem(
       icon: Icons.forum_outlined,
       name: 'Jukwaa la Jamii',
       description: 'Jadiliana na ubadilishane uzoefu na wakulima wengine.',
       requiredPlan: 'Free',
-      color: Colors.tealAccent,
+      color: MkColors.primary,
       targetScreen: ForumScreen(),
-      benefits: ['Uliza maswali kwa jamii', 'Uzoefu wa kilimo kutoka kwa wengine', 'Soko la kubadilishana taarifa'],
+      benefits: [
+        'Uliza maswali kwa jamii',
+        'Uzoefu wa kilimo kutoka kwa wengine',
+        'Soko la kubadilishana taarifa',
+      ],
     ),
     const ServiceItem(
       icon: Icons.verified_user_outlined,
       name: 'Thibitisha KYC',
       description: 'Thibitisha wasifu wako ili kuaminika.',
       requiredPlan: 'Free',
-      color: Colors.deepOrange,
+      color: MkColors.warning,
       targetScreen: KycScreen(),
-      benefits: ['Beji maalum ya uthibitisho', 'Ruhusa ya kuuza soko la mkulima', 'Uaminifu mkubwa kutoka kwa wanunuzi'],
+      benefits: [
+        'Beji maalum ya uthibitisho',
+        'Ruhusa ya kuuza soko la mkulima',
+        'Uaminifu mkubwa kutoka kwa wanunuzi',
+      ],
     ),
   ];
-
-
 
   Color _getBadgeColor(String plan) {
     switch (plan.toLowerCase()) {
       case 'free':
-        return Colors.green;
+        return MkColors.primary;
       case 'pro':
-        return Colors.blue;
+        return MkColors.info;
       case 'business':
-        return Colors.orange[700]!;
+        return MkColors.warning;
       case 'enterprise':
-        return Colors.purple;
+        return MkColors.info;
       default:
-        return Colors.grey;
+        return MkColors.muted;
     }
   }
 
@@ -288,9 +347,9 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
       return;
     }
 
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => service.targetScreen),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => service.targetScreen));
   }
 
   @override
@@ -299,71 +358,65 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
 
     return Scaffold(
       body: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. Hero Header Section with embedded Weather Gadget
-              _buildHeroSection(auth),
-              const SizedBox(height: 24),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 1. Hero Header Section with embedded Weather Gadget
+            _buildHeroSection(auth),
+            const SizedBox(height: 24),
 
-              // 2. Services Grid Category Blocks
-              _buildCategoryBlock('Miamala na Malipo', _miamalaServices),
-              _buildCategoryBlock('Zana za Kilimo (AI)', _kilimoServices),
-              _buildCategoryBlock('Teknolojia ya Juu', _teknolojiaServices),
-              _buildCategoryBlock('Mawasiliano na Wasifu', _mawasilianoServices),
+            // 2. Services Grid Category Blocks
+            _buildCategoryBlock('Miamala na Malipo', _miamalaServices),
+            _buildCategoryBlock('Zana za Kilimo (AI)', _kilimoServices),
+            _buildCategoryBlock('Teknolojia ya Juu', _teknolojiaServices),
+            _buildCategoryBlock('Mawasiliano na Wasifu', _mawasilianoServices),
 
-              // System Settings Screen Card
-              const SizedBox(height: 16),
-              Card(
-                margin: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(MkRadii.card),
-                  side: BorderSide(color: Colors.grey[200]!),
-                ),
-                child: ListTile(
-                  leading: const Icon(Icons.settings, color: Colors.grey),
-                  title: const Text('Mipangilio ya Mfumo'),
-                  subtitle: const Text('Weka mapendeleo ya lugha na arifa'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _handleServiceTap(const ServiceItem(
+            // System Settings Screen Card
+            const SizedBox(height: 16),
+            Card(
+              margin: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(MkRadii.card),
+                side: BorderSide(color: MkColors.border),
+              ),
+              child: ListTile(
+                leading: const Icon(Icons.settings, color: MkColors.muted),
+                title: const Text('Mipangilio ya Mfumo'),
+                subtitle: const Text('Weka mapendeleo ya lugha na arifa'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => _handleServiceTap(
+                  const ServiceItem(
                     icon: Icons.settings,
                     name: 'Mipangilio',
                     description: 'Weka mapendeleo ya lugha na arifa',
                     requiredPlan: 'Free',
-                    color: Colors.grey,
+                    color: MkColors.muted,
                     targetScreen: SettingsScreen(),
                     benefits: [],
-                  )),
+                  ),
                 ),
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
+            ),
+            const SizedBox(height: 40),
+          ],
         ),
+      ),
     );
   }
 
   Widget _buildHeroSection(AuthProvider auth) {
-    final userName = auth.isAuthenticated ? auth.user!.name.split(' ').first : 'Mgeni';
+    final userName = auth.isAuthenticated
+        ? auth.user!.name.split(' ').first
+        : 'Mgeni';
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [MkColors.primary, MkColors.primaryDark],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: MkColors.surface,
+        border: Border.all(color: MkColors.border),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: MkColors.primary.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
       ),
       padding: const EdgeInsets.all(20),
       child: Row(
@@ -376,8 +429,8 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
                 Text(
                   'Habari, $userName!',
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
+                    color: MkColors.ink,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -386,7 +439,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
                   auth.isAuthenticated
                       ? 'Huduma zako za kilimo sehemu moja'
                       : 'Jiunge leo kupata huduma zote',
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  style: const TextStyle(color: MkColors.muted, fontSize: 13),
                 ),
               ],
             ),
@@ -395,11 +448,17 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
             ElevatedButton(
               onPressed: () => AuthProvider.requireAuth(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: MkColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                backgroundColor: MkColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
               ),
-              child: const Text('Ingia', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text(
+                'Ingia',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
         ],
       ),
@@ -428,10 +487,12 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+            // Two columns on phones: three left ~100px per tile at 360px,
+            // which clipped Swahili names and descriptions at 13px.
+            crossAxisCount: isTablet ? 3 : 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: isTablet ? 1.1 : 0.82,
+            mainAxisExtent: 156,
           ),
           itemCount: services.length,
           itemBuilder: (context, index) {
@@ -448,12 +509,7 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
     final planBadge = service.requiredPlan;
 
     return Card(
-      elevation: 1,
       margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(MkRadii.card),
-        side: BorderSide(color: Colors.grey[100]!),
-      ),
       child: InkWell(
         onTap: () => _handleServiceTap(service),
         borderRadius: BorderRadius.circular(MkRadii.card),
@@ -475,16 +531,21 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
                   ),
                   if (planBadge != 'Free')
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getBadgeColor(planBadge).withValues(alpha: 0.15),
+                        color: _getBadgeColor(
+                          planBadge,
+                        ).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         planBadge,
                         style: TextStyle(
                           color: _getBadgeColor(planBadge),
-                          fontSize: 9,
+                          fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -494,10 +555,9 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
               const Spacer(),
               Text(
                 service.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: MkText.label.copyWith(height: 1.25),
               ),
               const SizedBox(height: 4),
               Text(
@@ -505,8 +565,8 @@ class _FeaturesScreenState extends State<FeaturesScreen> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 10,
+                  color: MkColors.muted,
+                  fontSize: 13,
                   height: 1.2,
                 ),
               ),

@@ -8,11 +8,7 @@ class IvrScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('IVR - Simu ya Kupiga'),
-        backgroundColor: MkColors.primary,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('IVR - Simu ya Kupiga')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -22,11 +18,8 @@ class IvrScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [MkColors.primary, MkColors.primaryDark],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: MkColors.surface,
+                border: Border.all(color: MkColors.border),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -34,13 +27,13 @@ class IvrScreen extends StatelessWidget {
                   const Icon(
                     Icons.phone_in_talk,
                     size: 64,
-                    color: Colors.white,
+                    color: MkColors.primary,
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     'Piga Simu Bila Mtandao',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: MkColors.ink,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -48,7 +41,7 @@ class IvrScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   const Text(
                     'Piga +255 714 524 007',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                    style: TextStyle(color: MkColors.muted, fontSize: 16),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
@@ -68,8 +61,8 @@ class IvrScreen extends StatelessWidget {
                     icon: const Icon(Icons.call),
                     label: const Text('Piga Sasa'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: MkColors.primary,
+                      backgroundColor: MkColors.primary,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 32,
                         vertical: 12,
@@ -122,7 +115,7 @@ class IvrScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info, color: Colors.orange),
+                        Icon(Icons.info, color: MkColors.warning),
                         SizedBox(width: 8),
                         Text(
                           'Vidokezo',

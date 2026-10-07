@@ -23,7 +23,7 @@ class ScannerPage extends StatelessWidget {
             Text(MkStrings.scannerBrand, style: TextStyle(fontSize: 17)),
             Text(
               MkStrings.scannerTagline,
-              style: TextStyle(fontSize: 11, color: MkColors.muted),
+              style: TextStyle(fontSize: 13, color: MkColors.muted),
             ),
           ],
         ),
@@ -101,17 +101,17 @@ class _ScannerScreenState extends State<ScannerScreen> {
         children: [
           if (!connectivity.isOnline)
             Card(
-              color: Colors.orange[50],
+              color: MkColors.accentSoft,
               child: const Padding(
                 padding: EdgeInsets.all(12),
                 child: Row(
                   children: [
-                    Icon(Icons.wifi_off, color: Colors.orange),
+                    Icon(Icons.wifi_off, color: MkColors.warning),
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Hakuna mtandao. Tumia AI ya ndani (inakuja).',
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(fontSize: 13),
                       ),
                     ),
                   ],
@@ -134,17 +134,17 @@ class _ScannerScreenState extends State<ScannerScreen> {
               height: 250,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: MkColors.border,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.camera_alt, size: 60, color: Colors.grey[400]),
+                  Icon(Icons.camera_alt, size: 60, color: MkColors.muted),
                   const SizedBox(height: 12),
                   Text(
                     MkStrings.scanPlant,
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: MkColors.muted),
                   ),
                 ],
               ),
@@ -195,7 +195,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.medical_services, color: Colors.red[700]),
+                        Icon(Icons.medical_services, color: MkColors.danger),
                         const SizedBox(width: 8),
                         Text(
                           'Matokeo ya Uchunguzi',

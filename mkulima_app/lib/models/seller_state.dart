@@ -37,8 +37,11 @@ class SellerState {
 
   /// The safe assumption for an account we have not asked about yet: show no
   /// business tools, and offer the application.
-  static const SellerState unknown =
-      SellerState(state: 'none', canSell: false, canApply: true);
+  static const SellerState unknown = SellerState(
+    state: 'none',
+    canSell: false,
+    canApply: true,
+  );
 
   bool get isApproved => canSell;
   bool get isPending => state == 'pending';
@@ -49,7 +52,9 @@ class SellerState {
     if (json == null) return unknown;
 
     final application = json['application'];
-    final app = application is Map ? Map<String, dynamic>.from(application) : null;
+    final app = application is Map
+        ? Map<String, dynamic>.from(application)
+        : null;
 
     return SellerState(
       state: json['state'] is String ? json['state'] as String : 'none',

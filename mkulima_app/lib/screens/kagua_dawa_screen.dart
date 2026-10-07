@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../core/theme.dart';
@@ -21,8 +22,6 @@ class KaguaDawaScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Kagua Dawa'),
-          backgroundColor: MkColors.primary,
-          foregroundColor: Colors.white,
           actions: [
             IconButton(
               tooltip: 'Orodha ya ukaguzi',
@@ -32,8 +31,8 @@ class KaguaDawaScreen extends StatelessWidget {
           ],
           bottom: const TabBar(
             indicatorColor: MkColors.primary,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
+            labelColor: MkColors.primaryDark,
+            unselectedLabelColor: MkColors.muted,
             tabs: [
               Tab(icon: Icon(Icons.search), text: 'Tafuta'),
               Tab(icon: Icon(Icons.photo_camera), text: 'Piga Lebo'),
@@ -42,11 +41,7 @@ class KaguaDawaScreen extends StatelessWidget {
           ),
         ),
         body: const TabBarView(
-          children: [
-            _RegistrySearchTab(),
-            _LabelCheckTab(),
-            _AlertsTab(),
-          ],
+          children: [_RegistrySearchTab(), _LabelCheckTab(), _AlertsTab()],
         ),
       ),
     );
@@ -79,26 +74,32 @@ class KaguaDawaScreen extends StatelessWidget {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            ...((data?['items'] as List?) ?? []).map((item) => ListTile(
-                  dense: true,
-                  leading: Icon(
-                    item['weight'] == 'high'
-                        ? Icons.priority_high
-                        : Icons.check_circle_outline,
-                    color: item['weight'] == 'high'
-                        ? MkColors.danger
-                        : MkColors.primary,
-                  ),
-                  title: Text('${item['text']}',
-                      style: const TextStyle(fontSize: 14)),
-                )),
+            ...((data?['items'] as List?) ?? []).map(
+              (item) => ListTile(
+                dense: true,
+                leading: Icon(
+                  item['weight'] == 'high'
+                      ? Icons.priority_high
+                      : Icons.check_circle_outline,
+                  color: item['weight'] == 'high'
+                      ? MkColors.danger
+                      : MkColors.primary,
+                ),
+                title: Text(
+                  '${item['text']}',
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ),
+            ),
             if (data?['advice'] != null)
               Card(
-                color: Colors.amber[50],
+                color: MkColors.accentSoft,
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Text('${data!['advice']}',
-                      style: const TextStyle(fontSize: 13)),
+                  child: Text(
+                    '${data!['advice']}',
+                    style: const TextStyle(fontSize: 13),
+                  ),
                 ),
               ),
           ],
@@ -145,8 +146,10 @@ class _RegistrySearchTabState extends State<_RegistrySearchTab>
       setState(() => _isLoading = true);
       try {
         final api = context.read<ApiService>();
-        final response =
-            await api.get('/inputs/verify', queryParameters: {'q': query});
+        final response = await api.get(
+          '/inputs/verify',
+          queryParameters: {'q': query},
+        );
         if (mounted) {
           setState(() {
             _data = response.data;
@@ -178,35 +181,43 @@ class _RegistrySearchTabState extends State<_RegistrySearchTab>
           ),
         ),
         const SizedBox(height: 16),
-        if (_isLoading) const Center(child: CircularProgressIndicator()),
+        if (_isLoading) const MkListSkeleton(),
         if (_data != null && !_isLoading) ...[
           _GuidanceCard(text: '${_data!['guidance']}'),
           const SizedBox(height: 12),
           if (alerts.isNotEmpty) ...[
-            const Text('Tahadhari Zilizothibitishwa',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Tahadhari Zilizothibitishwa',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             ...alerts.map((a) => _AlertCard(alert: a)),
             const SizedBox(height: 12),
           ],
           if (matches.isNotEmpty) ...[
-            const Text('Kwenye Orodha ya Usajili',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Kwenye Orodha ya Usajili',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
-            ...matches.map((m) => Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    leading: _statusIcon('${m['status']}'),
-                    title: Text('${m['name']}'),
-                    subtitle: Text([
+            ...matches.map(
+              (m) => Card(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  leading: _statusIcon('${m['status']}'),
+                  title: Text('${m['name']}'),
+                  subtitle: Text(
+                    [
                       if (m['registration_number'] != null)
                         'Usajili: ${m['registration_number']}',
                       if (m['manufacturer'] != null) '${m['manufacturer']}',
                       'Chanzo: ${m['source']}',
-                    ].join(' · ')),
-                    trailing: _statusChip('${m['status']}'),
+                    ].join(' · '),
                   ),
-                )),
+                  trailing: _statusChip('${m['status']}'),
+                ),
+              ),
+            ),
           ],
         ],
         if (_data == null && !_isLoading)
@@ -214,14 +225,17 @@ class _RegistrySearchTabState extends State<_RegistrySearchTab>
             padding: const EdgeInsets.only(top: 48),
             child: Column(
               children: [
-                const Icon(Icons.verified_user_outlined,
-                    size: 56, color: Colors.grey),
+                const Icon(
+                  Icons.verified_user_outlined,
+                  size: 56,
+                  color: MkColors.muted,
+                ),
                 const SizedBox(height: 12),
                 Text(
                   'Andika jina la dawa, mbolea au namba ya usajili '
                   'kuangalia kama imesajiliwa rasmi.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(color: MkColors.muted),
                 ),
               ],
             ),
@@ -251,8 +265,10 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
   bool get wantKeepAlive => true;
 
   Future<void> _pick(ImageSource source) async {
-    final picked =
-        await ImagePicker().pickImage(source: source, maxWidth: 1280);
+    final picked = await ImagePicker().pickImage(
+      source: source,
+      maxWidth: 1280,
+    );
     if (picked != null) {
       final bytes = await picked.readAsBytes();
       if (!mounted) return;
@@ -283,9 +299,13 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
     } catch (e) {
       if (!mounted) return;
       setState(() => _isChecking = false);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
-              'Huduma ya kusoma lebo haipatikani kwa sasa. Tumia "Tafuta".')));
+            'Huduma ya kusoma lebo haipatikani kwa sasa. Tumia "Tafuta".',
+          ),
+        ),
+      );
     }
   }
 
@@ -299,7 +319,7 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_outline, size: 56, color: Colors.grey),
+            const Icon(Icons.lock_outline, size: 56, color: MkColors.muted),
             const SizedBox(height: 12),
             const Text('Ingia ili kukagua lebo kwa picha'),
             const SizedBox(height: 12),
@@ -318,23 +338,29 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
         if (_imageBytes != null)
           ClipRRect(
             borderRadius: BorderRadius.circular(14),
-            child: Image.memory(_imageBytes!,
-                height: 220, width: double.infinity, fit: BoxFit.cover),
+            child: Image.memory(
+              _imageBytes!,
+              height: 220,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           )
         else
           Container(
             height: 220,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: MkColors.border,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.receipt_long, size: 52, color: Colors.grey[400]),
+                Icon(Icons.receipt_long, size: 52, color: MkColors.muted),
                 const SizedBox(height: 8),
-                Text('Piga picha ya LEBO ya dawa/mbolea kwa karibu',
-                    style: TextStyle(color: Colors.grey[600])),
+                Text(
+                  'Piga picha ya LEBO ya dawa/mbolea kwa karibu',
+                  style: TextStyle(color: MkColors.muted),
+                ),
               ],
             ),
           ),
@@ -373,7 +399,10 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
                   : const Icon(Icons.verified_user),
               label: const Text('Kagua Lebo Sasa'),
               style: ElevatedButton.styleFrom(
@@ -396,27 +425,40 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Kilichosomwa kwenye Lebo',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const Text(
+                      'Kilichosomwa kwenye Lebo',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 8),
                     _kv('Jina', _result!['extracted']?['product_name']),
-                    _kv('Namba ya usajili',
-                        _result!['extracted']?['registration_number']),
-                    _kv('Mtengenezaji',
-                        _result!['extracted']?['manufacturer']),
+                    _kv(
+                      'Namba ya usajili',
+                      _result!['extracted']?['registration_number'],
+                    ),
+                    _kv('Mtengenezaji', _result!['extracted']?['manufacturer']),
                     ...((_result!['extracted']?['label_warnings'] as List?) ??
                             [])
-                        .map((w) => Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Row(children: [
-                                const Icon(Icons.warning_amber,
-                                    size: 16, color: Colors.orange),
+                        .map(
+                          (w) => Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.warning_amber,
+                                  size: 16,
+                                  color: MkColors.warning,
+                                ),
                                 const SizedBox(width: 6),
                                 Expanded(
-                                    child: Text('$w',
-                                        style: const TextStyle(fontSize: 13))),
-                              ]),
-                            )),
+                                  child: Text(
+                                    '$w',
+                                    style: const TextStyle(fontSize: 13),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                   ],
                 ),
               ),
@@ -430,18 +472,21 @@ class _LabelCheckTabState extends State<_LabelCheckTab>
   }
 
   Widget _kv(String label, dynamic value) => Padding(
-        padding: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-                width: 120,
-                child: Text('$label:',
-                    style: const TextStyle(fontWeight: FontWeight.w600))),
-            Expanded(child: Text(value?.toString() ?? '—')),
-          ],
+    padding: const EdgeInsets.only(bottom: 4),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 120,
+          child: Text(
+            '$label:',
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
         ),
-      );
+        Expanded(child: Text(value?.toString() ?? '—')),
+      ],
+    ),
+  );
 }
 
 /* ======================= TAB 3: Regional alerts ======================= */
@@ -460,8 +505,18 @@ class _AlertsTabState extends State<_AlertsTab>
   bool _isLoading = true;
 
   static const _regions = [
-    'Dar es Salaam', 'Arusha', 'Dodoma', 'Mwanza', 'Mbeya', 'Morogoro',
-    'Tanga', 'Iringa', 'Kigoma', 'Mtwara', 'Tabora', 'Kilimanjaro',
+    'Dar es Salaam',
+    'Arusha',
+    'Dodoma',
+    'Mwanza',
+    'Mbeya',
+    'Morogoro',
+    'Tanga',
+    'Iringa',
+    'Kigoma',
+    'Mtwara',
+    'Tabora',
+    'Kilimanjaro',
   ];
 
   @override
@@ -477,8 +532,10 @@ class _AlertsTabState extends State<_AlertsTab>
     setState(() => _isLoading = true);
     try {
       final api = context.read<ApiService>();
-      final response = await api.get('/inputs/alerts',
-          queryParameters: {if (_region != null) 'region': _region});
+      final response = await api.get(
+        '/inputs/alerts',
+        queryParameters: {if (_region != null) 'region': _region},
+      );
       if (!mounted) return;
       setState(() {
         _alerts = response.data['data'] ?? [];
@@ -507,13 +564,19 @@ class _AlertsTabState extends State<_AlertsTab>
                   decoration: const InputDecoration(
                     labelText: 'Mkoa',
                     border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                   ),
                   items: [
-                    const DropdownMenuItem(value: null, child: Text('Mikoa yote')),
+                    const DropdownMenuItem(
+                      value: null,
+                      child: Text('Mikoa yote'),
+                    ),
                     ..._regions.map(
-                        (r) => DropdownMenuItem(value: r, child: Text(r))),
+                      (r) => DropdownMenuItem(value: r, child: Text(r)),
+                    ),
                   ],
                   onChanged: (value) {
                     setState(() => _region = value);
@@ -535,8 +598,10 @@ class _AlertsTabState extends State<_AlertsTab>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: MkColors.danger,
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 14,
+                  ),
                 ),
               ),
             ],
@@ -544,22 +609,25 @@ class _AlertsTabState extends State<_AlertsTab>
         ),
         Expanded(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const MkListSkeleton()
               : RefreshIndicator(
                   onRefresh: _load,
                   child: _alerts.isEmpty
                       ? ListView(
                           children: [
                             const SizedBox(height: 80),
-                            const Icon(Icons.shield_outlined,
-                                size: 56, color: Colors.grey),
+                            const Icon(
+                              Icons.shield_outlined,
+                              size: 56,
+                              color: MkColors.muted,
+                            ),
                             const SizedBox(height: 12),
                             Center(
                               child: Text(
                                 _region == null
                                     ? 'Hakuna tahadhari zilizothibitishwa kwa sasa.'
                                     : 'Hakuna tahadhari za $_region kwa sasa.',
-                                style: TextStyle(color: Colors.grey[600]),
+                                style: TextStyle(color: MkColors.muted),
                               ),
                             ),
                           ],
@@ -601,13 +669,17 @@ class _AlertsTabState extends State<_AlertsTab>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Ripoti Dawa Feki',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+              const Text(
+                'Ripoti Dawa Feki',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: name,
                 decoration: const InputDecoration(
-                    labelText: 'Jina la bidhaa', border: OutlineInputBorder()),
+                  labelText: 'Jina la bidhaa',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (v) =>
                     (v?.trim().isEmpty ?? true) ? 'Tafadhali jaza' : null,
               ),
@@ -615,14 +687,17 @@ class _AlertsTabState extends State<_AlertsTab>
               TextFormField(
                 controller: dealer,
                 decoration: const InputDecoration(
-                    labelText: 'Duka/agrovet (hiari)',
-                    border: OutlineInputBorder()),
+                  labelText: 'Duka/agrovet (hiari)',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 initialValue: region,
                 decoration: const InputDecoration(
-                    labelText: 'Mkoa', border: OutlineInputBorder()),
+                  labelText: 'Mkoa',
+                  border: OutlineInputBorder(),
+                ),
                 items: _regions
                     .map((r) => DropdownMenuItem(value: r, child: Text(r)))
                     .toList(),
@@ -633,8 +708,9 @@ class _AlertsTabState extends State<_AlertsTab>
                 controller: description,
                 maxLines: 3,
                 decoration: const InputDecoration(
-                    labelText: 'Eleza dalili za ubandia ulizoziona',
-                    border: OutlineInputBorder()),
+                  labelText: 'Eleza dalili za ubandia ulizoziona',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (v) => (v?.trim().length ?? 0) < 10
                     ? 'Eleza kwa ufupi (angalau herufi 10)'
                     : null,
@@ -648,27 +724,35 @@ class _AlertsTabState extends State<_AlertsTab>
                     if (!(formKey.currentState?.validate() ?? false)) return;
                     try {
                       final api = context.read<ApiService>();
-                      final response = await api.post('/inputs/report', data: {
-                        'product_name': name.text.trim(),
-                        'dealer_name': dealer.text.trim().isEmpty
-                            ? null
-                            : dealer.text.trim(),
-                        'region': region,
-                        'description': description.text.trim(),
-                      });
+                      final response = await api.post(
+                        '/inputs/report',
+                        data: {
+                          'product_name': name.text.trim(),
+                          'dealer_name': dealer.text.trim().isEmpty
+                              ? null
+                              : dealer.text.trim(),
+                          'region': region,
+                          'description': description.text.trim(),
+                        },
+                      );
                       if (!sheetContext.mounted) return;
                       Navigator.pop(sheetContext);
                       if (!mounted) return;
                       // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
                           content: Text(
-                              '${response.data['message'] ?? 'Ripoti imepokelewa.'}')));
+                            '${response.data['message'] ?? 'Ripoti imepokelewa.'}',
+                          ),
+                        ),
+                      );
                     } catch (_) {
                       if (!sheetContext.mounted) return;
                       ScaffoldMessenger.of(sheetContext).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Imeshindikana. Jaribu tena.')));
+                        const SnackBar(
+                          content: Text('Imeshindikana. Jaribu tena.'),
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -689,20 +773,22 @@ class _AlertsTabState extends State<_AlertsTab>
 /* ======================= Shared widgets ======================= */
 
 Widget _statusIcon(String status) => switch (status) {
-      'registered' => const Icon(Icons.verified, color: Colors.green),
-      'banned' => const Icon(Icons.dangerous, color: Colors.red),
-      _ => const Icon(Icons.remove_circle_outline, color: Colors.orange),
-    };
+  'registered' => const Icon(Icons.verified, color: MkColors.primary),
+  'banned' => const Icon(Icons.dangerous, color: MkColors.danger),
+  _ => const Icon(Icons.remove_circle_outline, color: MkColors.warning),
+};
 
 Widget _statusChip(String status) {
   final (label, color) = switch (status) {
-    'registered' => ('IMESAJILIWA', Colors.green),
-    'banned' => ('MARUFUKU', Colors.red),
-    _ => ('IMEONDOLEWA', Colors.orange),
+    'registered' => ('IMESAJILIWA', MkColors.primary),
+    'banned' => ('MARUFUKU', MkColors.danger),
+    _ => ('IMEONDOLEWA', MkColors.warning),
   };
   return Chip(
-    label: Text(label,
-        style: const TextStyle(color: Colors.white, fontSize: 10)),
+    label: Text(
+      label,
+      style: const TextStyle(color: Colors.white, fontSize: 13),
+    ),
     backgroundColor: color,
     padding: EdgeInsets.zero,
   );
@@ -717,22 +803,22 @@ class _VerdictBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final (text, color, icon) = switch (verdict) {
       'found_registered' => (
-          'IMEPATIKANA KWENYE ORODHA',
-          Colors.green,
-          Icons.verified
-        ),
-      'banned' => ('IMEPIGWA MARUFUKU', Colors.red, Icons.dangerous),
+        'IMEPATIKANA KWENYE ORODHA',
+        MkColors.primary,
+        Icons.verified,
+      ),
+      'banned' => ('IMEPIGWA MARUFUKU', MkColors.danger, Icons.dangerous),
       'withdrawn' => (
-          'USAJILI UMEONDOLEWA',
-          Colors.orange,
-          Icons.remove_circle
-        ),
+        'USAJILI UMEONDOLEWA',
+        MkColors.warning,
+        Icons.remove_circle,
+      ),
       'registry_empty' => (
-          'ORODHA BADO INAJAZWA',
-          Colors.blueGrey,
-          Icons.hourglass_top
-        ),
-      _ => ('HAIKUPATIKANA — DALILI YA HATARI', Colors.red, Icons.warning),
+        'ORODHA BADO INAJAZWA',
+        MkColors.primary,
+        Icons.hourglass_top,
+      ),
+      _ => ('HAIKUPATIKANA — DALILI YA HATARI', MkColors.danger, Icons.warning),
     };
 
     return Container(
@@ -748,8 +834,10 @@ class _VerdictBanner extends StatelessWidget {
           Icon(icon, color: color),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(text,
-                style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+            child: Text(
+              text,
+              style: TextStyle(fontWeight: FontWeight.bold, color: color),
+            ),
           ),
         ],
       ),
@@ -765,17 +853,20 @@ class _GuidanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.amber[50],
+      color: MkColors.accentSoft,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.info_outline, color: Colors.amber[900], size: 20),
+            Icon(Icons.info_outline, color: MkColors.onAccentSoft, size: 20),
             const SizedBox(width: 8),
             Expanded(
-                child: Text(text,
-                    style: const TextStyle(fontSize: 13, height: 1.4))),
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 13, height: 1.4),
+              ),
+            ),
           ],
         ),
       ),
@@ -794,7 +885,7 @@ class _AlertCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.red.withValues(alpha: .35)),
+        side: BorderSide(color: MkColors.danger.withValues(alpha: .35)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -803,11 +894,13 @@ class _AlertCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.campaign, color: Colors.red, size: 18),
+                const Icon(Icons.campaign, color: MkColors.danger, size: 18),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: Text('${alert['product_name']}',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(
+                    '${alert['product_name']}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
@@ -819,11 +912,13 @@ class _AlertCard extends StatelessWidget {
                 if (alert['dealer_name'] != null)
                   'Duka: ${alert['dealer_name']}',
               ].join(' · '),
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 13, color: MkColors.muted),
             ),
             const SizedBox(height: 6),
-            Text('${alert['description']}',
-                style: const TextStyle(fontSize: 13)),
+            Text(
+              '${alert['description']}',
+              style: const TextStyle(fontSize: 13),
+            ),
           ],
         ),
       ),

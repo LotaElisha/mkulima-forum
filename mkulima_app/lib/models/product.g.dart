@@ -16,8 +16,9 @@ _$ProductImpl _$$ProductImplFromJson(Map<String, dynamic> json) =>
       categoryId: _idFromJson(json['category_id']),
       sellerId: _idFromJson(json['user_id']),
       unit: json['unit'] as String,
-      images:
-          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      images: (json['images'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       minOrder: (json['minOrder'] as num?)?.toInt() ?? 0,
       isAvailable: json['isAvailable'] as bool? ?? true,
       createdAt: json['createdAt'] == null

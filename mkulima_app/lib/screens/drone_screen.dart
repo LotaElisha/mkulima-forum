@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import '../core/theme.dart';
+import '../widgets/mk_skeleton.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
 import 'login_modal.dart';
+import '../core/format.dart';
 
 class DroneScreen extends StatefulWidget {
   const DroneScreen({super.key});
@@ -39,22 +42,17 @@ class _DroneScreenState extends State<DroneScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Huduma za Drone'),
-        backgroundColor: const Color(0xFF2E7D32),
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Huduma za Drone')),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const MkListSkeleton()
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF2E7D32), Color(0xFF1B5E20)],
-                    ),
+                    color: MkColors.surface,
+                    border: Border.all(color: MkColors.border),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -63,7 +61,7 @@ class _DroneScreenState extends State<DroneScreen> {
                       const Icon(
                         Icons.flight_takeoff,
                         size: 48,
-                        color: Colors.white,
+                        color: MkColors.primary,
                       ),
                       const SizedBox(height: 12),
                       const Text(
@@ -71,13 +69,13 @@ class _DroneScreenState extends State<DroneScreen> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: MkColors.ink,
                         ),
                       ),
                       const SizedBox(height: 8),
                       const Text(
                         'Puliza, piga picha, na fuatilia mimea yako kutoka juu',
-                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                        style: TextStyle(color: MkColors.muted, fontSize: 15),
                       ),
                     ],
                   ),
@@ -134,10 +132,10 @@ class _ServiceCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
+                    color: MkColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.flight, color: Color(0xFF2E7D32)),
+                  child: const Icon(Icons.flight, color: MkColors.primary),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -154,7 +152,7 @@ class _ServiceCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         service['description'],
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        style: TextStyle(color: MkColors.muted, fontSize: 13),
                       ),
                     ],
                   ),
@@ -166,16 +164,16 @@ class _ServiceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'TZS ${service['price_per_acre'].toString()} / acre',
+                  '${mkMoney(num.tryParse('${service['price_per_acre']}'))} / ekari',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2E7D32),
+                    color: MkColors.primary,
                   ),
                 ),
                 Text(
                   service['duration'],
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  style: TextStyle(color: MkColors.muted, fontSize: 13),
                 ),
               ],
             ),
@@ -185,7 +183,7 @@ class _ServiceCard extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: onBook,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Weka Nafasi'),
@@ -324,7 +322,7 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
               child: ElevatedButton(
                 onPressed: _submitting ? null : _submitBooking,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2E7D32),
+                  backgroundColor: MkColors.primary,
                   foregroundColor: Colors.white,
                 ),
                 child: _submitting
@@ -332,7 +330,10 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
                         dimension: 22,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Thibitisha Nafasi', style: TextStyle(fontSize: 16)),
+                    : const Text(
+                        'Thibitisha Nafasi',
+                        style: TextStyle(fontSize: 16),
+                      ),
               ),
             ),
             const SizedBox(height: 16),
@@ -353,24 +354,33 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
     final size = double.tryParse(_sizeController.text);
     if (size == null || size < 0.5) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ukubwa wa shamba uwe angalau ekari 0.5.')),
+        const SnackBar(
+          content: Text('Ukubwa wa shamba uwe angalau ekari 0.5.'),
+        ),
       );
       return;
     }
 
     setState(() => _submitting = true);
     try {
-      final response = await context.read<ApiService>().post('/drone/book', data: {
-        'service_id': widget.service['id'],
-        'farm_location': _locationController.text.trim(),
-        'farm_size_acres': size,
-        'preferred_date': _selectedDate!.toIso8601String().split('T').first,
-        'contact_phone': _phoneController.text.trim(),
-        'notes': _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
-      });
+      final response = await context.read<ApiService>().post(
+        '/drone/book',
+        data: {
+          'service_id': widget.service['id'],
+          'farm_location': _locationController.text.trim(),
+          'farm_size_acres': size,
+          'preferred_date': _selectedDate!.toIso8601String().split('T').first,
+          'contact_phone': _phoneController.text.trim(),
+          'notes': _notesController.text.trim().isEmpty
+              ? null
+              : _notesController.text.trim(),
+        },
+      );
       if (!mounted) return;
       final booking = response.data['booking'] as Map<String, dynamic>?;
-      final cost = booking?['total_cost'] ?? ((widget.service['price_per_acre'] as num) * size);
+      final cost =
+          booking?['total_cost'] ??
+          ((widget.service['price_per_acre'] as num) * size);
       await showDialog<void>(
         context: context,
         builder: (dialogContext) => AlertDialog(
@@ -390,9 +400,9 @@ class _DroneBookingSheetState extends State<DroneBookingSheet> {
       if (mounted) Navigator.pop(context);
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(ApiService.formatError(error))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(ApiService.formatError(error))));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);

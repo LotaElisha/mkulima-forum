@@ -28,10 +28,8 @@ class CartProvider extends ChangeNotifier {
 
   int get itemCount => _items.fold(0, (sum, item) => sum + item.quantity);
 
-  double get total => _items.fold(
-    0,
-    (sum, item) => sum + (item.product.price * item.quantity),
-  );
+  double get total =>
+      _items.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
 
   CartProvider() {
     _loadCart();
@@ -101,10 +99,19 @@ class CartProvider extends ChangeNotifier {
   int getQuantity(String productId) {
     final item = _items.firstWhere(
       (item) => item.product.id == productId,
-      orElse: () => CartItem(product: Product(
-        id: '', name: '', description: '', price: 0, stock: 0,
-        categoryId: '', sellerId: '', unit: '',
-      ), quantity: 0),
+      orElse: () => CartItem(
+        product: Product(
+          id: '',
+          name: '',
+          description: '',
+          price: 0,
+          stock: 0,
+          categoryId: '',
+          sellerId: '',
+          unit: '',
+        ),
+        quantity: 0,
+      ),
     );
     return item.quantity;
   }

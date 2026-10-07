@@ -30,3 +30,9 @@ yarn-error.log
 /mkulima_app/.dart_tool/
 /mkulima_app/build/
 /public/app/*-test.apk
+
+# Copied from public/ by scripts/build-dist.mjs at deploy time
+/dist/images
+/dist/docs
+/dist/favicon.ico
+/dist/robots.txt
