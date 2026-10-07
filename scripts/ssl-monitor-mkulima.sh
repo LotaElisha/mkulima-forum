@@ -1,6 +1,6 @@
 #!/bin/bash
 # SSL expiry check for Mkulima Forum
-domain="mkulimaforum.app"
+domain="mkulimaforum.com"
 threshold_days=7
 expiry_date=$(openssl x509 -in /etc/letsencrypt/live/${domain}/fullchain.pem -noout -enddate | cut -d= -f2)
 expiry_epoch=$(date -d "${expiry_date}" +%s)

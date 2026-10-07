@@ -87,7 +87,7 @@
           <div class="c-info-icon"><svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></div>
           <div>
             <div class="c-info-label" data-i18n="c_label_email">Barua Pepe</div>
-            <div class="c-info-value">{{ $settings['contact_email'] ?? 'hello@mkulimaforum.app' }}</div>
+            <div class="c-info-value">{{ $settings['contact_email'] ?? 'hello@mkulimaforum.com' }}</div>
           </div>
         </div>
 
@@ -95,7 +95,7 @@
           <div class="c-info-icon"><x-icon name="globe" /></div>
           <div>
             <div class="c-info-label" data-i18n="c_label_web">Wavuti</div>
-            <div class="c-info-value">mkulimaforum.app</div>
+            <div class="c-info-value">mkulimaforum.com</div>
           </div>
         </div>
 
@@ -112,10 +112,10 @@
         <h4 class="c-dept-title" data-i18n="c_dept_title">IDARA</h4>
 
         @foreach([
-          ['🤝','Ushirikiano','Partnerships','partnerships@mkulimaforum.app'],
-          ['💰','Uwekezaji','Investment','invest@mkulimaforum.app'],
-          ['📰','Vyombo vya Habari','Press & Media','press@mkulimaforum.app'],
-          ['🔧','Msaada wa Kiufundi','Technical Support','support@mkulimaforum.app'],
+          ['🤝','Ushirikiano','Partnerships','partnerships@mkulimaforum.com'],
+          ['💰','Uwekezaji','Investment','invest@mkulimaforum.com'],
+          ['📰','Vyombo vya Habari','Press & Media','press@mkulimaforum.com'],
+          ['🔧','Msaada wa Kiufundi','Technical Support','support@mkulimaforum.com'],
         ] as $dept)
         <div class="c-dept">
           <div class="c-dept-name" data-i18n="dept_{{ $loop->index }}">{{ $dept[0] }} {{ $dept[1] }}</div>
@@ -126,7 +126,7 @@
         <div class="c-divider"></div>
 
         <p class="c-note" data-i18n="c_response_note">
-          Tunajibu barua pepe zote ndani ya siku 2 za kazi. Kwa maswali ya dharura ya kiufundi, tuma kwenye support@mkulimaforum.app.
+          Tunajibu barua pepe zote ndani ya siku 2 za kazi. Kwa maswali ya dharura ya kiufundi, tuma kwenye support@mkulimaforum.com.
         </p>
       </div>
 
@@ -191,7 +191,7 @@
     @foreach([
       ['faq0','Je, MkulimaForum ni bure kuitumia?','Is MkulimaForum free to use?','Ndiyo — sehemu za msingi za mfumo (utambuzi wa magonjwa, Mkulima AI, jamii, hali ya hewa) zinaweza kutumiwa bila malipo. Huduma za malipo (masoko, pembejeo) zina ada ndogo.','Yes — the core features (plant diagnosis, Mkulima AI, community, weather) are free to use. Paid services (marketplace, inputs) carry a small fee.'],
       ['faq1','Je, MkulimaForum inafanya kazi bila intaneti?','Does MkulimaForum work without internet?','Ndiyo. Tumejumuisha Mkulima AI Offline kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD kwa maeneo ya uunganisho mdogo.','Yes. We have integrated Mkulima AI Offline for offline AI inference, plus SMS and USSD services for low-connectivity areas.'],
-      ['faq2','Je, ninawezaje kuwa mshirika?','How can I become a partner?','Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe moja kwa moja kwenye partnerships@mkulimaforum.app.','Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.app.'],
+      ['faq2','Je, ninawezaje kuwa mshirika?','How can I become a partner?','Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe moja kwa moja kwenye partnerships@mkulimaforum.com.','Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.com.'],
       ['faq3','Je, MkulimaForum inafanya kazi nje ya Tanzania?','Does MkulimaForum work outside Tanzania?','Mfumo wa sasa unazingatia Tanzania. Tunapanga kupanua kwenda Kenya, Uganda, na nchi nyingine za Afrika Mashariki kulingana na mahitaji ya soko.','The current platform focuses on Tanzania. We plan to expand to Kenya, Uganda, and other East African markets based on traction and market need.'],
       ['faq4','Ni aina gani ya data ya kibinafsi mnayokusanya?','What personal data do you collect?','Tunakusanya taarifa za akaunti ya msingi (jina, nambari ya simu au barua pepe). Hatuzidishi au kuuza data za kibinafsi za wakulima kwa watu wengine.','We collect basic account information (name, phone number or email). We do not share or sell personal farmer data to third parties.'],
     ] as $faq)
@@ -244,7 +244,7 @@ mkPageTranslations = {
     c_location_val:'Tanzania 🇹🇿 — Afrika Mashariki 🌍',
     c_dept_title:'IDARA',
     dept_0:'🤝 Ushirikiano', dept_1:'💰 Uwekezaji', dept_2:'📰 Vyombo vya Habari', dept_3:'🔧 Msaada wa Kiufundi',
-    c_response_note:'Tunajibu barua pepe zote ndani ya siku 2 za kazi. Kwa maswali ya dharura ya kiufundi, tuma kwenye support@mkulimaforum.app.',
+    c_response_note:'Tunajibu barua pepe zote ndani ya siku 2 za kazi. Kwa maswali ya dharura ya kiufundi, tuma kwenye support@mkulimaforum.com.',
     c_form_title:'Tuma Ujumbe Wako',
     cf_name:'Jina Lako Kamili', cf_name_ph:'Jina Lako',
     cf_email:'Barua Pepe', cf_email_ph:'barua@mfano.com',
@@ -258,7 +258,7 @@ mkPageTranslations = {
     faq_eyebrow:'MASWALI YANAYOULIZWA MARA KWA MARA', faq_title:'Maswali ya Kawaida',
     faq0_q:'Je, MkulimaForum ni bure kuitumia?', faq0_a:'Ndiyo — sehemu za msingi za mfumo zinaweza kutumiwa bila malipo. Huduma za masoko na pembejeo zina ada ndogo.',
     faq1_q:'Je, MkulimaForum inafanya kazi bila intaneti?', faq1_a:'Ndiyo. Tumejumuisha Mkulima AI Offline kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD.',
-    faq2_q:'Je, ninawezaje kuwa mshirika?', faq2_a:'Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe kwenye partnerships@mkulimaforum.app.',
+    faq2_q:'Je, ninawezaje kuwa mshirika?', faq2_a:'Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe kwenye partnerships@mkulimaforum.com.',
     faq3_q:'Je, MkulimaForum inafanya kazi nje ya Tanzania?', faq3_a:'Mfumo wa sasa unazingatia Tanzania. Tunapanga kupanua kwenda Kenya, Uganda, na nchi nyingine za Afrika Mashariki.',
     faq4_q:'Ni aina gani ya data ya kibinafsi mnayokusanya?', faq4_a:'Tunakusanya taarifa za akaunti ya msingi tu. Hatuzidishi au kuuza data za kibinafsi za wakulima kwa watu wengine.',
   },
@@ -270,7 +270,7 @@ mkPageTranslations = {
     c_location_val:'Tanzania 🇹🇿 — East Africa 🌍',
     c_dept_title:'DEPARTMENTS',
     dept_0:'🤝 Partnerships', dept_1:'💰 Investment', dept_2:'📰 Press & Media', dept_3:'🔧 Technical Support',
-    c_response_note:'We respond to all emails within 2 business days. For urgent technical issues, email support@mkulimaforum.app.',
+    c_response_note:'We respond to all emails within 2 business days. For urgent technical issues, email support@mkulimaforum.com.',
     c_form_title:'Send Your Message',
     cf_name:'Full Name', cf_name_ph:'Your Name',
     cf_email:'Email Address', cf_email_ph:'email@example.com',
@@ -284,7 +284,7 @@ mkPageTranslations = {
     faq_eyebrow:'FREQUENTLY ASKED QUESTIONS', faq_title:'Common Questions',
     faq0_q:'Is MkulimaForum free to use?', faq0_a:'Yes — core features (plant diagnosis, Mkulima AI, community, weather) are free. Paid services (marketplace, inputs) carry a small fee.',
     faq1_q:'Does MkulimaForum work without internet?', faq1_a:'Yes. We have integrated Mkulima AI Offline for offline AI inference, plus SMS and USSD services for low-connectivity areas.',
-    faq2_q:'How can I become a partner?', faq2_a:'Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.app.',
+    faq2_q:'How can I become a partner?', faq2_a:'Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.com.',
     faq3_q:'Does MkulimaForum work outside Tanzania?', faq3_a:'The current platform focuses on Tanzania. We plan to expand to Kenya, Uganda, and other East African markets based on traction.',
     faq4_q:'What personal data do you collect?', faq4_a:'We collect basic account information only. We do not share or sell personal farmer data to third parties.',
   }

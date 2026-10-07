@@ -1,12 +1,11 @@
-// Assembles dist/ for the Hostinger static deploy, after `vite build`.
+// Assembles dist/ after `vite build`, for a machine that has PHP and vendor/.
 //
-// Hostinger's Vite build runs `npm install && npm run build` and nothing else:
-// no `composer install`, so there is no vendor/ and `php artisan` cannot boot.
-// When PHP and vendor/ are both present (a developer machine, the VPS), the
-// home page is rendered fresh with `mkulima:export-landing`. Otherwise the
-// committed snapshot dist/index.html is kept as-is. Refresh that snapshot by
-// running `APP_URL=https://mkulimaforum.app npm run build` locally after
-// changing the home page, so the snapshot carries production URLs.
+// Hostinger also runs this build from master, in a Node-only environment, as
+// a static "Vite" deploy attached to mkulimaforum.com. That domain serves the
+// real Laravel app. A successful static build there replaces the live API and
+// admin with one HTML page, which is what happened on 2026-10-07. So without
+// PHP and vendor/ this script fails on purpose, and Hostinger keeps serving
+// what it already has. Do not add a fallback that lets it succeed.
 
 import { cpSync, existsSync, mkdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
@@ -30,9 +29,7 @@ if (canRender) {
     if (run.status !== 0) {
         process.exit(run.status ?? 1);
     }
-} else if (existsSync('dist/index.html')) {
-    console.log('PHP or vendor/ not available: keeping the committed dist/index.html snapshot.');
 } else {
-    console.error('dist/index.html is missing and cannot be rendered without PHP and vendor/.');
+    console.error('Refusing to build dist/ without PHP and vendor/: a static deploy would replace the live Laravel site.');
     process.exit(1);
 }

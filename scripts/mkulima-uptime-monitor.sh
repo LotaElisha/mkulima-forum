@@ -2,11 +2,11 @@
 # Uptime / heartbeat monitor for Mkulima Forum
 
 URLS=(
-    "https://mkulimaforum.app/api/health"
-    "https://mkulimaforum.app/"
-    "https://mkulimaforum.app/admin/"
-    "https://mkulimaforum.app/api/market-prices"
-    "https://mkulimaforum.app/api/weather/report?location=Dodoma"
+    "https://mkulimaforum.com/api/health"
+    "https://mkulimaforum.com/"
+    "https://mkulimaforum.com/admin/"
+    "https://mkulimaforum.com/api/market-prices"
+    "https://mkulimaforum.com/api/weather/report?location=Dodoma"
 )
 
 failures=0

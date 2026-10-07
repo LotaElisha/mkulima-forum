@@ -3,7 +3,7 @@
 ## Server
 - **Host:** `147.79.115.194` (srv1772095.hstgr.cloud)
 - **OS:** Ubuntu 24.04
-- **Domains:** `mkulimaforum.app`, `www.mkulimaforum.app`
+- **Domains:** `mkulimaforum.com`, `www.mkulimaforum.com`
 - **Project root:** `/opt/data/projects/mkulima-forum`
 - **Web root:** `/opt/data/projects/mkulima-forum/public`
 - **Admin dashboard:** `/opt/data/projects/mkulima-forum/admin-dashboard/dist`
@@ -12,10 +12,10 @@
 - **Web server:** Nginx
 
 ## Admin access
-- **Admin dashboard:** `https://mkulimaforum.app/admin/`
+- **Admin dashboard:** `https://mkulimaforum.com/admin/`
 - **Admin email:** `admin@mkulima.forum`
 - **Admin password:** *(stored securely, changed from default)*
-- **Mobile APK:** `https://mkulimaforum.app/app/mkulima-forum.apk`
+- **Mobile APK:** `https://mkulimaforum.com/app/mkulima-forum.apk`
 
 ## Daily cron jobs (UTC)
 | Time | Task | Log |
@@ -50,7 +50,7 @@ php artisan config:cache
 php artisan view:cache
 
 # Run smoke tests
-bash scripts/smoke.sh https://mkulimaforum.app
+bash scripts/smoke.sh https://mkulimaforum.com
 
 # Re-sync market prices manually
 php artisan market-prices:sync --country=Tanzania
@@ -75,13 +75,13 @@ tail -f /var/log/mkulima-weather-cache.log
 cd /opt/data/projects/mkulima-forum
 bash scripts/build-mobile.sh
 # Or with custom URL:
-API_URL=https://mkulimaforum.app/api bash scripts/build-mobile.sh
+API_URL=https://mkulimaforum.com/api bash scripts/build-mobile.sh
 ```
 
 ## Admin dashboard build
 ```bash
 cd /opt/data/projects/mkulima-forum/admin-dashboard
-echo "VITE_API_URL=https://mkulimaforum.app/api" > .env.production
+echo "VITE_API_URL=https://mkulimaforum.com/api" > .env.production
 npm install
 npm run build
 ```

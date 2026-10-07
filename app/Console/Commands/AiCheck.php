@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AiProvider;
 use App\Services\AI\AIService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
 /**
  * Answers "why is the plant scanner failing?" in one command, on the server
@@ -39,7 +41,7 @@ class AiCheck extends Command
             ? '<EMPTY - this alone will fail every scan>'
             : 'set, '.strlen($key).' chars, ending '.substr($key, -4)));
 
-        $dbProviders = \App\Models\AiProvider::withoutGlobalScopes()->count();
+        $dbProviders = AiProvider::withoutGlobalScopes()->count();
         $this->line('  providers in database   : '.$dbProviders.($dbProviders === 0
             ? ' (falling back to .env)'
             : ''));
@@ -99,7 +101,6 @@ class AiCheck extends Command
         }
     }
 
-
     /**
      * Ask the key what it can see.
      *
@@ -121,7 +122,7 @@ class AiCheck extends Command
         // and printing a Laravel stack trace instead of an explanation would
         // be the same failure the app itself was making.
         try {
-            $response = \Illuminate\Support\Facades\Http::timeout(20)
+            $response = Http::timeout(20)
                 ->withOptions(['http_errors' => false])
                 ->get($url);
         } catch (\Throwable $e) {

@@ -15,7 +15,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-API_URL="${API_URL:-https://mkulimaforum.app/api}"
+API_URL="${API_URL:-https://mkulimaforum.com/api}"
 
 step() { printf '\n\033[1;32m==>\033[0m \033[1m%s\033[0m\n' "$1"; }
 die()  { printf '\n\033[1;31mFAILED:\033[0m %s\n' "$1" >&2; exit 1; }
