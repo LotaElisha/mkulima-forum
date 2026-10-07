@@ -16,10 +16,10 @@ import '../screens/login_modal.dart';
 ///
 /// Single definition so the API host and the Apple redirect URI cannot drift
 /// apart. Override at build time:
-///   flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api
+///   flutter build apk --dart-define=API_URL=https://mkulimaforum.com/api
 const String kApiBaseUrl = String.fromEnvironment(
   'API_URL',
-  defaultValue: 'https://mkulimaforum.app/api',
+  defaultValue: 'https://mkulimaforum.com/api',
 );
 
 class AuthProvider extends ChangeNotifier {

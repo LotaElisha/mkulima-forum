@@ -5,7 +5,7 @@
 // When PHP and vendor/ are both present (a developer machine, the VPS), the
 // home page is rendered fresh with `mkulima:export-landing`. Otherwise the
 // committed snapshot dist/index.html is kept as-is. Refresh that snapshot by
-// running `APP_URL=https://mkulimaforum.app npm run build` locally after
+// running `APP_URL=https://mkulimaforum.com npm run build` locally after
 // changing the home page, so the snapshot carries production URLs.
 
 import { cpSync, existsSync, mkdirSync } from 'node:fs';

@@ -50,21 +50,21 @@ There is exactly one build-time variable, and it has a single definition:
 // lib/providers/auth_provider.dart
 const String kApiBaseUrl = String.fromEnvironment(
   'API_URL',
-  defaultValue: 'https://mkulimaforum.app/api',
+  defaultValue: 'https://mkulimaforum.com/api',
 );
 ```
 
 `lib/main.dart` reads it (`ApiService(baseUrl: kApiBaseUrl)`) and the Apple
 sign-in redirect derives from it. Nothing else hardcodes a host — that is
-enforced, not aspirational: the previous default was `mkulimaforum.com`, a
-domain the server does not serve, fixed in commit `17fcd29a`.
+enforced, not aspirational. The production domain is `mkulimaforum.com`
+(chosen by the owner on 2026-10-07; `.app` has no working TLS).
 
 ### Build commands
 
 ```bash
 # Production — this is the correct URL. .app, not .com.
 flutter build apk --release \
-  --dart-define=API_URL=https://mkulimaforum.app/api
+  --dart-define=API_URL=https://mkulimaforum.com/api
 
 # Local backend, Android emulator (10.0.2.2 is the host from inside the emulator)
 flutter run --dart-define=API_URL=http://10.0.2.2:8000/api
@@ -74,10 +74,10 @@ flutter run --dart-define=API_URL=http://192.168.x.x:8000/api
 
 # Split per ABI — roughly a third the download size, worth it on Tanzanian data
 flutter build apk --release --split-per-abi \
-  --dart-define=API_URL=https://mkulimaforum.app/api
+  --dart-define=API_URL=https://mkulimaforum.com/api
 ```
 
-`APP_URL` in `.env.production` is `https://mkulimaforum.app` and matches the
+`APP_URL` in `.env.production` is `https://mkulimaforum.com` and matches the
 Nginx server names in `DEPLOYMENT_RUNBOOK.md`. Use `.app` everywhere.
 
 ### Release signing
@@ -144,7 +144,7 @@ the sixth digit, with a 60-second resend countdown.
 
 ## 4. API contract
 
-Base: `{API_URL}` → `https://mkulimaforum.app/api`.
+Base: `{API_URL}` → `https://mkulimaforum.com/api`.
 All six require `Authorization: Bearer {sanctum token}`.
 Throttles are per route and stated below; exceeding one returns **429** with
 Laravel's standard `Retry-After` header.
@@ -279,7 +279,7 @@ This is the outstanding work. Nothing below has been done.
 - [ ] `flutter pub get` resolves with no version conflicts
 - [ ] `dart run build_runner build --delete-conflicting-outputs` succeeds
 - [ ] `flutter analyze` — **zero** errors. Warnings triaged, not ignored
-- [ ] `flutter build apk --release --dart-define=API_URL=https://mkulimaforum.app/api`
+- [ ] `flutter build apk --release --dart-define=API_URL=https://mkulimaforum.com/api`
 - [ ] APK installs and opens on a real device
 
 ### Screenshot and review each screen

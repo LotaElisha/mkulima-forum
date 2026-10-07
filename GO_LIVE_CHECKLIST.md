@@ -29,9 +29,9 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
       remaining item that will break a launch. Gmail SMTP needs an app password, not the
       account password. `mkulima:preflight` fails on it. Verify with a real end-to-end send.
 - [ ] **Set `DB_PASSWORD` in `.env.production`.** Also empty.
-- [x] **`APP_URL` confirmed** as `https://mkulimaforum.app` — matches the Nginx domains in
-      `DEPLOYMENT_RUNBOOK.md`. The Flutter client defaulted to `mkulimaforum.com`, a host the
-      server does not serve; fixed in `17fcd29a`.
+- [ ] **`APP_URL` is `https://mkulimaforum.com`** — the owner chose `.com` on 2026-10-07
+      (`.app` has no working TLS). The Nginx/hosting config for `.com` must serve Laravel's
+      `public/`; today `.com` is a static Hostinger deploy where `/api` and `/admin` are 404.
 - [ ] **Run the new migration** — `2026_08_22_000001_create_password_reset_and_email_change_tables`.
       Without it, every password-reset request throws.
 - [ ] **Start the queue worker** under supervisor (`php artisan queue:work`).
@@ -136,7 +136,7 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
 
 ## Mobile app
 
-- [ ] **`flutter analyze && flutter build apk --dart-define=API_URL=https://mkulimaforum.app/api`**
+- [ ] **`flutter analyze && flutter build apk --dart-define=API_URL=https://mkulimaforum.com/api`**
       Nothing Dart was compiled — every route to a toolchain was blocked from the audit
       environment (storage.googleapis.com, dl.google.com, pub.dev and the GitHub archive all
       refused). Static checks pass: every `MkColors` token resolves, no unused local imports,
