@@ -1,1000 +1,1048 @@
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="sw" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MkulimaForum — Shiriki. Jifunze. Endelea.</title>
-<meta name="description" content="MkulimaForum: Jukwaa la Kidigitali la Wakulima wa Afrika Mashariki. AI Plant Scanner, Soko la Kilimo, Mkulima AI, Masoko ya Mazao na Hali ya Hewa.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --forest-dark: #0C3619;
-    --forest-mid: #165A2A;
-    --leaf-green: #4C9B27;
-    --leaf-bright: #6BB535;
-    --sun-gold: #F5A623;
-    --sun-amber: #FFBA36;
-    --cream-bg: #FAF8F2;
-    --cream-card: #FFFFFF;
-    --ink-dark: #0C2314;
-    --ink-muted: #4A6351;
-    --border-light: #E2EADF;
-    --radius-xl: 24px;
-    --radius-lg: 16px;
-    --shadow-soft: 0 12px 36px rgba(12, 54, 25, 0.08);
-    --shadow-hover: 0 20px 48px rgba(12, 54, 25, 0.14);
+  <script nonce="">document.documentElement.classList.add('js');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MkulimaForum | Jukwaa la Kidigitali la Wakulima wa Tanzania</title>
+  <meta name="description" content="MkulimaForum inaunganisha wakulima wa Tanzania na maarifa, masoko, huduma na Mkulima AI.">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="canonical" href="https://mkulimaforum.app">
+
+  
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MkulimaForum">
+  <meta property="og:title" content="MkulimaForum | AI Agriculture Platform">
+  <meta property="og:description" content="Connecting East African farmers with AI, markets, and agricultural knowledge.">
+  <meta property="og:image" content="https://mkulimaforum.app/images/brand-banner.png">
+  <meta property="og:url" content="https://mkulimaforum.app">
+
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MkulimaForum">
+  <meta name="twitter:description" content="AI Agriculture Platform for Tanzania">
+  <meta name="twitter:image" content="https://mkulimaforum.app/images/brand-banner.png">
+
+  
+
+  <style>
+  /* Tokens, buttons, header and footer come from layouts/public.blade.php.
+     This block only lays out the home page's own sections. */
+  .ico { width:1.15em; height:1.15em; vertical-align:-.2em; flex:none; stroke-width:2; }
+
+  /* Hero: copy on white, photograph to the right (below the copy on phones). */
+  .editorial-hero { min-height:620px; position:relative; overflow:hidden; border-bottom:1px solid var(--border-light); }
+  .hero-art { position:absolute; inset:0; background:url('/images/home/hero-composite.webp') right center/auto 92% no-repeat; }
+  .hero-art::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,#fff 0%,#fff 36%,rgba(255,255,255,.6) 48%,transparent 64%); }
+  .editorial-hero .wrap { min-height:620px; display:flex; align-items:center; position:relative; z-index:2; }
+  .hero-copy { width:min(48%,540px); padding:48px 0; }
+  .hero-kicker { display:inline-flex; align-items:center; min-height:32px; padding:0 14px; border-radius:999px; background:var(--leaf-pale); color:var(--forest-dark); font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:20px; }
+  .editorial-title { color:var(--ink-dark); font-size:clamp(34px,4.8vw,56px); font-weight:800; letter-spacing:-.03em; line-height:1.06; max-width:640px; margin-bottom:20px; }
+  .hero-summary { font-size:17px; max-width:34rem; line-height:1.65; margin-bottom:22px; color:var(--ink-body); }
+  .benefit-list { display:grid; gap:10px; list-style:none; margin:0 0 28px; }
+  .benefit-list li { display:flex; align-items:center; gap:10px; font-size:15px; color:var(--ink-body); }
+  .benefit-list .ico { color:var(--forest-mid); width:20px; height:20px; }
+  .hero-actions { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .availability { display:flex; gap:8px; margin-top:24px; align-items:center; flex-wrap:wrap; }
+  .availability small { width:100%; font-size:13px; color:var(--ink-muted); margin-bottom:2px; }
+  .store-pill { display:inline-flex; align-items:center; min-height:32px; border:1px solid var(--border-light); padding:0 12px; border-radius:999px; background:#fff; font-size:13px; color:var(--ink-body); }
+
+  /* Testimonial */
+  .story-band { border-bottom:1px solid var(--border-light); background:#fff; padding:40px 0; }
+  .story-grid { max-width:980px; margin:auto; display:grid; grid-template-columns:380px 1fr; align-items:center; gap:48px; padding:0 24px; }
+  .story-image { position:relative; }
+  .story-image img { width:100%; height:180px; object-fit:cover; border-radius:16px; }
+  .story-proof { position:absolute; left:-20px; bottom:18px; background:#fff; border:1px solid var(--border-light); box-shadow:var(--shadow-md); padding:12px 16px; border-radius:14px; width:150px; }
+  .story-proof small { display:block; font-size:13px; font-weight:700; letter-spacing:.06em; color:var(--forest-mid); }
+  .story-proof strong { display:block; font-size:24px; font-weight:800; color:var(--ink-dark); line-height:1.2; }
+  .story-proof span { display:block; font-size:13px; line-height:1.35; color:var(--ink-muted); }
+  blockquote { font-size:clamp(20px,2.2vw,26px); font-weight:600; line-height:1.4; color:var(--ink-dark); letter-spacing:-.01em; }
+  .quote-by { margin-top:14px; font-size:15px; color:var(--ink-muted); }
+
+  /* Three steps */
+  .journey { padding:80px 0; background:#fff; }
+  .journey-head { max-width:1100px; margin:0 auto 40px; }
+  .journey-title { font-size:clamp(26px,3.2vw,36px); font-weight:700; color:var(--ink-dark); margin-bottom:8px; letter-spacing:-.02em; }
+  .journey-head p { color:var(--ink-muted); font-size:17px; }
+  .journey-steps { max-width:1100px; margin:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .journey-step { border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; }
+  .step-number { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; background:var(--leaf-pale); color:var(--forest-dark); font-weight:800; font-size:16px; margin-bottom:16px; }
+  .journey-step h3 { font-size:19px; font-weight:700; margin-bottom:8px; }
+  .journey-step p { font-size:15px; line-height:1.6; color:var(--ink-muted); flex:1; }
+  .journey-step img { width:100%; height:170px; object-fit:cover; border-radius:12px; margin-top:18px; }
+  .journey-step:nth-child(3) img { object-position:center 40%; }
+  .journey-close { text-align:center; font-size:17px; font-weight:600; color:var(--ink-dark); margin-top:36px; }
+  .journey-close span { display:block; color:var(--forest-mid); font-size:15px; font-weight:600; margin-top:4px; }
+
+  /* Capabilities */
+  .light-capabilities { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:72px 0; }
+  .cap-head { display:flex; justify-content:space-between; gap:30px; align-items:end; margin-bottom:28px; }
+  .cap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .cap-item { padding:24px; background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); }
+  .cap-item .ico { color:var(--forest-mid); width:24px; height:24px; margin-bottom:14px; display:block; }
+  .cap-item h3 { font-size:17px; margin-bottom:6px; }
+  .cap-item p { font-size:15px; line-height:1.55; color:var(--ink-muted); }
+
+  .final-cta { padding:80px 0; text-align:center; background:#fff; }
+  .final-cta h2 { font-size:clamp(26px,3.6vw,38px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
+  .final-cta p { max-width:540px; margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
+  .final-cta .btn { width:auto; }
+
+  @media(max-width:900px) {
+    .story-grid { grid-template-columns:1fr; gap:28px; }
+    .story-proof { left:12px; }
+    .journey-steps { grid-template-columns:1fr; gap:12px; }
+    .cap-grid { grid-template-columns:1fr 1fr; }
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    color: var(--ink-dark);
-    background: var(--cream-bg);
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
+  /* Phones: photograph sits in its own band below the copy, never under text. */
+  .quick-access { display:none; }
+  @media (max-width:700px) {
+    .editorial-hero { display:flex; flex-direction:column; overflow:visible; min-height:0; }
+    .editorial-hero .wrap { order:1; min-height:0; }
+    .hero-art { position:relative; order:2; inset:auto; height:190px; margin:0 16px 20px; border-radius:16px; background-size:cover; background-position:center 62%; }
+    .hero-art::before { display:none; }
+    .hero-copy { width:100%; padding:24px 0 20px; }
+    .editorial-title { font-size:30px; line-height:1.14; }
+    .hero-summary { font-size:16px; margin-bottom:16px; }
+    .benefit-list { gap:8px; margin-bottom:20px; }
+    .hero-actions { gap:4px; }
+    .availability { margin-top:16px; }
 
-  h1, h2, h3, h4, .brand-font {
-    font-family: 'Outfit', sans-serif;
-  }
+    /* The main services within one tap of landing. */
+    .quick-access { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:20px 16px 4px; }
+    .qa-tile {
+      display:flex; flex-direction:column; align-items:center; gap:6px;
+      padding:14px 4px 12px; min-height:104px;
+      background:#fff; border:1px solid var(--border-light); border-radius:14px; text-align:center;
+    }
+    .qa-tile:active { background:var(--leaf-pale); border-color:var(--forest-mid); }
+    .qa-ico { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:var(--leaf-pale); color:var(--forest-mid); }
+    .qa-label { font-size:13px; font-weight:700; color:var(--ink-dark); line-height:1.2; }
+    .qa-sub   { font-size:13px; color:var(--ink-muted); line-height:1.2; }
 
-  img, svg { max-width: 100%; display: block; }
-  a { text-decoration: none; color: inherit; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-
-  /* ---------------- Navigation ---------------- */
-  header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(250, 248, 242, 0.94);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-light);
-  }
-  .nav {
-    display: flex; align-items: center; justify-content: space-between;
-    height: 76px;
-  }
-  .brand-logo-container {
-    display: flex; align-items: center; gap: 12px;
-  }
-  .brand-logo-container img {
-    height: 48px; width: auto; object-fit: contain;
-  }
-  .nav-links {
-    display: flex; gap: 24px; align-items: center;
-    font-weight: 600; font-size: 0.92rem; color: var(--ink-muted);
-  }
-  .nav-links a { transition: color 0.2s ease; cursor: pointer; }
-  .nav-links a:hover { color: var(--forest-mid); }
-
-  /* Language Switcher Pill */
-  .lang-switcher {
-    display: inline-flex; align-items: center; background: rgba(22, 90, 42, 0.08);
-    border: 1px solid rgba(22, 90, 42, 0.2); border-radius: 999px; padding: 3px;
-    font-size: 0.82rem; font-weight: 700; margin-left: 4px;
-  }
-  .lang-btn {
-    border: none; background: transparent; padding: 5px 12px; border-radius: 999px;
-    cursor: pointer; color: var(--ink-muted); transition: all 0.2s ease;
-  }
-  .lang-btn.active {
-    background: var(--forest-dark); color: #ffffff;
-    box-shadow: 0 2px 8px rgba(12, 54, 25, 0.2);
-  }
-
-  /* Buttons */
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-family: 'Outfit', sans-serif; font-weight: 700;
-    border-radius: 999px; padding: 14px 28px;
-    font-size: 1rem; cursor: pointer; border: none;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 14px rgba(12, 54, 25, 0.08);
-  }
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(12, 54, 25, 0.16);
-  }
-  .btn-gold {
-    background: linear-gradient(135deg, var(--sun-gold), var(--sun-amber));
-    color: var(--forest-dark);
-  }
-  .btn-forest {
-    background: linear-gradient(135deg, var(--forest-mid), var(--forest-dark));
-    color: #ffffff;
-  }
-  .btn-outline {
-    background: transparent; color: var(--forest-dark);
-    border: 2px solid var(--forest-mid);
-  }
-  .btn-outline:hover {
-    background: var(--forest-mid); color: #ffffff;
-  }
-  .btn-glass {
-    background: rgba(255, 255, 255, 0.15); color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(8px);
-  }
-  .btn-glass:hover {
-    background: rgba(255, 255, 255, 0.28); color: #ffffff;
-  }
-  .nav .btn { padding: 10px 20px; font-size: 0.9rem; }
-
-  /* ---------------- Hero Section ---------------- */
-  .hero {
-    background: radial-gradient(circle at 80% 20%, #1a6b33 0%, var(--forest-dark) 70%);
-    color: #ffffff; position: relative; overflow: hidden;
-    padding: 60px 0 90px;
-  }
-  .hero::after {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 40px;
-    background: var(--cream-bg);
-    clip-path: ellipse(60% 100% at 50% 100%);
-  }
-
-  .hero-grid {
-    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px;
-    align-items: center; position: relative; z-index: 2;
-  }
-
-  .motto-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    padding: 8px 18px; border-radius: 999px; font-weight: 700;
-    font-size: 0.88rem; color: var(--sun-amber); letter-spacing: 0.05em;
-    margin-bottom: 24px; backdrop-filter: blur(6px);
-  }
-  .motto-badge .pulse-dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--sun-amber); box-shadow: 0 0 10px var(--sun-amber);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.6; }
-  }
-
-  .hero h1 {
-    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-    line-height: 1.12; font-weight: 900; margin-bottom: 16px;
-    letter-spacing: -0.02em;
-  }
-  .hero h1 .gold { color: var(--sun-gold); }
-  .hero p.lead {
-    font-size: 1.15rem; color: rgba(255, 255, 255, 0.9);
-    max-width: 36rem; margin-bottom: 32px; font-weight: 400;
-  }
-
-  /* Pillars Bar */
-  .pillars-bar {
-    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px;
-  }
-  .pillar-item {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 8px 16px; border-radius: 12px; font-size: 0.88rem;
-    font-weight: 600; color: #ffffff;
-  }
-
-  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
-
-  .trust-strip {
-    display: flex; gap: 20px; flex-wrap: wrap;
-    font-size: 0.85rem; color: rgba(255, 255, 255, 0.8);
-    border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 20px;
-  }
-  .trust-strip b { color: var(--sun-gold); }
-
-  /* ---------------- Phone Mockup ---------------- */
-  .phone-container {
-    display: flex; justify-content: center; position: relative;
-  }
-  .phone-mockup {
-    width: 290px; background: #07190C; border-radius: 44px;
-    padding: 14px; box-shadow: 0 30px 70px rgba(0,0,0,0.5);
-    border: 3px solid rgba(255,255,255,0.15);
-    transform: perspective(1000px) rotateY(-8deg) rotateX(4deg);
-    transition: transform 0.5s ease;
-  }
-  .phone-mockup:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
-  .screen {
-    background: #0B1E10; border-radius: 32px; overflow: hidden;
-    color: #ffffff; border: 1px solid rgba(255,255,255,0.1);
-  }
-  .screen-header {
-    background: var(--forest-mid); padding: 16px 14px 12px; text-align: center;
-  }
-  .screen-header h4 { font-size: 0.95rem; font-weight: 800; }
-  .screen-header p { font-size: 0.65rem; color: var(--sun-amber); font-weight: 700; letter-spacing: 0.08em; }
-
-  .scanner-view {
-    margin: 14px; height: 170px; border-radius: 20px;
-    background: linear-gradient(160deg, #1C4223, #0F2D15);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; overflow: hidden; border: 1px solid rgba(107, 181, 53, 0.3);
-  }
-  .scan-line {
-    position: absolute; width: 100%; height: 3px;
-    background: linear-gradient(90deg, transparent, var(--leaf-bright), transparent);
-    box-shadow: 0 0 12px var(--leaf-bright);
-    animation: scanAnimation 2.5s infinite ease-in-out;
-  }
-  @keyframes scanAnimation {
-    0% { top: 10%; }
-    50% { top: 85%; }
-    100% { top: 10%; }
-  }
-  .scanner-icon { font-size: 52px; margin-bottom: 4px; }
-  .scanner-tag {
-    font-size: 0.68rem; font-weight: 700; background: rgba(76, 155, 39, 0.3);
-    padding: 3px 10px; border-radius: 999px; color: #9FE870;
-  }
-
-  .scan-result-card {
-    margin: 0 14px 16px; background: rgba(255, 255, 255, 0.08);
-    border-radius: 16px; padding: 12px; font-size: 0.72rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-  .scan-result-card b { color: var(--sun-gold); font-size: 0.78rem; display: block; margin-bottom: 2px; }
-  .status-badge-ok { color: #7BD48A; font-weight: 700; }
-
-  /* ---------------- Sections ---------------- */
-  section { padding: 90px 0; }
-  .section-tag {
-    color: var(--leaf-green); font-weight: 800; text-transform: uppercase;
-    font-size: 0.85rem; letter-spacing: 0.14em; margin-bottom: 10px; display: block;
-  }
-  .section-title {
-    font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
-    color: var(--forest-dark); margin-bottom: 14px; line-height: 1.2;
-  }
-  .section-sub {
-    color: var(--ink-muted); font-size: 1.05rem; max-width: 42rem; margin-bottom: 48px;
-  }
-
-  /* Core Features Grid */
-  .grid-3 {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
-  }
-  @media(max-width: 960px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
-  @media(max-width: 640px) { .grid-3 { grid-template-columns: 1fr; } }
-
-  .feature-card {
-    background: var(--cream-card); border-radius: var(--radius-xl);
-    padding: 32px; border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-soft); transition: all 0.3s ease;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .feature-card:hover {
-    transform: translateY(-6px); box-shadow: var(--shadow-hover);
-  }
-
-  .feat-icon {
-    width: 60px; height: 60px; border-radius: 18px;
-    background: rgba(76, 155, 39, 0.12); color: var(--forest-mid);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px; margin-bottom: 20px;
-  }
-  .feature-card h3 {
-    font-size: 1.3rem; font-weight: 800; color: var(--forest-dark); margin-bottom: 10px;
-  }
-  .feature-card p {
-    color: var(--ink-muted); font-size: 0.95rem; margin-bottom: 24px;
-  }
-  .pill-badge {
-    display: inline-block; font-size: 0.75rem; font-weight: 700;
-    background: var(--cream-bg); color: var(--forest-mid);
-    border: 1px solid var(--border-light); padding: 4px 12px; border-radius: 999px;
-  }
-
-  /* Special Gemini Card */
-  .card-gemini {
-    background: linear-gradient(135deg, var(--forest-mid), var(--forest-dark));
-    color: #ffffff; border: none;
-  }
-  .card-gemini h3 { color: #ffffff; }
-  .card-gemini p { color: rgba(255, 255, 255, 0.85); }
-  .card-gemini .pill-badge {
-    background: rgba(255, 255, 255, 0.15); color: var(--sun-gold);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-  }
-
-  /* ---------------- Steps ---------------- */
-  .steps-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
-  }
-  @media(max-width: 840px) { .steps-grid { grid-template-columns: 1fr; } }
-  .step-card {
-    background: var(--cream-card); border-radius: var(--radius-xl); padding: 36px;
-    border: 1px solid var(--border-light); position: relative;
-  }
-  .step-num {
-    font-size: 3.5rem; font-weight: 900; color: rgba(76, 155, 39, 0.15);
-    position: absolute; top: 16px; right: 24px; font-family: 'Outfit', sans-serif;
-  }
-  .step-card h3 { font-size: 1.25rem; font-weight: 800; color: var(--forest-dark); margin: 16px 0 10px; }
-  .step-card p { color: var(--ink-muted); font-size: 0.95rem; }
-
-  /* ---------------- Offline SMS Banner ---------------- */
-  .offline-banner {
-    background: linear-gradient(135deg, #10331A, #081D0E);
-    border-radius: var(--radius-xl); color: #ffffff; padding: 48px;
-    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center;
-  }
-  @media(max-width: 840px) { .offline-banner { grid-template-columns: 1fr; padding: 32px; } }
-  .offline-banner h2 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; }
-  .offline-banner p { color: rgba(255, 255, 255, 0.85); margin-bottom: 24px; }
-  .sms-box {
-    background: rgba(0,0,0,0.35); border-radius: 20px; padding: 24px;
-    border: 1px solid rgba(255,255,255,0.12); font-family: monospace; font-size: 0.9rem;
-  }
-
-  /* ---------------- Try Interactive Form ---------------- */
-  .try-section {
-    background: linear-gradient(135deg, var(--forest-dark), #175429);
-    border-radius: var(--radius-xl); padding: 48px; color: #ffffff;
-  }
-  .try-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-  @media(max-width: 840px) { .try-grid { grid-template-columns: 1fr; } }
-  .try-box textarea {
-    width: 100%; padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.08); color: #ffffff; font-size: 0.95rem;
-    outline: none; margin-bottom: 14px; resize: none; font-family: inherit;
-  }
-  .try-box textarea::placeholder { color: rgba(255,255,255,0.5); }
-
-  /* ---------------- Pitch Deck Banner & Modal ---------------- */
-  .pitch-banner {
-    background: linear-gradient(135deg, #1C4E28, var(--forest-dark));
-    border-radius: var(--radius-xl); padding: 40px 48px; color: #ffffff;
-    display: flex; justify-content: space-between; align-items: center; gap: 24px;
-    box-shadow: var(--shadow-soft); border: 1px solid rgba(245, 166, 35, 0.3);
-  }
-  @media(max-width: 840px) { .pitch-banner { flex-direction: column; text-align: center; padding: 32px; } }
-
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 999;
-    background: rgba(12, 35, 20, 0.8); backdrop-filter: blur(8px);
-    display: none; align-items: center; justify-content: center; padding: 24px;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal-card {
-    background: #ffffff; border-radius: 24px; width: 100%; max-width: 900px;
-    height: 85vh; display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-  .modal-header {
-    background: var(--forest-dark); color: #ffffff; padding: 20px 28px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .modal-header h3 { font-size: 1.25rem; font-weight: 800; color: var(--sun-gold); }
-  .close-btn {
-    background: rgba(255,255,255,0.15); border: none; color: #ffffff;
-    width: 36px; height: 36px; border-radius: 50%; font-size: 20px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s ease;
-  }
-  .close-btn:hover { background: rgba(255,255,255,0.3); }
-
-  /* ---------------- Footer ---------------- */
-  footer {
-    background: var(--forest-dark); color: rgba(255, 255, 255, 0.8);
-    padding: 70px 0 30px; border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .foot-grid {
-    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 50px;
-  }
-  @media(max-width: 960px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
-  @media(max-width: 540px) { .foot-grid { grid-template-columns: 1fr; } }
-  .foot-brand p { font-size: 0.9rem; margin-top: 16px; color: rgba(255, 255, 255, 0.7); max-width: 22rem; }
-  .foot-title { color: #ffffff; font-weight: 800; font-size: 1.05rem; margin-bottom: 20px; }
-  .foot-links { list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem; }
-  .foot-links a { color: rgba(255, 255, 255, 0.75); transition: color 0.2s ease; }
-  .foot-links a:hover { color: var(--sun-gold); }
-  .copyright {
-    border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 24px; text-align: center;
-    font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);
+    .story-band { padding:28px 0; }
+    .story-grid { padding:0 16px; }
+    .story-image img { height:160px; }
+    .journey { padding:44px 0; }
+    .journey-step { padding:18px; }
+    .journey-step img { height:150px; }
+    .journey-close { margin-top:20px; font-size:16px; }
+    .light-capabilities { padding:44px 0; }
+    .cap-head { align-items:start; flex-direction:column; gap:4px; }
+    .cap-grid { grid-template-columns:1fr; gap:10px; }
+    .cap-item { padding:18px; }
+    .final-cta { padding:48px 0; }
+    .final-cta .btn { width:100%; }
   }
 </style>
+
+  <style>
+    /* =============================================
+       MKULIMA DESIGN SYSTEM — public site
+       ---------------------------------------------
+       The same tokens as the farmer app (mkulima_app/lib/core/theme.dart),
+       so the website and the app read as one product: about 90% white,
+       green reserved for actions, navigation, badges and icons, nothing
+       below 13px, 44px touch targets and 48px primary actions.
+       Page templates should use these tokens rather than raw colours.
+       ============================================= */
+    :root {
+      /* Green: actions and identity only */
+      --forest-dark:   #14532D;   /* MkColors.primaryDark */
+      --forest-mid:    #1B7A3E;   /* MkColors.primary */
+      --forest-light:  #1B7A3E;
+      --leaf-green:    #1B7A3E;
+      --leaf-bright:   #3FA463;
+      --leaf-pale:     #EEF7F0;   /* selected states, icon chips */
+      /* Accent: small highlights only, never a fill behind body text */
+      --sun-gold:      #9A5B00;   /* text-safe amber (MkColors.warning) */
+      --sun-amber:     #E0A008;
+      --accent-soft:   #FDF1D6;
+      /* Surfaces */
+      --cream-bg:      #FFFFFF;   /* legacy name kept for page templates */
+      --cream-card:    #FFFFFF;
+      --surface:       #FFFFFF;
+      --surface-card:  #FFFFFF;
+      --surface-soft:  #F4F7F4;   /* the only tinted surface (MkColors.surfaceMuted) */
+      --surface-sunken:#F4F7F4;
+      /* Ink */
+      --ink-dark:      #0F1511;
+      --ink-body:      #2E3631;
+      --ink-muted:     #5A645E;   /* 5.9:1 on white */
+      --ink-faint:     #5A645E;   /* was #8A938C (3.2:1); faint text must still be read */
+      /* Lines */
+      --border-light:  #E5EAE6;
+      --border-mid:    #CDD6CF;
+      --line:          #E5EAE6;
+      /* Shape */
+      --radius-2xl:    24px;
+      --radius-xl:     16px;      /* MkRadii.card */
+      --radius-lg:     14px;      /* MkRadii.button */
+      --radius-md:     10px;
+      --shadow-xs:     0 1px 2px rgba(15,21,17,.05);
+      --shadow-sm:     0 1px 3px rgba(15,21,17,.06), 0 1px 2px rgba(15,21,17,.04);
+      --shadow-md:     0 8px 24px rgba(15,21,17,.08);
+      --shadow-lg:     0 16px 40px rgba(15,21,17,.12);
+      --nav-h:         68px;
+    }
+
+    /* =============================================
+       RESET & BASE
+       ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      color: var(--ink-body);
+      background: #fff;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4,h5,h6,.brand-font {
+      font-family: inherit; color: var(--ink-dark);
+      letter-spacing: -0.015em; font-weight: 700; line-height: 1.2;
+    }
+    a { color: inherit; text-decoration: none; }
+    img,svg { display: block; max-width: 100%; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+    input, select, textarea { font: inherit; font-size: 16px; } /* 16px stops iOS zoom-on-focus */
+
+    /* =============================================
+       LAYOUT
+       ============================================= */
+    .wrap    { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .wrap-lg { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+    .wrap-sm { max-width: 720px;  margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    section.tight { padding: 56px 0; }
+    section.hero-section { padding: 0; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+    @media(max-width: 1060px) { .grid-4 { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width: 860px)  { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+    @media(max-width: 640px)  { .grid-4 { grid-template-columns: 1fr; } }
+
+    /* =============================================
+       TYPE SCALE (mirrors MkText)
+       ============================================= */
+    .eyebrow {
+      display: inline-block;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--forest-mid); margin-bottom: 12px;
+    }
+    .page-title {
+      font-size: clamp(30px, 4.6vw, 48px);
+      font-weight: 800; line-height: 1.1; letter-spacing: -0.025em;
+      color: var(--ink-dark); margin-bottom: 18px;
+    }
+    .section-title {
+      font-size: clamp(24px, 3.2vw, 34px);
+      font-weight: 700; line-height: 1.2;
+      color: var(--ink-dark); margin-bottom: 12px;
+    }
+    .section-lead {
+      font-size: 17px; color: var(--ink-muted);
+      max-width: 42rem; line-height: 1.65;
+    }
+    .gold  { color: var(--sun-gold); }
+    .green { color: var(--forest-mid); }
+
+    /* =============================================
+       BUTTONS — one green primary, one quiet secondary
+       ============================================= */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 48px; padding: 12px 22px;
+      font-weight: 600; font-size: 15px; line-height: 1.2;
+      border-radius: var(--radius-lg); border: 1.5px solid transparent;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary, .btn-gold { background: var(--forest-mid); color: #fff; }
+    .btn-primary:hover, .btn-gold:hover { background: var(--forest-dark); }
+    .btn-outline, .btn-quiet { background: #fff; color: var(--forest-dark); border-color: var(--border-mid); }
+    .btn-outline:hover, .btn-quiet:hover { background: var(--leaf-pale); border-color: var(--forest-mid); }
+    /* Ghost buttons were for dark heroes; there are none left. */
+    .btn-ghost { background: #fff; color: var(--forest-dark); border-color: var(--border-mid); }
+    .btn-ghost:hover { background: var(--leaf-pale); }
+    .btn-sm { min-height: 44px; padding: 10px 16px; font-size: 14px; }
+    .btn-lg { min-height: 52px; padding: 14px 28px; font-size: 16px; }
+    .text-link {
+      display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
+      font-weight: 600; color: var(--forest-dark);
+    }
+    .text-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* =============================================
+       CARDS, CHIPS, BADGES
+       ============================================= */
+    .card {
+      background: #fff; border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl); padding: 28px;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .card:hover { border-color: var(--border-mid); box-shadow: var(--shadow-md); }
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--leaf-pale); color: var(--forest-mid);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; flex-shrink: 0;
+    }
+    .card h3 { font-size: 18px; font-weight: 700; color: var(--ink-dark); margin-bottom: 8px; }
+    .card p  { color: var(--ink-muted); font-size: 15px; line-height: 1.6; }
+    .tag {
+      display: inline-flex; align-items: center; font-size: 13px; font-weight: 600;
+      background: var(--surface-soft); color: var(--ink-body);
+      border: 1px solid var(--border-light); padding: 4px 12px; border-radius: 999px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--leaf-pale); border: 0; color: var(--forest-dark);
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 700; letter-spacing: .04em;
+    }
+    .badge.dark { background: var(--leaf-pale); color: var(--forest-dark); }
+    .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--leaf-bright); animation: mk-pulse 2s infinite; }
+    @keyframes mk-pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+    .divider { height: 1px; background: var(--border-light); margin: 48px 0; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+    /* =============================================
+       NAVIGATION
+       ============================================= */
+    #site-header {
+      position: sticky; top: 0; z-index: 200; height: var(--nav-h);
+      background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .nav-wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-height: 44px; }
+    .nav-logo img { height: 40px; width: auto; object-fit: contain; }
+    .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; justify-content: center; }
+    .nav-links a, .nav-dropdown-trigger {
+      display: flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 14px;
+      font-size: 15px; font-weight: 500; color: var(--ink-body);
+      border-radius: 10px; background: transparent; white-space: nowrap;
+      transition: background .15s ease, color .15s ease;
+    }
+    .nav-links a:hover, .nav-dropdown-trigger:hover { background: var(--surface-soft); color: var(--ink-dark); }
+    .nav-links a.active, .nav-dropdown-item.active .nav-dropdown-trigger { color: var(--forest-dark); font-weight: 600; }
+    .nav-dropdown-item { position: relative; }
+    .nav-dropdown-trigger svg { width: 14px; height: 14px; transition: transform .2s ease; }
+    .nav-dropdown-item:hover .nav-dropdown-trigger svg { transform: rotate(180deg); }
+    .nav-dropdown-menu {
+      position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%) translateY(-4px);
+      background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+      padding: 6px; min-width: 220px; box-shadow: var(--shadow-lg);
+      opacity: 0; pointer-events: none; transition: opacity .15s ease, transform .15s ease; z-index: 210;
+    }
+    .nav-dropdown-item:hover .nav-dropdown-menu,
+    .nav-dropdown-item:focus-within .nav-dropdown-menu,
+    .nav-dropdown-item.keyboard-open .nav-dropdown-menu { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .nav-dropdown-menu a {
+      display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px;
+      border-radius: 10px; font-size: 15px; font-weight: 500; color: var(--ink-body); white-space: nowrap;
+    }
+    .nav-dropdown-menu a:hover { background: var(--surface-soft); }
+    .nav-dropdown-menu a.active { background: var(--leaf-pale); color: var(--forest-dark); font-weight: 600; }
+    .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .lang-pill { display: flex; align-items: center; background: var(--surface-soft); border-radius: 999px; padding: 3px; }
+    .lang-btn {
+      background: transparent; border: none; min-height: 32px; padding: 0 12px; border-radius: 999px;
+      font-size: 13px; font-weight: 700; color: var(--ink-muted);
+    }
+    .lang-btn.active { background: #fff; color: var(--forest-dark); box-shadow: var(--shadow-xs); }
+    .hamburger {
+      display: none; width: 48px; height: 48px; flex-direction: column;
+      align-items: center; justify-content: center; gap: 5px; background: transparent; border-radius: 12px;
+    }
+    .hamburger:hover { background: var(--surface-soft); }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--ink-dark); border-radius: 2px; transition: all .25s ease; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    #nav-drawer {
+      position: fixed; inset: 0; z-index: 190; display: flex; flex-direction: column; background: #fff;
+      opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s ease, visibility .2s ease;
+    }
+    #nav-drawer.open { opacity: 1; visibility: visible; pointer-events: auto; }
+    .drawer-header {
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px 0 18px; border-bottom: 1px solid var(--border-light);
+    }
+    .drawer-close {
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      background: transparent; color: var(--ink-dark); border-radius: 12px;
+    }
+    .drawer-close:hover { background: var(--surface-soft); }
+    .drawer-links { flex: 1; overflow-y: auto; padding: 8px 12px 16px; display: flex; flex-direction: column; }
+    .drawer-links a {
+      display: flex; align-items: center; min-height: 52px; padding: 0 12px; border-radius: 12px;
+      font-size: 16px; font-weight: 500; color: var(--ink-dark);
+    }
+    .drawer-links a:hover { background: var(--surface-soft); }
+    .drawer-group {
+      font-size: 13px; font-weight: 700; color: var(--ink-muted);
+      padding: 18px 12px 6px; text-transform: uppercase; letter-spacing: .08em;
+    }
+    .drawer-divider { height: 1px; background: var(--border-light); margin: 8px 12px; }
+    .drawer-lang { display: flex; gap: 8px; padding: 8px 12px; }
+    .drawer-lang button {
+      flex: 1; min-height: 48px; border-radius: 12px; font-size: 15px; font-weight: 600;
+      background: #fff; color: var(--ink-body); border: 1.5px solid var(--border-light);
+    }
+    .drawer-lang button.active { background: var(--leaf-pale); color: var(--forest-dark); border-color: var(--forest-mid); }
+    .drawer-footer { padding: 16px 18px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border-light); display: flex; gap: 10px; }
+    .drawer-footer .btn { flex: 1; }
+
+    @media(max-width: 1000px) {
+      .nav-links, .nav-actions .lang-pill, .nav-actions > .btn { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* =============================================
+       FOOTER — white, like the rest of the page
+       ============================================= */
+    #site-footer { background: var(--surface-soft); color: var(--ink-body); padding: 64px 0 0; border-top: 1px solid var(--border-light); }
+    .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 48px; }
+    @media(max-width: 920px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+    .foot-brand img { height: 40px; width: auto; }
+    .foot-brand p { font-size: 15px; margin-top: 14px; color: var(--ink-muted); line-height: 1.6; max-width: 26rem; }
+    .foot-contact { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; font-weight: 600; color: var(--forest-dark); }
+    .foot-col-title { font-weight: 700; font-size: 13px; color: var(--ink-dark); margin-bottom: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    .foot-links { list-style: none; display: flex; flex-direction: column; }
+    .foot-links a { display: inline-flex; align-items: center; min-height: 40px; font-size: 15px; color: var(--ink-muted); }
+    .foot-links a:hover { color: var(--forest-dark); }
+    .foot-bottom {
+      padding: 20px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      font-size: 13px; color: var(--ink-muted); flex-wrap: wrap; border-top: 1px solid var(--border-light);
+    }
+
+    /* =============================================
+       SHARED PAGE BLOCKS
+       ============================================= */
+    .page-hero { background: #fff; padding: 72px 0 56px; border-bottom: 1px solid var(--border-light); }
+    /* Highlight panels: a soft grey card, not a coloured band */
+    .panel-dark {
+      background: var(--surface-soft); color: var(--ink-body);
+      border: 1px solid var(--border-light); border-radius: var(--radius-2xl); padding: 48px;
+    }
+    .panel-dark h2, .panel-dark h3 { color: var(--ink-dark); }
+    .panel-dark p { color: var(--ink-muted); }
+    .comm-hero, .verify-hero, .pitch-hero {
+      background: #fff !important; color: var(--ink-body) !important;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .comm-hero h1, .verify-hero h1, .pitch-hero h1 { color: var(--ink-dark) !important; font-weight: 800 !important; letter-spacing: -.025em; }
+    .comm-hero p, .verify-hero p, .pitch-hero p { color: var(--ink-muted) !important; }
+    .contact-info-card { background: var(--surface-soft) !important; color: var(--ink-body) !important; border: 1px solid var(--border-light); }
+    .contact-info-card h3 { color: var(--ink-dark) !important; font-weight: 700 !important; }
+    .contact-info-card p, .contact-info-card h4 { color: var(--ink-muted) !important; }
+    .contact-info-card a { color: var(--forest-dark) !important; font-weight: 600; }
+    .contact-info-card .c-info-icon { background: #fff; border: 1px solid var(--border-light); color: var(--forest-mid); }
+    .contact-info-card .c-info-label { color: var(--ink-muted); }
+    .contact-info-card .c-info-value { color: var(--ink-body); }
+    .contact-info-card .c-divider { background: var(--border-light); }
+    /* Legacy dark-green gradient bands in page markup render as soft panels. */
+    section[style*="linear-gradient(135deg,#0E4220"],
+    section[style*="linear-gradient(135deg, #0E4220"],
+    div[style*="linear-gradient(145deg,#0C3619"] {
+      background: var(--surface-soft) !important; color: var(--ink-body) !important;
+      border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);
+    }
+    section[style*="linear-gradient(135deg,#0E4220"] :is(h2,h3),
+    section[style*="linear-gradient(135deg, #0E4220"] :is(h2,h3),
+    div[style*="linear-gradient(145deg,#0C3619"] :is(h2,h3) { color: var(--ink-dark) !important; }
+    section[style*="linear-gradient(135deg,#0E4220"] p,
+    section[style*="linear-gradient(135deg, #0E4220"] p,
+    div[style*="linear-gradient(145deg,#0C3619"] p { color: var(--ink-muted) !important; }
+
+    /* Forms */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 14px; font-weight: 600; color: var(--ink-dark); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; min-height: 48px; padding: 12px 14px; border-radius: 12px;
+      border: 1.5px solid var(--border-mid); background: #fff; color: var(--ink-dark);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--forest-mid); box-shadow: 0 0 0 3px var(--leaf-pale);
+    }
+
+    /* Fade-up on scroll */
+    .fade-up { opacity: 1; transform: none; }
+    .js .fade-up { opacity: 0; transform: translateY(16px); transition: opacity .45s ease, transform .45s ease; }
+    .js .fade-up.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .js .fade-up { opacity: 1; transform: none; transition: none; } }
+
+    /* Focus visibility */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--leaf-bright); outline-offset: 2px; border-radius: 6px;
+    }
+
+    /* =============================================
+       PHONES (design floor 360px)
+       ============================================= */
+    @media (max-width: 700px) {
+      section            { padding: 44px 0; }
+      section.tight      { padding: 32px 0; }
+      .wrap, .wrap-lg, .wrap-sm { padding-left: 16px; padding-right: 16px; }
+      .page-title        { font-size: 28px; line-height: 1.18; margin-bottom: 14px; }
+      .section-title     { font-size: 23px; line-height: 1.25; margin-bottom: 10px; }
+      .section-lead      { font-size: 16px; }
+      p, li, td, label   { font-size: max(1em, 14px); }
+      .card              { padding: 18px; border-radius: 14px; }
+      .card h3           { font-size: 17px; }
+      .card-icon         { width: 44px; height: 44px; border-radius: 12px; margin-bottom: 12px; }
+      .grid-2, .grid-3, .grid-4 { gap: 12px; }
+      .btn               { width: 100%; }
+      .btn-sm            { width: auto; }
+      .card:hover        { box-shadow: none; }
+      .cat-btn, .chip, .filter-btn { min-height: 44px !important; padding: 10px 16px !important; }
+      .store-pill        { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 12px; font-size: 13px; }
+
+      /* Page-level blocks declare desktop padding in each page's <style>. */
+      .solution-row, .journey, .light-capabilities, .final-cta,
+      .sol-band, .submit-story-panel, .no-pitch, .story-band,
+      .contact-form-card, .partner-form, .deck-inner, .pdf-fallback {
+        padding-top: 32px !important; padding-bottom: 32px !important;
+      }
+      .cap-item, .highlight-card, .principle-card, .team-card,
+      .story-card-body, .contact-info-card { padding: 18px !important; }
+      .contact-form-card, .partner-form, .submit-story-panel { padding-left: 16px !important; padding-right: 16px !important; }
+      .hero-copy { padding: 24px 0 !important; }
+      .editorial-hero, .editorial-hero .wrap { min-height: 0 !important; }
+      .panel-dark { padding: 24px 18px !important; border-radius: 16px; }
+      .page-hero, .editorial-hero, .hero-section { padding-top: 28px !important; padding-bottom: 32px !important; }
+      .solution-row { gap: 20px !important; }
+      .sol-tile { padding: 20px !important; min-height: 0 !important; }
+
+      .foot-grid { grid-template-columns: 1fr 1fr; gap: 8px 16px; padding-bottom: 24px; }
+      .foot-brand { grid-column: 1 / -1; margin-bottom: 12px; }
+      #site-footer { padding-top: 36px; }
+    }
+
+    /* Sticky mobile action bar: the primary action stays in reach. */
+    .mobile-action-bar { display: none; }
+    @media (max-width: 700px) {
+      .mobile-action-bar {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 180;
+        display: flex; gap: 10px; align-items: center;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(255,255,255,.98); border-top: 1px solid var(--border-light);
+      }
+      .mobile-action-bar .btn { flex: 1; }
+      .mobile-action-bar .btn-quiet { flex: 0 0 auto; width: auto; padding: 12px 20px; }
+      #site-footer { padding-bottom: 84px; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- NAVIGATION HEADER -->
-<header>
-  <div class="wrap nav">
-    <a href="#" class="brand-logo-container">
-      <img src="/images/brand-banner.png" alt="MkulimaForum Logo">
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<header id="site-header">
+  <div class="wrap nav-wrap">
+    <!-- Logo -->
+    <a href="/" class="nav-logo">
+      <img src="/images/brand-banner.png" alt="MkulimaForum">
     </a>
 
-    <nav class="nav-links">
-      <a href="#jinsi" data-i18n="nav_how">Jinsi Inavyofanya</a>
-      <a href="#vipengele" data-i18n="nav_features">Vipengele</a>
-      <a href="#pitchdeck" onclick="openPitchModal(event)" data-i18n="nav_pitch">📊 Pitch Deck</a>
-      <a href="#sms" data-i18n="nav_offline">Bila Intaneti</a>
-      <a href="/docs/Mkulima_Forum_Pitch_Deck.pdf" target="_blank" class="btn btn-outline nav-btn" data-i18n="btn_pitch_doc">PDF Deck</a>
-      <a href="/download" class="btn btn-gold nav-btn" data-i18n="nav_download">Pakua App</a>
+    <!-- Primary nav links (Grouped & Uncongested) -->
+    <ul class="nav-links" role="list">
+      <li><a href="/" class="active" data-i18n="nav_home">Home</a></li>
+      <li><a href="/verify" class=""><span data-i18n="nav_verify">Verify</span></a></li>
 
-      <!-- Language Toggle Switcher -->
-      <div class="lang-switcher">
-        <button type="button" class="lang-btn active" id="btnSw" onclick="switchLanguage('sw')">🇹🇿 SW</button>
-        <button type="button" class="lang-btn" id="btnEn" onclick="switchLanguage('en')">🇬🇧 EN</button>
+      <!-- Solutions Dropdown -->
+      <li class="nav-dropdown-item ">
+        <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <span data-i18n="nav_solutions_group">Solutions</span>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="/solutions" class="" role="menuitem"><span data-i18n="nav_solutions">All Solutions</span></a>
+          <a href="/technology" class="" role="menuitem"><span data-i18n="nav_tech">Technology & AI</span></a>
+          <a href="/api/health" target="_blank" rel="noopener" role="menuitem"><span data-i18n="nav_api">API Status</span></a>
+        </div>
+      </li>
+
+      <!-- Community Dropdown -->
+      <li class="nav-dropdown-item ">
+        <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <span data-i18n="nav_community_group">Community</span>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="/community" class="" role="menuitem"><span data-i18n="nav_community">Community Hub</span></a>
+          <a href="/stories" class="" role="menuitem"><span data-i18n="nav_stories">Farmer Stories</span></a>
+        </div>
+      </li>
+
+      <!-- Company Dropdown -->
+      <li class="nav-dropdown-item ">
+        <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+          <span data-i18n="nav_company_group">Company</span>
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="nav-dropdown-menu" role="menu">
+          <a href="/about" class="" role="menuitem"><span data-i18n="nav_about">About Us</span></a>
+          <a href="/impact" class="" role="menuitem"><span data-i18n="nav_impact">Impact & Reach</span></a>
+          <a href="/partners" class="" role="menuitem"><span data-i18n="nav_partners">Partners</span></a>
+          <a href="/pitch-deck" class="" role="menuitem"><span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
+          <a href="/contact" class="" role="menuitem"><span data-i18n="nav_contact">Contact</span></a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Right side actions -->
+    <div class="nav-actions">
+      <!-- Language toggle -->
+      <div class="lang-pill" role="group" aria-label="Language">
+        <button class="lang-btn active" id="btnSw" onclick="mkSwitchLang('sw')">SW</button>
+        <button class="lang-btn" id="btnEn" onclick="mkSwitchLang('en')">EN</button>
       </div>
-    </nav>
+      <a href="/login" class="btn btn-outline btn-sm" data-i18n="nav_login">Ingia</a>
+      <a href="/download" class="btn btn-primary btn-sm" data-i18n="nav_download">Pakua App</a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false" onclick="toggleDrawer()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
 
-<!-- HERO SECTION -->
-<div class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="motto-badge">
-        <span class="pulse-dot"></span>
-        <span id="mottoText">SHIRIKI • JIFUNZE • ENDELEA</span>
-      </div>
+<!-- Mobile Drawer (Clean Grouped Mobile Menu) -->
+<nav id="nav-drawer" aria-label="Mobile navigation" aria-hidden="true" inert>
+  <div class="drawer-header">
+    <a href="/" class="nav-logo"><img src="/images/brand-banner.png" alt="MkulimaForum"></a>
+    <button class="drawer-close" onclick="toggleDrawer()" aria-label="Funga menyu"><svg class="ico"
+     width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+</button>
+  </div>
+  <div class="drawer-links">
+    <a href="/" onclick="toggleDrawer()"><span data-i18n="nav_home">Home</span></a>
+    <a href="/verify" onclick="toggleDrawer()"><span data-i18n="nav_verify">Mkulima Verify</span></a>
+    
+    <div class="drawer-group" data-i18n="nav_solutions_group">SOLUTIONS</div>
+    <a href="/solutions" onclick="toggleDrawer()"><span data-i18n="nav_solutions">All Solutions</span></a>
+    <a href="/technology" onclick="toggleDrawer()"><span data-i18n="nav_tech">Technology & AI</span></a>
 
-      <h1 id="heroTitle">Jukwaa la Kidigitali la Wakulima wa Tanzania</h1>
-      <div style="font-size: 1.1rem; font-weight: 800; color: var(--sun-amber); margin-bottom: 12px; letter-spacing: 0.05em;" id="heroTagline">
-        SKANI • TAMBUA • TIBU
-      </div>
+    <div class="drawer-group" data-i18n="nav_community_group">COMMUNITY</div>
+    <a href="/community" onclick="toggleDrawer()"><span data-i18n="nav_community">Community Hub</span></a>
+    <a href="/stories" onclick="toggleDrawer()"><span data-i18n="nav_stories">Farmer Stories</span></a>
 
-      <p class="lead" id="heroLead">Ushauri wa kilimo, masoko na teknolojia kwa wakulima wa Tanzania.</p>
+    <div class="drawer-group" data-i18n="nav_company_group">COMPANY</div>
+    <a href="/about" onclick="toggleDrawer()"><span data-i18n="nav_about">About Us</span></a>
+    <a href="/impact" onclick="toggleDrawer()"><span data-i18n="nav_impact">Impact</span></a>
+    <a href="/partners" onclick="toggleDrawer()"><span data-i18n="nav_partners">Partners</span></a>
+    <a href="/pitch-deck" onclick="toggleDrawer()"><span data-i18n="nav_pitchdeck">Pitch Deck</span></a>
+    <a href="/contact" onclick="toggleDrawer()"><span data-i18n="nav_contact">Contact</span></a>
 
-      <div class="pillars-bar">
-        <span class="pillar-item" id="pillar1">🌱 Shiriki Maarifa</span>
-        <span class="pillar-item" id="pillar2">📖 Jifunze Mbinu Bora</span>
-        <span class="pillar-item" id="pillar3">👥 Jenga Jamii</span>
-        <span class="pillar-item" id="pillar4">📈 Endelea Kukua</span>
-      </div>
-
-      <div class="hero-ctas">
-        <a href="/download" class="btn btn-gold" data-i18n="hero_download_btn">
-          ⬇️ Pakua App ya Mkulima (APK)
-        </a>
-        <button type="button" onclick="openPitchModal(event)" class="btn btn-glass">
-          📊 <span data-i18n="hero_pitch_btn">Tazama Pitch Deck</span>
-        </button>
-      </div>
-
-      <div class="trust-strip">
-        <span><b>✓</b> <span data-i18n="trust_free">Bure kutumia</span></span>
-        <span><b>✓</b> <span data-i18n="trust_lang">Kiswahili &amp; English</span></span>
-        <span><b>✓</b> <span data-i18n="trust_offline">SMS &amp; USSD Offline</span></span>
-        <span><b>✓</b> <span data-i18n="trust_ai">Mkulima AI</span></span>
-      </div>
+    <div class="drawer-divider"></div>
+    <!-- Lang switcher in drawer -->
+    <div class="drawer-lang">
+      <button onclick="mkSwitchLang('sw'); toggleDrawer()" id="drawerBtnSw">Kiswahili</button>
+      <button onclick="mkSwitchLang('en'); toggleDrawer()" id="drawerBtnEn">English</button>
     </div>
+  </div>
+  <div class="drawer-footer">
+    <a href="/login" class="btn btn-outline" data-i18n="nav_login">Ingia</a>
+    <a href="/download" class="btn btn-primary" data-i18n="nav_download">Pakua App</a>
+  </div>
+</nav>
 
-    <!-- Phone Mockup Display -->
-    <div class="phone-container">
-      <div class="phone-mockup">
-        <div class="screen">
-          <div class="screen-header">
-            <h4>Mkulima AI</h4>
-            <p data-i18n="mockup_tagline">SKANI • TAMBUA • TIBU</p>
-          </div>
-
-          <div class="scanner-view">
-            <div class="scan-line"></div>
-            <div class="scanner-icon">🌿</div>
-            <div class="scanner-tag">Mkulima AI Active</div>
-          </div>
-
-          <div class="scan-result-card">
-            <b data-i18n="mockup_result_title">Matokeo ya Uchunguzi</b>
-            <span data-i18n="mockup_disease">Ugonjwa: Kutu ya Majani (Leaf Rust)</span><br>
-            <span class="status-badge-ok" data-i18n="mockup_treatment">Tiba: Fungicide + Ondoa majani yaliyoathirika</span>
-          </div>
+<!-- ============================================================
+     PAGE CONTENT
+     ============================================================ -->
+<main id="main-content">
+  <div>
+  <section class="editorial-hero hero-section" aria-labelledby="home-title">
+    <div class="hero-art" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="hero-kicker" data-i18n="home_kicker">SHIRIKISHO · ELIMU · BIASHARA</p>
+        <h1 class="editorial-title" id="home-title" data-i18n="home_title">Jukwaa la Kidigitali la Wakulima wa Tanzania.</h1>
+        <p class="hero-summary" data-i18n="home_summary">Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.</p>
+        <ul class="benefit-list">
+          <li><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21.8 10A10 10 0 1 1 17 3.34"/><path d="m9 11 3 3L22 4"/></svg>
+<span data-i18n="benefit_1">Maarifa sahihi na kwa wakati</span></li>
+          <li><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21.8 10A10 10 0 1 1 17 3.34"/><path d="m9 11 3 3L22 4"/></svg>
+<span data-i18n="benefit_2">Ufikiaji wa masoko na wanunuzi</span></li>
+          <li><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21.8 10A10 10 0 1 1 17 3.34"/><path d="m9 11 3 3L22 4"/></svg>
+<span data-i18n="benefit_3">Zana za kisasa za kilimo</span></li>
+          <li><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21.8 10A10 10 0 1 1 17 3.34"/><path d="m9 11 3 3L22 4"/></svg>
+<span data-i18n="benefit_4">Jumuiya ya wakulima na ushauri</span></li>
+        </ul>
+        <div class="hero-actions">
+          <a href="/download" class="btn btn-primary"><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+<span data-i18n="download_app">Pakua App ya Mkulima</span></a>
+          <a href="/pitch-deck" class="text-link" data-i18n="view_pitch">Tazama Pitch Deck →</a>
+        </div>
+        <div class="availability" aria-label="App availability">
+          <small data-i18n="available_on">Inapatikana kwenye</small>
+          <span class="store-pill">Google Play</span><span class="store-pill">Android APK</span><span class="store-pill">Web App</span>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  
+  <nav class="quick-access" aria-label="Huduma kuu">
+    <a href="/solutions#mkulima-ai" class="qa-tile">
+      <span class="qa-ico"><svg class="ico"
+     width="22" height="22" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="8" width="10" height="8" rx="1"/></svg>
+</span>
+      <span class="qa-label" data-i18n="qa_ai">Mkulima AI</span>
+      <span class="qa-sub" data-i18n="qa_ai_sub">Tambua ugonjwa</span>
+    </a>
+    <a href="/verify" class="qa-tile">
+      <span class="qa-ico"><svg class="ico"
+     width="22" height="22" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5Z"/><path d="m9 12 2 2 4-4"/></svg>
+</span>
+      <span class="qa-label" data-i18n="qa_verify">Kagua Pembejeo</span>
+      <span class="qa-sub" data-i18n="qa_verify_sub">Epuka bandia</span>
+    </a>
+    <a href="/solutions#soko" class="qa-tile">
+      <span class="qa-ico"><svg class="ico"
+     width="22" height="22" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M3 9 4.5 4.5A2 2 0 0 1 6.4 3h11.2a2 2 0 0 1 1.9 1.5L21 9"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M9 21v-6h6v6"/></svg>
+</span>
+      <span class="qa-label" data-i18n="qa_market">Soko la Mazao</span>
+      <span class="qa-sub" data-i18n="qa_market_sub">Nunua na uuze</span>
+    </a>
+    <a href="/solutions#bei" class="qa-tile">
+      <span class="qa-ico"><svg class="ico"
+     width="22" height="22" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+</span>
+      <span class="qa-label" data-i18n="qa_prices">Bei za Soko</span>
+      <span class="qa-sub" data-i18n="qa_prices_sub">Bei za leo</span>
+    </a>
+    <a href="/solutions#hali-ya-hewa" class="qa-tile">
+      <span class="qa-ico"><svg class="ico"
+     width="22" height="22" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+</span>
+      <span class="qa-label" data-i18n="qa_weather">Hali ya Hewa</span>
+      <span class="qa-sub" data-i18n="qa_weather_sub">Utabiri wa mvua</span>
+    </a>
+    <a href="/community" class="qa-tile">
+      <span class="qa-ico"><svg class="ico"
+     width="22" height="22" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+</span>
+      <span class="qa-label" data-i18n="qa_community">Jamii</span>
+      <span class="qa-sub" data-i18n="qa_community_sub">Uliza wakulima</span>
+    </a>
+  </nav>
+
+  <section class="story-band" aria-labelledby="farmer-story">
+    <div class="story-grid">
+      <div class="story-image">
+        <img src="/images/home/farmer-community.webp" alt="Wakulima wakitumia MkulimaForum pamoja" width="1200" height="700" loading="lazy">
+        <div class="story-proof"><small>JAMII YETU</small><strong>120K+</strong><span>Wakulima wanaotumia jukwaa letu</span></div>
+      </div>
+      <div>
+        <blockquote id="farmer-story">“Kupitia MkulimaForum, nimejifunza mengi, na sasa naongeza uzalishaji na kipato.”</blockquote>
+        <p class="quote-by">— Asha, Mkulima wa Mahindi, Morogoro</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="journey" id="jinsi" aria-labelledby="journey-title">
+    <div class="wrap">
+      <div class="journey-head">
+        <span class="eyebrow" data-i18n="journey_kicker">ANZIA HAPA</span>
+        <h2 class="journey-title" id="journey-title" data-i18n="journey_title">Hatua 3 tu – wezesha kilimo chako</h2>
+        <p data-i18n="journey_sub">Rahisi, haraka na yenye matokeo halisi.</p>
+      </div>
+      <div class="journey-steps">
+        <article class="journey-step"><span class="step-number">01</span><h3 data-i18n="step1_title">Gundua</h3><p data-i18n="step1_desc">Piga picha ya tatizo la mmea au uliza swali lolote la kilimo.</p><img src="/images/home/plant-scan.webp" alt="Mkulima akipiga picha ya jani lililoathirika" width="900" height="600" loading="lazy"></article>
+        <article class="journey-step"><span class="step-number">02</span><h3 data-i18n="step2_title">Pata suluhisho</h3><p data-i18n="step2_desc">Pata majibu sahihi kutoka Mkulima AI na ushauri wa kitaalam kwa lugha rahisi.</p><img src="/images/home/hero-composite.webp" alt="Mkulima AI ikionyesha uchunguzi wa mmea" width="1400" height="1050" loading="lazy"></article>
+        <article class="journey-step"><span class="step-number">03</span><h3 data-i18n="step3_title">Tekeleza na faidika</h3><p data-i18n="step3_desc">Tumia maarifa, nunue pembejeo bora na uuze mazao kwa bei nzuri kupitia masoko ya uhakika.</p><img src="/images/home/market-handshake.webp" alt="Mkulima na mnunuzi wakikamilisha biashara ya mazao" width="900" height="600" loading="lazy"></article>
+      </div>
+      <p class="journey-close">Kilimo chako. Maarifa bora. Masoko bora. Maisha bora.<span>Pamoja, tunajenga kilimo chenye tija kwa Tanzania.</span></p>
+    </div>
+  </section>
+
+  <section class="light-capabilities" id="vipengele" aria-labelledby="cap-title">
+    <div class="wrap">
+      <div class="cap-head"><div><span class="eyebrow" data-i18n="cap_kicker">KILA KITU MAHALI PAMOJA</span><h2 class="journey-title" id="cap-title" data-i18n="cap_title">Zana za kukusaidia kutoka shambani hadi sokoni</h2></div><a href="/solutions" class="text-link" data-i18n="all_solutions">Angalia suluhisho zote →</a></div>
+      <div class="cap-grid">
+        <article class="cap-item"><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="8" width="10" height="8" rx="1"/></svg>
+<h3>Mkulima AI</h3><p>Tambua matatizo ya mimea na pata ushauri wa vitendo.</p></article>
+        <article class="cap-item"><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5Z"/><path d="m9 12 2 2 4-4"/></svg>
+<h3>Kagua Pembejeo</h3><p>Thibitisha ubora kabla ya kununua mbegu, dawa au mbolea.</p></article>
+        <article class="cap-item"><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M3 9 4.5 4.5A2 2 0 0 1 6.4 3h11.2a2 2 0 0 1 1.9 1.5L21 9"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M9 21v-6h6v6"/></svg>
+<h3>Soko la Kilimo</h3><p>Fikia wanunuzi, wauzaji na bei za mazao kwa urahisi.</p></article>
+        <article class="cap-item"><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+<h3>Jamii ya Wakulima</h3><p>Jifunze, uliza maswali na shiriki uzoefu na wengine.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="final-cta" aria-labelledby="cta-title"><div class="wrap"><span class="eyebrow">ANZA LEO</span><h2 id="cta-title">Kilimo bora kiko mikononi mwako.</h2><p>Pakua MkulimaForum na upate maarifa, masoko na msaada unaohitaji kila siku.</p><a href="/download" class="btn btn-primary btn-lg"><svg class="ico"
+     width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+ Pakua App ya Mkulima</a></div></section>
 </div>
+</main>
 
-<!-- HOW IT WORKS SECTION -->
-<section id="jinsi">
-  <div class="wrap">
-    <span class="section-tag" data-i18n="how_tag">Jinsi Inavyofanya Kazi</span>
-    <h2 class="section-title" data-i18n="how_title">Hatua 3 tu — chini ya dakika moja</h2>
-    <p class="section-sub" data-i18n="how_sub">Huhitaji ujuzi wowote wa kiufundi.</p>
-
-    <div class="steps-grid">
-      <div class="step-card">
-        <span class="step-num">01</span>
-        <div class="feat-icon">📷</div>
-        <h3 data-i18n="step1_title">1. Piga Picha ya Mmea</h3>
-        <p data-i18n="step1_desc">Fungua app, bonyeza kitufe cha Kagua Mmea, na upige picha ya jani lililoathirika shambani.</p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-num">02</span>
-        <div class="feat-icon">⚡</div>
-        <h3 data-i18n="step2_title">2. AI Inatambua Papo Hapo</h3>
-        <p data-i18n="step2_desc">Mkulima AI inachambua picha sekunde chache na kutambua ugonjwa au wadudu.</p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-num">03</span>
-        <div class="feat-icon">💊</div>
-        <h3 data-i18n="step3_title">3. Pata Tiba &amp; Ushauri</h3>
-        <p data-i18n="step3_desc">Pata maelekezo ya dawa zilizosajiliwa na TFRA, hatua za kinga, na usaidizi wa mtalamu.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PITCH DECK BANNER SECTION -->
-<section id="pitchdeck" style="padding: 30px 0;">
-  <div class="wrap">
-    <div class="pitch-banner">
-      <div>
-        <span class="motto-badge" style="background:rgba(255,255,255,0.15); margin-bottom:12px;" data-i18n="pitch_badge">
-          INVESTOR PRESENTATION
-        </span>
-        <h2 style="font-size:1.8rem; font-weight:800; margin-bottom:8px;" data-i18n="pitch_heading">
-          Google Africa Applied AI Lab Pitch Deck
-        </h2>
-        <p style="color:rgba(255,255,255,0.9); font-size:0.98rem; max-width:38rem;" data-i18n="pitch_sub">
-          Jifunze zaidi kuhusu mradi wa Mkulima Forum, muundo wa biashara, teknolojia ya Mkulima AI, na athari zetu kwa wakulima wadogo wadogo.
-        </p>
-      </div>
-      <div style="display:flex; gap:12px; flex-wrap:wrap; shrink:0;">
-        <button type="button" onclick="openPitchModal(event)" class="btn btn-gold" data-i18n="btn_open_deck">
-          👁️ Tazama Online
-        </button>
-        <a href="/docs/Mkulima_Forum_Pitch_Deck.pdf" target="_blank" class="btn btn-glass" data-i18n="btn_download_deck">
-          ⬇️ Pakua PDF
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CORE FEATURES SECTION -->
-<section id="vipengele">
-  <div class="wrap">
-    <span class="section-tag" data-i18n="feat_tag">Vipengele</span>
-    <h2 class="section-title" data-i18n="feat_title">Mfumo kamili wa kilimo</h2>
-    <p class="section-sub" data-i18n="feat_sub">Kila kitu mkulima anachohitaji, mahali pamoja.</p>
-
-    <div class="grid-3">
-      <!-- Feature 1: Gemini 3 Plant Scanner -->
-      <div class="feature-card card-gemini">
-        <div>
-          <div class="feat-icon" style="background:rgba(255,255,255,0.15); color:#fff;">📷</div>
-          <h3 data-i18n="f1_title">AI Plant Scanner</h3>
-          <p data-i18n="f1_desc">Piga picha jani lililoathirika. Mkulima AI inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.</p>
-        </div>
-        <div>
-          <span class="pill-badge">Mkulima AI</span>
-        </div>
-      </div>
-
-      <!-- Feature 2: Mkulima AI -->
-      <div class="feature-card">
-        <div>
-          <div class="feat-icon">🤖</div>
-          <h3 data-i18n="f2_title">Mkulima AI</h3>
-          <p data-i18n="f2_desc">Msaidizi wako wa kilimo 24/7 — uliza maswali ya mazao, pembejeo, na tiba kupitia sauti au maandishi.</p>
-        </div>
-        <div>
-          <span class="pill-badge">Virtual Agronomist</span>
-        </div>
-      </div>
-
-      <!-- Feature 3: Kagua Dawa Counterfeit Verification -->
-      <div class="feature-card">
-        <div>
-          <div class="feat-icon">🛡️</div>
-          <h3 data-i18n="f3_title">Kagua Dawa &amp; Pembejeo</h3>
-          <p data-i18n="f3_desc">Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPHPA/TFRA, na tahadhari za jamii.</p>
-        </div>
-        <div>
-          <span class="pill-badge">Counterfeit Protection</span>
-        </div>
-      </div>
-
-      <!-- Feature 4: Soko & Escrow -->
-      <div class="feature-card">
-        <div>
-          <div class="feat-icon">🛒</div>
-          <h3 data-i18n="f4_title">Soko la Pembejeo &amp; Mazao</h3>
-          <p data-i18n="f4_desc">Nunua dawa, mbegu na mbolea kutoka kwa wauzaji walioidhinishwa. Malipo yote yanalindwa na Mkulima Escrow.</p>
-        </div>
-        <div>
-          <span class="pill-badge">Escrow Secured</span>
-        </div>
-      </div>
-
-      <!-- Feature 5: Grounded Weather -->
-      <div class="feature-card">
-        <div>
-          <div class="feat-icon">⛅</div>
-          <h3 data-i18n="f5_title">Hali ya Hewa &amp; Ushauri</h3>
-          <p data-i18n="f5_desc">Mkulima AI Weather na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.</p>
-        </div>
-        <div>
-          <span class="pill-badge">Mkulima AI Weather Grounded</span>
-        </div>
-      </div>
-
-      <!-- Feature 6: Offline Mkulima AI Offline -->
-      <div class="feature-card">
-        <div>
-          <div class="feat-icon">📱</div>
-          <h3 data-i18n="f6_title">Offline Mode (Mkulima AI Offline)</h3>
-          <p data-i18n="f6_desc">Huna mtandao shambani? Mkulima AI Offline quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.</p>
-        </div>
-        <div>
-          <span class="pill-badge">Google AI Edge SDK</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- OFFLINE SMS SECTION -->
-<section id="sms" style="padding-top:0;">
-  <div class="wrap">
-    <div class="offline-banner">
-      <div>
-        <span class="motto-badge" style="background:rgba(255,255,255,0.15); margin-bottom:14px;" data-i18n="sms_badge">
-          HUDUMA BILA INTANETI
-        </span>
-        <h2 data-i18n="sms_title">Inafanya kazi kwenye simu yoyote</h2>
-        <p data-i18n="sms_desc">
-          Hata bila smartphone au mtandao wa intaneti shambani, unaweza kupata bei za masoko, hali ya hewa, na ushauri wa kilimo kwa njia ya SMS na USSD.
-        </p>
-        <div style="display:flex; gap:12px; font-weight:700; font-size:0.95rem; color:var(--sun-gold);">
-          <span>✓ SMS Gateway</span> &bull; <span>✓ USSD Code</span> &bull; <span>✓ Mkulima AI Offline Offline</span>
-        </div>
-      </div>
-
-      <div class="sms-box">
-        <div style="color:var(--sun-amber); font-weight:700; margin-bottom:8px;" data-i18n="sms_demo_head">
-          📲 Mfano wa Kutuma SMS (Bure):
-        </div>
-        <div style="margin-bottom:6px;">Tuma: <b style="color:#ffffff;">BEI MAHINDI DODOMA</b> -> kwenda 15500</div>
-        <div style="color:rgba(255,255,255,0.7); font-size:0.8rem; border-top:1px solid rgba(255,255,255,0.15); padding-top:8px;" data-i18n="sms_demo_resp">
-          Jibu: "Bei ya Mahindi Dodoma leo ni TZS 52,000/Gunia (TFRA Certified Market)."
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- INTERACTIVE TRY SECTION -->
-<section id="jaribu" style="padding-top: 0;">
-  <div class="wrap">
-    <div class="try-section">
-      <div class="try-grid">
-        <div>
-          <span class="motto-badge" style="background:rgba(255,255,255,0.15);" data-i18n="try_badge">JARIBU MTAALAMU WA AI</span>
-          <h2 style="font-size:2.2rem; font-weight:800; margin-bottom:14px;" data-i18n="try_heading">Uliza Swali la Kilimo Hapa</h2>
-          <p style="color:rgba(255,255,255,0.85); font-size:1rem; margin-bottom:20px;" data-i18n="try_desc">
-            Jaribu uwezo wa <b>Mkulima AI</b> kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.
-          </p>
-          <div style="font-size:0.88rem; color:var(--sun-gold);" data-i18n="try_sub">
-            ✓ Inatumia Mkulima AI &bull; Lugha ya Kiswahili &amp; English
-          </div>
-        </div>
-
-        <div class="try-box">
-          <form id="agriAiForm" onsubmit="handleDemoQuestion(event)">
-            <textarea id="userQuestion" rows="3" placeholder="Mfano: Jinsi ya kuzuia funza wa mahindi..." required></textarea>
-            <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center;" data-i18n="btn_ask_ai">
-              🚀 Tuma Swali kwa AI
-            </button>
-          </form>
-          <div id="aiAnswerOutput" style="display:none; margin-top:16px; padding:16px; background:rgba(0,0,0,0.4); border-radius:12px; font-size:0.9rem; border:1px solid rgba(255,255,255,0.15);">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SERVER STATUS & API SECTION -->
-<section id="status">
-  <div class="wrap">
-    <div style="background: var(--cream-card); border-radius: var(--radius-xl); padding: 48px; border: 1px solid var(--border-light); text-align: center; box-shadow: var(--shadow-soft);">
-      <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(76, 155, 39, 0.12); color:var(--forest-mid); padding:6px 16px; border-radius:999px; font-weight:700; font-size:0.85rem; margin-bottom:16px;">
-        <span style="width:8px; height:8px; background:var(--leaf-green); border-radius:50%;"></span> MFUMO UPO HEWANI (ONLINE)
-      </div>
-      <h3 style="font-size:1.6rem; font-weight:800; color:var(--forest-dark); margin-bottom:10px;">
-        MkulimaForum API v1.0.0
-      </h3>
-      <p style="color:var(--ink-muted); max-width:32rem; margin:0 auto 24px; font-size:0.95rem;">
-        PostgreSQL (pgvector), Redis Cache, Laravel Sanctum Auth, M-Pesa &amp; Tigo Pesa Gateway, Mkulima AI Engine.
-      </p>
-
-      <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
-        <a class="btn btn-forest" href="/api/health" target="_blank" data-i18n="btn_api_health">
-          🔍 Kagua Status ya API (/api/health)
-        </a>
-        <a class="btn btn-outline" href="/admin/login" data-i18n="btn_admin_portal">
-          🔐 Admin Dashboard Portal
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer id="site-footer">
   <div class="wrap">
     <div class="foot-grid">
+      <!-- Brand -->
       <div class="foot-brand">
-        <img src="/images/brand-banner.png" alt="MkulimaForum" style="height:44px; width:auto;">
-        <p data-i18n="foot_desc">Jukwaa kuu la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.</p>
+        <img src="/images/brand-banner.png" alt="MkulimaForum">
+        <p data-i18n="foot_tagline">Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania na Afrika Mashariki.</p>
+        <a href="/contact" class="foot-contact" data-i18n="foot_contact_link">Wasiliana Nasi →</a>
       </div>
 
+      <!-- Company -->
       <div>
-        <h4 class="foot-title" data-i18n="foot_f_title">Vipengele</h4>
+        <h4 class="foot-col-title" data-i18n="foot_company">KAMPUNI</h4>
         <ul class="foot-links">
-          <li><a href="#vipengele">AI Plant Scanner</a></li>
-          <li><a href="#vipengele">Mkulima AI Chat</a></li>
-          <li><a href="#vipengele">Soko la Pembejeo</a></li>
-          <li><a href="#status">API Endpoints</a></li>
+          <li><a href="/about" data-i18n="foot_about">Kuhusu Sisi</a></li>
+          <li><a href="/impact" data-i18n="foot_impact">Athari Zetu</a></li>
+          <li><a href="/partners" data-i18n="foot_partners">Washirika</a></li>
+          <li><a href="/stories" data-i18n="foot_stories">Hadithi za Wakulima</a></li>
+          <li><a href="/contact" data-i18n="foot_contact">Wasiliana</a></li>
         </ul>
       </div>
 
+      <!-- Solutions -->
       <div>
-        <h4 class="foot-title" data-i18n="foot_q_title">Viungo vya Haraka</h4>
+        <h4 class="foot-col-title" data-i18n="foot_solutions">SULUHISHO</h4>
         <ul class="foot-links">
-          <li><a href="/docs/Mkulima_Forum_Pitch_Deck.pdf" target="_blank" data-i18n="foot_link_pitch">📊 Pitch Deck (PDF)</a></li>
-          <li><a href="/download">Pakua App (APK)</a></li>
-          <li><a href="/admin/login">Admin Dashboard</a></li>
-          <li><a href="/api/health">API Health</a></li>
+          <li><a href="/solutions#plant-scanner" data-i18n="foot_scanner">AI Plant Scanner</a></li>
+          <li><a href="/solutions#mkulima-bot" data-i18n="foot_bot">Mkulima AI</a></li>
+          <li><a href="/solutions#marketplace" data-i18n="foot_market">Soko la Kilimo</a></li>
+          <li><a href="/solutions#input-verify" data-i18n="foot_verify">Kagua Pembejeo</a></li>
+          <li><a href="/solutions#weather" data-i18n="foot_weather">Hali ya Hewa</a></li>
+          <li><a href="/solutions#offline" data-i18n="foot_offline">Offline AI</a></li>
+        </ul>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <h4 class="foot-col-title" data-i18n="foot_resources">RASILIMALI</h4>
+        <ul class="foot-links">
+          <li><a href="/pitch-deck" data-i18n="foot_pitch">Pitch Deck</a></li>
+          <li><a href="/technology" data-i18n="foot_tech">Teknolojia</a></li>
+          <li><a href="/download" data-i18n="foot_app">Pakua App</a></li>
+          <li><a href="/api/health" target="_blank" data-i18n="foot_api">API Status</a></li>
+          <li><a href="/privacy" data-i18n="foot_privacy">Faragha</a></li>
+          <li><a href="/terms" data-i18n="foot_terms">Masharti</a></li>
         </ul>
       </div>
     </div>
 
-    <div class="copyright">
-      MkulimaForum &copy; 2026 | Shiriki. Jifunze. Endelea. &bull; Built for East African Farmers
+    <div class="foot-bottom">
+      <span>MkulimaForum &copy; 2026 &bull; <span data-i18n="foot_motto">Shiriki. Jifunze. Endelea.</span></span>
+      <span>Tanzania &bull; Built for East African Farmers &bull; Powered by Mkulima AI</span>
     </div>
   </div>
 </footer>
 
-<!-- PITCH DECK MODAL VIEWER -->
-<div id="pitchModal" class="modal-overlay" onclick="closePitchModalOnOverlay(event)">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3>📊 Mkulima Forum — Google Africa Applied AI Lab Pitch Deck</h3>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <a href="/docs/Mkulima_Forum_Pitch_Deck.pdf" target="_blank" class="btn btn-gold" style="padding:6px 14px; font-size:0.8rem;">
-          ⬇️ Download PDF
-        </a>
-        <button type="button" class="close-btn" onclick="closePitchModal()">×</button>
-      </div>
-    </div>
-    <iframe src="/docs/Mkulima_Forum_Pitch_Deck.pdf#toolbar=1" style="width:100%; height:100%; border:none;" title="Pitch Deck PDF"></iframe>
-  </div>
+
+<div class="mobile-action-bar" role="navigation" aria-label="Vitendo vikuu">
+  <a href="/download" class="btn btn-primary">
+    <svg class="ico"
+     width="18" height="18" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span data-i18n="nav_download">Pakua App</span>
+  </a>
+  <a href="/login" class="btn btn-quiet" aria-label="Ingia kwenye akaunti yako">
+    <span data-i18n="nav_login">Ingia</span>
+  </a>
 </div>
 
-<!-- MULTILINGUAL I18N ENGINE -->
+<!-- ============================================================
+     GLOBAL SCRIPTS: i18n + Nav
+     ============================================================ -->
 <script nonce="">
-const translations = {
+// ---- Translation dictionary ----
+const MK_TRANSLATIONS = {
   sw: {
-    nav_how: "Jinsi Inavyofanya",
-    nav_features: "Vipengele",
-    nav_pitch: "📊 Pitch Deck",
-    nav_offline: "Bila Intaneti",
-    btn_pitch_doc: "PDF Deck",
-    nav_download: "Pakua App",
-    hero_download_btn: "⬇️ Pakua App ya Mkulima (APK)",
-    hero_pitch_btn: "Tazama Pitch Deck",
-    trust_free: "Bure kutumia",
-    trust_lang: "Kiswahili & English",
-    trust_offline: "SMS & USSD Offline",
-    trust_ai: "Mkulima AI",
-    mockup_tagline: "SKANI • TAMBUA • TIBU",
-    mockup_result_title: "Matokeo ya Uchunguzi",
-    mockup_disease: "Ugonjwa: Kutu ya Majani (Leaf Rust)",
-    mockup_treatment: "Tiba: Fungicide + Ondoa majani yaliyoathirika",
-    how_tag: "Jinsi Inavyofanya Kazi",
-    how_title: "Hatua 3 tu \u2014 chini ya dakika moja",
-    how_sub: "Huhitaji ujuzi wowote wa kiufundi.",
-    step1_title: "1. Piga Picha ya Mmea",
-    step1_desc: "Fungua app, bonyeza kitufe cha Kagua Mmea, na upige picha ya jani lililoathirika shambani.",
-    step2_title: "2. AI Inatambua Papo Hapo",
-    step2_desc: "Mkulima AI inachambua picha sekunde chache na kutambua ugonjwa au wadudu.",
-    step3_title: "3. Pata Tiba & Ushauri",
-    step3_desc: "Pata maelekezo ya dawa zilizosajiliwa na TFRA, hatua za kinga, na usaidizi wa mtalamu.",
-    pitch_badge: "INVESTOR PRESENTATION",
-    pitch_heading: "Google Africa Applied AI Lab Pitch Deck",
-    pitch_sub: "Jifunze zaidi kuhusu mradi wa Mkulima Forum, muundo wa biashara, teknolojia ya Mkulima AI, na athari zetu kwa wakulima wadogo wadogo.",
-    btn_open_deck: "👁️ Tazama Online",
-    btn_download_deck: "⬇️ Pakua PDF",
-    feat_tag: "Vipengele",
-    feat_title: "Mfumo kamili wa kilimo",
-    feat_sub: "Kila kitu mkulima anachohitaji, mahali pamoja.",
-    f1_title: "AI Plant Scanner",
-    f1_desc: "Piga picha jani lililoathirika. Mkulima AI inatambua ugonjwa au wadudu papo hapo na kutoa tiba sahihi kwa Kiswahili.",
-    f2_title: "Mkulima AI",
-    f2_desc: "Msaidizi wako wa kilimo 24/7 — uliza maswali ya mazao, pembejeo, na tiba kupitia sauti au maandishi.",
-    f3_title: "Kagua Dawa & Pembejeo",
-    f3_desc: "Gundua pembejeo feki kwa kagua lebo za dawa na mbolea, kutafuta usajili wa TPHPA/TFRA, na tahadhari za jamii.",
-    f4_title: "Soko la Pembejeo & Mazao",
-    f4_desc: "Nunua dawa, mbegu na mbolea kutoka kwa wauzaji walioidhinishwa. Malipo yote yanalindwa na Mkulima Escrow.",
-    f5_title: "Hali ya Hewa & Ushauri",
-    f5_desc: "Mkulima AI Weather na Google Search Grounding inakupa utabiri sahihi wa hewa na ushauri wa msimu kulingana na mkoa wako.",
-    f6_title: "Offline Mode (Mkulima AI Offline)",
-    f6_desc: "Huna mtandao shambani? Mkulima AI Offline quantized inafanya kazi moja kwa moja kwenye simu yako bila intaneti.",
-    sms_badge: "HUDUMA BILA INTANETI",
-    sms_title: "Inafanya kazi kwenye simu yoyote",
-    sms_desc: "Hata bila smartphone au mtandao wa intaneti shambani, unaweza kupata bei za masoko, hali ya hewa, na ushauri wa kilimo kwa njia ya SMS na USSD.",
-    sms_demo_head: "📲 Mfano wa Kutuma SMS (Bure):",
-    sms_demo_resp: "Jibu: \"Bei ya Mahindi Dodoma leo ni TZS 52,000/Gunia (TFRA Certified Market).\"",
-    try_badge: "JARIBU MTAALAMU WA AI",
-    try_heading: "Uliza Swali la Kilimo Hapa",
-    try_desc: "Jaribu uwezo wa Mkulima AI kwa kuuliza swali kuhusu kilimo cha mahindi, nyanya, mpunga au mbolea.",
-    try_sub: "✓ Inatumia Mkulima AI • Lugha ya Kiswahili & English",
-    btn_ask_ai: "🚀 Tuma Swali kwa AI",
-    btn_api_health: "🔍 Kagua Status ya API (/api/health)",
-    btn_admin_portal: "🔐 Admin Dashboard Portal",
-    foot_desc: "Jukwaa kuu la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.",
-    foot_f_title: "Vipengele",
-    foot_q_title: "Viungo vya Haraka",
-    foot_link_pitch: "📊 Pitch Deck (PDF)",
-    placeholder_q: "Mfano: Jinsi ya kuzuia funza wa mahindi..."
+    nav_home:'Nyumbani', nav_verify:'Thibitisha', nav_community:'Jamii', nav_about:'Kuhusu', nav_solutions:'Suluhisho Zote',
+    nav_solutions_group:'Suluhisho', nav_community_group:'Jamii', nav_company_group:'Taasisi',
+    nav_impact:'Athari', nav_partners:'Washirika', nav_pitchdeck:'Pitch Deck',
+    nav_more:'Zaidi', nav_stories:'Hadithi za Wakulima', nav_tech:'Teknolojia na AI',
+    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'Pakua App', nav_login:'Ingia', nav_webapp:'Web App',
+    foot_tagline:'Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.',
+    foot_contact_link:'Wasiliana Nasi →',
+    foot_company:'KAMPUNI', foot_about:'Kuhusu Sisi', foot_impact:'Athari Zetu',
+    foot_partners:'Washirika', foot_stories:'Hadithi za Wakulima', foot_contact:'Wasiliana',
+    foot_solutions:'SULUHISHO', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
+    foot_market:'Soko la Kilimo', foot_verify:'Kagua Pembejeo', foot_weather:'Hali ya Hewa', foot_offline:'Offline AI',
+    foot_resources:'RASILIMALI', foot_pitch:'Pitch Deck', foot_tech:'Teknolojia',
+    foot_app:'Pakua App', foot_api:'Hali ya API', foot_privacy:'Faragha', foot_terms:'Masharti',
+    foot_motto:'Shiriki. Jifunze. Endelea.',
   },
   en: {
-    nav_how: "How It Works",
-    nav_features: "Features",
-    nav_pitch: "📊 Pitch Deck",
-    nav_offline: "Offline SMS",
-    btn_pitch_doc: "PDF Deck",
-    nav_download: "Download App",
-    hero_download_btn: "⬇️ Download Farmer App (APK)",
-    hero_pitch_btn: "View Pitch Deck",
-    trust_free: "Free to Use",
-    trust_lang: "Swahili & English",
-    trust_offline: "SMS & USSD Offline",
-    trust_ai: "Mkulima AI",
-    mockup_tagline: "SCAN • DIAGNOSE • TREAT",
-    mockup_result_title: "Diagnosis Result",
-    mockup_disease: "Disease: Leaf Rust",
-    mockup_treatment: "Treatment: Fungicide + Remove infected leaves",
-    how_tag: "HOW IT WORKS",
-    how_title: "3 Simple Steps — Under One Minute",
-    how_sub: "No technical knowledge required. If you can take a photo, you can use Mkulima Forum.",
-    step1_title: "1. Snap a Plant Photo",
-    step1_desc: "Open the app, tap Scan Plant, and snap a picture of an affected crop leaf in your field.",
-    step2_title: "2. Instant AI Diagnosis",
-    step2_desc: "Mkulima AI analyzes the photo in seconds to identify crop diseases or pest infestations.",
-    step3_title: "3. Get Treatments & Advice",
-    step3_desc: "Receive actionable treatment steps, TFRA-certified remedies, and expert agronomist guidance.",
-    pitch_badge: "INVESTOR PRESENTATION",
-    pitch_heading: "Google Africa Applied AI Lab Pitch Deck",
-    pitch_sub: "Learn more about the Mkulima Forum project, business model, Mkulima AI technology integration, and impact on East African smallholder farmers.",
-    btn_open_deck: "👁️ View Online",
-    btn_download_deck: "⬇️ Download PDF",
-    feat_tag: "FEATURES",
-    feat_title: "More Than a Scanner — Complete Agri Ecosystem",
-    feat_sub: "Everything a farmer needs, in one unified platform, available in Swahili & English.",
-    f1_title: "AI Plant Scanner",
-    f1_desc: "Snap a photo of an affected leaf. Mkulima AI instantly identifies diseases or pests and recommends accurate treatments.",
-    f2_title: "Mkulima AI",
-    f2_desc: "Your 24/7 AI agronomist — ask questions about crops, inputs, and soil treatments via text or voice.",
-    f3_title: "Agri-Input Verification",
-    f3_desc: "Verify genuine pesticides & fertilizers by scanning labels, cross-referencing TPHPA/TFRA registries, and community alerts.",
-    f4_title: "Marketplace & Escrow",
-    f4_desc: "Buy inputs or sell harvests directly without middlemen. All payments secured by Mkulima Escrow.",
-    f5_title: "Weather & Crop Advisory",
-    f5_desc: "Mkulima AI Weather with Google Search Grounding provides real-time regional micro-climate forecasts and crop planning.",
-    f6_title: "Offline Mode (Mkulima AI Offline)",
-    f6_desc: "No connectivity in remote fields? Quantized Mkulima AI Offline runs lightweight inference directly on your phone NPU/GPU.",
-    sms_badge: "OFFLINE CAPABILITY",
-    sms_title: "Works on Any Feature Phone",
-    sms_desc: "Even without a smartphone or internet bundle, access market prices, weather alerts, and farming advice via SMS and USSD.",
-    sms_demo_head: "📲 Sample SMS Query (Free):",
-    sms_demo_resp: "Reply: \"Maize market price in Dodoma today: TZS 52,000/Bag (TFRA Certified Market).\"",
-    try_badge: "TRY AI AGRONOMIST",
-    try_heading: "Ask an Agriculture Question",
-    try_desc: "Test Mkulima AI by asking a question about maize, tomato, rice farming, or fertilizer application.",
-    try_sub: "✓ Powered by Mkulima AI • Swahili & English Support",
-    btn_ask_ai: "🚀 Send Question to AI",
-    btn_api_health: "🔍 Check API Status (/api/health)",
-    btn_admin_portal: "🔐 Admin Dashboard Portal",
-    foot_desc: "The primary digital platform connecting smallholder farmers, certified agronomists, markets, and AI technology across Tanzania.",
-    foot_f_title: "Features",
-    foot_q_title: "Quick Links",
-    foot_link_pitch: "📊 Pitch Deck (PDF)",
-    placeholder_q: "e.g. How to prevent fall armyworms in maize..."
+    nav_home:'Home', nav_verify:'Verify', nav_community:'Community', nav_about:'About', nav_solutions:'All Solutions',
+    nav_solutions_group:'Solutions', nav_community_group:'Community', nav_company_group:'Company',
+    nav_impact:'Impact', nav_partners:'Partners', nav_pitchdeck:'Pitch Deck',
+    nav_more:'More', nav_stories:'Farmer Stories', nav_tech:'Technology & AI',
+    nav_contact:'Contact', nav_api:'API Status', nav_download:'Download App', nav_login:'Login', nav_webapp:'Web App',
+    foot_tagline:'A digital platform connecting farmers, agronomists, markets, and AI technology across Tanzania and East Africa.',
+    foot_contact_link:'Contact Us →',
+    foot_company:'COMPANY', foot_about:'About Us', foot_impact:'Our Impact',
+    foot_partners:'Partners', foot_stories:'Farmer Stories', foot_contact:'Contact',
+    foot_solutions:'SOLUTIONS', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
+    foot_market:'Agri Marketplace', foot_verify:'Input Verification', foot_weather:'Weather Intelligence', foot_offline:'Offline AI',
+    foot_resources:'RESOURCES', foot_pitch:'Pitch Deck', foot_tech:'Technology',
+    foot_app:'Download App', foot_api:'API Status', foot_privacy:'Privacy', foot_terms:'Terms',
+    foot_motto:'Share. Learn. Grow.',
   }
 };
 
-let currentLang = localStorage.getItem('preferred_lang') || 'sw';
+// Per-page translations are merged in via mkPageTranslations (defined in each page)
+if(typeof mkPageTranslations === 'undefined') { var mkPageTranslations = {sw:{},en:{}}; }
 
-function applyLanguage(lang) {
-  currentLang = lang;
-  localStorage.setItem('preferred_lang', lang);
+let MK_LANG = localStorage.getItem('mk_lang') || 'sw';
+
+function mkApplyLang(lang) {
+  MK_LANG = lang;
+  localStorage.setItem('mk_lang', lang);
   document.documentElement.lang = lang;
 
-  // Toggle active button UI
-  document.getElementById('btnSw').classList.toggle('active', lang === 'sw');
-  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  // Toggle nav buttons
+  document.querySelectorAll('#btnSw, #drawerBtnSw').forEach(b => b.classList.toggle('active', lang==='sw'));
+  document.querySelectorAll('#btnEn, #drawerBtnEn').forEach(b => b.classList.toggle('active', lang==='en'));
 
-  const dict = translations[lang] || translations.sw;
+  // Merge global + page dicts
+  const dict = Object.assign({}, MK_TRANSLATIONS[lang] || {}, (mkPageTranslations[lang] || {}));
 
-  // Update text nodes by data-i18n key
   document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key]) {
-      el.textContent = dict[key];
-    }
+    const k = el.getAttribute('data-i18n');
+    if(dict[k] !== undefined) el.textContent = dict[k];
   });
 
-  // Update textarea placeholder
-  const textarea = document.getElementById('userQuestion');
-  if (textarea && dict.placeholder_q) {
-    textarea.placeholder = dict.placeholder_q;
-  }
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.getAttribute('data-i18n-html');
+    if(dict[k] !== undefined) el.innerHTML = dict[k];
+  });
+
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    if(dict[k] !== undefined) el.placeholder = dict[k];
+  });
 }
 
-function switchLanguage(lang) {
-  applyLanguage(lang);
+function mkSwitchLang(lang) { mkApplyLang(lang); }
+
+// ---- Mobile Drawer ----
+function toggleDrawer() {
+  const drawer = document.getElementById('nav-drawer');
+  const btn    = document.getElementById('hamburger-btn');
+  const isOpen = drawer.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  btn.setAttribute('aria-expanded', isOpen);
+  drawer.setAttribute('aria-hidden', String(!isOpen));
+  drawer.toggleAttribute('inert', !isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
 }
 
-// Modal functions for Pitch Deck
-function openPitchModal(e) {
-  if (e) e.preventDefault();
-  document.getElementById('pitchModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
+// Close drawer on ESC
+document.addEventListener('keydown', e => { if(e.key==='Escape') { const d=document.getElementById('nav-drawer'); if(d.classList.contains('open')) toggleDrawer(); } });
 
-function closePitchModal() {
-  document.getElementById('pitchModal').classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function closePitchModalOnOverlay(e) {
-  if (e.target.id === 'pitchModal') {
-    closePitchModal();
-  }
-}
-
-// Initialize language on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  applyLanguage(currentLang);
+document.querySelectorAll('.nav-dropdown-trigger').forEach(trigger => {
+  const item = trigger.closest('.nav-dropdown-item');
+  const setOpen = open => {
+    trigger.setAttribute('aria-expanded', String(open));
+    item.classList.toggle('keyboard-open', open);
+  };
+  trigger.addEventListener('click', () => setOpen(trigger.getAttribute('aria-expanded') !== 'true'));
+  item.addEventListener('focusout', event => { if (!item.contains(event.relatedTarget)) setOpen(false); });
+  trigger.addEventListener('keydown', event => { if (event.key === 'Escape') { setOpen(false); trigger.focus(); } });
 });
 
-async function handleDemoQuestion(e) {
-  e.preventDefault();
-  const q = document.getElementById('userQuestion').value;
-  const out = document.getElementById('aiAnswerOutput');
-  out.style.display = 'block';
-  const isSw = currentLang === 'sw';
-  const renderAnswer = (heading, answer, loading = false) => {
-    const title = document.createElement(loading ? 'div' : 'strong');
-    title.textContent = heading;
-    if (loading) title.style.color = 'var(--sun-gold)';
-    out.replaceChildren(title);
-    if (!loading) {
-      out.append(document.createElement('br'), document.createElement('br'), document.createTextNode(answer));
-    }
-  };
-  renderAnswer(isSw ? '⏳ Mkulima AI inaandaa majibu...' : '⏳ Mkulima AI is generating response...', '', true);
+// ---- Scroll fade-up ----
+const mkObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); mkObserver.unobserve(e.target); } });
+}, { threshold: .12 });
+function mkObserveAll() { document.querySelectorAll('.fade-up').forEach(el => mkObserver.observe(el)); }
 
-  try {
-    const res = await fetch('/api/agronomist/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ question: q, language: currentLang })
-    });
-    const data = await res.json();
-
-    if (data.text || data.answer) {
-      renderAnswer(isSw ? '🤖 Majibu ya Mkulima AI:' : '🤖 Mkulima AI Answer:', data.text || data.answer);
-    } else {
-      renderAnswer(isSw ? '🤖 Ushauri wa Kawaida:' : '🤖 Agronomy Recommendation:', isSw ? 'Kuhusu ' + q + ', hakikisha unatumia mbolea iliyosajiliwa na TFRA na kunyunyizia dawa mara tu dalili zinapojitokeza.' : 'Regarding ' + q + ', ensure you apply TFRA-certified fertilizers and spray approved pesticides at first symptom appearance.');
-    }
-  } catch (err) {
-    renderAnswer(isSw ? '🤖 Ushauri wa Mkulima AI:' : '🤖 Mkulima AI Advice:', isSw ? 'Kuhusu ' + q + ', hakikisha unakagua majani asubuhi na mapema na kutumia pembejeo sahihi zilizothibitishwa.' : 'Regarding ' + q + ', inspect leaf surfaces early morning and use certified agricultural inputs.');
-  }
-}
+// ---- Init ----
+document.addEventListener('DOMContentLoaded', () => {
+  mkApplyLang(MK_LANG);
+  mkObserveAll();
+});
 </script>
+
+<script nonce="">
+mkPageTranslations = {
+  sw:{home_kicker:'SHIRIKISHO · ELIMU · BIASHARA',home_title:'Jukwaa la Kidigitali la Wakulima wa Tanzania.',home_summary:'Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.',benefit_1:'Maarifa sahihi na kwa wakati',benefit_2:'Ufikiaji wa masoko na wanunuzi',benefit_3:'Zana za kisasa za kilimo',benefit_4:'Jumuiya ya wakulima na ushauri',download_app:'Pakua App ya Mkulima',view_pitch:'Tazama Pitch Deck →',available_on:'Inapatikana kwenye',journey_kicker:'ANZIA HAPA',journey_title:'Hatua 3 tu – wezesha kilimo chako',journey_sub:'Rahisi, haraka na yenye matokeo halisi.',step1_title:'Gundua',step1_desc:'Piga picha ya tatizo la mmea au uliza swali lolote la kilimo.',step2_title:'Pata suluhisho',step2_desc:'Pata majibu sahihi kutoka Mkulima AI na ushauri wa kitaalam kwa lugha rahisi.',step3_title:'Tekeleza na faidika',step3_desc:'Tumia maarifa, nunue pembejeo bora na uuze mazao kwa bei nzuri kupitia masoko ya uhakika.',cap_kicker:'KILA KITU MAHALI PAMOJA',cap_title:'Zana za kukusaidia kutoka shambani hadi sokoni',all_solutions:'Angalia suluhisho zote →',qa_ai:'Mkulima AI',qa_ai_sub:'Tambua ugonjwa',qa_verify:'Kagua Pembejeo',qa_verify_sub:'Epuka bandia',qa_market:'Soko la Mazao',qa_market_sub:'Nunua na uuze',qa_prices:'Bei za Soko',qa_prices_sub:'Bei za leo',qa_weather:'Hali ya Hewa',qa_weather_sub:'Utabiri wa mvua',qa_community:'Jamii',qa_community_sub:'Uliza wakulima'},
+  en:{home_kicker:'COMMUNITY · KNOWLEDGE · TRADE',home_title:'The Digital Platform for Tanzanian Farmers.',home_summary:'Knowledge, markets and essential services in one place. From field to market, every step is easier with MkulimaForum.',benefit_1:'Reliable, timely farming knowledge',benefit_2:'Access to markets and buyers',benefit_3:'Modern tools for better farming',benefit_4:'A farmer community and expert advice',download_app:'Download the Farmer App',view_pitch:'View Pitch Deck →',available_on:'Available on',journey_kicker:'START HERE',journey_title:'Three steps to strengthen your farm',journey_sub:'Simple, fast and built for real results.',step1_title:'Discover',step1_desc:'Photograph a crop problem or ask any farming question.',step2_title:'Get a solution',step2_desc:'Receive clear answers from Mkulima AI and practical expert guidance.',step3_title:'Act and benefit',step3_desc:'Apply the advice, buy trusted inputs and sell produce through reliable markets.',cap_kicker:'EVERYTHING IN ONE PLACE',cap_title:'Tools that support you from field to market',all_solutions:'View all solutions →',qa_ai:'Mkulima AI',qa_ai_sub:'Diagnose disease',qa_verify:'Verify Inputs',qa_verify_sub:'Avoid fakes',qa_market:'Produce Market',qa_market_sub:'Buy and sell',qa_prices:'Market Prices',qa_prices_sub:'Prices today',qa_weather:'Weather',qa_weather_sub:'Rain forecast',qa_community:'Community',qa_community_sub:'Ask farmers'}
+};
+</script>
+
 </body>
 </html>
