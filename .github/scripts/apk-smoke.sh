@@ -29,14 +29,22 @@ tap_text() {
 import re, sys
 xml = open(sys.argv[1], encoding='utf-8', errors='ignore').read()
 want = sys.argv[2].lower()
+# Prefer a node whose label line is exactly the wanted text (a nav tab),
+# so "Soko" does not hit "Bei za Masoko"; fall back to a substring match.
+nodes = []
 for node in re.finditer(r'<node [^>]*>', xml):
     n = node.group(0)
-    label = ' '.join(re.findall(r'(?:text|content-desc)="([^"]*)"', n)).lower()
-    if want in label:
-        b = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', n)
-        if b:
-            x1, y1, x2, y2 = map(int, b.groups())
-            print((x1 + x2) // 2, (y1 + y2) // 2); break
+    b = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', n)
+    if not b:
+        continue
+    raw = ' '.join(re.findall(r'(?:text|content-desc)="([^"]*)"', n))
+    lines = [l.strip().lower() for l in re.split(r'&#10;|\n', raw)]
+    nodes.append((lines, raw.lower(), tuple(map(int, b.groups()))))
+hit = next((bb for ls, _, bb in nodes if want in ls), None) \
+    or next((bb for _, r, bb in nodes if want in r), None)
+if hit:
+    x1, y1, x2, y2 = hit
+    print((x1 + x2) // 2, (y1 + y2) // 2)
 PY
 }
 
