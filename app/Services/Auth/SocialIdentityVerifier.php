@@ -55,8 +55,7 @@ class SocialIdentityVerifier
         }
 
         try {
-            $jwks = Cache::remember('auth.apple.jwks', now()->addHours(6), fn () =>
-                Http::timeout(10)->get('https://appleid.apple.com/auth/keys')->throw()->json()
+            $jwks = Cache::remember('auth.apple.jwks', now()->addHours(6), fn () => Http::timeout(10)->get('https://appleid.apple.com/auth/keys')->throw()->json()
             );
             $payload = (array) JWT::decode($token, JWK::parseKeySet($jwks));
         } catch (\Throwable) {
