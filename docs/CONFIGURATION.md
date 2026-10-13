@@ -53,7 +53,7 @@ Use the `setting()` helper for values with no config path of their own, or when 
 deliberately want to bypass the overlay:
 
 ```php
-setting('app.support_email', 'hello@mkulimaforum.app');
+setting('app.support_email', 'hello@mkulimaforum.com');
 ```
 
 ## Adding a setting

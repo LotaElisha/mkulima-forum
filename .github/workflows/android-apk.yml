@@ -24,7 +24,7 @@ jobs:
       run:
         working-directory: mkulima_app
     env:
-      API_URL: https://mkulimaforum.app/api
+      API_URL: https://mkulimaforum.com/api
       HAS_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +94,7 @@ jobs:
       - name: Probe the live API the APK talks to
         run: |
           for path in market-prices/filters market-prices forum/categories marketplace/products; do
-            echo "/api/$path -> $(curl -s -o /dev/null -w '%{http_code}' -m 20 "https://mkulimaforum.app/api/$path")"
+            echo "/api/$path -> $(curl -s -o /dev/null -w '%{http_code}' -m 20 "https://mkulimaforum.com/api/$path")"
           done
       - name: Enable KVM
         run: |

@@ -34,7 +34,7 @@ class SystemConfigurationTest extends TestCase
         return User::provision([
             'tenant_id' => $tenant->id,
             'name' => ucfirst($role),
-            'email' => $role.'@mkulimaforum.app',
+            'email' => $role.'@mkulimaforum.com',
             'password' => Hash::make('correct-horse-battery'),
             'role' => $role,
             'status' => 'active',
@@ -242,7 +242,7 @@ class SystemConfigurationTest extends TestCase
         config(['mail.default' => 'log']);
 
         $this->actingAs($this->staff(Roles::SUPERADMIN), 'sanctum')
-            ->postJson('/api/admin/system/test-email', ['to' => 'operator@mkulimaforum.app'])
+            ->postJson('/api/admin/system/test-email', ['to' => 'operator@mkulimaforum.com'])
             ->assertStatus(422)
             ->assertJsonPath('success', false);
     }
@@ -253,7 +253,7 @@ class SystemConfigurationTest extends TestCase
         config(['mail.default' => 'smtp']);
 
         $this->actingAs($this->staff(Roles::SUPERADMIN), 'sanctum')
-            ->postJson('/api/admin/system/test-email', ['to' => 'operator@mkulimaforum.app'])
+            ->postJson('/api/admin/system/test-email', ['to' => 'operator@mkulimaforum.com'])
             ->assertOk()
             ->assertJsonPath('success', true);
 

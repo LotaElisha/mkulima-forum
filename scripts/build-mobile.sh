@@ -2,7 +2,7 @@
 # Build MkulimaForum mobile APK for production and publish to public/app
 set -e
 
-API_URL="${API_URL:-https://mkulimaforum.app/api}"
+API_URL="${API_URL:-https://mkulimaforum.com/api}"
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="${PROJECT_DIR}/mkulima_app"
 PUBLIC_DIR="${PROJECT_DIR}/public/app"

@@ -93,7 +93,7 @@ lib/
 The app uses a production API URL passed at build time:
 
 ```bash
-flutter build apk --release --dart-define=API_URL=https://mkulimaforum.app/api
+flutter build apk --release --dart-define=API_URL=https://mkulimaforum.com/api
 ```
 
 For local development (Android emulator):
@@ -102,7 +102,7 @@ For local development (Android emulator):
 flutter run --dart-define=API_URL=http://10.0.2.2:8000/api
 ```
 
-The default in `lib/main.dart` is `https://mkulimaforum.app/api`.
+The default in `lib/main.dart` is `https://mkulimaforum.com/api`.
 
 ## Tech Stack
 

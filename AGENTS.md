@@ -30,10 +30,11 @@ cd mkulima_app && ./scripts/verify.sh # pub get, codegen, analyze, test, APK
 The Flutter client takes exactly one build-time variable:
 
 ```bash
-flutter build apk --release --dart-define=API_URL=https://mkulimaforum.app/api
+flutter build apk --release --dart-define=API_URL=https://mkulimaforum.com/api
 ```
 
-`.app`, not `.com`. The server does not serve `.com`.
+`.com`, not `.app`. The owner chose `.com` as the production domain on
+2026-10-07; `.app` has no working TLS certificate.
 
 ## Do not undo these
 
