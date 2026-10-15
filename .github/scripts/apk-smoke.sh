@@ -50,8 +50,7 @@ PY
 
 alive() { adb shell pidof "$PKG" >/dev/null; }
 
-# A freshly booted emulator often shows "Pixel Launcher isn't responding"
-# over the app, which swallows every tap. Answer "Wait" until it is gone.
+# Any system "isn't responding" dialog swallows every tap. Answer "Wait".
 clear_anr() {
   for _ in 1 2 3; do
     adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
@@ -59,6 +58,13 @@ clear_anr() {
     tap_text "Wait" "Wait (system dialog)"; sleep 2
   done
 }
+
+# The launcher is not needed and on a cold emulator it keeps hanging, which
+# brings its "isn't responding" dialog back over the app after every answer.
+for launcher in com.google.android.apps.nexuslauncher com.android.launcher3; do
+  adb shell pm disable-user --user 0 "$launcher" >/dev/null 2>&1 || true
+done
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
 
 adb logcat -c
 adb install -r "$APK" || exit 1
