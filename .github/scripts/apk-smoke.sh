@@ -57,6 +57,7 @@ sleep 25
 shot 01-launch
 
 tap_text "Ruka" "Ruka"; sleep 8; shot 02-home
+adb shell input swipe 540 1800 540 700 400; sleep 3; shot 02b-home-scrolled
 tap_text "Soko" "Soko"; sleep 8; shot 03-soko
 tap_text "Jukwaa" "Jukwaa"; sleep 8; shot 04-jukwaa
 tap_text "Wasifu" "Wasifu"; sleep 5; shot 05-wasifu

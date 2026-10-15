@@ -16,6 +16,7 @@ on:
     paths:
       - 'mkulima_app/**'
       - '.github/workflows/android-apk.yml'
+      - '.github/scripts/apk-smoke.sh'
 
 jobs:
   apk:
