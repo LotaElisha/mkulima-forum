@@ -245,11 +245,11 @@ links an APK only when a real zip-based APK is on disk.
 | Every minute | `php artisan schedule:run` |
 | 04:00 | `scripts/backup-mkulima-db.sh` |
 | 04:30 | `scripts/verify-postgres-backup.sh` |
-| 06:00 | `market-prices:sync` |
+| 06:00 | `market-prices:sync` (no-ops unless `RATIN_SYNC_ENABLED=true`) |
 | 07:00 | `weather:cache` |
 | 08:00 | `ssl-monitor-mkulima.sh` |
 | 09:00 | `mkulima-cron-monitor.sh` |
-| Every 5 min | `mkulima-uptime-monitor.sh` |
+| Every 5 min | `mkulima-uptime-monitor.sh` (weather report skips Gemini unless `WEATHER_ADVISORY_AI=true`) |
 
 Uptime and SSL checks read `APP_URL` from
 `/opt/data/projects/mkulima-forum/.env`. Staging

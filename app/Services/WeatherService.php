@@ -330,6 +330,37 @@ class WeatherService
 
     public function getFarmingAdvisory(array $weather): array
     {
+        if ($this->geminiAdvisoryEnabled()) {
+            $fromGemini = $this->advisoryFromGemini($weather);
+            if ($fromGemini !== null) {
+                return $fromGemini;
+            }
+        }
+
+        return $this->localFarmingAdvisory($weather);
+    }
+
+    /**
+     * The five-minute uptime check calls the weather report. Gemini runs only
+     * when the flag is on and a key is actually configured.
+     */
+    protected function geminiAdvisoryEnabled(): bool
+    {
+        if (! config('services.weather.ai_advisory', false)) {
+            return false;
+        }
+
+        if (app(AIService::class)->configuredApiKey() === '') {
+            Log::info('Skipping Gemini weather advisory: no API key is configured.');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function advisoryFromGemini(array $weather): ?array
+    {
         $temp = $weather['temperature'] ?? 25;
         $humidity = $weather['humidity'] ?? 50;
         $desc = strtolower($weather['description'] ?? '');
@@ -357,8 +388,17 @@ class WeatherService
                 }
             }
         } catch (\Throwable $e) {
-            Log::info('Gemini 3 Pro Weather Advisory fallback: '.$e->getMessage());
+            Log::info('Gemini weather advisory fallback: '.$e->getMessage());
         }
+
+        return null;
+    }
+
+    protected function localFarmingAdvisory(array $weather): array
+    {
+        $temp = $weather['temperature'] ?? 25;
+        $humidity = $weather['humidity'] ?? 50;
+        $desc = strtolower($weather['description'] ?? '');
 
         $advisories = [];
 

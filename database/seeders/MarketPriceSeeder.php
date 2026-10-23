@@ -8,10 +8,18 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
+/**
+ * Local sample prices only. Includes Mwea, which is in Kenya, and dates
+ * every row as today. Production seeding does not call this class.
+ */
 class MarketPriceSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            return;
+        }
+
         $admin = User::role('admin')->first() ?? User::first();
 
         $records = [

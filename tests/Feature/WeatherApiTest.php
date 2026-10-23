@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\WeatherCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class WeatherApiTest extends TestCase
@@ -128,5 +129,25 @@ class WeatherApiTest extends TestCase
             ->assertJsonPath('available', true);
 
         $this->assertNotEmpty($this->getJson('/api/weather/advisory?location=Dodoma')->json('advisory'));
+    }
+
+    public function test_the_weather_report_does_not_call_gemini_without_a_key(): void
+    {
+        config([
+            'services.weather.ai_advisory' => true,
+            'services.gemini.api_key' => null,
+        ]);
+        $this->fakeOpenWeatherSuccess();
+        $lines = [];
+        Log::listen(function ($event) use (&$lines) {
+            $lines[] = $event->message;
+        });
+
+        $this->getJson('/api/weather/report?location=Dodoma')->assertOk();
+
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'generativelanguage.googleapis.com'));
+        $this->assertTrue(collect($lines)->contains(
+            fn ($line) => str_contains($line, 'no API key is configured')
+        ));
     }
 }

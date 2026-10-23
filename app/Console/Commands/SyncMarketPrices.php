@@ -21,12 +21,19 @@ class SyncMarketPrices extends Command
             return self::FAILURE;
         }
 
-        $this->info('Syncing market prices from RATIN for '.$country.'...');
         $report = $service->syncTanzania();
 
+        if (! $report['enabled']) {
+            $this->info('RATIN sync is off (RATIN_SYNC_ENABLED). No prices were written.');
+
+            return self::SUCCESS;
+        }
+
+        $this->info('Syncing market prices from RATIN for '.$country.'...');
         $this->info('Created: '.$report['created']);
         $this->info('Updated: '.$report['updated']);
         $this->info('Skipped: '.$report['skipped']);
+        $this->info('Removed old per-market rows: '.$report['removed']);
 
         if ($report['failed'] > 0) {
             $this->error('Failed: '.$report['failed']);
