@@ -330,6 +330,27 @@ class WeatherService
 
     public function getFarmingAdvisory(array $weather): array
     {
+        if ($this->geminiConfigured()) {
+            $fromGemini = $this->advisoryFromGemini($weather);
+            if ($fromGemini !== null) {
+                return $fromGemini;
+            }
+        }
+
+        return $this->localFarmingAdvisory($weather);
+    }
+
+    /**
+     * Built-in advice is the answer when no Gemini key and no AI provider
+     * secret are configured. That path does not call Gemini and does not log.
+     */
+    protected function geminiConfigured(): bool
+    {
+        return app(AIService::class)->configuredApiKey() !== '';
+    }
+
+    protected function advisoryFromGemini(array $weather): ?array
+    {
         $temp = $weather['temperature'] ?? 25;
         $humidity = $weather['humidity'] ?? 50;
         $desc = strtolower($weather['description'] ?? '');
@@ -357,8 +378,19 @@ class WeatherService
                 }
             }
         } catch (\Throwable $e) {
-            Log::info('Gemini 3 Pro Weather Advisory fallback: '.$e->getMessage());
+            if (! str_contains($e->getMessage(), 'not configured')) {
+                Log::info('Gemini weather advisory fallback: '.$e->getMessage());
+            }
         }
+
+        return null;
+    }
+
+    protected function localFarmingAdvisory(array $weather): array
+    {
+        $temp = $weather['temperature'] ?? 25;
+        $humidity = $weather['humidity'] ?? 50;
+        $desc = strtolower($weather['description'] ?? '');
 
         $advisories = [];
 

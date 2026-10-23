@@ -48,6 +48,12 @@ return [
 
     'ratin' => [
         'base_url' => env('RATIN_BASE_URL', 'https://ratin.net/ratinapp/api'),
+        // Off until someone has checked a sync. The daily job in
+        // deploy/cron/mkulima-forum is commented out as well; uncomment
+        // that line and set RATIN_SYNC_ENABLED=true together. The trend
+        // feed is a national figure; it does not change with the market name.
+        'sync_enabled' => env('RATIN_SYNC_ENABLED', false),
+        // Recorded on each converted row. Empty or 0 stores the USD/kg figure.
         'usd_to_tzs_rate' => env('RATIN_USD_TO_TZS_RATE', 2600),
     ],
 
@@ -85,7 +91,7 @@ return [
     'short_links' => [
         'allowed_hosts' => array_values(array_filter(array_map(
             'trim',
-            explode(',', (string) env('SHORT_LINK_ALLOWED_HOSTS', 'mkulimaforum.app,mkulimaforum.com,wa.me,youtube.com,youtu.be,facebook.com,instagram.com,x.com,twitter.com,linkedin.com,tiktok.com'))
+            explode(',', (string) env('SHORT_LINK_ALLOWED_HOSTS', 'mkulimaforum.app,www.mkulimaforum.app,mkulimaforum.com,www.mkulimaforum.com,wa.me,youtube.com,youtu.be,facebook.com,instagram.com,x.com,twitter.com,linkedin.com,tiktok.com'))
         ))),
     ],
 

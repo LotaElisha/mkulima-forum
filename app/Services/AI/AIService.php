@@ -111,6 +111,28 @@ class AIService
     }
 
     /**
+     * The key generateText would actually send. An active database provider
+     * wins over the environment, matching getDefaultProvider().
+     */
+    public function configuredApiKey(): string
+    {
+        try {
+            $providerId = AiProvider::withoutGlobalScopes()
+                ->where('status', 'active')
+                ->orderByDesc('is_default')
+                ->value('id');
+
+            if ($providerId) {
+                return trim((string) ($this->secretManager->getSecret($providerId) ?? ''));
+            }
+        } catch (\Throwable) {
+            // Provider storage is unavailable. Fall through to the env key.
+        }
+
+        return trim((string) config('services.gemini.api_key', ''));
+    }
+
+    /**
      * Get the default AI provider, or fallback to env Gemini provider.
      */
     public function getDefaultProvider(int $tenantId = 1): AIProviderInterface

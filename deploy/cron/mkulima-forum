@@ -1,12 +1,12 @@
 # /etc/cron.d/mkulima-forum
 # Install with: sudo cp deploy/cron/mkulima-forum /etc/cron.d/mkulima-forum
-# Times are UTC. The queue worker is supervised; cron only starts the scheduler
-# and the jobs that are not inside the Laravel scheduler.
+# Times are UTC. This file is the scheduler. Laravel has no scheduled tasks
+# (routes/console.php only registers inspire). The queue worker is supervised.
 
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# Laravel scheduler. Required every minute.
+# Kept so a task registered later would run. Nothing is registered today.
 * * * * * www-data cd /opt/data/projects/mkulima-forum && /usr/bin/php artisan schedule:run >> /var/log/mkulima-schedule.log 2>&1
 
 # Postgres backup, then a restore into a side database that is dropped afterwards.
@@ -14,9 +14,16 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 30 4 * * * root ENV_FILE=/opt/data/projects/mkulima-forum/.env BACKUP_DIR=/opt/backups/mkulima-forum /opt/data/projects/mkulima-forum/scripts/verify-postgres-backup.sh >> /var/log/mkulima-db-restore-check.log 2>&1
 
 # Existing operational jobs. Logs are what scripts/mkulima-cron-monitor.sh reads.
-0 6 * * * www-data cd /opt/data/projects/mkulima-forum && /usr/bin/php artisan market-prices:sync --country=Tanzania >> /var/log/mkulima-market-prices-sync.log 2>&1
+# Market price sync is OFF while the line below is commented out. That is the
+# switch. The command also writes nothing unless RATIN_SYNC_ENABLED=true, so
+# an already-installed copy of this file that still has the line active stays
+# idle. Turn it on by uncommenting the line and setting RATIN_SYNC_ENABLED=true.
+# It stores one national RATIN figure (market Taifa), not a price per town.
+#0 6 * * * www-data cd /opt/data/projects/mkulima-forum && /usr/bin/php artisan market-prices:sync --country=Tanzania >> /var/log/mkulima-market-prices-sync.log 2>&1
 0 7 * * * www-data cd /opt/data/projects/mkulima-forum && /usr/bin/php artisan weather:cache >> /var/log/mkulima-weather-cache.log 2>&1
 # Monitors read APP_URL from ENV_FILE. Do not hard-code .com or .app here.
 0 8 * * * root ENV_FILE=/opt/data/projects/mkulima-forum/.env /opt/data/projects/mkulima-forum/scripts/ssl-monitor-mkulima.sh >> /var/log/mkulima-ssl-monitor.log 2>&1
 0 9 * * * root ENV_FILE=/opt/data/projects/mkulima-forum/.env /opt/data/projects/mkulima-forum/scripts/mkulima-cron-monitor.sh >> /var/log/mkulima-cron-monitor.log 2>&1
+# /api/weather/current does not call Gemini. Report advisories skip Gemini
+# when no key and no AI provider are configured.
 */5 * * * * root ENV_FILE=/opt/data/projects/mkulima-forum/.env /opt/data/projects/mkulima-forum/scripts/mkulima-uptime-monitor.sh >> /var/log/mkulima-uptime.log 2>&1

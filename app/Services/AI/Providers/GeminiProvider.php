@@ -36,8 +36,27 @@ class GeminiProvider implements AIProviderInterface
         return 'gemini';
     }
 
+    /**
+     * An empty key used to be sent to Google, which answered 403 on every call.
+     */
+    protected function requireKey(): void
+    {
+        if (trim($this->apiKey) !== '') {
+            return;
+        }
+
+        static $logged = false;
+        if (! $logged) {
+            Log::info('Skipping Gemini: no API key is configured.');
+            $logged = true;
+        }
+
+        throw new \RuntimeException('Gemini API key is not configured.');
+    }
+
     public function generateText(array $messages, array $options = []): AIResponse
     {
+        $this->requireKey();
         $startTime = microtime(true);
         $model = $options['model'] ?? $this->model;
         $temperature = (float) ($options['temperature'] ?? $this->temperature);
@@ -98,6 +117,7 @@ class GeminiProvider implements AIProviderInterface
 
     public function generateStructuredData(array $messages, array $schema = [], array $options = []): AIResponse
     {
+        $this->requireKey();
         $startTime = microtime(true);
         $model = $options['model'] ?? $this->model;
         $temperature = (float) ($options['temperature'] ?? $this->temperature);
@@ -150,6 +170,7 @@ class GeminiProvider implements AIProviderInterface
 
     public function analyzeImage(string $imagePath, string $prompt, array $options = []): AIResponse
     {
+        $this->requireKey();
         $startTime = microtime(true);
         $model = $options['model'] ?? $this->model;
 

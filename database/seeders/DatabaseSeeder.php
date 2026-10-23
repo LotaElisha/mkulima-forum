@@ -13,14 +13,22 @@ class DatabaseSeeder extends Seeder
             TenantSeeder::class,
             AdminUserSeeder::class,
             CategoryProductSeeder::class,
-            ForumSeeder::class,
+            ForumCategorySeeder::class,
             FeatureFlagSeeder::class,
             LandingSettingSeeder::class,
-            MarketPriceSeeder::class,
             LogisticsServiceSeeder::class,
             SpineSeeder::class,
             RegulatoryAuthoritySeeder::class,
             CommunityChannelSeeder::class,
         ]);
+
+        // Sample prices and English forum threads are local fixtures.
+        // Production gets the Swahili categories above and nothing invented.
+        if (! app()->environment('production')) {
+            $this->call([
+                ForumSeeder::class,
+                MarketPriceSeeder::class,
+            ]);
+        }
     }
 }

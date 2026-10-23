@@ -6,51 +6,56 @@ use App\Models\MarketPrice;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class MarketPriceSyncService
 {
-    protected string $baseUrl = 'https://ratin.net/ratinapp/api';
-
-    protected int $perMarketTimeout = 30;
-
     /**
-     * Sync Tanzania market prices from RATIN (EAGC) public API.
-     * Fetches country-level summary + per-market trend data for major markets.
+     * RATIN's single-trend feed returns the same series for every market name,
+     * including names that are not markets. It is stored as one national figure.
+     *
+     * @return array{created: int, updated: int, failed: int, skipped: int, removed: int, enabled: bool}
      */
     public function syncTanzania(): array
     {
-        $report = ['created' => 0, 'updated' => 0, 'failed' => 0, 'skipped' => 0];
+        $report = ['created' => 0, 'updated' => 0, 'failed' => 0, 'skipped' => 0, 'removed' => 0, 'enabled' => true];
 
-        $admin = (User::role('admin')->first() ?: null)
-            ?? (User::first() ?: null);
+        if (! config('services.ratin.sync_enabled')) {
+            $report['enabled'] = false;
+            Log::info('RATIN market price sync is off (RATIN_SYNC_ENABLED).');
 
-        $priceDate = now()->toDateString();
-        $rate = config('services.ratin.usd_to_tzs_rate', null);
-
-        // 1. Country-level summary (market = Tanzania)
-        $summary = $this->fetchSummary('Tanzania');
-        if ($summary !== null) {
-            foreach ($summary as $item) {
-                $this->upsertSummaryRecord($item, $priceDate, $rate, $admin, $report);
-            }
-        } else {
-            $report['failed']++;
+            return $report;
         }
 
-        // 2. Per-market trends for major commodities/markets.
-        // We limit the matrix to avoid hammering the RATIN server.
-        $markets = $this->majorMarkets();
-        $commodities = $this->majorCommodityNames();
+        $admin = $this->recorder();
+        $rate = $this->exchangeRate();
+        $series = [];
 
-        foreach ($commodities as $commodity) {
-            foreach ($markets as $market) {
-                $trend = $this->fetchSingleTrend($commodity, $market, 7);
-                if ($trend === null) {
-                    continue; // no data or error; not a failure
-                }
-                $this->upsertTrendRecords($commodity, $market, $trend, $priceDate, $rate, $admin, $report);
+        $summary = $this->fetchSummary('Tanzania');
+        if ($summary === null) {
+            Log::warning('RATIN summary endpoint returned nothing. National prices come from the trend feed only.');
+        }
+
+        foreach ($this->commodities() as $commodity) {
+            $trend = $this->fetchTrend($commodity);
+            if ($trend === null) {
+                $report['skipped']++;
+
+                continue;
             }
+            $series[$commodity] = $trend;
+        }
+
+        if ($series === []) {
+            $report['failed']++;
+            Log::warning('RATIN market price sync stored nothing', $report);
+
+            return $report;
+        }
+
+        $report['removed'] = $this->removeFabricatedMarkets();
+
+        foreach ($series as $commodity => $trend) {
+            $this->storeTrend($commodity, $trend, $rate, $admin, $report);
         }
 
         Log::info('RATIN market price sync completed', $report);
@@ -61,100 +66,41 @@ class MarketPriceSyncService
     protected function fetchSummary(string $country): ?array
     {
         try {
-            $response = Http::timeout(120)
+            $response = Http::timeout(30)
                 ->withUserAgent('Mozilla/5.0 (MkulimaForum Sync Bot)')
-                ->get("{$this->baseUrl}/market_prices_summary.php", [
+                ->get($this->baseUrl().'/market_prices_summary.php', [
                     'country' => $country,
                 ]);
 
             if (! $response->successful()) {
-                Log::warning('RATIN summary API returned non-success', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                ]);
-
                 return null;
             }
 
             $data = $response->json();
-
-            if (empty($data['success']) || empty($data['data']['commodityGroups'])) {
-                Log::warning('RATIN summary API returned unexpected shape', $data);
-
+            if (! is_array($data) || empty($data['success']) || empty($data['data']['commodityGroups'])) {
                 return null;
             }
 
-            $items = [];
-            foreach ($data['data']['commodityGroups'] as $group) {
-                foreach ($group['items'] as $item) {
-                    $items[] = $item;
-                }
-            }
-
-            return $items;
+            return $data['data']['commodityGroups'];
         } catch (\Throwable $e) {
-            Log::error('RATIN summary fetch failed: '.$e->getMessage());
+            Log::warning('RATIN summary fetch failed: '.$e->getMessage());
 
             return null;
         }
     }
 
-    protected function upsertSummaryRecord(
-        array $item,
-        string $priceDate,
-        ?float $rate,
-        ?User $admin,
-        array &$report
-    ): void {
-        $commodity = $item['commodity'] ?? null;
-        $country = $item['country'] ?? 'Tanzania';
-
-        if (! $commodity) {
-            $report['skipped']++;
-
-            return;
-        }
-
-        foreach (['wholesale', 'retail'] as $priceType) {
-            $price = $item['prices'][$priceType] ?? null;
-            if (! $price || ! is_numeric($price['countryPrice'] ?? null)) {
-                continue;
-            }
-
-            [$avg, $min, $max, $currency] = $this->convert(
-                (float) $price['countryPrice'],
-                (float) ($price['min_price'] ?? $price['countryPrice'] * 0.9),
-                (float) ($price['max_price'] ?? $price['countryPrice'] * 1.1),
-                $rate
-            );
-
-            $this->store(
-                commodity: $commodity,
-                market: $country,
-                region: 'Tanzania',
-                priceDate: $priceDate,
-                avg: $avg,
-                min: $min,
-                max: $max,
-                unit: 'kg',
-                currency: $currency,
-                source: 'RATIN/EAGC',
-                admin: $admin,
-                report: $report
-            );
-        }
-    }
-
-    protected function fetchSingleTrend(string $commodity, string $market, int $days): ?array
+    /**
+     * @return list<array<string, mixed>>|null
+     */
+    protected function fetchTrend(string $commodity): ?array
     {
         try {
-            $response = Http::timeout($this->perMarketTimeout)
+            $response = Http::timeout(30)
                 ->withUserAgent('Mozilla/5.0 (MkulimaForum Sync Bot)')
-                ->get("{$this->baseUrl}/price_trends.php", [
+                ->get($this->baseUrl().'/price_trends.php', [
                     'mode' => 'single',
                     'commodity' => $commodity,
-                    'market' => $market,
-                    'days' => $days,
+                    'days' => 7,
                 ]);
 
             if (! $response->successful()) {
@@ -168,100 +114,122 @@ class MarketPriceSyncService
 
             return $data['data'];
         } catch (\Throwable $e) {
-            Log::warning("RATIN trend fetch failed for {$commodity} @ {$market}: ".$e->getMessage());
+            Log::warning("RATIN trend fetch failed for {$commodity}: ".$e->getMessage());
 
             return null;
         }
     }
 
-    protected function upsertTrendRecords(
-        string $commodity,
-        string $market,
-        array $trend,
-        string $priceDate,
-        ?float $rate,
-        ?User $admin,
-        array &$report
-    ): void {
-        // Take the latest entry per price_type (most recent date).
-        $latest = [];
-        foreach (array_reverse($trend) as $row) {
-            $type = $row['price_type'] ?? 'Retail';
-            if (! isset($latest[$type])) {
-                $latest[$type] = $row;
-            }
-        }
-
-        foreach ($latest as $row) {
+    /**
+     * @param  list<array<string, mixed>>  $trend
+     * @param  array{created: int, updated: int, failed: int, skipped: int, removed: int, enabled: bool}  $report
+     */
+    protected function storeTrend(string $commodity, array $trend, ?float $rate, ?User $admin, array &$report): void
+    {
+        foreach ($trend as $row) {
             $avg = (float) ($row['avg_price'] ?? 0);
-            $min = (float) ($row['min_price'] ?? $avg * 0.9);
-            $max = (float) ($row['max_price'] ?? $avg * 1.1);
-
             if ($avg <= 0) {
+                $report['skipped']++;
+
                 continue;
             }
 
+            $priceType = trim((string) ($row['price_type'] ?? ''));
+            $date = (string) ($row['date_label'] ?? '');
+            if ($priceType === '' || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                $report['skipped']++;
+
+                continue;
+            }
+
+            $min = isset($row['min_price']) ? (float) $row['min_price'] : $avg;
+            $max = isset($row['max_price']) ? (float) $row['max_price'] : $avg;
             [$avg, $min, $max, $currency] = $this->convert($avg, $min, $max, $rate);
 
             $this->store(
                 commodity: $commodity,
-                market: $market,
-                region: 'Tanzania',
-                priceDate: $priceDate,
+                priceType: $priceType,
+                priceDate: $date,
                 avg: $avg,
                 min: $min,
                 max: $max,
-                unit: 'kg',
                 currency: $currency,
-                source: 'RATIN/EAGC (per-market)',
+                rate: $rate,
                 admin: $admin,
-                report: $report
+                report: $report,
             );
         }
     }
 
+    /**
+     * @param  array{created: int, updated: int, failed: int, skipped: int, removed: int, enabled: bool}  $report
+     */
     protected function store(
         string $commodity,
-        string $market,
-        string $region,
+        string $priceType,
         string $priceDate,
         float $avg,
         float $min,
         float $max,
-        string $unit,
         string $currency,
-        string $source,
+        ?float $rate,
         ?User $admin,
-        array &$report
+        array &$report,
     ): void {
-        $record = MarketPrice::updateOrCreate(
-            [
-                'commodity' => $commodity,
-                'market' => $market,
-                'region' => $region,
-                'price_date' => $priceDate,
-                'source' => $source,
-            ],
-            [
-                'uuid' => (string) Str::uuid(),
-                'min_price' => $min,
-                'max_price' => $max,
-                'avg_price' => $avg,
-                'unit' => $unit,
-                'currency' => $currency,
-                'recorded_by' => $admin?->id,
-            ]
-        );
+        $match = [
+            'commodity' => $commodity,
+            'market' => 'Taifa',
+            'region' => 'Tanzania',
+            'price_date' => $priceDate,
+            'price_type' => $priceType,
+        ];
 
-        if ($record->wasRecentlyCreated) {
-            $report['created']++;
-        } else {
+        $values = [
+            'min_price' => $min,
+            'max_price' => $max,
+            'avg_price' => $avg,
+            'unit' => 'kg',
+            'currency' => $currency,
+            'fx_rate' => $currency === 'TZS' ? $rate : null,
+            'source' => $this->sourceLabel($priceType, $currency, $rate),
+            'recorded_by' => $admin?->id,
+        ];
+
+        $existing = MarketPrice::query()->where($match)->first();
+        if ($existing) {
+            $existing->fill($values)->save();
             $report['updated']++;
+
+            return;
         }
+
+        MarketPrice::query()->create($match + $values);
+        $report['created']++;
+    }
+
+    protected function sourceLabel(string $priceType, string $currency, ?float $rate): string
+    {
+        $kind = strtolower($priceType);
+        if ($currency === 'TZS' && $rate) {
+            return "RATIN/EAGC national {$kind}, 1 USD = {$rate} TZS";
+        }
+
+        return "RATIN/EAGC national {$kind}, USD/kg";
     }
 
     /**
-     * Convert USD prices to TZS if a rate is configured.
+     * Rows written when the sync treated one national series as many towns.
+     */
+    protected function removeFabricatedMarkets(): int
+    {
+        return MarketPrice::query()->whereIn('source', [
+            'RATIN/EAGC',
+            'RATIN/EAGC (per-market)',
+        ])->delete();
+    }
+
+    /**
+     * @return array{0: float, 1: float, 2: float, 3: string}
      */
     protected function convert(float $avg, float $min, float $max, ?float $rate): array
     {
@@ -277,29 +245,34 @@ class MarketPriceSyncService
         return [round($avg, 4), round($min, 4), round($max, 4), 'USD'];
     }
 
-    /**
-     * Major markets to query per-commodity. Keep small to be respectful to RATIN.
-     */
-    protected function majorMarkets(): array
+    protected function recorder(): ?User
     {
-        return [
-            'Arusha',
-            'Dar es salaam',
-            'Dodoma',
-            'Iringa',
-            'Mwanza',
-            'Morogoro',
-            'Mbeya', // RATIN uses this spelling?
-            'Shinyanga',
-            'Tabora',
-            'Tanga',
-        ];
+        try {
+            return User::role('admin')->first() ?: User::query()->first();
+        } catch (\Throwable) {
+            return User::query()->first();
+        }
+    }
+
+    protected function exchangeRate(): ?float
+    {
+        $raw = config('services.ratin.usd_to_tzs_rate');
+        if (! is_numeric($raw) || (float) $raw <= 0) {
+            return null;
+        }
+
+        return (float) $raw;
+    }
+
+    protected function baseUrl(): string
+    {
+        return rtrim((string) config('services.ratin.base_url', 'https://ratin.net/ratinapp/api'), '/');
     }
 
     /**
-     * Base commodity names used by the RATIN single-trend endpoint.
+     * @return list<string>
      */
-    protected function majorCommodityNames(): array
+    protected function commodities(): array
     {
         return [
             'Maize',
