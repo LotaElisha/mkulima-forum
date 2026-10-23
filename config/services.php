@@ -48,8 +48,10 @@ return [
 
     'ratin' => [
         'base_url' => env('RATIN_BASE_URL', 'https://ratin.net/ratinapp/api'),
-        // Off until someone has checked a sync. The trend feed is a national
-        // figure; it does not change when the market name changes.
+        // Off until someone has checked a sync. The daily job in
+        // deploy/cron/mkulima-forum is commented out as well; uncomment
+        // that line and set RATIN_SYNC_ENABLED=true together. The trend
+        // feed is a national figure; it does not change with the market name.
         'sync_enabled' => env('RATIN_SYNC_ENABLED', false),
         // Recorded on each converted row. Empty or 0 stores the USD/kg figure.
         'usd_to_tzs_rate' => env('RATIN_USD_TO_TZS_RATE', 2600),
@@ -57,9 +59,6 @@ return [
 
     'weather' => [
         'use_open_meteo' => env('WEATHER_USE_OPEN_METEO', true),
-        // The uptime check calls /api/weather/report every five minutes.
-        // Leave this off unless a Gemini key is configured.
-        'ai_advisory' => env('WEATHER_ADVISORY_AI', false),
     ],
 
     /*

@@ -330,7 +330,7 @@ class WeatherService
 
     public function getFarmingAdvisory(array $weather): array
     {
-        if ($this->geminiAdvisoryEnabled()) {
+        if ($this->geminiConfigured()) {
             $fromGemini = $this->advisoryFromGemini($weather);
             if ($fromGemini !== null) {
                 return $fromGemini;
@@ -341,22 +341,12 @@ class WeatherService
     }
 
     /**
-     * The five-minute uptime check calls the weather report. Gemini runs only
-     * when the flag is on and a key is actually configured.
+     * Built-in advice is the answer when no Gemini key and no AI provider
+     * secret are configured. That path does not call Gemini and does not log.
      */
-    protected function geminiAdvisoryEnabled(): bool
+    protected function geminiConfigured(): bool
     {
-        if (! config('services.weather.ai_advisory', false)) {
-            return false;
-        }
-
-        if (app(AIService::class)->configuredApiKey() === '') {
-            Log::info('Skipping Gemini weather advisory: no API key is configured.');
-
-            return false;
-        }
-
-        return true;
+        return app(AIService::class)->configuredApiKey() !== '';
     }
 
     protected function advisoryFromGemini(array $weather): ?array
@@ -388,7 +378,9 @@ class WeatherService
                 }
             }
         } catch (\Throwable $e) {
-            Log::info('Gemini weather advisory fallback: '.$e->getMessage());
+            if (! str_contains($e->getMessage(), 'not configured')) {
+                Log::info('Gemini weather advisory fallback: '.$e->getMessage());
+            }
         }
 
         return null;

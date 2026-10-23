@@ -39,7 +39,7 @@ URLS=(
     "${BASE}/"
     "${BASE}/admin/"
     "${BASE}/api/market-prices"
-    "${BASE}/api/weather/report?location=Dodoma"
+    "${BASE}/api/weather/current?location=Dodoma"
 )
 
 if [ "${MONITOR_DRY_RUN:-}" = "1" ]; then

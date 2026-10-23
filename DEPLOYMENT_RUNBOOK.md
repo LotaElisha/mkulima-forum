@@ -17,7 +17,7 @@ Queue and cache stay on Postgres until Redis is installed and answering.
 | Database | PostgreSQL 16, database `mkulima_forum`, user `mkulima` |
 | Web server | Nginx, site root `.../public` |
 | Queue | `QUEUE_CONNECTION=database`, one supervised `queue:work` process |
-| Scheduler | cron `schedule:run` every minute |
+| Scheduler | `deploy/cron/mkulima-forum` (no Laravel tasks are registered) |
 | App URL | `https://mkulimaforum.com` |
 | Debug | `APP_DEBUG=false` |
 | Project root | `/opt/data/projects/mkulima-forum` |
@@ -240,16 +240,24 @@ links an APK only when a real zip-based APK is on disk.
 
 ## Scheduler and monitors
 
+Nothing is registered with Laravel's scheduler. `routes/console.php` only
+defines `inspire`. Every job is a line in `deploy/cron/mkulima-forum`. The
+every-minute `schedule:run` line is kept so a task added later would run.
+
 | When (UTC) | What |
 |---|---|
-| Every minute | `php artisan schedule:run` |
+| Every minute | `php artisan schedule:run` (no tasks registered) |
 | 04:00 | `scripts/backup-mkulima-db.sh` |
 | 04:30 | `scripts/verify-postgres-backup.sh` |
-| 06:00 | `market-prices:sync` (no-ops unless `RATIN_SYNC_ENABLED=true`) |
+| 06:00 | `market-prices:sync` is commented out. Uncomment that line and set `RATIN_SYNC_ENABLED=true` to store the national RATIN figure. A commented line, or a run that prints that sync is off, is not a cron-monitor alert. |
 | 07:00 | `weather:cache` |
 | 08:00 | `ssl-monitor-mkulima.sh` |
 | 09:00 | `mkulima-cron-monitor.sh` |
-| Every 5 min | `mkulima-uptime-monitor.sh` (weather report skips Gemini unless `WEATHER_ADVISORY_AI=true`) |
+| Every 5 min | `mkulima-uptime-monitor.sh` checks `/api/weather/current`, which does not call Gemini |
+
+`/api/weather/report` still builds a farming advisory. Gemini is called only
+when a key or an AI provider secret is configured. Otherwise the report uses
+the built-in advice and does not log an error.
 
 Uptime and SSL checks read `APP_URL` from
 `/opt/data/projects/mkulima-forum/.env`. Staging
