@@ -106,7 +106,7 @@
 cp .env.example .env            # or use existing .env
 composer install
 php artisan key:generate
-touch database/database.sqlite  # dev; use PostgreSQL in production (DB_CONNECTION)
+# PostgreSQL only. See README.md for the mkulima / mkulima_test databases.
 php artisan migrate --seed      # 38 migrations + roles, admin, categories, demo products, feature flags
 php artisan serve               # http://localhost:8000
 

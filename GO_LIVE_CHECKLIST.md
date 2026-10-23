@@ -49,8 +49,9 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
 
 ## Database
 
-- [ ] Production database provisioned, credentials in `.env.production`
-      (currently configured as PostgreSQL on `127.0.0.1:5433`)
+- [ ] Production database provisioned on the VPS as PostgreSQL 16 on
+      `127.0.0.1:5432`, database `mkulima_forum`. See `DEPLOYMENT_RUNBOOK.md`.
+      This application does not connect to MySQL.
 - [ ] `php artisan migrate --force` run against production (`mkulima:preflight` verifies)
 - [ ] Seeders run: `TenantSeeder`, `RolesAndPermissionsSeeder`, `SpineSeeder`,
       `RegulatoryAuthoritySeeder`, `FeatureFlagSeeder`
@@ -160,7 +161,8 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
 - [ ] `/privacy` and `/terms` reviewed by counsel — registration now records consent to both
 - [ ] Impact metrics on `/impact` are currently null placeholders; publish real numbers or
       remove the section
-- [ ] Confirm the "120K+ farmers" figure on the home page is real before launch
+- [x] The unverified "120K+ farmers" figure is removed from the home page.
+      Do not put it back without a count from `php artisan mkulima:census`.
 - [ ] Contact email `hello@mkulimaforum.com` is monitored
 
 ## Post-launch (first week)

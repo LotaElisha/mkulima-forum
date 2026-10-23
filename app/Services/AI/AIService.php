@@ -13,6 +13,7 @@ use App\Services\AI\Providers\GeminiProvider;
 use App\Services\AI\Providers\OpenAIProvider;
 use App\Services\AI\Secrets\SecretManagerServiceInterface;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AIService
@@ -243,7 +244,7 @@ class AIService
 
     protected function logUsage(AIProviderInterface $providerAdapter, string $feature, AIResponse $response, ?int $userId, string $status): void
     {
-        try {
+        $this->writeUsageLog(function () use ($providerAdapter, $feature, $response, $userId) {
             AiUsageLog::create([
                 'tenant_id' => $this->resolveTenantId($userId),
                 'user_id' => $userId,
@@ -256,9 +257,7 @@ class AIService
                 'latency_ms' => $response->latencyMs,
                 'status' => 'success',
             ]);
-        } catch (\Throwable $e) {
-            Log::warning('Failed to log AI usage: '.$e->getMessage());
-        }
+        }, 'Failed to log AI usage: ');
     }
 
     /**
@@ -266,7 +265,7 @@ class AIService
      */
     protected function logError(AIProviderInterface $providerAdapter, string $feature, string $errorMessage, int $latencyMs, ?int $userId): void
     {
-        try {
+        $this->writeUsageLog(function () use ($providerAdapter, $feature, $errorMessage, $latencyMs, $userId) {
             AiUsageLog::create([
                 'tenant_id' => $this->resolveTenantId($userId),
                 'user_id' => $userId,
@@ -277,8 +276,20 @@ class AIService
                 'status' => 'error',
                 'error_type' => substr($errorMessage, 0, 250),
             ]);
+        }, 'Failed to log AI error usage: ');
+    }
+
+    /**
+     * Postgres aborts the surrounding transaction when a statement fails.
+     * A usage-log insert that has no tenant must not take the request with it,
+     * so the write gets its own transaction (a savepoint when one is already open).
+     */
+    private function writeUsageLog(callable $write, string $prefix): void
+    {
+        try {
+            DB::transaction($write);
         } catch (\Throwable $e) {
-            Log::warning('Failed to log AI error usage: '.$e->getMessage());
+            Log::warning($prefix.$e->getMessage());
         }
     }
 }

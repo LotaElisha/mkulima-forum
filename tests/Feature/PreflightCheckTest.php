@@ -116,4 +116,36 @@ class PreflightCheckTest extends TestCase
 
         $this->artisan('mkulima:preflight')->assertExitCode(1);
     }
+
+    public function test_a_non_postgres_driver_blocks_the_deploy(): void
+    {
+        $this->productionConfig();
+        $this->seedMinimum();
+        // Change the driver in place. Swapping database.default to a connection
+        // that does not exist makes RefreshDatabase roll back the wrong handle
+        // and leak the Postgres transaction.
+        config(['database.connections.pgsql.driver' => 'mysql']);
+
+        $this->artisan('mkulima:preflight')
+            ->expectsOutputToContain('PostgreSQL')
+            ->assertExitCode(1);
+    }
+
+    public function test_a_synchronous_queue_blocks_the_deploy(): void
+    {
+        $this->productionConfig();
+        $this->seedMinimum();
+        config(['queue.default' => 'sync']);
+
+        $this->artisan('mkulima:preflight')->assertExitCode(1);
+    }
+
+    public function test_a_database_queue_without_a_jobs_table_blocks_the_deploy(): void
+    {
+        $this->productionConfig();
+        $this->seedMinimum();
+        Schema::drop('jobs');
+
+        $this->artisan('mkulima:preflight')->assertExitCode(1);
+    }
 }

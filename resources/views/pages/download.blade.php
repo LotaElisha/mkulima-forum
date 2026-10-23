@@ -41,49 +41,44 @@
     </div>
     <span class="eyebrow">TOLEO LA MAJARIBIO</span>
     <h1 class="page-title">Jaribu MkulimaForum kwenye Android</h1>
-    <p class="dl-lead">
-      Pakua APK ya majaribio yenye muonekano mpya. Toleo hili limeunganishwa na huduma za MkulimaForum na linakusudiwa kwa upimaji kabla ya uzinduzi rasmi.
-    </p>
-
     @php($androidBuild = \App\Support\AppDownload::android())
 
-    <div class="dl-actions">
     @if($androidBuild)
-      {{-- Filename and size are read from the build actually on disk. The page
-           used to hardcode both, so it kept advertising a stale APK. --}}
-      <a href="{{ $androidBuild['url'] }}" download="MkulimaForum.apk" class="btn btn-primary btn-lg">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Pakua APK ya Android
-      </a>
+      <p class="dl-lead">
+        Pakua APK iliyo kwenye seva. Jina na ukubwa vinatoka kwenye faili yenyewe, si kwenye kiungo kilichoandikwa kwa mkono.
+      </p>
+      <div class="dl-actions">
+        <a href="{{ $androidBuild['url'] }}" download="{{ $androidBuild['filename'] }}" class="btn btn-primary btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Pakua APK ya Android
+        </a>
+        @if(\App\Support\AppDownload::hasWebBuild())
+          <a href="{{ \App\Support\AppDownload::webUrl() }}" class="btn btn-outline btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            Fungua Web App
+          </a>
+        @endif
+      </div>
+      <div class="dl-tags">
+        <span class="tag">Android</span>
+        <span class="tag">Toleo {{ config('app.version', '1.0.0') }}</span>
+        <span class="tag">Takriban {{ $androidBuild['human'] }}</span>
+      </div>
+      <div class="dl-note">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div>
+            <strong>Kumbuka: hili ni toleo la majaribio</strong>
+            <p>
+              Android inaweza kukuomba uruhusu usakinishaji kutoka kwenye kivinjari. Usisakinishe APK hii kama toleo la Play Store.
+            </p>
+          </div>
+      </div>
     @else
-      <p class="dl-pending">Toleo la Android bado halijachapishwa. Rudi hapa hivi karibuni.</p>
+      <p class="dl-lead">
+        Toleo la Android bado halijachapishwa. Ukurasa huu hauwapi kiungo cha APK kwa sababu faili halipo kwenye seva.
+      </p>
+      <p class="dl-pending">Rudi hapa baada ya toleo la usakinishaji kutangazwa.</p>
     @endif
-
-    @if(\App\Support\AppDownload::hasWebBuild())
-      {{-- Only rendered when public/app/web/index.html exists. This button used
-           to be unconditional and always resolved to a 404. --}}
-      <a href="{{ \App\Support\AppDownload::webUrl() }}" class="btn btn-outline btn-lg">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-        Fungua Web App
-      </a>
-    @endif
-    </div>
-
-    <div class="dl-tags">
-      <span class="tag">Android</span>
-      <span class="tag">Toleo {{ config('app.version', '1.0.0') }}</span>
-      @if($androidBuild)<span class="tag">Takriban {{ $androidBuild['human'] }}</span>@endif
-    </div>
-
-    <div class="dl-note">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-        <div>
-          <strong>Kumbuka: hili ni toleo la majaribio</strong>
-          <p>
-            Android inaweza kukuomba uruhusu usakinishaji kutoka kwenye kivinjari. APK hii imesainiwa kwa ufunguo wa majaribio; usiitumie kama toleo la uzalishaji au kuisambaza kwenye Play Store.
-          </p>
-        </div>
-    </div>
   </div>
 </section>
 @endsection
