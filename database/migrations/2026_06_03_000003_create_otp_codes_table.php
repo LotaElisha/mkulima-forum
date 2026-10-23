@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('otp_codes', function (Blueprint $table) {
             $table->id();
             $table->string('phone', 20);
-            $table->string('code', 6);
+            // The column stores a bcrypt hash, not the six-digit code.
+            $table->string('code', 255);
             $table->string('purpose')->default('login'); // login, register, reset
             $table->timestamp('expires_at');
             $table->timestamp('used_at')->nullable();

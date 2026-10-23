@@ -14,7 +14,9 @@ return new class extends Migration
             $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
             $table->string('uuid', 36)->unique();
-            $table->enum('status', ['pending', 'confirmed', 'paid', 'shipped', 'delivered', 'cancelled', 'disputed'])->default('pending');
+            $table->enum('status', [
+                'pending', 'confirmed', 'paid', 'processing', 'shipped', 'delivered', 'completed', 'cancelled', 'disputed', 'refunded',
+            ])->default('pending');
             $table->decimal('subtotal', 15, 2);
             $table->decimal('delivery_fee', 15, 2)->default(0);
             $table->decimal('total', 15, 2);

@@ -9,20 +9,32 @@ Multivendor marketplace, farmers forum, AI plant disease scanner, wallet/escrow 
 
 | Path | What it is | Stack |
 |---|---|---|
-| `/` (root) | Backend API | Laravel 11, Sanctum, Spatie Permission, PostgreSQL, Reverb |
+| `/` (root) | Backend API | Laravel 13, Sanctum, Spatie Permission, PostgreSQL only |
 | `mkulima_app/` | Farmer mobile app | Flutter ≥3.5, Provider, drift (offline-first), dio |
 | `admin-dashboard/` | Admin web panel | React 18, Vite, Tailwind |
 | `MkulimaForum_ Modern Agri Hub/` | Architecture & requirements docs | — |
 
 ## Backend (Laravel API)
 
+PostgreSQL is the only supported database. Create a role and two databases
+(the second is what `php artisan test` migrates; it must not be the application
+database):
+
 ```bash
+sudo -u postgres psql -c "CREATE USER mkulima WITH PASSWORD 'secret' CREATEDB;"
+sudo -u postgres psql -c "CREATE DATABASE mkulima_forum OWNER mkulima;"
+sudo -u postgres psql -c "CREATE DATABASE mkulima_test OWNER mkulima;"
 composer install
 cp .env.example .env && php artisan key:generate
-# Set DB_* (PostgreSQL), then:
+# .env.example is already DB_CONNECTION=pgsql. Set DB_PASSWORD, then:
 php artisan migrate --seed
 php artisan serve   # http://localhost:8000
+php artisan test    # uses mkulima_test, from phpunit.xml
 ```
+
+Production is the Ubuntu VPS in [`DEPLOYMENT_RUNBOOK.md`](DEPLOYMENT_RUNBOOK.md).
+Before a deploy: `php artisan mkulima:preflight`. To count users and content
+without changing them: `php artisan mkulima:census`.
 
 Required `.env` keys for full functionality (all currently empty — features degrade honestly without them):
 

@@ -31,10 +31,6 @@
   .story-grid { max-width:980px; margin:auto; display:grid; grid-template-columns:380px 1fr; align-items:center; gap:48px; padding:0 24px; }
   .story-image { position:relative; }
   .story-image img { width:100%; height:180px; object-fit:cover; border-radius:16px; }
-  .story-proof { position:absolute; left:-20px; bottom:18px; background:#fff; border:1px solid var(--border-light); box-shadow:var(--shadow-md); padding:12px 16px; border-radius:14px; width:150px; }
-  .story-proof small { display:block; font-size:13px; font-weight:700; letter-spacing:.06em; color:var(--forest-mid); }
-  .story-proof strong { display:block; font-size:24px; font-weight:800; color:var(--ink-dark); line-height:1.2; }
-  .story-proof span { display:block; font-size:13px; line-height:1.35; color:var(--ink-muted); }
   blockquote { font-size:clamp(20px,2.2vw,26px); font-weight:600; line-height:1.4; color:var(--ink-dark); letter-spacing:-.01em; }
   .quote-by { margin-top:14px; font-size:15px; color:var(--ink-muted); }
 
@@ -69,7 +65,6 @@
 
   @media(max-width:900px) {
     .story-grid { grid-template-columns:1fr; gap:28px; }
-    .story-proof { left:12px; }
     .journey-steps { grid-template-columns:1fr; gap:12px; }
     .cap-grid { grid-template-columns:1fr 1fr; }
   }
@@ -191,7 +186,6 @@
     <div class="story-grid">
       <div class="story-image">
         <img src="/images/home/farmer-community.webp" alt="Wakulima wakitumia MkulimaForum pamoja" width="1200" height="700" loading="lazy">
-        <div class="story-proof"><small>JAMII YETU</small><strong>120K+</strong><span>Wakulima wanaotumia jukwaa letu</span></div>
       </div>
       <div>
         <blockquote id="farmer-story">“Kupitia MkulimaForum, nimejifunza mengi, na sasa naongeza uzalishaji na kipato.”</blockquote>

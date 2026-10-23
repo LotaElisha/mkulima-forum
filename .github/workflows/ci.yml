@@ -35,7 +35,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: pdo_pgsql, pgsql, redis, mbstring, xml, ctype, fileinfo, json, openssl, tokenizer, xmlwriter
+          extensions: pdo_pgsql, pgsql, redis, mbstring, xml, ctype, fileinfo, json, openssl, tokenizer, xmlwriter, gd
           coverage: xdebug
 
       - name: Install dependencies
@@ -63,7 +63,8 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --env=testing --force
 
-      - name: Run tests
+      - name: Run tests on Postgres
+        # phpunit.xml forces DB_* to this service's mkulima_test database.
         # Coverage gate re-enabled once the suite grows (see REDESIGN.md Phase 2)
         run: php artisan test
 

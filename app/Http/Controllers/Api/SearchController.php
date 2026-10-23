@@ -67,7 +67,8 @@ class SearchController extends Controller
             $query->where(function ($q) use ($columns, $terms) {
                 foreach ($columns as $column) {
                     foreach ($terms as $term) {
-                        $q->orWhere($column, 'like', "%{$term}%");
+                        // ilike: Postgres LIKE is case-sensitive, and farmers type either case.
+                        $q->orWhere($column, 'ilike', "%{$term}%");
                     }
                 }
             });

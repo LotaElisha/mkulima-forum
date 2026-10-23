@@ -139,10 +139,12 @@ but it presents as an outage if the gateway is already live.
 php artisan mkulima:preflight
 ```
 
-Eighteen checks covering application, database, mail, auth, integrations, storage and
-queue. Exits non-zero on anything blocking, so it can gate a deploy script. The same
-checks render at **Admin → System → Configuration → Readiness**, from one shared service,
-so the terminal and the dashboard cannot disagree.
+The checks live in `App\Services\System\ProductionReadiness` (application, PostgreSQL,
+mail, auth, integrations, storage, and the queue). The command exits non-zero on
+anything blocking, so it can gate a deploy. The same checks render at **Admin →
+System → Configuration → Readiness**, from that one service, so the terminal and the
+dashboard cannot disagree. On the VPS the database driver must be `pgsql` and
+`QUEUE_CONNECTION` must not be `sync`.
 
 A green mail configuration is not proof of delivery. Use **Send a test email** — empty
 SMTP credentials do not error, mail simply never arrives, and the first person to notice
@@ -154,21 +156,12 @@ Verification and reset mail is queued so a slow SMTP host cannot stall a sign-up
 That means **nothing sends unless a worker is running**. The dashboard reports the
 backlog; it cannot start the process. Supervisor:
 
-```ini
-[program:mkulima-worker]
-command=php /opt/data/projects/mkulima-forum/artisan queue:work --sleep=3 --tries=3 --max-time=3600
-directory=/opt/data/projects/mkulima-forum
-autostart=true
-autorestart=true
-user=www-data
-numprocs=2
-redirect_stderr=true
-stdout_logfile=/var/log/mkulima-worker.log
-stopwaitsecs=3600
-```
+The program is `deploy/supervisor/mkulima-queue.conf`. It runs
+`queue:work database` (Postgres, not Redis, until Redis is installed).
 
 ```bash
-sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl start mkulima-worker:*
+sudo cp deploy/supervisor/mkulima-queue.conf /etc/supervisor/conf.d/mkulima-queue.conf
+sudo supervisorctl reread && sudo supervisorctl update && sudo supervisorctl start mkulima-queue
 ```
 
 After each deploy: `php artisan queue:restart` so workers pick up new code.
@@ -179,8 +172,11 @@ Stated plainly rather than left to be discovered:
 
 - **Error tracking.** No tracker is installed, so production failures surface only in
   `storage/logs`. Requires `composer require sentry/sentry-laravel` plus a DSN.
-- **Backups.** No automated backup exists. `spatie/laravel-backup` is the usual choice.
-  Both need a composer install, which could not be run in the audit environment.
+- **Backups.** `scripts/backup-mkulima-db.sh` dumps PostgreSQL and
+  `scripts/verify-postgres-backup.sh` restores that dump into
+  `mkulima_forum_restore_check`, compares counts, and drops the side database.
+  Cron lines are in `deploy/cron/mkulima-forum`. Run both by hand once on the
+  VPS before trusting them. They do not back up a MySQL database.
 - **Queue control from the dashboard.** Reporting only. Starting, restarting and
   supervising a worker is the process manager's job, and pretending otherwise would give
   a false sense of control.

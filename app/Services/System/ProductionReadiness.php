@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\SmsService;
 use App\Settings\SettingsManager;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
@@ -76,20 +77,47 @@ class ProductionReadiness
             $this->check('Application', 'Environment is production',
                 config('app.env') === 'production', self::WARN,
                 "Currently '".config('app.env')."'.", (string) config('app.env')),
+
+            $this->check('Application', 'PHP is 8.3 or newer', PHP_VERSION_ID >= 80300, self::FAIL,
+                'Laravel 13 needs PHP 8.3+. The VPS should run PHP 8.4 to match CI.',
+                PHP_VERSION),
         ];
     }
 
     private function databaseChecks(): array
     {
+        $default = (string) config('database.default');
+        $driver = (string) config("database.connections.{$default}.driver");
+        $driverCheck = $this->check('Database', 'Database driver is PostgreSQL', $driver === 'pgsql', self::FAIL,
+            "Configured driver is '".($driver !== '' ? $driver : $default)."'. This application supports PostgreSQL only.",
+            $driver !== '' ? $driver : $default);
+
+        if ($driver !== 'pgsql') {
+            return [$driverCheck];
+        }
+
         try {
             DB::connection()->getPdo();
         } catch (Throwable $e) {
-            return [$this->check('Database', 'Connection succeeds', false, self::FAIL, $e->getMessage())];
+            return [
+                $driverCheck,
+                $this->check('Database', 'Connection succeeds', false, self::FAIL, $e->getMessage()),
+            ];
+        }
+
+        $version = null;
+        try {
+            $raw = (string) DB::scalar('select version()');
+            $version = preg_match('/PostgreSQL [\d.]+/', $raw, $match) === 1 ? $match[0] : null;
+        } catch (Throwable) {
+            $version = null;
         }
 
         return [
+            $driverCheck,
+
             $this->check('Database', 'Connection succeeds', true, self::FAIL, '',
-                (string) DB::connection()->getDatabaseName()),
+                trim((string) DB::connection()->getDatabaseName().($version ? ' · '.$version : ''))),
 
             $this->check('Database', 'Password reset table exists',
                 Schema::hasTable('password_reset_tokens'), self::FAIL,
@@ -215,10 +243,22 @@ class ProductionReadiness
         $connection = (string) config('queue.default');
 
         $checks = [
-            $this->check('Queue', 'Queue is not synchronous', $connection !== 'sync', self::WARN,
-                'QUEUE_CONNECTION=sync sends mail inline, so a slow SMTP host stalls the sign-up request.',
+            $this->check('Queue', 'Queue is not synchronous', $connection !== 'sync', self::FAIL,
+                'QUEUE_CONNECTION=sync sends mail inside the request. On the VPS use database, and run the supervisor program in deploy/supervisor/mkulima-queue.conf. Redis is optional later.',
                 $connection),
         ];
+
+        if ($connection === 'redis') {
+            $checks[] = $this->redisQueueCheck();
+        }
+
+        if ($connection === 'database') {
+            $checks[] = $this->check('Queue', 'Jobs table exists', Schema::hasTable('jobs'), self::FAIL,
+                'Run php artisan migrate --force. The supervisor worker stores queued mail in this table.');
+
+            $checks[] = $this->check('Queue', 'Failed jobs table exists', Schema::hasTable('failed_jobs'), self::FAIL,
+                'Run php artisan migrate --force.');
+        }
 
         if ($connection === 'database' && Schema::hasTable('jobs')) {
             $pending = DB::table('jobs')->count();
@@ -233,6 +273,20 @@ class ProductionReadiness
         }
 
         return $checks;
+    }
+
+    private function redisQueueCheck(): array
+    {
+        try {
+            $pong = Redis::connection()->ping();
+            $ok = $pong === true || $pong === 'PONG' || $pong === '+PONG';
+        } catch (Throwable $e) {
+            return $this->check('Queue', 'Redis queue is reachable', false, self::FAIL,
+                'QUEUE_CONNECTION=redis but Redis did not answer. Use database until Redis is installed. '.$e->getMessage());
+        }
+
+        return $this->check('Queue', 'Redis queue is reachable', $ok, self::FAIL,
+            'QUEUE_CONNECTION=redis but Redis did not answer PONG. Use database until Redis is installed.');
     }
 
     // ── Helper ────────────────────────────────────────────────────────
