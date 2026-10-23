@@ -50,19 +50,37 @@ PY
 
 alive() { adb shell pidof "$PKG" >/dev/null; }
 
+# Any system "isn't responding" dialog swallows every tap. Answer "Wait".
+clear_anr() {
+  for _ in 1 2 3; do
+    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+    adb shell cat /sdcard/ui.xml 2>/dev/null | grep -q "responding" || return 0
+    tap_text "Wait" "Wait (system dialog)"; sleep 2
+  done
+}
+
+# The launcher is not needed and on a cold emulator it keeps hanging, which
+# brings its "isn't responding" dialog back over the app after every answer.
+for launcher in com.google.android.apps.nexuslauncher com.android.launcher3; do
+  adb shell pm disable-user --user 0 "$launcher" >/dev/null 2>&1 || true
+done
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+
 adb logcat -c
 adb install -r "$APK" || exit 1
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null
 sleep 25
+clear_anr
 shot 01-launch
 
-tap_text "Ruka" "Ruka"; sleep 8; shot 02-home
-tap_text "Soko" "Soko"; sleep 8; shot 03-soko
-tap_text "Jukwaa" "Jukwaa"; sleep 8; shot 04-jukwaa
-tap_text "Wasifu" "Wasifu"; sleep 5; shot 05-wasifu
-tap_text "Ingia Sasa" "Ingia Sasa"; sleep 4; shot 06-login
+clear_anr; tap_text "Ruka" "Ruka"; sleep 8; shot 02-home
+clear_anr; adb shell input swipe 540 1800 540 700 400; sleep 3; shot 02b-home-scrolled
+clear_anr; tap_text "Soko" "Soko"; sleep 8; shot 03-soko
+clear_anr; tap_text "Jukwaa" "Jukwaa"; sleep 8; shot 04-jukwaa
+clear_anr; tap_text "Wasifu" "Wasifu"; sleep 5; shot 05-wasifu
+clear_anr; tap_text "Ingia Sasa" "Ingia Sasa"; sleep 4; shot 06-login
 adb shell input keyevent KEYCODE_BACK; sleep 2
-tap_text "Kagua" "Kagua"; sleep 6; shot 07-kagua
+clear_anr; tap_text "Kagua" "Kagua"; sleep 6; shot 07-kagua
 
 adb logcat -d > "$OUT/logcat.txt"
 echo "---- app errors ----"
