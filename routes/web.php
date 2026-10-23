@@ -41,7 +41,7 @@ Route::get('/', function () {
         'brand_motto' => 'SHIRIKI • JIFUNZE • ENDELEA',
         'hero_title' => 'Jukwaa la Kidigitali la Wakulima wa Tanzania',
         'hero_tagline' => 'SKANI • TAMBUA • TIBU',
-        'hero_lead' => 'Utambuzi wa magonjwa ya mimea kwa <b>Gemini 3 Flash AI</b>, ushauri wa kilimo kwa Kiswahili, masoko ya mazao, bei za masoko kwa wakati halisi, na usaidizi wa offline kupitia <b>Gemma 2B</b>.',
+        'hero_lead' => 'Bei za masoko zilizoandikwa (pamoja na tarehe), hali ya hewa, na jamii ya wakulima kwa Kiswahili. Utambuzi wa magonjwa kwa AI, SMS na USSD bado havijawashwa.',
         'pillar_1' => '🌱 Shiriki Maarifa',
         'pillar_2' => '📖 Jifunze Mbinu Bora',
         'pillar_3' => '👥 Jenga Jamii',
@@ -202,6 +202,7 @@ Route::get('/c/{slug}', function (string $slug) {
 // ─── Auth ────────────────────────────────────────────────────────────────────
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
+Route::view('/email/verify', 'auth.verify-notice')->name('verification.notice');
 
 // Password recovery pages. These are web routes rather than API ones because
 // they are opened from an email client on whatever device is to hand — the
@@ -222,8 +223,5 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 've
     ->middleware(['signed', 'throttle:6,1'])
     ->name('verification.verify');
 
-// React admin SPA deep-link fallback. Static assets are served directly from
-// public/admin; application routes must all return the same entry document.
-Route::get('/admin/{path?}', fn () => response()->file(public_path('admin/index.html')))
-    ->where('path', '.*')
-    ->name('admin.spa');
+// /admin is the Filament panel. The old React bundle is not served from
+// public/admin, so a built SPA cannot shadow these routes.

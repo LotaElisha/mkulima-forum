@@ -6,6 +6,7 @@ use App\Services\AI\AIService;
 use App\Services\AI\Secrets\EncryptedDatabaseSecretManager;
 use App\Services\AI\Secrets\SecretManagerServiceInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +29,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Filament pulls in blade-icons, which registers <x-icon> and would
+        // replace the inline SVG component the public pages already use
+        // (resources/views/components/icon.blade.php). Putting the view back
+        // last keeps those pages working. Filament's own icons are
+        // x-filament::icon and x-heroicon-*, not this alias.
+        Blade::component('components.icon', 'icon');
+
         // Fail loudly outside production when a write silently drops an
         // attribute that is not mass-assignable.
         //

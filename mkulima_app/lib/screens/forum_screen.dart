@@ -121,7 +121,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => ThreadsScreen(
-                      categoryId: cat['id']?.toString() ?? '',
+                      categoryId: cat['uuid']?.toString() ?? '',
                       categoryName: cat['name'] ?? 'Jukwaa',
                     ),
                   ),
@@ -238,91 +238,16 @@ class _ThreadsScreenState extends State<ThreadsScreen> {
     }
   }
 
+  /// Posting stays off /api/v1. Reading uses the category uuid. The legacy
+  /// create endpoint still wants a numeric category id, so the button explains
+  /// that instead of sending a request that cannot succeed.
   Future<void> _startThread() async {
-    final ok = await AuthProvider.requireAuth(
-      context,
-      action: 'kuandika mada mpya',
-    );
-    if (ok && mounted) {
-      _showCreateThreadDialog();
-    }
-  }
-
-  void _showCreateThreadDialog() {
-    final titleController = TextEditingController();
-    final bodyController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Andika Mada Mpya'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: 'Kichwa cha Mada',
-                hintText: 'Mfano: Ushauri wa kilimo cha mahindi',
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: bodyController,
-              maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: 'Maelezo',
-                hintText: 'Andika maelezo yako hapa...',
-              ),
-            ),
-          ],
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Kuandika swali kitapatiwa baadaye. Unaweza kusoma mijadala sasa.',
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Ghairi'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final title = titleController.text.trim();
-              final body = bodyController.text.trim();
-
-              if (title.isEmpty || body.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Jaza kichwa na maelezo')),
-                );
-                return;
-              }
-
-              final messenger = ScaffoldMessenger.of(this.context);
-              final api = Provider.of<ApiService>(context, listen: false);
-              Navigator.of(context).pop();
-
-              try {
-                await api.createThread(
-                  categoryId: widget.categoryId,
-                  title: title,
-                  body: body,
-                );
-
-                _loadThreads();
-
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('Mada imetumwa kikamilifu')),
-                );
-              } catch (e) {
-                messenger.showSnackBar(
-                  SnackBar(content: Text(ApiService.formatError(e))),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: MkColors.primary,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Tuma'),
-          ),
-        ],
       ),
     );
   }

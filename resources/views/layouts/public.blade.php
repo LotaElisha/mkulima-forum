@@ -438,6 +438,7 @@
       #site-footer { padding-bottom: 84px; }
     }
   </style>
+@livewireStyles
 </head>
 <body>
 
@@ -752,5 +753,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 @yield('page_scripts')
 
+@livewireScripts
 </body>
 </html>

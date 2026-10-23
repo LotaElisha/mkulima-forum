@@ -57,7 +57,7 @@ class _HomeTabState extends State<HomeTab> {
 
   Future<void> _loadThreads(ApiService api) async {
     try {
-      final response = await api.get('/forum/threads');
+      final response = await api.get('/v1/forum/threads');
       if (mounted) {
         setState(() {
           _trending =
@@ -86,7 +86,7 @@ class _HomeTabState extends State<HomeTab> {
   Future<void> _loadPrices(ApiService api) async {
     // Hidden unless the server has real prices; never filled with samples.
     try {
-      final response = await api.get('/market-prices');
+      final response = await api.get('/v1/market-prices');
       final data = response.data['data'];
       if (mounted && data is List) {
         setState(() => _prices = data.take(3).toList());

@@ -80,7 +80,7 @@
     <h2 class="section-title" style="margin-bottom:32px;" data-i18n="pcat_title">Tunashirikiana na Aina Hizi za Mashirika</h2>
     <div class="partner-cat-grid">
       @foreach([
-        ['globe','Washirika wa Teknolojia','Technology Partners','Miundombinu ya AI, wingu, data, uunganisho, na vifaa.','AI infrastructure, cloud, data, connectivity, and hardware.','Gemini AI / Cloud / IoT / Connectivity','pc0'],
+        ['globe','Washirika wa Teknolojia','Technology Partners','Miundombinu ya AI, wingu, data, uunganisho, na vifaa.','AI infrastructure, cloud, data, connectivity, and hardware.','Wingu / Data / Uunganisho','pc0'],
         ['chart','Washirika wa Fedha','Financial Partners','Pesa za simu, benki, FinTech, na fedha za kilimo.','Mobile money, banks, FinTech, and agricultural finance.','M-Pesa / Tigo Pesa / CRDB / Agricultural Finance','pc1'],
         ['leaf','Washirika wa Kilimo','Agricultural Partners','Wauzaji wa pembejeo, wazalishaji, wakusanyaji, wanunuzi wa mazao, na wataalamu.','Agro-dealers, input manufacturers, aggregators, buyers, and agronomists.','Agro-dealers / Input Manufacturers / Buyers','pc2'],
         ['verified','Serikali na Usimamizi','Government & Regulatory','Wizara za kilimo, mamlaka za mitaa, wasimamizi, na huduma za ugani.','Agricultural ministries, local governments, regulators, and extension services.','MAFC / TFRA / TPHPA / Local Authorities','pc3'],
@@ -114,8 +114,8 @@
     </div>
     <div class="tech-eco-grid">
       @foreach([
-        ['🤖','Google Gemini 3','Cloud AI Engine','G'],
-        ['🧠','Google Gemma 2B','On-Device AI','G'],
+        ['🤖','Utambuzi wa magonjwa','Haijawashwa','—'],
+        ['🧠','AI bila intaneti','Haijawashwa','—'],
         ['☁️','Google Cloud','Infrastructure','G'],
         ['🔍','Google Search','Grounding / RAG','G'],
         ['📱','Flutter','Cross-Platform App','F'],
@@ -133,7 +133,7 @@
       @endforeach
     </div>
     <p class="eco-note" data-i18n="eco_note">
-      Google Gemini na bidhaa za Google ni teknolojia zinazotumika katika mfumo. Kutajwa kwao hapa hakumaanishi ushirikiano rasmi na Google.
+      Hatuna ushirikiano na Google, na Gemini haijawashwa kwenye toleo hili.
     </p>
   </div>
 </section>
@@ -235,7 +235,7 @@ mkPageTranslations = {
     pc5_title:'Utafiti na Elimu', pc5_desc:'Vyuo vikuu, taasisi za utafiti wa kilimo, na watafiti wa AI.',
     eco_eyebrow:'MFUMO WA TEKNOLOJIA', eco_title:'Teknolojia Tunazotumia Kujenga',
     eco_sub:'MkulimaForum imejengwa juu ya teknolojia za kisasa za dunia. Hizi ni teknolojia tunazotumia katika mfumo wetu — si lazima washirika rasmi.',
-    eco_note:'Google Gemini na bidhaa za Google ni teknolojia zinazotumika katika mfumo. Kutajwa kwao hapa hakumaanishi ushirikiano rasmi na Google.',
+    eco_note:'Hatuna ushirikiano na Google, na Gemini haijawashwa kwenye toleo hili.',
     bp_eyebrow:'ANZA USHIRIKIANO', bp_title:'Shirikiana na MkulimaForum',
     bp_sub:'Tuna nafasi za ushirikiano katika maeneo mbalimbali. Chagua aina ya ushirikiano inayokufaa na tutawasiliana nawe.',
     bp_opt_0:'Ushirikiano wa Teknolojia', bp_opt_1:'Ufikiaji wa Soko', bp_opt_2:'Utafiti wa Pamoja',
@@ -260,7 +260,7 @@ mkPageTranslations = {
     pc5_title:'Research & Academia', pc5_desc:'Universities, agricultural research institutes, and AI researchers.',
     eco_eyebrow:'TECHNOLOGY ECOSYSTEM', eco_title:'Technologies We Build With',
     eco_sub:'MkulimaForum is built on world-class technologies. These are the tools we use — not necessarily formal partner endorsements.',
-    eco_note:'Google Gemini and Google products are technologies used in our system. Their mention does not imply a formal partnership or endorsement by Google.',
+    eco_note:'There is no Google partnership, and Gemini is not switched on in this release.',
     bp_eyebrow:'START A PARTNERSHIP', bp_title:'Partner With MkulimaForum',
     bp_sub:'We have partnership opportunities across multiple areas. Choose the type that fits and we will be in touch.',
     bp_opt_0:'Technology Partnership', bp_opt_1:'Market Access', bp_opt_2:'Research Collaboration',

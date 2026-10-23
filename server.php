@@ -7,9 +7,9 @@ if ($uri !== '/' && is_file($publicPath.$uri)) {
     return false;
 }
 
-// A real public directory (such as public/admin) must not make PHP's built-in
-// server treat nested SPA routes as the executing script. Production web
-// servers already normalize these values when rewriting to index.php.
+// A real public directory must not make PHP's built-in server treat a nested
+// path as the executing script. Production web servers already normalize
+// these values when rewriting to index.php.
 $_SERVER['SCRIPT_NAME'] = '/index.php';
 $_SERVER['PHP_SELF'] = '/index.php';
 

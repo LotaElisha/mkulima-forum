@@ -260,7 +260,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _api.post('/auth/password/forgot', data: {'email': email});
+      await _api.post('/v1/auth/password/forgot', data: {'email': email});
       _isLoading = false;
       notifyListeners();
       return true;
@@ -287,7 +287,7 @@ class AuthProvider extends ChangeNotifier {
   /// Re-send the email verification link for the signed-in account.
   Future<bool> resendEmailVerification() async {
     try {
-      await _api.post('/auth/email/resend', data: const {});
+      await _api.post('/v1/auth/email/resend', data: const {});
       return true;
     } catch (_) {
       return false;
@@ -301,18 +301,21 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final response = await _api.post(
-        '/auth/login/email',
+        '/v1/auth/login',
         data: {'email': email, 'password': password},
       );
 
-      final token = response.data['token'];
-      final userData = response.data['user'];
+      final payload = ApiService.v1Data(response.data);
+      final token = payload['token'] as String;
+      final userData = Map<String, dynamic>.from(payload['user'] as Map);
       _user = User.fromJson(userData);
-      _seller = SellerState.fromAnywhere(response);
+      _seller = SellerState.fromAnywhere(payload);
 
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
-      await _db.saveUser(_user!, token);
+      // The bearer token stays in secure storage. The Drift users row keeps
+      // the profile only, so a copied database is not a second copy of the token.
+      await _db.saveUser(_user!, '');
 
       _isLoading = false;
       notifyListeners();
@@ -339,14 +342,22 @@ class AuthProvider extends ChangeNotifier {
     required String password,
     required String role,
     String countryCode = 'tz',
-  }) async => _authenticateRequest('/auth/register/email', {
-    'name': name,
-    'email': email,
-    'password': password,
-    'password_confirmation': password,
-    'role': role,
-    'country_code': countryCode,
-  });
+  }) {
+    final body = {
+      'name': name,
+      'email': email,
+      'password': password,
+      'password_confirmation': password,
+      'role': role,
+      'country_code': countryCode,
+    };
+    // /api/v1 registers a farmer only. Other self-serve roles stay on the
+    // legacy endpoint until that contract moves.
+    if (role != 'farmer') {
+      return _authenticateRequest('/auth/register/email', body);
+    }
+    return _authenticateRequest('/v1/auth/register', body, v1: true);
+  }
 
   Future<bool> signInWithGoogle({String role = 'farmer'}) async {
     // Checked before _startLoading so an unconfigured build fails instantly
@@ -440,16 +451,20 @@ class AuthProvider extends ChangeNotifier {
     String path,
     Map<String, dynamic> data, {
     bool loadingAlreadyStarted = false,
+    bool v1 = false,
   }) async {
     if (!loadingAlreadyStarted) _startLoading();
     try {
       final response = await _api.post(path, data: data);
-      final token = response.data['token'] as String;
-      _user = User.fromJson(response.data['user']);
-      _seller = SellerState.fromAnywhere(response);
+      final payload = v1
+          ? ApiService.v1Data(response.data)
+          : Map<String, dynamic>.from(response.data as Map);
+      final token = payload['token'] as String;
+      _user = User.fromJson(Map<String, dynamic>.from(payload['user'] as Map));
+      _seller = SellerState.fromAnywhere(v1 ? payload : response);
       _api.setToken(token);
       await _secureStorage.write(key: 'auth_token', value: token);
-      await _db.saveUser(_user!, token);
+      await _db.saveUser(_user!, v1 ? '' : token);
       _isLoading = false;
       notifyListeners();
       return true;

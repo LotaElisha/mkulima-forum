@@ -142,7 +142,9 @@ class LocalDatabase extends _$LocalDatabase {
 
   Future<String?> getToken() async {
     final user = await select(users).getSingleOrNull();
-    return user?.token;
+    final token = user?.token;
+    if (token == null || token.isEmpty) return null;
+    return token;
   }
 
   Future<void> clearUser() async {

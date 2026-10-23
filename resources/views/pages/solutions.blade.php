@@ -241,7 +241,7 @@
         <span class="sol-number">05</span>
       </div>
       <h2 data-i18n="s5_title">Hali ya Hewa na Ujasiriamali wa Mazao</h2>
-      <p data-i18n="s5_desc">Toa hali ya hewa ya eneo maalum na ushauri wa mazao unaotumia Mkulima AI Weather pamoja na Google Search Grounding kwa data ya hewa ya wakati halisi.</p>
+      <p data-i18n="s5_desc">Hali ya hewa inapatikana kutoka huduma ya hali ya hewa, si kwa wakati halisi wa dhamana, na si kwa AI. Ushauri wa mazao kwa AI haujawashwa.</p>
       <ul class="sol-cap-list">
         <li data-i18n="s5_cap1">Tahadhari za hali ya hewa kwa mkoa wako</li>
         <li data-i18n="s5_cap2">Mapendekezo ya kupanda mazao kwa msimu</li>
@@ -269,10 +269,10 @@
         <span class="sol-number">06</span>
       </div>
       <h2 data-i18n="s6_title">Akili ya Kilimo Bila Intaneti</h2>
-      <p data-i18n="s6_desc">Unga mkono maeneo ya uunganisho mdogo kupitia SMS, USSD, maarifa yaliyohifadhiwa, na AI inayofanya kazi moja kwa moja kwenye simu.</p>
+      <p data-i18n="s6_desc">SMS, USSD, na AI kwenye simu bila intaneti havijawashwa. Programu inahitaji intaneti.</p>
       <ul class="sol-cap-list">
-        <li data-i18n="s6_cap1">Huduma ya SMS — uliza maswali bila data</li>
-        <li data-i18n="s6_cap2">Msimbo wa USSD wa huduma mbalimbali</li>
+        <li data-i18n="s6_cap1">SMS haijawashwa</li>
+        <li data-i18n="s6_cap2">USSD haijawashwa</li>
         <li data-i18n="s6_cap3">Maarifa yaliyohifadhiwa kwenye simu</li>
         <li data-i18n="s6_cap4">Mkulima AI Offline — AI ndani ya simu bila intaneti</li>
       </ul>
@@ -331,7 +331,7 @@
       <h2 data-i18n="s8_title">Ujasiriamali wa Soko</h2>
       <p data-i18n="s8_desc">Toa bei za mazao, mahitaji ya wanunuzi, mwenendo wa masoko, na mipango ya mavuno kusaidia wakulima kupata zaidi kwa mazao yao.</p>
       <ul class="sol-cap-list">
-        <li data-i18n="s8_cap1">Bei za mazao kwa wakati halisi kwa mkoa</li>
+        <li data-i18n="s8_cap1">Bei zilizoandikwa, pamoja na tarehe — si za wakati halisi</li>
         <li data-i18n="s8_cap2">Mahitaji ya wanunuzi na wenye masoko</li>
         <li data-i18n="s8_cap3">Mwenendo wa bei kwa historia</li>
         <li data-i18n="s8_cap4">Mipango ya misimu ya mavuno</li>
@@ -390,12 +390,12 @@ mkPageTranslations = {
     s4_cap1:'Angalia lebo za dawa na mbolea', s4_cap2:'Uthibitisho wa rejesta ya TFRA/TPHPA',
     s4_cap3:'Ukaguzi wa QR code ya bidhaa', s4_cap4:'Ripoti za jamii za bidhaa za shaka', s4_cap5:'Uthibitisho wa wakala wa mauzo',
     s4_visual_title:'Ulinzi wa Pembejeo', s4_visual_sub:'Funika wakulima dhidi ya bidhaa feki',
-    s5_title:'Hali ya Hewa na Ujasiriamali wa Mazao', s5_desc:'Toa hali ya hewa ya eneo maalum na ushauri wa mazao kwa wakati halisi.',
+    s5_title:'Hali ya Hewa', s5_desc:'Hali ya hewa inapatikana kutoka huduma ya hali ya hewa, si kwa AI. Ushauri wa mazao kwa AI haujawashwa.',
     s5_cap1:'Tahadhari za hali ya hewa kwa mkoa wako', s5_cap2:'Mapendekezo ya kupanda mazao kwa msimu',
     s5_cap3:'Mipango ya hatari ya kilimo', s5_cap4:'Taarifa za mwanzo wa mvua',
     s5_visual_title:'Mkulima AI Weather Grounded', s5_visual_sub:'Utabiri wa wakati halisi kwa Google Search',
-    s6_title:'Akili ya Kilimo Bila Intaneti', s6_desc:'Unga mkono maeneo ya uunganisho mdogo kupitia SMS, USSD, na AI inayofanya kazi kwenye simu.',
-    s6_cap1:'Huduma ya SMS — uliza maswali bila data', s6_cap2:'Msimbo wa USSD wa huduma mbalimbali',
+    s6_title:'Bila intaneti — haijawashwa', s6_desc:'SMS, USSD, na AI kwenye simu bila intaneti havijawashwa. Programu inahitaji intaneti.',
+    s6_cap1:'SMS haijawashwa', s6_cap2:'USSD haijawashwa',
     s6_cap3:'Maarifa yaliyohifadhiwa kwenye simu', s6_cap4:'Mkulima AI Offline — AI ndani ya simu bila intaneti',
     s6_visual_title:'Offline-First Architecture', s6_visual_sub:'Inafanya kazi hata bila intaneti kabisa',
     s7_title:'Jamii ya Wakulima', s7_desc:'Mfumo wa kushiriki maarifa unaounganisha wakulima, wataalamu, na vikundi vya kikanda.',
@@ -403,7 +403,7 @@ mkPageTranslations = {
     s7_cap3:'Vikundi vya kikanda vya kilimo', s7_cap4:'Uzoefu wa wakulima wenzao',
     s7_visual_title:'Jamii Inayounganisha', s7_visual_sub:'Wakulima wanaosaidiana kwa maarifa',
     s8_title:'Ujasiriamali wa Soko', s8_desc:'Toa bei za mazao, mahitaji ya wanunuzi, mwenendo wa masoko, na mipango ya mavuno.',
-    s8_cap1:'Bei za mazao kwa wakati halisi kwa mkoa', s8_cap2:'Mahitaji ya wanunuzi na wenye masoko',
+    s8_cap1:'Bei zilizoandikwa, pamoja na tarehe — si za wakati halisi', s8_cap2:'Soko la kununua na kuuza bado halijawashwa',
     s8_cap3:'Mwenendo wa bei kwa historia', s8_cap4:'Mipango ya misimu ya mavuno',
     s8_visual_title:'Taarifa za Soko', s8_visual_sub:'Maamuzi bora ya kuuza mazao',
     sol_cta_title:'Anza Kutumia Mfumo Wetu',
@@ -432,12 +432,12 @@ mkPageTranslations = {
     s4_cap1:'Inspect pesticide and fertilizer labels', s4_cap2:'TFRA/TPHPA registry cross-reference',
     s4_cap3:'Product QR code scanning', s4_cap4:'Community reports on suspicious products', s4_cap5:'Dealer and distributor verification',
     s4_visual_title:'Input Protection', s4_visual_sub:'Shield farmers from counterfeit products',
-    s5_title:'Weather & Crop Intelligence', s5_desc:'Provide location-specific weather and crop advice using Mkulima AI Weather with Google Search Grounding for real-time data.',
+    s5_title:'Weather', s5_desc:'Weather comes from a weather service, not from an AI model. AI crop advice is not switched on.',
     s5_cap1:'Regional weather alerts for your area', s5_cap2:'Seasonal crop planting recommendations',
     s5_cap3:'Agricultural risk planning', s5_cap4:'Rain onset and dry spell alerts',
     s5_visual_title:'Mkulima AI Weather Grounded', s5_visual_sub:'Real-time data via Google Search grounding',
-    s6_title:'Offline Farming Intelligence', s6_desc:'Support low-connectivity areas through SMS, USSD, cached knowledge, and on-device AI inference.',
-    s6_cap1:'SMS service — ask questions without mobile data', s6_cap2:'USSD shortcodes for multiple services',
+    s6_title:'Offline — not switched on', s6_desc:'SMS, USSD, and on-device AI are not switched on. The app needs an internet connection.',
+    s6_cap1:'SMS is not switched on', s6_cap2:'USSD is not switched on',
     s6_cap3:'Cached agronomy knowledge stored on device', s6_cap4:'Mkulima AI Offline — on-device AI without internet',
     s6_visual_title:'Offline-First Architecture', s6_visual_sub:'Fully functional even without connectivity',
     s7_title:'Farmer Community', s7_desc:'A knowledge-sharing ecosystem connecting farmers, agronomists, and regional agricultural groups.',
@@ -445,7 +445,7 @@ mkPageTranslations = {
     s7_cap3:'Regional farming communities', s7_cap4:'Peer farmer experiences and advice',
     s7_visual_title:'Connected Community', s7_visual_sub:'Farmers helping farmers with knowledge',
     s8_title:'Market Intelligence', s8_desc:'Provide crop prices, buyer demand, market trends, and harvest planning to help farmers earn more from their produce.',
-    s8_cap1:'Real-time crop prices by region', s8_cap2:'Buyer demand and market availability',
+    s8_cap1:'Recorded prices, with the date — not live prices', s8_cap2:'Buying and selling is not switched on yet',
     s8_cap3:'Historical price trends', s8_cap4:'Harvest season planning',
     s8_visual_title:'Market Intelligence', s8_visual_sub:'Better decisions for selling your harvest',
     sol_cta_title:'Start Using Our Platform',

@@ -16,9 +16,13 @@ class SecurityHeadersTest extends TestCase
         $this->assertStringContainsString("object-src 'none'", $policy);
     }
 
-    public function test_admin_spa_deep_links_return_the_admin_entrypoint(): void
+    public function test_admin_is_the_filament_panel_not_a_static_spa(): void
     {
-        $this->assertFileExists(public_path('admin/index.html'));
-        $this->get('/admin/settings')->assertOk();
+        $this->assertFileDoesNotExist(public_path('admin/index.html'));
+
+        // Guests are sent to the panel login. A path the panel does not
+        // define is a 404, not the old React bundle.
+        $this->get('/admin')->assertRedirect('/admin/login');
+        $this->get('/admin/settings')->assertNotFound();
     }
 }

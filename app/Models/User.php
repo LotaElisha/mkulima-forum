@@ -4,6 +4,12 @@ namespace App\Models;
 
 use App\Notifications\ResetPasswordNotification;
 use App\Notifications\VerifyEmailNotification;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,9 +18,11 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
 
     /**
      * Mass-assignable attributes.
@@ -80,6 +88,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'pending_email_requested_at' => 'datetime',
         'last_active_at' => 'datetime',
+        'kyc_submitted_at' => 'datetime',
+        'kyc_verified_at' => 'datetime',
         'kyc_documents' => 'array',
         'is_active' => 'boolean',
         'is_verified_expert' => 'boolean',
@@ -188,15 +198,19 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Admin & superadmin bypass ALL permission checks — they have full access.
+     * Filament panel. The role column is the gate. A Spatie role alone does
+     * not admit someone, and admin is not the same thing as superadmin.
      */
-    public function can($abilities, $arguments = []): bool
+    public function canAccessPanel(Panel $panel): bool
     {
-        if ($this->isAdmin()) {
-            return true;
-        }
+        return in_array($this->role, ['admin', 'superadmin'], true)
+            && $this->status === 'active'
+            && $this->is_active !== false;
+    }
 
-        return parent::can($abilities, $arguments);
+    public function getAppAuthenticationHolderName(): string
+    {
+        return $this->email ?: ($this->phone ?: $this->uuid);
     }
 
     public function isExpert(): bool

@@ -11,7 +11,7 @@ Multivendor marketplace, farmers forum, AI plant disease scanner, wallet/escrow 
 |---|---|---|
 | `/` (root) | Backend API | Laravel 13, Sanctum, Spatie Permission, PostgreSQL only |
 | `mkulima_app/` | Farmer mobile app | Flutter ≥3.5, Provider, drift (offline-first), dio |
-| `admin-dashboard/` | Admin web panel | React 18, Vite, Tailwind |
+| `admin-dashboard/` | Legacy React admin (not served). Live staff panel is Filament at `/admin` | React 18, Vite, Tailwind |
 | `MkulimaForum_ Modern Agri Hub/` | Architecture & requirements docs | — |
 
 ## Backend (Laravel API)
@@ -55,14 +55,16 @@ flutter build apk --dart-define=API_URL=https://mkulimaforum.com/api
 
 The API base URL is injected via `--dart-define=API_URL` (defaults to production). No hardcoded hosts.
 
-## Admin Dashboard
+## Admin
+
+Staff sign in at `/admin` (Filament). Publish assets after install:
 
 ```bash
-cd admin-dashboard
-npm install
-npm run dev     # http://localhost:3020, proxies VITE_API_URL (default /api)
-npm run build   # uses .env.production → https://mkulimaforum.com/api
+php artisan filament:assets
 ```
+
+`admin-dashboard/` is the previous React app. It is not deployed, and its
+build must not be written to `public/admin`.
 
 ## Canonical API Host
 

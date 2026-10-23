@@ -1,9 +1,9 @@
 @extends('layouts.public')
 
 @section('title', 'MkulimaForum Technology | AI Built for Real Farming Conditions')
-@section('meta_description', 'Explore the technology powering MkulimaForum: Gemini 3 Flash, Gemini 3 Pro, Gemma 2B Edge AI, Computer Vision, SMS/USSD offline architecture, and agricultural intelligence.')
+@section('meta_description', 'MkulimaForum inaendesha Laravel na PostgreSQL. Utambuzi wa magonjwa, SMS, USSD, na AI bila intaneti havijawashwa.')
 @section('og_title', 'MkulimaForum Technology | AI for East African Agriculture')
-@section('og_description', 'Google Gemini 3 AI, on-device Gemma 2B, Computer Vision, and offline-first architecture built for East African farmers.')
+@section('og_description', 'Tovuti na API zinaendesha Laravel na PostgreSQL. Utambuzi wa magonjwa, SMS, USSD, na AI bila intaneti havijawashwa.')
 
 @section('head_extra')
 <style>
@@ -83,8 +83,8 @@
 <section class="page-hero">
   <div class="wrap fade-up">
     <span class="eyebrow" data-i18n="tech_eyebrow">TEKNOLOJIA</span>
-    <h1 class="page-title" data-i18n="tech_title">AI Iliyojengwa kwa Hali Halisi ya Kilimo</h1>
-    <p class="section-lead" data-i18n="tech_sub">Tunatumia teknolojia za kisasa za ulimwengu na kuzirekebisha kwa hali ya wakulima wa Tanzania na Afrika Mashariki — bila kuacha wale wanaoishi mbali na mtandao.</p>
+    <h1 class="page-title" data-i18n="tech_title">Kinachofanya kazi sasa</h1>
+    <p class="section-lead" data-i18n="tech_sub">Tovuti na API zinaendesha Laravel na PostgreSQL. Utambuzi wa magonjwa, Gemini, Gemma, SMS, USSD, na malipo havijawashwa.</p>
   </div>
 </section>
 
@@ -95,12 +95,12 @@
     <h2 class="section-title" style="margin-bottom:32px;" data-i18n="stack_title">Teknolojia Inayofanya Kazi Nyuma ya Pazia</h2>
     <div class="tech-stack-grid">
       @foreach([
-        ['🤖','Gemini Cloud AI','Gemini Cloud AI','Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Gemini 3 Flash inashughulikia utambuzi wa haraka wa magonjwa ya mimea, maswali ya Mkulima AI, na utafutaji wa soko. Gemini 3 Pro inashughulikia ushauri wa hali ya hewa na mazao kwa kutumia Google Search Grounding.','Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima AI queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.','tc0',['Gemini 3 Flash','Gemini 3 Pro','Google AI Studio']],
-        ['🧠','Gemma Edge AI','Gemma Edge AI','Gemma 2B (INT4 Quantized) inafanya kazi moja kwa moja kwenye simu za wakulima bila kuhitaji intaneti. Imetumia MediaPipe LLM Inference (Google AI Edge SDK) kufanya uamuzi wa AI ndani ya simu kwenye GPU/NPU ya simu.','Gemma 2B (INT4 Quantized) runs locally on farmer smartphones without requiring internet. Implemented via MediaPipe LLM Inference (Google AI Edge SDK) for on-device inference on mobile GPU/NPU.','tc1',['Gemma 2B INT4','MediaPipe','Google AI Edge SDK']],
-        ['👁️','Computer Vision','Computer Vision','Mfumo wa utambuzi wa picha wa AI unaotumia uwezo wa mfano mkubwa wa lugha wa Gemini na uwezo wa kuona wa multimodal kuchambua picha za mazao yaliyoathirika na kutoa matokeo ya utambuzi wa ugonjwa.','AI image recognition system using Gemini\'s multimodal large language model capabilities to analyze crop images and provide accurate disease or pest identification results.','tc2',['Multimodal Vision','Image Analysis','Disease Classification']],
-        ['📴','Mfumo wa Offline','Offline Architecture','Mfumo wa usanifu unaounga mkono maeneo ya uunganisho mdogo kupitia SMS (kwa geti la SMS), USSD, maarifa yaliyohifadhiwa kwenye simu, na Gemma 2B inayofanya kazi nje ya mtandao. Wakulima wanapata huduma muhimu hata bila data.','An architecture supporting low-connectivity areas via SMS gateway, USSD shortcodes, device-cached agronomy knowledge, and offline Gemma 2B. Farmers access critical services even without mobile data.','tc3',['SMS Gateway','USSD','Cached Knowledge','Offline-First']],
+        ['🤖','AI ya wingu — haijawashwa','Cloud AI — not switched on','Utambuzi wa magonjwa na mazungumzo ya AI havijawashwa. Hatuwasilishi Gemini kama huduma inayofanya kazi.','Disease diagnosis and AI chat are not switched on. Gemini is not a live service here.','tc0',['Haijawashwa','Si huduma ya sasa']],
+        ['🧠','AI kwenye simu — haijawashwa','On-device AI — not switched on','Hakuna modeli inayoendesha ndani ya simu bila intaneti.','No model runs on the phone without internet.','tc1',['Haijawashwa','Inahitaji intaneti']],
+        ['👁️','Utambuzi wa picha — haijawashwa','Image diagnosis — not switched on','Kupiga picha ya jani na kupata utambuzi bado hakufanyi kazi.','Photographing a leaf and receiving a diagnosis does not work yet.','tc2',['Haijawashwa']],
+        ['📴','SMS na USSD — haijawashwa','SMS and USSD — not switched on','Huduma za SMS na USSD hazitumwi. Programu inahitaji intaneti.','SMS and USSD are not sent. The app needs an internet connection.','tc3',['Haijawashwa','Inahitaji intaneti']],
         ['🗄️','Msingi wa Data','Data Infrastructure','PostgreSQL iliyo na pgvector inashughulikia utafutaji wa mfano wa kulingana (semantic search) kwa maktaba ya maarifa ya kilimo. Redis inashughulikia akiba, vipindi vya mtumiaji, na foleni za kazi za usuli.','PostgreSQL with pgvector extension handles semantic search across the agronomy knowledge base. Redis manages caching, user sessions, and background job queues for scalable performance.','tc4',['PostgreSQL + pgvector','Redis Cache','Semantic Search']],
-        ['💳','Malipo na Fedha','Payments & Finance','Mfumo wa mauzo wenye uwezo wa M-Pesa na Tigo Pesa, Escrow ya Mkulima inayolinda wanunuzi na wauzaji, na muundo wa usanifu unaoruhusu kuongeza njia za malipo za ziada.','Payment infrastructure supporting M-Pesa and Tigo Pesa, Mkulima Escrow protecting buyers and sellers in marketplace transactions, and an architecture designed to add additional payment channels.','tc5',['M-Pesa','Tigo Pesa','Mkulima Escrow']],
+        ['💳','Malipo — haijawashwa','Payments — not switched on','M-Pesa, Tigo Pesa, na escrow havijawashwa kwenye toleo hili.','M-Pesa, Tigo Pesa, and escrow are not switched on in this release.','tc5',['Haijawashwa']],
         ['🔐','Usalama na Faragha','Security & Privacy','Laravel Sanctum inashughulikia uthibitisho wa mtumiaji na kuzuia API. Maelezo ya kibinafsi ya mtumiaji yanalindwa na sera kali ya faragha. Hifadhidata imeundwa kwa muundo wa data za hatari ndogo.','Laravel Sanctum handles user authentication and API token management. User personal data is protected by strict privacy policies. Database is designed with minimal personally-identifiable data architecture.','tc6',['Sanctum Auth','API Security','Data Privacy']],
         ['📱','Mfumo wa App ya Simu','Mobile App Platform','App ya MkulimaForum imejengwa kwa Flutter, inayoruhusu kutolewa kwa Android na iOS kutoka msingi mmoja wa msimbo. Imeboreshwa kwa simu za android za bei ya chini zinazotumika zaidi Tanzania.','MkulimaForum app is built with Flutter, enabling Android and iOS deployment from a single codebase. Optimized for lower-end Android devices common among Tanzanian smallholder farmers.','tc7',['Flutter','Android','iOS','Material 3']],
       ] as $t)
@@ -128,20 +128,20 @@
       <div class="google-head">
         <div class="google-gemini-badge">
           <span class="g-letter g-g">G</span><span class="g-letter g-e">e</span><span class="g-letter g-o1">m</span><span class="g-letter g-o2">i</span><span class="g-letter g-g">n</span><span class="g-letter g-l">i</span>
-          <span class="g-text">3 Flash &amp; Pro</span>
+          <span class="g-text">haijawashwa</span>
         </div>
         <span class="eyebrow" style="display:block;" data-i18n="google_eyebrow">TEKNOLOJIA YA GOOGLE AI</span>
-        <h2 class="section-title" data-i18n="google_title">Jinsi Tunavyotumia Gemini AI</h2>
+        <h2 class="section-title" data-i18n="google_title">AI ya magonjwa haijawashwa</h2>
         <p class="section-lead" style="text-align:center; margin:0 auto; max-width:44rem;" data-i18n="google_sub">
-          MkulimaForum inatumia mifano ya Gemini ya Google katika mtiririko mbalimbali wa AI. Toleo la awali la mfumo wetu lilibuniwa kwa kutumia Google AI Studio.
+          Hatutumii Gemini wala Gemma kwenye toleo hili. Mipango hiyo haijawashwa.
         </p>
       </div>
 
       <div class="google-uses-grid">
         @foreach([
-          ['⚡','Gemini 3 Flash','AI Plant Scanner, Mkulima AI mazungumzo, Utafutaji wa Soko','Gemini 3 Flash','AI Plant Scanner, Mkulima AI conversations, Smart Marketplace Search','gc0'],
-          ['🔍','Gemini 3 Pro + Grounding','Ushauri wa Hali ya Hewa na Mazao ukitumia Google Search Grounding','Gemini 3 Pro + Grounding','Weather & Crop Advisory Engine using real-time Google Search Grounding','gc1'],
-          ['🛠️','Google AI Studio','Ubunifu wa kwanza na majaribio ya mfano wa AI ya MkulimaForum','Google AI Studio','Used for initial AI prototype development and model experimentation','gc2'],
+          ['⚡','Scanner — haijawashwa','Utambuzi wa magonjwa kwa picha haujawashwa.','Scanner — not switched on','Photo diagnosis is not switched on.','gc0'],
+          ['🔍','Ushauri wa AI — haijawashwa','Ushauri wa mazao unaotumia AI haujawashwa. Hali ya hewa inayopatikana ni ya huduma ya hali ya hewa, si AI.','AI advice — not switched on','AI crop advice is not switched on. Weather that is available comes from a weather service, not from an AI model.','gc1'],
+          ['🛠️','Google AI Studio','Ubunifu wa kwanza na majaribio ya mfano. Si huduma inayotolewa kwa wakulima.','Google AI Studio','Prototype experiments only. Not a service offered to farmers.','gc2'],
         ] as $g)
         <div class="google-use">
           <div class="card-icon">@if($g[0] === '⚡')<x-icon name="sun" :size="22" />@elseif($g[0] === '🔍')<x-icon name="search" :size="22" />@elseif($g[0] === '🛠️')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>@endif</div>
@@ -152,7 +152,7 @@
       </div>
 
       <p class="google-note" data-i18n="google_note">
-        Teknolojia za Google zinazotajwa hapa (Gemini, Google AI Studio) zinawakilisha zana tunazotumia katika ujenzi wa mfumo. Hii haikusudiwa kuwakilisha ushirikiano rasmi au uidhinisho wowote na Google.
+        Hatuna ushirikiano na Google. Gemini na Gemma havijawashwa. Google AI Studio, ikiwa imetajwa, ni majaribio ya ndani na si huduma kwa wakulima.
       </p>
     </div>
   </div>
@@ -178,7 +178,7 @@
       <div class="flow-row">
         <div class="flow-node">📱 <span data-i18n="arch_app">App ya Simu</span></div>
         <div class="flow-node">🌐 <span data-i18n="arch_web">Wavuti</span></div>
-        <div class="flow-node">📲 SMS / USSD</div>
+        <div class="flow-node">📲 SMS / USSD — haijawashwa</div>
       </div>
       <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
       <div class="flow-label" data-i18n="arch_platform">MkulimaForum Platform (Laravel API + Flutter)</div>
@@ -192,9 +192,9 @@
 
       {{-- AI Layer --}}
       <div class="flow-row">
-        <div class="flow-node ai">🤖 Gemini 3 Flash</div>
-        <div class="flow-node ai">🔍 Gemini 3 Pro + Search</div>
-        <div class="flow-node ai">🧠 Gemma 2B (Offline)</div>
+        <div class="flow-node ai">AI ya magonjwa — haijawashwa</div>
+        <div class="flow-node ai">SMS — haijawashwa</div>
+        <div class="flow-node ai">Malipo — haijawashwa</div>
         <div class="flow-node ai">📊 Agri Knowledge Base</div>
         <div class="flow-node ai">⛅ Weather Data</div>
         <div class="flow-node ai">🛒 Market Data</div>
@@ -214,7 +214,7 @@
   <div class="wrap" style="max-width:700px; text-align:center;">
     <span class="eyebrow" data-i18n="privacy_eyebrow">FARAGHA NA UWAJIBIKAJI</span>
     <h2 class="section-title" data-i18n="privacy_title">AI Inayowajibika</h2>
-    <p class="section-lead" style="text-align:center; margin:0 auto 24px;" data-i18n="privacy_desc">MkulimaForum inaamini katika uwazi wa AI na ulinzi wa data za wakulima. Hatuzidishi wala kuuza data za kibinafsi za wakulima. Mifano yetu yote ya AI inajaribiwa kwa usahihi kabla ya kutolewa kwa mazao halisi.</p>
+    <p class="section-lead" style="text-align:center; margin:0 auto 24px;" data-i18n="privacy_desc">MkulimaForum inaamini katika uwazi na ulinzi wa data za wakulima. Hatuzidishi wala kuuza data za kibinafsi za wakulima.</p>
     <a href="/contact" class="btn btn-outline" data-i18n="privacy_cta">Jifunze Zaidi Kuhusu Sera Yetu →</a>
   </div>
 </section>
@@ -237,23 +237,23 @@
 <script nonce="{{ $cspNonce ?? '' }}">
 mkPageTranslations = {
   sw: {
-    tech_eyebrow:'TEKNOLOJIA', tech_title:'AI Iliyojengwa kwa Hali Halisi ya Kilimo',
-    tech_sub:'Tunatumia teknolojia za kisasa za ulimwengu na kuzirekebisha kwa hali ya wakulima wa Tanzania na Afrika Mashariki — bila kuacha wale wanaoishi mbali na mtandao.',
-    stack_eyebrow:'NGUZO ZA TEKNOLOJIA', stack_title:'Teknolojia Inayofanya Kazi Nyuma ya Pazia',
-    tc0_title:'Gemini Cloud AI', tc0_desc:'Gemini 3 Flash na Gemini 3 Pro ndio nguvu kuu za akili ya AI ya MkulimaForum. Flash inashughulikia utambuzi wa haraka wa magonjwa, maswali ya Mkulima AI, na utafutaji wa soko. Pro inashughulikia ushauri wa hali ya hewa na mazao.',
-    tc1_title:'Gemma Edge AI', tc1_desc:'Gemma 2B (INT4 Quantized) inafanya kazi moja kwa moja kwenye simu za wakulima bila kuhitaji intaneti kupitia MediaPipe LLM Inference (Google AI Edge SDK).',
-    tc2_title:'Computer Vision', tc2_desc:'Mfumo wa utambuzi wa picha wa AI unaotumia uwezo wa multimodal wa Gemini kuchambua picha za mazao yaliyoathirika na kutoa matokeo ya utambuzi wa ugonjwa.',
-    tc3_title:'Mfumo wa Offline', tc3_desc:'Mfumo wa usanifu unaounga mkono maeneo ya uunganisho mdogo kupitia SMS, USSD, maarifa yaliyohifadhiwa, na Gemma 2B inayofanya kazi nje ya mtandao.',
+    tech_eyebrow:'TEKNOLOJIA', tech_title:'Kinachofanya kazi sasa',
+    tech_sub:'Tovuti na API zinaendesha Laravel na PostgreSQL. Utambuzi wa magonjwa, Gemini, Gemma, SMS, USSD, na malipo havijawashwa.',
+    stack_eyebrow:'NGUZO ZA TEKNOLOJIA', stack_title:'Kilichoandikwa hapa si ahadi',
+    tc0_title:'AI ya wingu — haijawashwa', tc0_desc:'Utambuzi wa magonjwa na mazungumzo ya AI havijawashwa. Hatuwasilishi Gemini kama huduma inayofanya kazi.',
+    tc1_title:'AI kwenye simu — haijawashwa', tc1_desc:'Hakuna modeli inayoendesha ndani ya simu bila intaneti.',
+    tc2_title:'Utambuzi wa picha — haijawashwa', tc2_desc:'Kupiga picha ya jani na kupata utambuzi bado hakufanyi kazi.',
+    tc3_title:'SMS na USSD — haijawashwa', tc3_desc:'Huduma za SMS na USSD hazitumwi. Programu inahitaji intaneti.',
     tc4_title:'Msingi wa Data', tc4_desc:'PostgreSQL iliyo na pgvector inashughulikia utafutaji wa semantic wa maktaba ya maarifa ya kilimo. Redis inashughulikia akiba na foleni za kazi.',
-    tc5_title:'Malipo na Fedha', tc5_desc:'M-Pesa, Tigo Pesa, Escrow ya Mkulima inayolinda wanunuzi na wauzaji katika miamala ya soko.',
+    tc5_title:'Malipo — haijawashwa', tc5_desc:'M-Pesa, Tigo Pesa, na escrow havijawashwa kwenye toleo hili.',
     tc6_title:'Usalama na Faragha', tc6_desc:'Laravel Sanctum inashughulikia uthibitisho wa mtumiaji na kuzuia API. Maelezo ya kibinafsi ya mtumiaji yanalindwa na sera kali ya faragha.',
     tc7_title:'App ya Simu', tc7_desc:'App ya MkulimaForum imejengwa kwa Flutter, inayoruhusu kutolewa kwa Android na iOS. Imeboreshwa kwa simu za android za bei ya chini.',
-    google_eyebrow:'TEKNOLOJIA YA GOOGLE AI', google_title:'Jinsi Tunavyotumia Gemini AI',
-    google_sub:'MkulimaForum inatumia mifano ya Gemini ya Google katika mtiririko mbalimbali wa AI. Toleo la awali la mfumo wetu lilibuniwa kwa kutumia Google AI Studio.',
-    gc0_title:'Gemini 3 Flash', gc0_desc:'AI Plant Scanner, Mkulima AI mazungumzo, Utafutaji wa Soko',
-    gc1_title:'Gemini 3 Pro + Grounding', gc1_desc:'Ushauri wa Hali ya Hewa na Mazao ukitumia Google Search Grounding',
-    gc2_title:'Google AI Studio', gc2_desc:'Ubunifu wa kwanza na majaribio ya mfano wa AI ya MkulimaForum',
-    google_note:'Teknolojia za Google zinazotajwa hapa zinawakilisha zana tunazotumia. Hii haikusudiwa kuwakilisha ushirikiano rasmi au uidhinisho wowote na Google.',
+    google_eyebrow:'HALI YA AI', google_title:'AI ya magonjwa haijawashwa',
+    google_sub:'Hatutumii Gemini wala Gemma kwenye toleo hili. Mipango hiyo haijawashwa.',
+    gc0_title:'Scanner — haijawashwa', gc0_desc:'Utambuzi wa magonjwa kwa picha haujawashwa.',
+    gc1_title:'Ushauri wa AI — haijawashwa', gc1_desc:'Ushauri wa mazao unaotumia AI haujawashwa. Hali ya hewa inayopatikana ni ya huduma ya hali ya hewa, si AI.',
+    gc2_title:'Google AI Studio', gc2_desc:'Ubunifu wa kwanza na majaribio ya mfano. Si huduma inayotolewa kwa wakulima.',
+    google_note:'Hatuna ushirikiano na Google. Gemini na Gemma havijawashwa.',
     arch_eyebrow:'MTIRIRIKO WA AI', arch_title:'Jinsi AI Inavyofikia Mkulima',
     arch_farmer:'Mkulima', arch_via:'Kupitia', arch_app:'App ya Simu', arch_web:'Wavuti',
     arch_platform:'Jukwaa la MkulimaForum (Laravel API + Flutter)', arch_routed:'Inaelekeza kwa',
@@ -266,29 +266,29 @@ mkPageTranslations = {
     t_cta_contact:'Wasiliana Nasi →', t_cta_pitch:'📊 Pitch Deck',
   },
   en: {
-    tech_eyebrow:'TECHNOLOGY', tech_title:'AI Built for Real Farming Conditions',
-    tech_sub:'We apply world-class technology, adapted for the realities of Tanzania and East African farmers — including those in areas with little to no internet connectivity.',
-    stack_eyebrow:'TECHNOLOGY STACK', stack_title:'The Technology Working Behind the Scenes',
-    tc0_title:'Gemini Cloud AI', tc0_desc:'Gemini 3 Flash and Gemini 3 Pro power MkulimaForum\'s core AI capabilities. Flash handles plant diagnosis, Mkulima AI queries, and marketplace search. Pro handles weather and crop advisory with Google Search Grounding.',
-    tc1_title:'Gemma Edge AI', tc1_desc:'Gemma 2B (INT4 Quantized) runs locally on farmer smartphones without requiring internet, implemented via MediaPipe LLM Inference (Google AI Edge SDK) for on-device inference.',
-    tc2_title:'Computer Vision', tc2_desc:'AI image recognition using Gemini\'s multimodal capabilities to analyze crop images and provide accurate disease or pest identification with treatment recommendations.',
-    tc3_title:'Offline Architecture', tc3_desc:'An architecture supporting low-connectivity areas via SMS gateway, USSD shortcodes, device-cached agronomy knowledge, and offline Gemma 2B inference.',
+    tech_eyebrow:'TECHNOLOGY', tech_title:'What works today',
+    tech_sub:'The site and API run on Laravel and PostgreSQL. Disease diagnosis, Gemini, Gemma, SMS, USSD, and payments are not switched on.',
+    stack_eyebrow:'TECHNOLOGY STACK', stack_title:'What is written here is not a promise',
+    tc0_title:'Cloud AI — not switched on', tc0_desc:'Disease diagnosis and AI chat are not switched on. Gemini is not a live service here.',
+    tc1_title:'On-device AI — not switched on', tc1_desc:'No model runs on the phone without internet.',
+    tc2_title:'Image diagnosis — not switched on', tc2_desc:'Photographing a leaf and receiving a diagnosis does not work yet.',
+    tc3_title:'SMS and USSD — not switched on', tc3_desc:'SMS and USSD are not sent. The app needs an internet connection.',
     tc4_title:'Data Infrastructure', tc4_desc:'PostgreSQL with pgvector handles semantic search across the agronomy knowledge base. Redis manages caching, user sessions, and background job queues for scalable performance.',
-    tc5_title:'Payments & Finance', tc5_desc:'M-Pesa and Tigo Pesa payment integration, Mkulima Escrow protecting buyers and sellers in marketplace transactions, and an extensible payment architecture.',
+    tc5_title:'Payments — not switched on', tc5_desc:'M-Pesa, Tigo Pesa, and escrow are not switched on in this release.',
     tc6_title:'Security & Privacy', tc6_desc:'Laravel Sanctum handles user authentication and API token management. User personal data is protected by strict privacy policies and a minimal data architecture.',
     tc7_title:'Mobile App Platform', tc7_desc:'MkulimaForum app built with Flutter for Android and iOS deployment from a single codebase. Optimized for lower-end Android devices common among Tanzanian farmers.',
-    google_eyebrow:'GOOGLE AI TECHNOLOGY', google_title:'How We Use Gemini AI',
-    google_sub:"MkulimaForum uses Google's Gemini models across several AI-assisted workflows. Early versions of the platform were prototyped using Google AI Studio.",
-    gc0_title:'Gemini 3 Flash', gc0_desc:'AI Plant Scanner, Mkulima AI conversations, Smart Marketplace Search',
-    gc1_title:'Gemini 3 Pro + Grounding', gc1_desc:'Weather & Crop Advisory Engine using real-time Google Search Grounding',
-    gc2_title:'Google AI Studio', gc2_desc:'Used for initial AI prototype development and model experimentation for MkulimaForum',
-    google_note:'Google technologies mentioned here represent tools we use in building our system. This is not intended to represent a formal partnership or endorsement by Google.',
+    google_eyebrow:'AI STATUS', google_title:'Disease AI is not switched on',
+    google_sub:'This release does not use Gemini or Gemma. Those plans are not switched on.',
+    gc0_title:'Scanner — not switched on', gc0_desc:'Photo diagnosis is not switched on.',
+    gc1_title:'AI advice — not switched on', gc1_desc:'AI crop advice is not switched on. Weather that is available comes from a weather service, not from an AI model.',
+    gc2_title:'Google AI Studio', gc2_desc:'Prototype experiments only. Not a service offered to farmers.',
+    google_note:'There is no Google partnership. Gemini and Gemma are not switched on.',
     arch_eyebrow:'AI FLOW', arch_title:'How AI Reaches the Farmer',
     arch_farmer:'Farmer', arch_via:'Via', arch_app:'Mobile App', arch_web:'Web',
     arch_platform:'MkulimaForum Platform (Laravel API + Flutter)', arch_routed:'Routes to',
     arch_output:'✅ Actionable farmer recommendation delivered',
     privacy_eyebrow:'PRIVACY & RESPONSIBILITY', privacy_title:'Responsible AI',
-    privacy_desc:'MkulimaForum believes in AI transparency and farmer data protection. We do not sell or misuse personal farmer data. All AI models are tested for accuracy before deployment on real crops.',
+    privacy_desc:'MkulimaForum does not sell or misuse personal farmer data.',
     privacy_cta:'Learn More About Our Policy →',
     t_cta_title:'Questions About Our Technology?',
     t_cta_sub:"We are happy to speak with researchers, technology partners, and system developers about our AI architecture.",
