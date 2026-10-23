@@ -105,6 +105,7 @@
 @endsection
 
 @section('content')
+<x-mk.note />
 
 {{-- Hero --}}
 <div class="pitch-hero">

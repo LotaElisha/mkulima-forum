@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/strings.dart';
+import '../core/mk_tokens.dart';
 import '../core/theme.dart';
 import '../providers/auth_provider.dart';
 import 'notifications_screen.dart';
 import 'login_modal.dart';
 import '../services/api_service.dart';
-import 'scanner_screen.dart';
 import 'search_screen.dart';
-import 'kagua_dawa_screen.dart';
-import 'mkulima_bot_screen.dart';
 import 'forum_screen.dart';
 import 'weather_screen.dart';
 import 'market_prices_screen.dart';
-import 'features_screen.dart';
 import '../core/format.dart';
+import '../widgets/mk_badge.dart';
 import '../widgets/mk_section_header.dart';
 import '../widgets/mk_skeleton.dart';
 
@@ -98,8 +96,6 @@ class _HomeTabState extends State<HomeTab> {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
   }
 
-  void _openScanner() => _push(const ScannerPage());
-
   void _openNotifications() {
     final auth = context.read<AuthProvider>();
     if (!auth.isAuthenticated) {
@@ -108,13 +104,6 @@ class _HomeTabState extends State<HomeTab> {
     }
     _push(const NotificationsScreen());
   }
-
-  void _openAllServices() => _push(
-    Scaffold(
-      appBar: AppBar(title: const Text(MkStrings.titleServices)),
-      body: const FeaturesScreen(),
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -176,59 +165,36 @@ class _HomeTabState extends State<HomeTab> {
 
             _SearchField(onTap: () => _push(const SearchScreen())),
 
-            if (_weather != null) ...[
-              const SizedBox(height: 12),
+            const SizedBox(height: 12),
+            if (_weather != null)
               _WeatherStrip(
                 weather: _weather!,
                 onTap: () => _push(const WeatherScreen()),
+              )
+            else
+              _LeadCard(
+                title: 'Hali ya hewa',
+                body: 'Hakuna taarifa kwa sasa. Hatutungi namba.',
+                action: 'Angalia',
+                onTap: () => _push(const WeatherScreen()),
               ),
-            ],
 
             const SizedBox(height: 16),
-            _ScannerCard(onScan: _openScanner),
-
-            const SizedBox(height: 20),
             MkSectionHeader(
-              title: 'Huduma',
+              title: 'Bei za soko',
               actionLabel: 'Zote',
-              onAction: _openAllServices,
+              onAction: () => _push(const MarketPricesScreen()),
             ),
-            const SizedBox(height: 4),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _QuickService(
-                  icon: Icons.chat_bubble_outline,
-                  label: MkStrings.botTitle,
-                  onTap: () => _push(const MkulimaBotScreen()),
+            if (_prices.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: Text(
+                  'Bado hakuna bei iliyoandikwa.',
+                  style: MkText.bodyMuted,
                 ),
-                _QuickService(
-                  icon: Icons.verified_user_outlined,
-                  label: 'Kagua Dawa',
-                  onTap: () => _push(const KaguaDawaScreen()),
-                ),
-                _QuickService(
-                  icon: Icons.show_chart,
-                  label: 'Bei za Masoko',
-                  onTap: () => _push(const MarketPricesScreen()),
-                ),
-                _QuickService(
-                  icon: Icons.wb_cloudy_outlined,
-                  label: 'Hali ya Hewa',
-                  onTap: () => _push(const WeatherScreen()),
-                ),
-              ],
-            ),
-
-            if (_prices.isNotEmpty) ...[
-              const SizedBox(height: 20),
-              MkSectionHeader(
-                title: 'Bei za leo (TSh)',
-                actionLabel: 'Zote',
-                onAction: () => _push(const MarketPricesScreen()),
-              ),
+              )
+            else
               _PriceTable(prices: _prices),
-            ],
 
             const SizedBox(height: 20),
             MkSectionHeader(
@@ -244,7 +210,7 @@ class _HomeTabState extends State<HomeTab> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Text(
-                  'Bado hakuna mijadala. Uliza swali la kwanza kwenye Jukwaa.',
+                  'Bado hakuna mijadala. Kusoma kumewashwa; kuandika bado hakijawashwa.',
                   style: MkText.bodyMuted,
                 ),
               )
@@ -260,10 +226,68 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                   ),
                 ),
+
+            const SizedBox(height: 20),
+            const Text('Bado hazijawashwa', style: MkText.section),
+            const SizedBox(height: 8),
+            const Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _SoonChip('Soko na malipo'),
+                _SoonChip('Utambuzi wa magonjwa'),
+                _SoonChip('SMS na USSD'),
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+}
+
+class _LeadCard extends StatelessWidget {
+  final String title;
+  final String body;
+  final String action;
+  final VoidCallback onTap;
+
+  const _LeadCard({
+    required this.title,
+    required this.body,
+    required this.action,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(MkTokens.space4),
+      decoration: BoxDecoration(
+        border: Border.all(color: MkColors.border),
+        borderRadius: BorderRadius.circular(MkRadii.card),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: MkText.title),
+          const SizedBox(height: 4),
+          Text(body, style: MkText.bodyMuted),
+          const SizedBox(height: 8),
+          TextButton(onPressed: onTap, child: Text(action)),
+        ],
+      ),
+    );
+  }
+}
+
+class _SoonChip extends StatelessWidget {
+  final String label;
+  const _SoonChip(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return MkBadge('Inakuja hivi karibuni · $label');
   }
 }
 
@@ -307,67 +331,6 @@ class _SearchField extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// The scanner, as a white card with one green action.
-class _ScannerCard extends StatelessWidget {
-  final VoidCallback onScan;
-
-  const _ScannerCard({required this.onScan});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: MkColors.border),
-        borderRadius: BorderRadius.circular(MkRadii.card),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: MkColors.leafPale,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  Icons.center_focus_strong,
-                  size: 28,
-                  color: MkColors.primary,
-                ),
-              ),
-              const SizedBox(width: 14),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Mmea wako unaumwa?', style: MkText.title),
-                    SizedBox(height: 4),
-                    Text(
-                      MkStrings.scannerHeroSubtitle,
-                      style: MkText.bodyMuted,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          FilledButton.icon(
-            onPressed: onScan,
-            icon: const Icon(Icons.photo_camera_outlined),
-            label: const Text(MkStrings.scannerCta),
-          ),
-        ],
       ),
     );
   }

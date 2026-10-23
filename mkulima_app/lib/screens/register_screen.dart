@@ -107,8 +107,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      'Fungua akaunti kwa barua pepe. Ni rahisi, salama na haraka.',
-                      style: TextStyle(color: MkColors.muted, height: 1.4),
+                      'Fungua akaunti kwa barua pepe. SMS bado haijawashwa.',
+                      style: TextStyle(color: MkColors.muted, height: 1.4, fontSize: 16),
                     ),
                     const SizedBox(height: 26),
                     TextFormField(

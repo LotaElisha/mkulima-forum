@@ -8,8 +8,8 @@ import 'home_tab.dart';
 import 'marketplace_screen.dart';
 import 'forum_screen.dart';
 import 'profile_screen.dart';
-import 'scanner_screen.dart';
-import 'cart_screen.dart';
+import 'market_prices_screen.dart';
+import 'weather_screen.dart';
 import 'notifications_screen.dart';
 import 'login_modal.dart';
 
@@ -29,28 +29,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  /// Index into [_screens]: 0 Home, 1 Soko, 2 Jukwaa, 3 Wasifu. Kept stable
-  /// because [HomeTab.onSwitchTab] callers pass these numbers.
+  /// 0 Nyumbani, 1 Soko (bado si kichupo kikuu), 2 Jukwaa, 3 Wasifu.
+  /// Bei na hali ya hewa zinafunguliwa juu ya ukurasa, si kama kichupo.
   int _currentIndex = 0;
 
-  /// Bar slot 2 is the scanner, which opens a page instead of a tab.
-  static const _scannerSlot = 2;
-
-  int get _selectedSlot =>
-      _currentIndex >= _scannerSlot ? _currentIndex + 1 : _currentIndex;
-
-  void _openScanner() {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const ScannerPage()));
-  }
+  int get _selectedSlot => switch (_currentIndex) {
+    2 => 3,
+    3 => 4,
+    _ => 0,
+  };
 
   void _onSlotSelected(int slot) {
-    if (slot == _scannerSlot) {
-      _openScanner();
+    if (slot == 1) {
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const MarketPricesScreen()));
       return;
     }
-    setState(() => _currentIndex = slot > _scannerSlot ? slot - 1 : slot);
+    if (slot == 2) {
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const WeatherScreen()));
+      return;
+    }
+    setState(() => _currentIndex = switch (slot) { 3 => 2, 4 => 3, _ => 0 });
   }
 
   void _openNotifications(AuthProvider auth) {
@@ -116,14 +118,12 @@ class _HomeScreenState extends State<HomeScreen> {
               label: MkStrings.navHome,
             ),
             NavigationDestination(
-              icon: Icon(Icons.storefront_outlined),
-              selectedIcon: Icon(Icons.storefront),
-              label: MkStrings.navMarket,
+              icon: Icon(Icons.show_chart),
+              label: 'Bei',
             ),
             NavigationDestination(
-              icon: _ScanIcon(),
-              label: MkStrings.navScanner,
-              tooltip: MkStrings.scannerTooltip,
+              icon: Icon(Icons.wb_sunny_outlined),
+              label: 'Hewa',
             ),
             NavigationDestination(
               icon: Icon(Icons.forum_outlined),
@@ -137,29 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// The scanner slot's icon: the only filled green control in the bar, so the
-/// flagship action stands out without a floating button.
-class _ScanIcon extends StatelessWidget {
-  const _ScanIcon();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 34,
-      decoration: BoxDecoration(
-        color: MkColors.primary,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Icon(
-        Icons.photo_camera_outlined,
-        color: Colors.white,
-        size: 22,
       ),
     );
   }

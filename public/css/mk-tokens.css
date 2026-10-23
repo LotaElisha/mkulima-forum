@@ -1,0 +1,101 @@
+/* Generated from design/tokens.json. Do not edit by hand. */
+:root {
+  --mk-font: Roboto, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --mk-color-primary: #166534;
+  --mk-color-on-primary: #FFFFFF;
+  --mk-color-primary-dark: #14532D;
+  --mk-color-leaf: #166534;
+  --mk-color-leaf-pale: #E8F5EC;
+  --mk-color-ink: #102117;
+  --mk-color-ink-body: #24312A;
+  --mk-color-muted: #3E4C44;
+  --mk-color-surface: #FFFFFF;
+  --mk-color-surface-muted: #F3F6F4;
+  --mk-color-border: #D5DED8;
+  --mk-color-border-strong: #B7C4BB;
+  --mk-color-danger: #9F1239;
+  --mk-color-danger-soft: #FDE8EE;
+  --mk-color-warning: #7A4E00;
+  --mk-color-warning-soft: #FBF3D5;
+  --mk-color-info: #1D4E89;
+  --mk-color-info-soft: #E7F0FA;
+  --mk-color-earth: #8A5A2B;
+
+  --mk-text-caption: 13px;
+  --mk-text-body: 16px;
+  --mk-text-title: 20px;
+  --mk-text-page: 28px;
+  --mk-text-display: 34px;
+
+  --mk-space-1: 4px;
+  --mk-space-2: 8px;
+  --mk-space-3: 12px;
+  --mk-space-4: 16px;
+  --mk-space-5: 20px;
+  --mk-space-6: 24px;
+  --mk-space-8: 32px;
+  --mk-space-12: 48px;
+
+  --mk-radius-sm: 10px;
+  --mk-radius-md: 14px;
+  --mk-radius-lg: 16px;
+  --mk-radius-xl: 24px;
+  --mk-radius-full: 999px;
+
+  --mk-shadow-1: 0 1px 2px rgba(16,33,23,.06);
+  --mk-shadow-2: 0 8px 24px rgba(16,33,23,.08);
+  --mk-motion-fast: 120ms;
+  --mk-motion: 180ms;
+  --mk-tap: 44px;
+  --mk-button: 48px;
+  --mk-nav: 64px;
+
+  /* Names the existing Blade pages already use. */
+  --forest-dark: var(--mk-color-primary-dark);
+  --forest-mid: var(--mk-color-primary);
+  --forest-light: var(--mk-color-primary);
+  --leaf-green: var(--mk-color-leaf);
+  --leaf-bright: var(--mk-color-leaf);
+  --leaf-pale: var(--mk-color-leaf-pale);
+  --sun-gold: var(--mk-color-warning);
+  --sun-amber: var(--mk-color-earth);
+  --accent-soft: var(--mk-color-warning-soft);
+  --cream-bg: var(--mk-color-surface);
+  --cream-card: var(--mk-color-surface);
+  --surface: var(--mk-color-surface);
+  --surface-card: var(--mk-color-surface);
+  --surface-soft: var(--mk-color-surface-muted);
+  --surface-sunken: var(--mk-color-surface-muted);
+  --ink-dark: var(--mk-color-ink);
+  --ink-body: var(--mk-color-ink-body);
+  --ink-muted: var(--mk-color-muted);
+  --ink-faint: var(--mk-color-muted);
+  --border-light: var(--mk-color-border);
+  --border-mid: var(--mk-color-border-strong);
+  --line: var(--mk-color-border);
+  --radius-2xl: var(--mk-radius-xl);
+  --radius-xl: var(--mk-radius-lg);
+  --radius-lg: var(--mk-radius-md);
+  --radius-md: var(--mk-radius-sm);
+  --shadow-xs: var(--mk-shadow-1);
+  --shadow-sm: var(--mk-shadow-1);
+  --shadow-md: var(--mk-shadow-2);
+  --shadow-lg: var(--mk-shadow-2);
+  --nav-h: var(--mk-nav);
+
+  --green-700: var(--mk-color-primary-dark);
+  --green-600: var(--mk-color-primary);
+  --green-500: var(--mk-color-primary);
+  --green-50: var(--mk-color-leaf-pale);
+  --green-100: var(--mk-color-leaf-pale);
+  --ink: var(--mk-color-ink);
+  --line-strong: var(--mk-color-border-strong);
+  --warn: var(--mk-color-warning);
+  --danger: var(--mk-color-danger);
+  --danger-bg: var(--mk-color-danger-soft);
+  --ok: var(--mk-color-primary-dark);
+  --ok-bg: var(--mk-color-leaf-pale);
+  --r-sm: var(--mk-radius-sm);
+  --r-md: var(--mk-radius-md);
+  --r-lg: var(--mk-radius-lg);
+}

@@ -1,236 +1,71 @@
 @extends('layouts.public')
 
-@section('title', 'MkulimaForum | Jukwaa la Kidigitali la Wakulima wa Tanzania')
-@section('meta_description', 'MkulimaForum inaunganisha wakulima wa Tanzania na maarifa, masoko, huduma na Mkulima AI.')
-
-@section('head_extra')
-<style>
-  /* Tokens, buttons, header and footer come from layouts/public.blade.php.
-     This block only lays out the home page's own sections. */
-  .ico { width:1.15em; height:1.15em; vertical-align:-.2em; flex:none; stroke-width:2; }
-
-  /* Hero: copy on white, photograph to the right (below the copy on phones). */
-  .editorial-hero { min-height:620px; position:relative; overflow:hidden; border-bottom:1px solid var(--border-light); }
-  .hero-art { position:absolute; inset:0; background:url('/images/home/hero-composite.webp') right center/auto 92% no-repeat; }
-  .hero-art::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,#fff 0%,#fff 36%,rgba(255,255,255,.6) 48%,transparent 64%); }
-  .editorial-hero .wrap { min-height:620px; display:flex; align-items:center; position:relative; z-index:2; }
-  .hero-copy { width:min(48%,540px); padding:48px 0; }
-  .hero-kicker { display:inline-flex; align-items:center; min-height:32px; padding:0 14px; border-radius:999px; background:var(--leaf-pale); color:var(--forest-dark); font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:20px; }
-  .editorial-title { color:var(--ink-dark); font-size:clamp(34px,4.8vw,56px); font-weight:800; letter-spacing:-.03em; line-height:1.06; max-width:640px; margin-bottom:20px; }
-  .hero-summary { font-size:17px; max-width:34rem; line-height:1.65; margin-bottom:22px; color:var(--ink-body); }
-  .benefit-list { display:grid; gap:10px; list-style:none; margin:0 0 28px; }
-  .benefit-list li { display:flex; align-items:center; gap:10px; font-size:15px; color:var(--ink-body); }
-  .benefit-list .ico { color:var(--forest-mid); width:20px; height:20px; }
-  .hero-actions { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
-  .availability { display:flex; gap:8px; margin-top:24px; align-items:center; flex-wrap:wrap; }
-  .availability small { width:100%; font-size:13px; color:var(--ink-muted); margin-bottom:2px; }
-  .store-pill { display:inline-flex; align-items:center; min-height:32px; border:1px solid var(--border-light); padding:0 12px; border-radius:999px; background:#fff; font-size:13px; color:var(--ink-body); }
-
-  /* Testimonial */
-  .story-band { border-bottom:1px solid var(--border-light); background:#fff; padding:40px 0; }
-  .story-grid { max-width:980px; margin:auto; display:grid; grid-template-columns:380px 1fr; align-items:center; gap:48px; padding:0 24px; }
-  .story-image { position:relative; }
-  .story-image img { width:100%; height:180px; object-fit:cover; border-radius:16px; }
-  blockquote { font-size:clamp(20px,2.2vw,26px); font-weight:600; line-height:1.4; color:var(--ink-dark); letter-spacing:-.01em; }
-  .quote-by { margin-top:14px; font-size:15px; color:var(--ink-muted); }
-
-  /* Three steps */
-  .journey { padding:80px 0; background:#fff; }
-  .journey-head { max-width:1100px; margin:0 auto 40px; }
-  .journey-title { font-size:clamp(26px,3.2vw,36px); font-weight:700; color:var(--ink-dark); margin-bottom:8px; letter-spacing:-.02em; }
-  .journey-head p { color:var(--ink-muted); font-size:17px; }
-  .journey-steps { max-width:1100px; margin:auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-  .journey-step { border:1px solid var(--border-light); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; }
-  .step-number { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; background:var(--leaf-pale); color:var(--forest-dark); font-weight:800; font-size:16px; margin-bottom:16px; }
-  .journey-step h3 { font-size:19px; font-weight:700; margin-bottom:8px; }
-  .journey-step p { font-size:15px; line-height:1.6; color:var(--ink-muted); flex:1; }
-  .journey-step img { width:100%; height:170px; object-fit:cover; border-radius:12px; margin-top:18px; }
-  .journey-step:nth-child(3) img { object-position:center 40%; }
-  .journey-close { text-align:center; font-size:17px; font-weight:600; color:var(--ink-dark); margin-top:36px; }
-  .journey-close span { display:block; color:var(--forest-mid); font-size:15px; font-weight:600; margin-top:4px; }
-
-  /* Capabilities */
-  .light-capabilities { background:var(--surface-soft); border-top:1px solid var(--border-light); border-bottom:1px solid var(--border-light); padding:72px 0; }
-  .cap-head { display:flex; justify-content:space-between; gap:30px; align-items:end; margin-bottom:28px; }
-  .cap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
-  .cap-item { padding:24px; background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-xl); }
-  .cap-item .ico { color:var(--forest-mid); width:24px; height:24px; margin-bottom:14px; display:block; }
-  .cap-item h3 { font-size:17px; margin-bottom:6px; }
-  .cap-item p { font-size:15px; line-height:1.55; color:var(--ink-muted); }
-
-  .final-cta { padding:80px 0; text-align:center; background:#fff; }
-  .final-cta h2 { font-size:clamp(26px,3.6vw,38px); font-weight:800; margin-bottom:12px; letter-spacing:-.02em; }
-  .final-cta p { max-width:540px; margin:0 auto 24px; color:var(--ink-muted); font-size:17px; }
-  .final-cta .btn { width:auto; }
-
-  @media(max-width:900px) {
-    .story-grid { grid-template-columns:1fr; gap:28px; }
-    .journey-steps { grid-template-columns:1fr; gap:12px; }
-    .cap-grid { grid-template-columns:1fr 1fr; }
-  }
-
-  /* Phones: photograph sits in its own band below the copy, never under text. */
-  .quick-access { display:none; }
-  @media (max-width:700px) {
-    .editorial-hero { display:flex; flex-direction:column; overflow:visible; min-height:0; }
-    .editorial-hero .wrap { order:1; min-height:0; }
-    .hero-art { position:relative; order:2; inset:auto; height:190px; margin:0 16px 20px; border-radius:16px; background-size:cover; background-position:center 62%; }
-    .hero-art::before { display:none; }
-    .hero-copy { width:100%; padding:24px 0 20px; }
-    .editorial-title { font-size:30px; line-height:1.14; }
-    .hero-summary { font-size:16px; margin-bottom:16px; }
-    .benefit-list { gap:8px; margin-bottom:20px; }
-    .hero-actions { gap:4px; }
-    .availability { margin-top:16px; }
-
-    /* The main services within one tap of landing. */
-    .quick-access { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:20px 16px 4px; }
-    .qa-tile {
-      display:flex; flex-direction:column; align-items:center; gap:6px;
-      padding:14px 4px 12px; min-height:104px;
-      background:#fff; border:1px solid var(--border-light); border-radius:14px; text-align:center;
-    }
-    .qa-tile:active { background:var(--leaf-pale); border-color:var(--forest-mid); }
-    .qa-ico { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:var(--leaf-pale); color:var(--forest-mid); }
-    .qa-label { font-size:13px; font-weight:700; color:var(--ink-dark); line-height:1.2; }
-    .qa-sub   { font-size:13px; color:var(--ink-muted); line-height:1.2; }
-
-    .story-band { padding:28px 0; }
-    .story-grid { padding:0 16px; }
-    .story-image img { height:160px; }
-    .journey { padding:44px 0; }
-    .journey-step { padding:18px; }
-    .journey-step img { height:150px; }
-    .journey-close { margin-top:20px; font-size:16px; }
-    .light-capabilities { padding:44px 0; }
-    .cap-head { align-items:start; flex-direction:column; gap:4px; }
-    .cap-grid { grid-template-columns:1fr; gap:10px; }
-    .cap-item { padding:18px; }
-    .final-cta { padding:48px 0; }
-    .final-cta .btn { width:100%; }
-  }
-</style>
-@endsection
+@section('title', 'MkulimaForum | Bei, hali ya hewa, na jamii')
+@section('meta_description', 'Bei za masoko zilizoandikwa, hali ya hewa, na mijadala ya wakulima kwa Kiswahili. Soko, malipo, na utambuzi wa magonjwa bado havijawashwa.')
 
 @section('content')
-<div>
-  <section class="editorial-hero hero-section" aria-labelledby="home-title">
-    <div class="hero-art" aria-hidden="true"></div>
-    <div class="wrap">
-      <div class="hero-copy">
-        <p class="hero-kicker" data-i18n="home_kicker">SHIRIKISHO · ELIMU · BIASHARA</p>
-        <h1 class="editorial-title" id="home-title" data-i18n="home_title">Jukwaa la Kidigitali la Wakulima wa Tanzania.</h1>
-        <p class="hero-summary" data-i18n="home_summary">Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.</p>
-        <ul class="benefit-list">
-          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_1">Maarifa sahihi na kwa wakati</span></li>
-          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_2">Ufikiaji wa masoko na wanunuzi</span></li>
-          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_3">Zana za kisasa za kilimo</span></li>
-          <li><x-icon name="check-circle" class="ico" /><span data-i18n="benefit_4">Jumuiya ya wakulima na ushauri</span></li>
-        </ul>
-        <div class="hero-actions">
-          <a href="/download" class="btn btn-primary"><x-icon name="download" class="ico" /><span data-i18n="download_app">Pakua App ya Mkulima</span></a>
-          <a href="/pitch-deck" class="text-link" data-i18n="view_pitch">Tazama Pitch Deck →</a>
+<div class="wrap mk-home">
+  <section class="mk-hero" aria-labelledby="home-title">
+    <x-mk.badge live>Kinachofanya kazi sasa</x-mk.badge>
+    <h1 id="home-title">{{ $settings['hero_title'] ?? 'Bei, hali ya hewa, na jamii.' }}</h1>
+    <p class="lead">{{ $settings['hero_lead'] ?? 'Anza na taarifa unazoweza kutumia leo.' }}</p>
+    <div class="mk-actions">
+      <a class="mk-btn" href="{{ route('register') }}">Jisajili</a>
+      <a class="mk-btn mk-btn-quiet" href="{{ route('login') }}">Ingia</a>
+    </div>
+  </section>
+
+  <div class="mk-grid mk-grid-3">
+    <section class="mk-card" id="hewa" aria-labelledby="hewa-title">
+      <x-mk.badge live>Hali ya hewa</x-mk.badge>
+      <h2 id="hewa-title">{{ $brief['weather']['location'] }}</h2>
+      @if ($brief['weather']['available'])
+        <p>{{ $brief['weather']['summary'] }}</p>
+      @else
+        <x-mk.empty title="Hakuna taarifa sasa">Hali ya hewa itaonekana hapa ikiwa seva ina kumbukumbu. Hatutungi namba.</x-mk.empty>
+      @endif
+    </section>
+
+    <section class="mk-card" id="bei" aria-labelledby="bei-title">
+      <x-mk.badge live>Bei zilizoandikwa</x-mk.badge>
+      <h2 id="bei-title">Bei za soko</h2>
+      @forelse ($brief['prices'] as $price)
+        <div class="mk-row">
+          <div>
+            <strong>{{ $price['commodity'] }}</strong>
+            <span>{{ $price['market'] }} · {{ $price['date'] }} · {{ $price['price'] }}</span>
+          </div>
         </div>
-        <div class="availability" aria-label="App availability">
-          <small data-i18n="available_on">Inapatikana kwenye</small>
-          <span class="store-pill">Google Play</span><span class="store-pill">Android APK</span><span class="store-pill">Web App</span>
-        </div>
-      </div>
+      @empty
+        <x-mk.empty title="Bado hakuna bei">Bei zinaonekana baada ya kuandikwa, pamoja na tarehe.</x-mk.empty>
+      @endforelse
+    </section>
+
+    <section class="mk-card" id="jukwaa" aria-labelledby="jukwaa-title">
+      <x-mk.badge live>Jukwaa</x-mk.badge>
+      <h2 id="jukwaa-title">Mijadala</h2>
+      @forelse ($brief['threads'] as $thread)
+        <a class="mk-row" href="{{ route('forum.show', $thread['uuid']) }}">
+          <div>
+            <strong>{{ $thread['title'] }}</strong>
+            <span>{{ $thread['replies'] }} majibu</span>
+          </div>
+        </a>
+      @empty
+        <x-mk.empty title="Bado hakuna mijadala">Kusoma mijadala kumewashwa. Kuandika swali bado hakijawashwa kwenye toleo hili.</x-mk.empty>
+      @endforelse
+      <p style="margin-top:12px"><a href="{{ route('forum.index') }}">Fungua jukwaa</a></p>
+    </section>
+  </div>
+
+  <section aria-labelledby="soon-title" style="margin-top:28px">
+    <h2 id="soon-title" style="font-size:20px;margin-bottom:8px">Bado hazijawashwa</h2>
+    <div class="mk-soon">
+      <article class="mk-card"><x-mk.badge>Inakuja hivi karibuni</x-mk.badge><h3>Soko na malipo</h3><p>Kununua, kuuza, na kulipa bado hakufanyi kazi.</p></article>
+      <article class="mk-card"><x-mk.badge>Inakuja hivi karibuni</x-mk.badge><h3>Utambuzi wa magonjwa</h3><p>Kupiga picha ya jani na kupata utambuzi bado hakufanyi kazi.</p></article>
+      <article class="mk-card"><x-mk.badge>Inakuja hivi karibuni</x-mk.badge><h3>SMS na USSD</h3><p>Huduma hizi hazitumwi. Unahitaji intaneti.</p></article>
+      <article class="mk-card"><x-mk.badge>Inakuja hivi karibuni</x-mk.badge><h3>Kagua pembejeo</h3><p>Ukaguzi wa mbegu na dawa bado haujawashwa.</p></article>
     </div>
   </section>
-
-  {{-- Mobile quick access.
-
-       The brief asks that the home page say what MkulimaForum does and put the
-       main services within one to three taps. Before this, the capabilities
-       grid was the fourth section down — roughly 3,500px on a 390px screen —
-       so a farmer arriving on a phone saw a hero, a testimonial and a
-       three-step explainer before anything they could actually use.
-
-       Hidden above 700px, where the editorial layout and the header nav
-       already do this job. --}}
-  <nav class="quick-access" aria-label="Huduma kuu">
-    <a href="/solutions#mkulima-ai" class="qa-tile">
-      <span class="qa-ico"><x-icon name="scan" :size="22" /></span>
-      <span class="qa-label" data-i18n="qa_ai">Mkulima AI</span>
-      <span class="qa-sub" data-i18n="qa_ai_sub">Tambua ugonjwa</span>
-    </a>
-    <a href="/verify" class="qa-tile">
-      <span class="qa-ico"><x-icon name="verified" :size="22" /></span>
-      <span class="qa-label" data-i18n="qa_verify">Kagua Pembejeo</span>
-      <span class="qa-sub" data-i18n="qa_verify_sub">Epuka bandia</span>
-    </a>
-    <a href="/solutions#soko" class="qa-tile">
-      <span class="qa-ico"><x-icon name="storefront" :size="22" /></span>
-      <span class="qa-label" data-i18n="qa_market">Soko la Mazao</span>
-      <span class="qa-sub" data-i18n="qa_market_sub">Nunua na uuze</span>
-    </a>
-    <a href="/solutions#bei" class="qa-tile">
-      <span class="qa-ico"><x-icon name="chart" :size="22" /></span>
-      <span class="qa-label" data-i18n="qa_prices">Bei za Soko</span>
-      <span class="qa-sub" data-i18n="qa_prices_sub">Bei za leo</span>
-    </a>
-    <a href="/solutions#hali-ya-hewa" class="qa-tile">
-      <span class="qa-ico"><x-icon name="sun" :size="22" /></span>
-      <span class="qa-label" data-i18n="qa_weather">Hali ya Hewa</span>
-      <span class="qa-sub" data-i18n="qa_weather_sub">Utabiri wa mvua</span>
-    </a>
-    <a href="/community" class="qa-tile">
-      <span class="qa-ico"><x-icon name="groups" :size="22" /></span>
-      <span class="qa-label" data-i18n="qa_community">Jamii</span>
-      <span class="qa-sub" data-i18n="qa_community_sub">Uliza wakulima</span>
-    </a>
-  </nav>
-
-  <section class="story-band" aria-labelledby="farmer-story">
-    <div class="story-grid">
-      <div class="story-image">
-        <img src="/images/home/farmer-community.webp" alt="Wakulima wakitumia MkulimaForum pamoja" width="1200" height="700" loading="lazy">
-      </div>
-      <div>
-        <blockquote id="farmer-story">“Kupitia MkulimaForum, nimejifunza mengi, na sasa naongeza uzalishaji na kipato.”</blockquote>
-        <p class="quote-by">— Asha, Mkulima wa Mahindi, Morogoro</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="journey" id="jinsi" aria-labelledby="journey-title">
-    <div class="wrap">
-      <div class="journey-head">
-        <span class="eyebrow" data-i18n="journey_kicker">ANZIA HAPA</span>
-        <h2 class="journey-title" id="journey-title" data-i18n="journey_title">Hatua 3 tu – wezesha kilimo chako</h2>
-        <p data-i18n="journey_sub">Rahisi, haraka na yenye matokeo halisi.</p>
-      </div>
-      <div class="journey-steps">
-        <article class="journey-step"><span class="step-number">01</span><h3 data-i18n="step1_title">Soma</h3><p data-i18n="step1_desc">Soma mijadala ya wakulima na bei za masoko zilizoandikwa, pamoja na tarehe.</p><img src="/images/home/plant-scan.webp" alt="Mkulima akipiga picha ya jani lililoathirika" width="900" height="600" loading="lazy"></article>
-        <article class="journey-step"><span class="step-number">02</span><h3 data-i18n="step2_title">Angalia hali ya hewa</h3><p data-i18n="step2_desc">Hali ya hewa inapatikana mtandaoni. Utambuzi wa magonjwa kwa AI bado haujawashwa.</p><img src="/images/home/hero-composite.webp" alt="Mkulima akisoma taarifa kwenye simu" width="1400" height="1050" loading="lazy"></article>
-        <article class="journey-step"><span class="step-number">03</span><h3 data-i18n="step3_title">Wasiliana</h3><p data-i18n="step3_desc">Jisajili kwa barua pepe na tutumie ujumbe. Masoko na malipo bado havijawashwa.</p><img src="/images/home/market-handshake.webp" alt="Mkulima na mnunuzi wakikamilisha biashara ya mazao" width="900" height="600" loading="lazy"></article>
-      </div>
-      <p class="journey-close">Kilimo chako. Maarifa bora. Masoko bora. Maisha bora.<span>Pamoja, tunajenga kilimo chenye tija kwa Tanzania.</span></p>
-    </div>
-  </section>
-
-  <section class="light-capabilities" id="vipengele" aria-labelledby="cap-title">
-    <div class="wrap">
-      <div class="cap-head"><div><span class="eyebrow" data-i18n="cap_kicker">KILA KITU MAHALI PAMOJA</span><h2 class="journey-title" id="cap-title" data-i18n="cap_title">Zana za kukusaidia kutoka shambani hadi sokoni</h2></div><a href="/solutions" class="text-link" data-i18n="all_solutions">Angalia suluhisho zote →</a></div>
-      <div class="cap-grid">
-        <article class="cap-item"><x-icon name="scan" class="ico" /><h3>Mkulima AI</h3><p>Utambuzi wa magonjwa bado haujawashwa.</p></article>
-        <article class="cap-item"><x-icon name="verified" class="ico" /><h3>Kagua Pembejeo</h3><p>Ukaguzi wa mbegu na dawa bado haujawashwa.</p></article>
-        <article class="cap-item"><x-icon name="storefront" class="ico" /><h3>Soko la Kilimo</h3><p>Kununua na kuuza bado hakijawashwa. Bei zilizoandikwa zinapatikana.</p></article>
-        <article class="cap-item"><x-icon name="groups" class="ico" /><h3>Jamii ya Wakulima</h3><p>Jifunze, uliza maswali na shiriki uzoefu na wengine.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="final-cta" aria-labelledby="cta-title"><div class="wrap"><span class="eyebrow">ANZA LEO</span><h2 id="cta-title">Kilimo bora kiko mikononi mwako.</h2><p>Pakua MkulimaForum na upate maarifa, masoko na msaada unaohitaji kila siku.</p><a href="/download" class="btn btn-primary btn-lg"><x-icon name="download" class="ico" /> Pakua App ya Mkulima</a></div></section>
 </div>
-@endsection
-
-@section('page_scripts')
-<script nonce="{{ $cspNonce ?? '' }}">
-mkPageTranslations = {
-  sw:{home_kicker:'SHIRIKISHO · ELIMU · BIASHARA',home_title:'Jukwaa la Kidigitali la Wakulima wa Tanzania.',home_summary:'Tunaunganisha maarifa, masoko na huduma muhimu kwenye jukwaa moja. Kutoka shambani hadi sokoni, kila hatua inawezekana na MkulimaForum.',benefit_1:'Maarifa sahihi na kwa wakati',benefit_2:'Ufikiaji wa masoko na wanunuzi',benefit_3:'Zana za kisasa za kilimo',benefit_4:'Jumuiya ya wakulima na ushauri',download_app:'Pakua App ya Mkulima',view_pitch:'Tazama Pitch Deck →',available_on:'Inapatikana kwenye',journey_kicker:'ANZIA HAPA',journey_title:'Hatua 3 tu – wezesha kilimo chako',journey_sub:'Rahisi, haraka na yenye matokeo halisi.',step1_title:'Soma',step1_desc:'Soma mijadala ya wakulima na bei za masoko zilizoandikwa, pamoja na tarehe.',step2_title:'Angalia hali ya hewa',step2_desc:'Hali ya hewa inapatikana mtandaoni. Utambuzi wa magonjwa kwa AI bado haujawashwa.',step3_title:'Wasiliana',step3_desc:'Jisajili kwa barua pepe na tutumie ujumbe. Masoko na malipo bado havijawashwa.',cap_kicker:'KILA KITU MAHALI PAMOJA',cap_title:'Zana za kukusaidia kutoka shambani hadi sokoni',all_solutions:'Angalia suluhisho zote →',qa_ai:'Mkulima AI',qa_ai_sub:'Haijawashwa',qa_verify:'Kagua Pembejeo',qa_verify_sub:'Haijawashwa',qa_market:'Soko la Mazao',qa_market_sub:'Haijawashwa',qa_prices:'Bei za Soko',qa_prices_sub:'Zilizoandikwa',qa_weather:'Hali ya Hewa',qa_weather_sub:'Utabiri wa mvua',qa_community:'Jamii',qa_community_sub:'Uliza wakulima'},
-  en:{home_kicker:'COMMUNITY · KNOWLEDGE · TRADE',home_title:'The Digital Platform for Tanzanian Farmers.',home_summary:'Knowledge, markets and essential services in one place. From field to market, every step is easier with MkulimaForum.',benefit_1:'Reliable, timely farming knowledge',benefit_2:'Access to markets and buyers',benefit_3:'Modern tools for better farming',benefit_4:'A farmer community and expert advice',download_app:'Download the Farmer App',view_pitch:'View Pitch Deck →',available_on:'Available on',journey_kicker:'START HERE',journey_title:'Three steps to strengthen your farm',journey_sub:'Simple, fast and built for real results.',step1_title:'Read',step1_desc:'Read farmer discussions and recorded market prices, with the date they were taken.',step2_title:'Check the weather',step2_desc:'Weather is available online. AI disease diagnosis is not switched on yet.',step3_title:'Get in touch',step3_desc:'Register with email and send us a message. The marketplace and payments are not switched on yet.',cap_kicker:'EVERYTHING IN ONE PLACE',cap_title:'Tools that support you from field to market',all_solutions:'View all solutions →',qa_ai:'Mkulima AI',qa_ai_sub:'Not switched on',qa_verify:'Verify Inputs',qa_verify_sub:'Not switched on',qa_market:'Produce Market',qa_market_sub:'Not switched on',qa_prices:'Market Prices',qa_prices_sub:'Recorded prices',qa_weather:'Weather',qa_weather_sub:'Rain forecast',qa_community:'Community',qa_community_sub:'Ask farmers'}
-};
-</script>
 @endsection

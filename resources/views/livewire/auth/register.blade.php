@@ -8,7 +8,7 @@
       <div class="control">
         <input id="name" type="text" wire:model="name" autocomplete="name" required>
       </div>
-      @error('name') <p class="field-error show">{{ $message }}</p> @enderror
+      @error('name') <p class="mk-error">{{ $message }}</p> @enderror
     </div>
 
     <div class="field">
@@ -16,7 +16,7 @@
       <div class="control">
         <input id="email" type="email" wire:model="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required>
       </div>
-      @error('email') <p class="field-error show">{{ $message }}</p> @enderror
+      @error('email') <p class="mk-error">{{ $message }}</p> @enderror
     </div>
 
     <div class="field">
@@ -24,7 +24,7 @@
       <div class="control">
         <input id="password" type="password" wire:model="password" autocomplete="new-password" required>
       </div>
-      @error('password') <p class="field-error show">{{ $message }}</p> @enderror
+      @error('password') <p class="mk-error">{{ $message }}</p> @enderror
     </div>
 
     <div class="field">
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <button class="btn btn-primary" type="submit" wire:loading.attr="disabled">
+    <button class="mk-btn mk-btn-block" type="submit" wire:loading.attr="disabled">
       <span class="label">Jisajili</span>
     </button>
   </form>
