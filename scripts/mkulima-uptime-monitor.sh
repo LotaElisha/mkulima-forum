@@ -1,13 +1,51 @@
 #!/bin/bash
-# Uptime / heartbeat monitor for Mkulima Forum
+# Uptime check. The host comes from APP_URL (environment, then the app .env)
+# so staging (mkulimaforum.app) and production (mkulimaforum.com) share this
+# script. MONITOR_BASE_URL overrides APP_URL when set.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+if [ -z "${ENV_FILE:-}" ]; then
+  if [ -f /opt/data/projects/mkulima-forum/.env ]; then
+    ENV_FILE="/opt/data/projects/mkulima-forum/.env"
+  elif [ -f "${REPO_ROOT}/.env" ]; then
+    ENV_FILE="${REPO_ROOT}/.env"
+  fi
+fi
+
+read_env() {
+  local key="$1"
+  local line
+  line="$(grep -E "^${key}=" "${ENV_FILE}" | tail -n 1 || true)"
+  local val="${line#*=}"
+  val="${val%\"}"
+  val="${val#\"}"
+  val="${val%\'}"
+  val="${val#\'}"
+  printf '%s' "${val}"
+}
+
+if [ -z "${APP_URL:-}" ] && [ -n "${ENV_FILE:-}" ] && [ -f "${ENV_FILE}" ]; then
+  APP_URL="$(read_env APP_URL)"
+fi
+
+BASE="${MONITOR_BASE_URL:-${APP_URL:-https://mkulimaforum.com}}"
+BASE="${BASE%/}"
 
 URLS=(
-    "https://mkulimaforum.com/api/health"
-    "https://mkulimaforum.com/"
-    "https://mkulimaforum.com/admin/"
-    "https://mkulimaforum.com/api/market-prices"
-    "https://mkulimaforum.com/api/weather/report?location=Dodoma"
+    "${BASE}/api/health"
+    "${BASE}/"
+    "${BASE}/admin/"
+    "${BASE}/api/market-prices"
+    "${BASE}/api/weather/report?location=Dodoma"
 )
+
+if [ "${MONITOR_DRY_RUN:-}" = "1" ]; then
+  printf '%s\n' "${URLS[@]}"
+  exit 0
+fi
 
 failures=0
 for url in "${URLS[@]}"; do

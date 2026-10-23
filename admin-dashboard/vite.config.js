@@ -19,7 +19,9 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: '../public/admin',
+    // Filament serves /admin. A build must not land in public/admin or nginx
+    // will serve this bundle instead of the panel.
+    outDir: 'dist',
     emptyOutDir: true,
     assetsDir: 'assets'
   }

@@ -118,7 +118,7 @@
           Mamilioni ya wakulima wadogo wadogo nchini Tanzania na Afrika Mashariki bado hufanya maamuzi muhimu ya kilimo bila ufikio wa wataalamu wa kilimo, taarifa za masoko kwa wakati halisi, pembejeo zilizothibitishwa, na utambuzi wa magonjwa wa mazao.
         </p>
         <p data-i18n="story_p2">
-          MkulimaForum inayaleta huduma hizi zote katika mfumo mmoja wa kidigitali unaoweza kufikia — kuanzia utambuzi wa magonjwa ya mimea kwa AI, masoko ya mazao, jamii za wakulima, huduma za SMS bila intaneti, na biashara ya pembejeo zinazoaminika.
+          Leo MkulimaForum inatoa kurasa kwa Kiswahili, kujisajili kwa barua pepe, bei za masoko zilizoandikwa, hali ya hewa, na kusoma jukwaa. Utambuzi wa magonjwa kwa AI, SMS, USSD, masoko, na malipo bado havijawashwa.
         </p>
       </div>
       <div class="problem-card">
@@ -217,13 +217,13 @@
 <section class="tech-band">
   <div class="wrap">
     <span class="eyebrow" data-i18n="tech_eyebrow">MKAKATI WA TEKNOLOJIA</span>
-    <h2 class="section-title" data-i18n="tech_title">Teknolojia Inayotumika</h2>
-    <p class="section-lead" data-i18n="tech_sub">Tunatumia teknolojia bora duniani na kuzirekebisha kwa hali ya wakulima wa Tanzania.</p>
+    <h2 class="section-title" data-i18n="tech_title">Kilicho washwa, na kisicho washwa</h2>
+    <p class="section-lead" data-i18n="tech_sub">Orodha hii inasema kinachofanya kazi sasa. Vilivyobaki havijawashwa.</p>
     <div class="tech-approach-grid fade-up">
       @foreach([
-        ['globe','Gemini Cloud AI'],['phone','Gemma Edge AI'],['scan','Computer Vision'],
-        ['phone','SMS / USSD'],['sun','Weather Intelligence'],['storefront','Marketplace Infrastructure'],
-        ['shield','Mobile Money'],['chart','Agricultural Data'],
+        ['globe','AI ya magonjwa — haijawashwa'],['phone','SMS / USSD — haijawashwa'],['scan','Ukaguzi wa pembejeo — haijawashwa'],
+        ['sun','Hali ya hewa'],['groups','Jukwaa'],['storefront','Bei zilizoandikwa'],
+        ['shield','Malipo — haijawashwa'],['chart','Takwimu — bado'],
       ] as $t)
       <div class="tech-chip"><x-icon :name="$t[0]" /><span>{{ $t[1] }}</span></div>
       @endforeach
@@ -289,7 +289,7 @@ mkPageTranslations = {
     about_hero_sub:'MkulimaForum ni mfumo wa kidigitali wa kilimo unaotumia AI, uliobuniwa kuunganisha wakulima na maarifa, masoko, pembejeo zinazoaminika, utabiri wa hali ya hewa, na msaada wa kilimo.',
     story_eyebrow:'HADITHI YETU', story_title:'Kwa Nini Tulijenga MkulimaForum',
     story_p1:'Mamilioni ya wakulima wadogo wadogo nchini Tanzania na Afrika Mashariki bado hufanya maamuzi muhimu ya kilimo bila ufikio wa wataalamu wa kilimo, taarifa za masoko, pembejeo zilizothibitishwa, na utambuzi wa magonjwa wa mazao.',
-    story_p2:'MkulimaForum inayaleta huduma hizi katika mfumo mmoja wa kidigitali unaoweza kufikia — kuanzia utambuzi wa magonjwa ya mimea kwa AI, masoko ya mazao, jamii za wakulima, huduma za SMS, na biashara ya pembejeo zinazoaminika.',
+    story_p2:'Leo MkulimaForum inatoa kurasa kwa Kiswahili, kujisajili kwa barua pepe, bei za masoko zilizoandikwa, hali ya hewa, na kusoma jukwaa. Utambuzi wa magonjwa kwa AI, SMS, USSD, masoko, na malipo bado havijawashwa.',
     story_stat_title:'Tatizo Tunalosuluhisha',
     prob_0:'Upatikanaji mdogo wa wataalamu wa kilimo', prob_1:'Upotevu wa mazao kwa magonjwa yasiyotambuliwa',
     prob_2:'Pembejeo feki na zisizothibitishwa', prob_3:'Ukosefu wa taarifa za masoko kwa wakati halisi',
@@ -306,8 +306,8 @@ mkPageTranslations = {
     tz_pill_0:'🌾 Wakulima wengi wadogo wadogo', tz_pill_1:'📱 Ukuaji wa matumizi ya simu',
     tz_pill_2:'💳 Miundombinu ya pesa za simu', tz_pill_3:'🗣️ Kiswahili kama lugha ya pamoja',
     tz_pill_4:'📊 Masoko yaliyogawanyika', tz_pill_5:'🌍 Uwezekano wa kupanuka Afrika Mashariki',
-    tech_eyebrow:'MKAKATI WA TEKNOLOJIA', tech_title:'Teknolojia Inayotumika',
-    tech_sub:'Tunatumia teknolojia bora duniani na kuzirekebisha kwa hali ya wakulima wa Tanzania.',
+    tech_eyebrow:'MKAKATI WA TEKNOLOJIA', tech_title:'Kilicho washwa, na kisicho washwa',
+    tech_sub:'Orodha hii inasema kinachofanya kazi sasa. Vilivyobaki havijawashwa.',
     tech_cta:'Gundua Teknolojia Yetu →',
     team_eyebrow:'TIMU YETU', team_title:'Watu Nyuma ya MkulimaForum',
     team_note:'Wasifu wa timu utapatikana kwenye portal ya admin na utajaza hapa mara unapoongezwa.',
@@ -322,7 +322,7 @@ mkPageTranslations = {
     about_hero_sub:'MkulimaForum is an AI-powered digital agriculture ecosystem designed to connect farmers with knowledge, markets, trusted agricultural inputs, weather intelligence, and practical farming support.',
     story_eyebrow:'OUR STORY', story_title:'Why We Built MkulimaForum',
     story_p1:'Millions of smallholder farmers across Tanzania and East Africa still make critical farming decisions with limited access to agronomists, timely market information, verified agricultural inputs, and reliable crop diagnostics.',
-    story_p2:'MkulimaForum brings these services into one accessible digital ecosystem — from AI-powered plant diagnosis to market intelligence, farmer communities, offline SMS services, and trusted agricultural commerce.',
+    story_p2:'Today MkulimaForum offers Swahili pages, email registration, recorded market prices, weather, and forum reading. AI disease diagnosis, SMS, USSD, the marketplace, and payments are not switched on yet.',
     story_stat_title:'The Problem We Are Solving',
     prob_0:'Limited access to certified agronomists', prob_1:'Crop losses from undiagnosed diseases',
     prob_2:'Counterfeit and unverified agricultural inputs', prob_3:'No real-time market price information',
@@ -339,8 +339,8 @@ mkPageTranslations = {
     tz_pill_0:'🌾 Large smallholder farming population', tz_pill_1:'📱 Growing smartphone adoption',
     tz_pill_2:'💳 Strong mobile money infrastructure', tz_pill_3:'🗣️ Swahili as a shared language',
     tz_pill_4:'📊 Fragmented produce markets', tz_pill_5:'🌍 Scalable across East Africa',
-    tech_eyebrow:'TECHNOLOGY APPROACH', tech_title:'Technologies We Use',
-    tech_sub:'We apply world-class technology, adapted for the realities of Tanzanian and East African farmers.',
+    tech_eyebrow:'TECHNOLOGY APPROACH', tech_title:'What is on, and what is not',
+    tech_sub:'This list says what works today. The rest is not switched on.',
     tech_cta:'Explore Our Technology →',
     team_eyebrow:'OUR TEAM', team_title:'The People Behind MkulimaForum',
     team_note:'Team profiles are managed via Admin Dashboard and will appear here once added.',

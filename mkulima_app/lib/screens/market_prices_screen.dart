@@ -34,10 +34,11 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
   Future<void> _loadFilters() async {
     try {
       final api = context.read<ApiService>();
-      final response = await api.get('/market-prices/filters');
+      final response = await api.get('/v1/market-prices/filters');
+      final filters = ApiService.v1Data(response.data);
       setState(() {
-        _commodities = response.data['commodities'] ?? [];
-        _regions = response.data['regions'] ?? [];
+        _commodities = filters['commodities'] ?? [];
+        _regions = filters['regions'] ?? [];
       });
     } catch (_) {
       // Filters are optional; the list still works without them.
@@ -52,7 +53,7 @@ class _MarketPricesScreenState extends State<MarketPricesScreen> {
     try {
       final api = context.read<ApiService>();
       final response = await api.get(
-        '/market-prices',
+        '/v1/market-prices',
         queryParameters: {
           'latest': 1,
           if (_commodity != null) 'commodity': _commodity,

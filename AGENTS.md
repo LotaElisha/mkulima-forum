@@ -10,7 +10,7 @@ read as bugs to an agent that has not been told why they are there.
 |---|---|
 | `app/`, `routes/`, `database/` | Laravel 13 / PHP 8.4 API and web tier |
 | `mkulima_app/` | Flutter client (Android + web; there is no `ios/`) |
-| `admin-dashboard/` | React + Vite admin SPA, built into `public/admin` |
+| `admin-dashboard/` | Legacy React admin. Filament serves `/admin`. Do not build this app into `public/admin`. |
 | `resources/views/` | Blade public site |
 | `docs/` | `FLUTTER_HANDOFF.md`, `CONFIGURATION.md` |
 | `MKULIMA_FORUM_AUDIT.md` | Every finding, classified P0–P3 |
@@ -63,9 +63,11 @@ Each was a real finding. Reverting one reopens the hole it closed.
 - **Secrets are encrypted at rest and never returned to the frontend.** The
   admin configuration centre masks existing values and supports rotation
   without revealing the old one. Log `SMS webhook secret rotated`, never the
-  secret. Sensitive settings are Super Admin only — and note `User::can()` is
-  overridden to return true for admin *or* superadmin, so it cannot tell the
-  two apart. Do not use it for a secrets gate.
+  secret. Sensitive settings are Super Admin only. The old `User::can()`
+  override (it returned true for every ability when the role was admin or
+  superadmin) has been removed. The secrets page is gated by
+  `ConfigSettingPolicy`, which checks `role === 'superadmin'` directly.
+  Do not put that override back.
 
 ## Configuration
 

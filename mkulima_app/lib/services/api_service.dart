@@ -127,18 +127,19 @@ class ApiService {
 
   /// Current email verification state, for the "confirm your email" nudge.
   Future<Map<String, dynamic>> getEmailStatus() async {
-    final response = await _dio.get('/auth/email/status');
-    return Map<String, dynamic>.from(response.data as Map);
+    final response = await _dio.get('/v1/auth/email/status');
+    return v1Data(response.data);
   }
 
   /// Re-send the email verification link.
   Future<void> resendEmailVerification() async {
-    await _dio.post('/auth/email/resend');
+    await _dio.post('/v1/auth/email/resend');
   }
 
   Future<User> getMe() async {
-    final response = await _dio.get('/auth/me');
-    return User.fromJson(response.data['user']);
+    final response = await _dio.get('/v1/auth/me');
+    final payload = v1Data(response.data);
+    return User.fromJson(Map<String, dynamic>.from(payload['user'] as Map));
   }
 
   /// The account plus its selling state, from one request.
@@ -147,10 +148,11 @@ class ApiService {
   /// apart between calls, which is the class of bug that put a Seller
   /// Dashboard button in front of farmers in the first place.
   Future<({User user, SellerState seller})> getMeDetailed() async {
-    final response = await _dio.get('/auth/me');
+    final response = await _dio.get('/v1/auth/me');
+    final payload = v1Data(response.data);
     return (
-      user: User.fromJson(response.data['user']),
-      seller: SellerState.fromAnywhere(response.data),
+      user: User.fromJson(Map<String, dynamic>.from(payload['user'] as Map)),
+      seller: SellerState.fromAnywhere(payload),
     );
   }
 
@@ -262,7 +264,7 @@ class ApiService {
   // Forum APIs
   Future<List<dynamic>> getForumCategories() async {
     try {
-      final response = await _dio.get('/forum/categories');
+      final response = await _dio.get('/v1/forum/categories');
       await CacheProvider.cacheForumCategories(
         response.data['categories'] ?? response.data['data'] ?? [],
       );
@@ -276,8 +278,8 @@ class ApiService {
 
   Future<List<dynamic>> getThreads(String categoryId) async {
     final response = await _dio.get(
-      '/forum/threads',
-      queryParameters: {'category_id': categoryId},
+      '/v1/forum/threads',
+      queryParameters: {'category': categoryId},
     );
     return _asList(response.data, const ['threads']);
   }
@@ -312,7 +314,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getThread(String threadId) async {
-    final response = await _dio.get('/forum/threads/$threadId');
+    final response = await _dio.get('/v1/forum/threads/$threadId');
     return _asMap(
       response.data['thread'] ?? response.data['data'] ?? response.data,
     );
@@ -452,15 +454,14 @@ class ApiService {
     );
   }
 
-  // Weather APIs — full report: current + 5-day forecast + farming advisory.
-  // Data is real (OpenWeather); `available: false` means no data, and
-  // `is_stale: true` flags a cached last-known reading.
+  // Current weather from /api/v1. `available: false` means no reading.
+  // Forecast stays on the legacy /weather/report endpoint.
   Future<Map<String, dynamic>> getWeather({String? location}) async {
     final response = await _dio.get(
-      '/weather/report',
+      '/v1/weather/current',
       queryParameters: location != null ? {'location': location} : null,
     );
-    return response.data;
+    return v1Data(response.data);
   }
 
   // Generic HTTP methods
@@ -534,6 +535,15 @@ class ApiService {
   /// `type 'List<dynamic>' is not a subtype of 'FutureOr<Map<String,
   /// dynamic>>'` reached the notifications screen.
   static Map<String, dynamic> _asMap(dynamic body) {
+    if (body is Map) return Map<String, dynamic>.from(body);
+    return const {};
+  }
+
+  /// Inner object of a `{data, meta}` response. Legacy bodies pass through.
+  static Map<String, dynamic> v1Data(dynamic body) {
+    if (body is Map && body['data'] is Map) {
+      return Map<String, dynamic>.from(body['data'] as Map);
+    }
     if (body is Map) return Map<String, dynamic>.from(body);
     return const {};
   }

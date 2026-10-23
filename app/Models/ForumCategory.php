@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ForumCategory extends Model
 {
@@ -12,6 +13,7 @@ class ForumCategory extends Model
 
     protected $fillable = [
         'tenant_id',
+        'uuid',
         'name',
         'slug',
         'description',
@@ -25,6 +27,15 @@ class ForumCategory extends Model
         'requires_expert' => 'boolean',
         'is_active' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (ForumCategory $category) {
+            if (empty($category->uuid)) {
+                $category->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     public function threads()
     {

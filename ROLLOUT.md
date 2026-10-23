@@ -52,9 +52,8 @@ php artisan config:cache && php artisan route:cache && php artisan view:cache
 php artisan queue:work database --sleep=1 --tries=3 --max-time=3600   # deploy/supervisor/mkulima-queue.conf
 # php artisan reverb:start              # only if realtime features enabled
 
-# 6. Admin dashboard (Vite writes public/admin, which Laravel serves at /admin)
-cd admin-dashboard && echo "VITE_API_URL=https://mkulimaforum.com/api" > .env.production \
-  && npm ci && npm run build
+# 6. Filament panel assets. Do not npm-build admin-dashboard into public/admin.
+php artisan filament:assets
 
 # 7. Smoke test (read-only, run every deploy)
 ./scripts/smoke.sh https://mkulimaforum.com       # must print "20 passed, 0 failed"

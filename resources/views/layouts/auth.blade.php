@@ -168,6 +168,7 @@
     .consent input{ width:26px; height:26px; }
   </style>
   @yield('head_extra')
+  @livewireStyles
 </head>
 <body>
   <main class="auth-shell">
@@ -187,5 +188,6 @@
 
     <p class="foot">@yield('foot')</p>
   </main>
+  @livewireScripts
 </body>
 </html>

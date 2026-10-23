@@ -3,9 +3,15 @@
 use App\Http\Middleware\AdminTokenCookie;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\VerifyWebhookSignature;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -34,4 +40,38 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn ($request) => $request->is('api/*') || $request->expectsJson()
         );
+
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if (! $request->is('api/v1') && ! $request->is('api/v1/*')) {
+                return null;
+            }
+
+            if ($e instanceof ValidationException) {
+                return null;
+            }
+
+            if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
+                return response()->json([
+                    'message' => 'Haipatikani.',
+                    'errors' => new stdClass,
+                ], 404);
+            }
+
+            $status = $e instanceof AuthenticationException
+                ? 401
+                : ($e instanceof HttpExceptionInterface ? $e->getStatusCode() : null);
+
+            if ($status === null) {
+                return null;
+            }
+
+            $message = $e->getMessage() !== ''
+                ? $e->getMessage()
+                : ($status === 401 ? 'Unauthenticated.' : 'Request failed.');
+
+            return response()->json([
+                'message' => $message,
+                'errors' => new stdClass,
+            ], $status);
+        });
     })->create();

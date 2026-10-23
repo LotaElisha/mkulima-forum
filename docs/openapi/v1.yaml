@@ -1,0 +1,377 @@
+openapi: 3.0.3
+info:
+  title: Mkulima Forum API
+  version: "1.0.0"
+  description: |
+    Phase 1 contract for the Flutter app and any other client of /api/v1.
+    Success responses are `{data, meta}`. Errors are `{message, errors}`.
+    Identifiers in URLs and payloads are UUIDs. The previous /api/* routes
+    stay in routes/legacy.php and are not described here.
+servers:
+  - url: https://mkulimaforum.com/api/v1
+    description: Production
+  - url: http://127.0.0.1:8000/api/v1
+    description: Local
+paths:
+  /auth/register:
+    post:
+      summary: Register a farmer
+      description: The only self-serve role is farmer. Other roles are rejected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password, password_confirmation]
+              properties:
+                name: {type: string}
+                email: {type: string, format: email}
+                phone: {type: string, nullable: true}
+                password: {type: string, minLength: 12}
+                password_confirmation: {type: string}
+                country_code: {type: string, minLength: 2, maxLength: 2}
+                preferred_language: {type: string, enum: [sw, en]}
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "422":
+          $ref: "#/components/responses/Error"
+  /auth/login:
+    post:
+      summary: Log in with email and password
+      description: Unknown addresses and wrong passwords return the same 401 body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string}
+      responses:
+        "200":
+          description: Session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "401":
+          $ref: "#/components/responses/Error"
+  /auth/password/forgot:
+    post:
+      summary: Request a password reset
+      description: The body is identical whether or not the address is registered.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: {type: string, format: email}
+      responses:
+        "200":
+          description: Always the same acknowledgement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /auth/password/reset:
+    post:
+      summary: Set a new password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, token, password, password_confirmation]
+              properties:
+                email: {type: string, format: email}
+                token: {type: string}
+                password: {type: string, minLength: 12}
+                password_confirmation: {type: string}
+      responses:
+        "200":
+          description: Password changed and existing tokens revoked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "422":
+          $ref: "#/components/responses/Error"
+  /auth/email/verify/{uuid}/{hash}:
+    get:
+      summary: Verify an email address
+      parameters:
+        - $ref: "#/components/parameters/Uuid"
+        - name: hash
+          in: path
+          required: true
+          schema: {type: string}
+        - name: expires
+          in: query
+          required: true
+          schema: {type: integer}
+        - name: signature
+          in: query
+          required: true
+          schema: {type: string}
+      responses:
+        "200":
+          description: Verified
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          email_verified: {type: boolean}
+        "403":
+          $ref: "#/components/responses/Error"
+  /auth/me:
+    get:
+      summary: Current account
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: Account
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Envelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Error"
+  /auth/email/resend:
+    post:
+      summary: Resend the verification mail
+      description: The body does not say whether a mail was actually sent.
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: Acknowledgement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /auth/email/status:
+    get:
+      summary: Verification state of the signed-in account
+      security: [{bearer: []}]
+      responses:
+        "200":
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /weather/current:
+    get:
+      summary: Current weather for a place
+      parameters:
+        - name: location
+          in: query
+          schema: {type: string, default: Dar es Salaam}
+      responses:
+        "200":
+          description: Reading, or available=false when none can be fetched
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /market-prices:
+    get:
+      summary: Recorded market prices
+      parameters:
+        - name: commodity
+          in: query
+          schema: {type: string}
+        - name: region
+          in: query
+          schema: {type: string}
+        - name: market
+          in: query
+          schema: {type: string}
+        - name: latest
+          in: query
+          schema: {type: boolean}
+        - name: per_page
+          in: query
+          schema: {type: integer, maximum: 100}
+      responses:
+        "200":
+          description: Page of prices. meta holds current_page, last_page, per_page, total.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /market-prices/filters:
+    get:
+      summary: Commodity, region, and market names for filters
+      responses:
+        "200":
+          description: Filter lists inside data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /forum/categories:
+    get:
+      summary: Active forum categories
+      parameters:
+        - name: region
+          in: query
+          schema: {type: string}
+      responses:
+        "200":
+          description: Categories. No numeric ids.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /forum/categories/{uuid}/threads:
+    get:
+      summary: Threads in one category
+      parameters:
+        - $ref: "#/components/parameters/Uuid"
+      responses:
+        "200":
+          description: Page of threads
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /forum/threads:
+    get:
+      summary: Threads, optionally filtered by category uuid
+      parameters:
+        - name: category
+          in: query
+          schema: {type: string, format: uuid}
+        - name: search
+          in: query
+          schema: {type: string}
+        - name: sort
+          in: query
+          schema: {type: string, enum: [created_at, upvote_count, reply_count]}
+      responses:
+        "200":
+          description: Page of threads
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+  /forum/threads/{uuid}:
+    get:
+      summary: One thread and its replies
+      parameters:
+        - $ref: "#/components/parameters/Uuid"
+      responses:
+        "200":
+          description: Thread
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+        "404":
+          $ref: "#/components/responses/Error"
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Sanctum
+  parameters:
+    Uuid:
+      name: uuid
+      in: path
+      required: true
+      schema: {type: string, format: uuid}
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    Envelope:
+      type: object
+      required: [data, meta]
+      properties:
+        data: {}
+        meta:
+          type: object
+          description: Empty object when there is nothing to report. Lists include current_page, last_page, per_page, and total.
+    Error:
+      type: object
+      required: [message, errors]
+      properties:
+        message: {type: string}
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items: {type: string}
+    Message:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                message: {type: string}
+    User:
+      type: object
+      required: [uuid, name, role]
+      properties:
+        uuid: {type: string, format: uuid}
+        name: {type: string}
+        phone: {type: string, nullable: true}
+        email: {type: string, format: email, nullable: true}
+        emailVerified: {type: boolean}
+        role: {type: string, enum: [farmer]}
+        kycStatus: {type: string}
+        preferredLanguage: {type: string}
+        avatar: {type: string, nullable: true}
+        createdAt: {type: string, format: date-time, nullable: true}
+        seller:
+          type: object
+          properties:
+            state: {type: string}
+            can_sell: {type: boolean}
+            can_apply: {type: boolean}
+    AuthSession:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [token, token_type, user]
+              properties:
+                token: {type: string}
+                token_type: {type: string, enum: [Bearer]}
+                user:
+                  $ref: "#/components/schemas/User"

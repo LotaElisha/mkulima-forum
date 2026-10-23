@@ -150,6 +150,12 @@ is started, run it again.
 ## 5. Nginx, TLS, supervisor, cron
 
 ```bash
+# If Certbot has already added a `listen 443` server to the installed file,
+# do not overwrite that file with this HTTP-only copy. Add the same
+# `location ^~ /admin { rewrite ^ /index.php last; }` block to the TLS
+# server. A leftover `public/admin` directory makes `/admin` return 403
+# until that block is in the server that answers the request.
+sudo rm -rf /opt/data/projects/mkulima-forum/public/admin
 sudo cp deploy/nginx/mkulimaforum.conf /etc/nginx/sites-available/mkulimaforum.conf
 sudo ln -sfn /etc/nginx/sites-available/mkulimaforum.conf /etc/nginx/sites-enabled/mkulimaforum.conf
 sudo rm -f /etc/nginx/sites-enabled/default
@@ -217,16 +223,17 @@ passed on the VPS:
 6. Run `php artisan mkulima:census` again and keep the output. Phase 1 uses
    those numbers.
 
-The admin UI is the built SPA in `public/admin`, served by Laravel at
-`/admin`. Build it on the VPS or in CI and deploy the `public/admin` output.
-`admin-dashboard/dist` is not the document root.
+Staff admin is Filament at `/admin`. Do not deploy a React build into
+`public/admin`: that directory is served as static files and would hide the
+panel. After `composer install`, publish Filament's assets and run migrations:
 
 ```bash
-cd /opt/data/projects/mkulima-forum/admin-dashboard
-echo "VITE_API_URL=https://mkulimaforum.com/api" > .env.production
-npm ci
-npm run build
+php artisan migrate --force
+php artisan filament:assets
 ```
+
+The React app under `admin-dashboard/` is not the live panel. Its Vite build
+writes `admin-dashboard/dist`, which is gitignored and is not the document root.
 
 Do not advertise `https://mkulimaforum.com/app/mkulima-forum.apk`. `/download`
 links an APK only when a real zip-based APK is on disk.
@@ -244,8 +251,15 @@ links an APK only when a real zip-based APK is on disk.
 | 09:00 | `mkulima-cron-monitor.sh` |
 | Every 5 min | `mkulima-uptime-monitor.sh` |
 
-The monitor scripts stay in `/usr/local/bin/` if they are already installed
-from an earlier setup. The backup script is the one in this repository.
+Uptime and SSL checks read `APP_URL` from
+`/opt/data/projects/mkulima-forum/.env`. Staging
+(`https://www.mkulimaforum.app`) and production
+(`https://mkulimaforum.com`) use the same cron file. Re-copy
+`deploy/cron/mkulima-forum` after this change so cron stops calling the old
+copies in `/usr/local/bin`, which still had `.com` written into them.
+`MONITOR_BASE_URL` overrides the uptime host. `MONITOR_DOMAIN` overrides the
+certificate directory name when it is not the `APP_URL` host (a `www` host
+also tries the apex certificate).
 
 ## Redis, later
 

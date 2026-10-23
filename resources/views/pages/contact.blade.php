@@ -134,48 +134,7 @@
       <div class="contact-form-card fade-up">
         <h3 class="c-form-title" data-i18n="c_form_title">Tuma Ujumbe Wako</h3>
 
-        <form id="contactForm" class="contact-form" onsubmit="handleContactForm(event)">
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="cf_name" data-i18n="cf_name">Jina Lako Kamili</label>
-              <input id="cf_name" type="text" required data-i18n-ph="cf_name_ph" placeholder="Jina Lako">
-            </div>
-            <div class="form-group">
-              <label for="cf_email" data-i18n="cf_email">Barua Pepe</label>
-              <input id="cf_email" type="email" required data-i18n-ph="cf_email_ph" placeholder="barua@mfano.com">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="cf_type" data-i18n="cf_type_label">Aina ya Uchunguzi</label>
-            <select id="cf_type" required>
-              <option value="" data-i18n="cf_select">-- Chagua Aina --</option>
-              <option value="partnership" data-i18n="cf_opt_partner">🤝 Ushirikiano / Partnership</option>
-              <option value="investor" data-i18n="cf_opt_invest">💰 Uwekezaji / Investment</option>
-              <option value="press" data-i18n="cf_opt_press">📰 Vyombo vya Habari / Press</option>
-              <option value="farmer" data-i18n="cf_opt_farmer">👨‍🌾 Msaada kwa Mkulima / Farmer Support</option>
-              <option value="technical" data-i18n="cf_opt_tech">🔧 Msaada wa Kiufundi / Technical</option>
-              <option value="story" data-i18n="cf_opt_story">🌾 Hadithi ya Mkulima / Farmer Story</option>
-              <option value="general" data-i18n="cf_opt_gen">💬 Swali la Jumla / General Question</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="cf_org" data-i18n="cf_org">Shirika / Kampuni <span class="optional">(si lazima)</span></label>
-            <input id="cf_org" type="text" data-i18n-ph="cf_org_ph" placeholder="Shirika lako (si lazima)">
-          </div>
-
-          <div class="form-group">
-            <label for="cf_message" data-i18n="cf_message">Ujumbe Wako</label>
-            <textarea id="cf_message" rows="5" required data-i18n-ph="cf_msg_ph" placeholder="Andika ujumbe wako hapa..."></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-lg" id="cf_submit_btn" data-i18n="cf_submit">
-            ✉️ Tuma Ujumbe
-          </button>
-
-          <div id="cf_result" class="cf-result"></div>
-        </form>
+        <livewire:contact-form />
       </div>
     </div>
   </div>
@@ -189,8 +148,8 @@
     <div class="faq-list">
 
     @foreach([
-      ['faq0','Je, MkulimaForum ni bure kuitumia?','Is MkulimaForum free to use?','Ndiyo — sehemu za msingi za mfumo (utambuzi wa magonjwa, Mkulima AI, jamii, hali ya hewa) zinaweza kutumiwa bila malipo. Huduma za malipo (masoko, pembejeo) zina ada ndogo.','Yes — the core features (plant diagnosis, Mkulima AI, community, weather) are free to use. Paid services (marketplace, inputs) carry a small fee.'],
-      ['faq1','Je, MkulimaForum inafanya kazi bila intaneti?','Does MkulimaForum work without internet?','Ndiyo. Tumejumuisha Mkulima AI Offline kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD kwa maeneo ya uunganisho mdogo.','Yes. We have integrated Mkulima AI Offline for offline AI inference, plus SMS and USSD services for low-connectivity areas.'],
+      ['faq0','Je, MkulimaForum ni bure kuitumia?','Is MkulimaForum free to use?','Sehemu zilizowashwa — kusoma jukwaa, bei zilizoandikwa, hali ya hewa, na kujisajili — zinatumika bila malipo. Utambuzi wa magonjwa, SMS, na malipo bado havijawashwa.','What is switched on — reading the forum, recorded prices, weather, and registration — is free. Disease diagnosis, SMS, and payments are not switched on yet.'],
+      ['faq1','Je, MkulimaForum inafanya kazi bila intaneti?','Does MkulimaForum work without internet?','Hapana. Programu inahitaji intaneti. SMS, USSD, na AI bila intaneti havijawashwa.','No. The app needs an internet connection. SMS, USSD, and offline AI are not switched on.'],
       ['faq2','Je, ninawezaje kuwa mshirika?','How can I become a partner?','Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe moja kwa moja kwenye partnerships@mkulimaforum.com.','Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.com.'],
       ['faq3','Je, MkulimaForum inafanya kazi nje ya Tanzania?','Does MkulimaForum work outside Tanzania?','Mfumo wa sasa unazingatia Tanzania. Tunapanga kupanua kwenda Kenya, Uganda, na nchi nyingine za Afrika Mashariki kulingana na mahitaji ya soko.','The current platform focuses on Tanzania. We plan to expand to Kenya, Uganda, and other East African markets based on traction and market need.'],
       ['faq4','Ni aina gani ya data ya kibinafsi mnayokusanya?','What personal data do you collect?','Tunakusanya taarifa za akaunti ya msingi (jina, nambari ya simu au barua pepe). Hatuzidishi au kuuza data za kibinafsi za wakulima kwa watu wengine.','We collect basic account information (name, phone number or email). We do not share or sell personal farmer data to third parties.'],
@@ -216,25 +175,6 @@ function toggleFaq(id) {
   el.classList.toggle('open');
 }
 
-async function handleContactForm(e) {
-  e.preventDefault();
-  const btn = document.getElementById('cf_submit_btn');
-  const result = document.getElementById('cf_result');
-  btn.disabled = true;
-  btn.textContent = '⏳ ' + (MK_LANG === 'sw' ? 'Inatuma...' : 'Sending...');
-  await new Promise(r => setTimeout(r, 1000));
-  result.style.display = 'block';
-  result.style.background = 'var(--leaf-pale)';
-  result.style.color = 'var(--forest-dark)';
-  result.style.border = '1px solid var(--border-mid)';
-  result.textContent = MK_LANG === 'sw'
-    ? '✅ Asante sana! Tumepokea ujumbe wako. Tutawasiliana nawe ndani ya siku 2 za kazi.'
-    : '✅ Thank you! We have received your message and will respond within 2 business days.';
-  btn.disabled = false;
-  btn.textContent = MK_LANG === 'sw' ? '✉️ Tuma Ujumbe' : '✉️ Send Message';
-  e.target.reset();
-}
-
 mkPageTranslations = {
   sw: {
     contact_eyebrow:'WASILIANA NASI', contact_title:'Tutakaribisha Kushikana Nawe',
@@ -256,8 +196,8 @@ mkPageTranslations = {
     cf_message:'Ujumbe Wako', cf_msg_ph:'Andika ujumbe wako hapa...',
     cf_submit:'✉️ Tuma Ujumbe',
     faq_eyebrow:'MASWALI YANAYOULIZWA MARA KWA MARA', faq_title:'Maswali ya Kawaida',
-    faq0_q:'Je, MkulimaForum ni bure kuitumia?', faq0_a:'Ndiyo — sehemu za msingi za mfumo zinaweza kutumiwa bila malipo. Huduma za masoko na pembejeo zina ada ndogo.',
-    faq1_q:'Je, MkulimaForum inafanya kazi bila intaneti?', faq1_a:'Ndiyo. Tumejumuisha Mkulima AI Offline kwa utambuzi wa AI bila intaneti, pamoja na huduma za SMS na USSD.',
+    faq0_q:'Je, MkulimaForum ni bure kuitumia?', faq0_a:'Sehemu zilizowashwa — kusoma jukwaa, bei zilizoandikwa, hali ya hewa, na kujisajili — zinatumika bila malipo. Utambuzi wa magonjwa, SMS, na malipo bado havijawashwa.',
+    faq1_q:'Je, MkulimaForum inafanya kazi bila intaneti?', faq1_a:'Hapana. Programu inahitaji intaneti. SMS, USSD, na AI bila intaneti havijawashwa.',
     faq2_q:'Je, ninawezaje kuwa mshirika?', faq2_a:'Tembelea ukurasa wetu wa Washirika na ujaze fomu ya ushirikiano, au tuma barua pepe kwenye partnerships@mkulimaforum.com.',
     faq3_q:'Je, MkulimaForum inafanya kazi nje ya Tanzania?', faq3_a:'Mfumo wa sasa unazingatia Tanzania. Tunapanga kupanua kwenda Kenya, Uganda, na nchi nyingine za Afrika Mashariki.',
     faq4_q:'Ni aina gani ya data ya kibinafsi mnayokusanya?', faq4_a:'Tunakusanya taarifa za akaunti ya msingi tu. Hatuzidishi au kuuza data za kibinafsi za wakulima kwa watu wengine.',
@@ -282,8 +222,8 @@ mkPageTranslations = {
     cf_message:'Your Message', cf_msg_ph:'Write your message here...',
     cf_submit:'✉️ Send Message',
     faq_eyebrow:'FREQUENTLY ASKED QUESTIONS', faq_title:'Common Questions',
-    faq0_q:'Is MkulimaForum free to use?', faq0_a:'Yes — core features (plant diagnosis, Mkulima AI, community, weather) are free. Paid services (marketplace, inputs) carry a small fee.',
-    faq1_q:'Does MkulimaForum work without internet?', faq1_a:'Yes. We have integrated Mkulima AI Offline for offline AI inference, plus SMS and USSD services for low-connectivity areas.',
+    faq0_q:'Is MkulimaForum free to use?', faq0_a:'What is switched on — reading the forum, recorded prices, weather, and registration — is free. Disease diagnosis, SMS, and payments are not switched on yet.',
+    faq1_q:'Does MkulimaForum work without internet?', faq1_a:'No. The app needs an internet connection. SMS, USSD, and offline AI are not switched on.',
     faq2_q:'How can I become a partner?', faq2_a:'Visit our Partners page and fill in the partnership request form, or email directly to partnerships@mkulimaforum.com.',
     faq3_q:'Does MkulimaForum work outside Tanzania?', faq3_a:'The current platform focuses on Tanzania. We plan to expand to Kenya, Uganda, and other East African markets based on traction.',
     faq4_q:'What personal data do you collect?', faq4_a:'We collect basic account information only. We do not share or sell personal farmer data to third parties.',
