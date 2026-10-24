@@ -4,6 +4,7 @@ import '../core/strings.dart';
 import '../core/theme.dart';
 import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
+import 'cart_screen.dart';
 import 'home_tab.dart';
 import 'marketplace_screen.dart';
 import 'forum_screen.dart';

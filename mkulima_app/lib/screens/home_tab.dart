@@ -393,58 +393,6 @@ class _WeatherStrip extends StatelessWidget {
   }
 }
 
-class _QuickService extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _QuickService({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Every service icon is the same green in the same pale circle. The old
-    // grid tinted each tile a different colour, which read as decoration
-    // rather than as one set of tools.
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(MkRadii.card),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-          child: Column(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: MkColors.leafPale,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(icon, color: MkColors.primary),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: const TextStyle(
-                  fontSize: 13,
-                  height: 1.25,
-                  color: MkColors.ink,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _PriceTable extends StatelessWidget {
   final List<dynamic> prices;
 
