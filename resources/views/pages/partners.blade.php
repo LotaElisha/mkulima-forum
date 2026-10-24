@@ -63,6 +63,7 @@
 @endsection
 
 @section('content')
+<x-mk.note />
 
 {{-- Hero --}}
 <section class="page-hero">
