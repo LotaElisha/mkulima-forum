@@ -454,12 +454,27 @@ class ApiService {
     );
   }
 
-  // Current weather from /api/v1. `available: false` means no reading.
-  // Forecast stays on the legacy /weather/report endpoint.
+  // Current weather prefers /api/v1. The live host still serves the legacy
+  // report until that route is deployed, and a 404 falls back to it.
+  // `available: false` means no reading. The report also carries forecast
+  // and advisory; the v1 payload does not.
   Future<Map<String, dynamic>> getWeather({String? location}) async {
+    final query = location != null ? {'location': location} : null;
+    try {
+      final response = await _dio.get(
+        '/v1/weather/current',
+        queryParameters: query,
+      );
+      return v1Data(response.data);
+    } on DioException catch (error) {
+      if (error.response?.statusCode != 404) {
+        rethrow;
+      }
+    }
+
     final response = await _dio.get(
-      '/v1/weather/current',
-      queryParameters: location != null ? {'location': location} : null,
+      '/weather/report',
+      queryParameters: query,
     );
     return v1Data(response.data);
   }
