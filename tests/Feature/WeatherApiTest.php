@@ -2,19 +2,23 @@
 
 namespace Tests\Feature;
 
+use App\Models\AiProvider;
+use App\Models\Tenant;
 use App\Models\WeatherCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class WeatherApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function fakeOpenWeatherSuccess(): void
+    protected function fakeOpenWeatherSuccess(mixed $gemini = null): void
     {
         config(['services.weather.use_open_meteo' => false, 'services.openweather.api_key' => 'test-key']);
         Http::fake([
+            'generativelanguage.googleapis.com/*' => $gemini ?? Http::response(['error' => 'should not be called'], 403),
             'api.openweathermap.org/data/2.5/weather*' => Http::response([
                 'name' => 'Dodoma',
                 'coord' => ['lat' => -6.17, 'lon' => 35.74],
@@ -128,5 +132,74 @@ class WeatherApiTest extends TestCase
             ->assertJsonPath('available', true);
 
         $this->assertNotEmpty($this->getJson('/api/weather/advisory?location=Dodoma')->json('advisory'));
+    }
+
+    public function test_the_weather_report_skips_gemini_when_nothing_is_configured(): void
+    {
+        config(['services.gemini.api_key' => null]);
+        $this->fakeOpenWeatherSuccess();
+        $lines = [];
+        Log::listen(function ($event) use (&$lines) {
+            if ($event->level === 'error' || str_contains(strtolower($event->message), 'gemini')) {
+                $lines[] = $event->level.' '.$event->message;
+            }
+        });
+
+        $report = $this->getJson('/api/weather/report?location=Dodoma');
+        $advisory = $this->getJson('/api/weather/advisory?location=Dodoma');
+
+        $report->assertOk()->assertJsonPath('available', true);
+        $this->assertNotEmpty($report->json('advisory'));
+        $advisory->assertOk();
+        $this->assertNotEmpty($advisory->json('advisory'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'generativelanguage.googleapis.com'));
+        $this->assertSame([], $lines);
+    }
+
+    public function test_an_active_provider_without_a_secret_does_not_call_gemini(): void
+    {
+        Tenant::firstOrCreate(['id' => 1], ['name' => 'Tanzania', 'country_code' => 'tz']);
+        config(['services.gemini.api_key' => 'env-key-must-not-be-sent']);
+        AiProvider::create([
+            'tenant_id' => 1,
+            'name' => 'Empty Gemini',
+            'provider_type' => 'gemini',
+            'model' => 'gemini-2.0-flash',
+            'status' => 'active',
+            'is_default' => true,
+        ]);
+        $this->fakeOpenWeatherSuccess();
+        $lines = [];
+        Log::listen(function ($event) use (&$lines) {
+            if ($event->level === 'error' || str_contains(strtolower($event->message), 'gemini')) {
+                $lines[] = $event->level.' '.$event->message;
+            }
+        });
+
+        $this->getJson('/api/weather/report?location=Dodoma')
+            ->assertOk()
+            ->assertJsonPath('available', true);
+
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'generativelanguage.googleapis.com'));
+        $this->assertSame([], $lines);
+    }
+
+    public function test_the_weather_report_calls_gemini_when_a_key_is_configured(): void
+    {
+        config(['services.gemini.api_key' => 'test-key']);
+        $this->fakeOpenWeatherSuccess(Http::response([
+            'candidates' => [[
+                'content' => ['parts' => [[
+                    'text' => '[{"category":"Mtihani","title":"Ushauri wa Gemini","message":"Panda mapema.","priority":"low","icon":"agriculture"}]',
+                ]]],
+            ]],
+        ], 200));
+
+        $this->getJson('/api/weather/report?location=Dodoma')
+            ->assertOk()
+            ->assertJsonPath('advisory.0.title', 'Ushauri wa Gemini');
+
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'generativelanguage.googleapis.com')
+            && str_contains($request->url(), 'key=test-key'));
     }
 }

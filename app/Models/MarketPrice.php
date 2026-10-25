@@ -12,11 +12,13 @@ class MarketPrice extends Model
         'commodity',
         'market',
         'region',
+        'price_type',
         'min_price',
         'max_price',
         'avg_price',
         'unit',
         'currency',
+        'fx_rate',
         'price_date',
         'source',
         'recorded_by',
@@ -26,6 +28,7 @@ class MarketPrice extends Model
         'min_price' => 'decimal:2',
         'max_price' => 'decimal:2',
         'avg_price' => 'decimal:2',
+        'fx_rate' => 'decimal:4',
         'price_date' => 'date',
     ];
 
@@ -50,6 +53,7 @@ class MarketPrice extends Model
     {
         $previous = static::where('commodity', $this->commodity)
             ->where('market', $this->market)
+            ->when($this->price_type, fn ($query) => $query->where('price_type', $this->price_type))
             ->where('price_date', '<', $this->price_date)
             ->orderByDesc('price_date')
             ->first();

@@ -13,6 +13,10 @@ class ForumSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            return;
+        }
+
         $user = User::first();
         if (! $user) {
             return;
