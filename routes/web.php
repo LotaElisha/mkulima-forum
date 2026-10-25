@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\Forum\ListForumThreads;
+use App\Actions\Forum\ShowForumThread;
+use App\Actions\Home\PublicHome;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Models\LandingSetting;
 use App\Models\ShortLink;
@@ -63,8 +66,9 @@ Route::get('/', function () {
     ];
 
     $settings = array_merge($defaults, $settings);
+    $brief = app(PublicHome::class)();
 
-    return view('pages.home', compact('settings'));
+    return view('pages.home', compact('settings', 'brief'));
 });
 
 // ─── Public Pages ────────────────────────────────────────────────────────────
@@ -145,6 +149,20 @@ Route::get('/verify', function () use ($publicSettings) {
 
     return view('pages.verify', compact('settings'));
 })->name('verify');
+
+Route::get('/forum', function () use ($publicSettings) {
+    $settings = $publicSettings();
+    $threads = app(ListForumThreads::class)(request())->items();
+
+    return view('pages.forum.index', compact('settings', 'threads'));
+})->name('forum.index');
+
+Route::get('/forum/{uuid}', function (string $uuid) use ($publicSettings) {
+    $settings = $publicSettings();
+    $thread = app(ShowForumThread::class)($uuid);
+
+    return view('pages.forum.show', compact('settings', 'thread'));
+})->name('forum.show')->whereUuid('uuid');
 
 Route::get('/community', function () use ($publicSettings) {
     $settings = $publicSettings();

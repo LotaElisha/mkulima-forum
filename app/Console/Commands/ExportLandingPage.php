@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Actions\Home\PublicHome;
 use App\Models\LandingSetting;
 use Illuminate\Console\Command;
 use Throwable;
@@ -48,7 +49,10 @@ class ExportLandingPage extends Command
         ], $settings);
 
         try {
-            $html = view('pages.home', compact('settings'))->render();
+            // The home route passes this brief. A build machine has no
+            // database, and PublicHome answers with empty sections then.
+            $brief = app(PublicHome::class)();
+            $html = view('pages.home', compact('settings', 'brief'))->render();
         } catch (Throwable $e) {
             $this->error('Could not render the home page: '.$e->getMessage());
 

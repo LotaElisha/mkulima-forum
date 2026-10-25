@@ -18,18 +18,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
-  final _phone = TextEditingController();
-  final _otp = TextEditingController();
   bool _showPassword = false;
-  bool _useOtp = false;
-  bool _otpSent = false;
 
   @override
   void dispose() {
     _email.dispose();
     _password.dispose();
-    _phone.dispose();
-    _otp.dispose();
     super.dispose();
   }
 
@@ -43,30 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submit() async {
     final auth = context.read<AuthProvider>();
-    if (!_useOtp) {
-      if (!_email.text.contains('@') || _password.text.isEmpty) {
-        _message('Weka barua pepe na nenosiri sahihi');
-        return;
-      }
-      _finish(await auth.loginWithEmail(_email.text.trim(), _password.text));
+    if (!_email.text.contains('@') || _password.text.isEmpty) {
+      _message('Weka barua pepe na nenosiri sahihi');
       return;
     }
-    if (!_otpSent) {
-      if (_phone.text.trim().length < 9) {
-        _message('Weka namba sahihi ya simu');
-        return;
-      }
-      final sent = await auth.requestOtp(_phone.text.trim(), 'login');
-      if (sent && mounted) setState(() => _otpSent = true);
-      return;
-    }
-    _finish(
-      await auth.verifyOtp(
-        phone: _phone.text.trim(),
-        code: _otp.text.trim(),
-        purpose: 'login',
-      ),
-    );
+    _finish(await auth.loginWithEmail(_email.text.trim(), _password.text));
   }
 
   void _message(String text) {
@@ -110,13 +85,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Ingia kwenye maarifa, masoko na jamii yako.',
+                    'Ingia kwa barua pepe. SMS bado haijawashwa.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: MkColors.muted, height: 1.4),
+                    style: TextStyle(color: MkColors.muted, height: 1.4, fontSize: 16),
                   ),
                   const SizedBox(height: 30),
-                  if (!_useOtp) ...[
-                    TextField(
+                  TextField(
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
@@ -151,45 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                  ] else ...[
-                    TextField(
-                      controller: _phone,
-                      keyboardType: TextInputType.phone,
-                      enabled: !_otpSent,
-                      decoration: const InputDecoration(
-                        labelText: 'Namba ya simu',
-                        hintText: '2557XXXXXXXX',
-                        prefixIcon: Icon(Icons.phone_outlined),
-                      ),
-                    ),
-                    if (_otpSent) ...[
-                      const SizedBox(height: 14),
-                      TextField(
-                        controller: _otp,
-                        keyboardType: TextInputType.number,
-                        maxLength: 6,
-                        decoration: const InputDecoration(
-                          labelText: 'Namba ya uthibitisho',
-                          prefixIcon: Icon(Icons.password_outlined),
-                        ),
-                      ),
-                    ],
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => setState(() => _otpSent = false),
-                        child: const Text('Badilisha namba'),
-                      ),
-                    ),
-                  ],
                   if (auth.error != null) ...[
                     const SizedBox(height: 8),
                     _ErrorMessage(auth.error!),
                   ],
                   // Forgot-password entry point. The mobile app had none,
                   // because until now the platform had no reset flow at all.
-                  if (!_useOtp)
-                    Align(
+                  Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: auth.isLoading
@@ -210,13 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             dimension: 22,
                             child: CircularProgressIndicator(strokeWidth: 2.5),
                           )
-                        : Text(
-                            _useOtp
-                                ? (_otpSent
-                                      ? 'Thibitisha na uingie'
-                                      : 'Tuma OTP')
-                                : 'Ingia',
-                          ),
+                        : const Text('Ingia'),
                   ),
                   const SizedBox(height: 20),
                   // Only drawn for providers this build carries credentials
@@ -255,21 +191,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ],
-                  const SizedBox(height: 10),
-                  TextButton.icon(
-                    onPressed: () => setState(() {
-                      _useOtp = !_useOtp;
-                      _otpSent = false;
-                    }),
-                    icon: Icon(
-                      _useOtp ? Icons.mail_outline : Icons.phone_outlined,
-                    ),
-                    label: Text(
-                      _useOtp
-                          ? 'Ingia kwa barua pepe'
-                          : 'Ingia kwa simu na OTP',
-                    ),
-                  ),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

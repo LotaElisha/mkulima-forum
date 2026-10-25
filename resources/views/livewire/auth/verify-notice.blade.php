@@ -3,13 +3,13 @@
   <p class="lead">Tumetuma kiungo kwenye barua pepe yako. Fungua kiungo hicho ili kuthibitisha akaunti. Ukikosa ujumbe, angalia folda ya taka.</p>
 
   @if ($sent)
-    <div class="alert alert-ok show" role="status">{{ __('auth_flows.verification_sent') }}</div>
+    <x-mk.alert>{{ __('auth_flows.verification_sent') }}</x-mk.alert>
   @endif
 
-  @error('email') <p class="field-error show">{{ $message }}</p> @enderror
+  @error('email') <p class="mk-error">{{ $message }}</p> @enderror
 
   @auth
-    <button class="btn btn-primary" type="button" wire:click="resend" wire:loading.attr="disabled">
+    <button class="mk-btn mk-btn-block" type="button" wire:click="resend" wire:loading.attr="disabled">
       <span class="label">Tuma kiungo tena</span>
     </button>
   @else

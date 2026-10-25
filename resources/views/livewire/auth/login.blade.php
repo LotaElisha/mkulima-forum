@@ -1,13 +1,13 @@
 <div>
   <h1>Ingia</h1>
-  <p class="lead">Tumia barua pepe na nenosiri. Kuingia kwa SMS bado hakijawashwa.</p>
+  <p class="lead">Barua pepe na nenosiri. Kuingia kwa SMS bado hakijawashwa.</p>
 
   @if ($notice)
-    <div class="alert alert-ok show" role="status">{{ $notice }}</div>
+    <x-mk.alert>{{ $notice }}</x-mk.alert>
   @endif
 
   @if (session('status'))
-    <div class="alert alert-ok show" role="status">{{ session('status') }}</div>
+    <x-mk.alert>{{ session('status') }}</x-mk.alert>
   @endif
 
   <form wire:submit="login">
@@ -16,7 +16,7 @@
       <div class="control">
         <input id="email" type="email" wire:model="email" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" required>
       </div>
-      @error('email') <p class="field-error show">{{ $message }}</p> @enderror
+      @error('email') <p class="mk-error">{{ $message }}</p> @enderror
     </div>
 
     <div class="field">
@@ -24,7 +24,7 @@
       <div class="control">
         <input id="password" type="password" wire:model="password" autocomplete="current-password" required>
       </div>
-      @error('password') <p class="field-error show">{{ $message }}</p> @enderror
+      @error('password') <p class="mk-error">{{ $message }}</p> @enderror
     </div>
 
     <div class="field">
@@ -34,7 +34,7 @@
       </label>
     </div>
 
-    <button class="btn btn-primary" type="submit" wire:loading.attr="disabled">
+    <button class="mk-btn mk-btn-block" type="submit" wire:loading.attr="disabled">
       <span class="label">Ingia</span>
     </button>
   </form>

@@ -33,57 +33,13 @@
        which paints instantly, costs nothing in data, and looks native on the
        low-cost Androids most farmers are using. --}}
 
+  <link rel="stylesheet" href="{{ asset('css/mk-tokens.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/mk-components.css') }}">
+
   @yield('head_extra')
 
   <style>
-    /* =============================================
-       MKULIMA DESIGN SYSTEM — public site
-       ---------------------------------------------
-       The same tokens as the farmer app (mkulima_app/lib/core/theme.dart),
-       so the website and the app read as one product: about 90% white,
-       green reserved for actions, navigation, badges and icons, nothing
-       below 13px, 44px touch targets and 48px primary actions.
-       Page templates should use these tokens rather than raw colours.
-       ============================================= */
-    :root {
-      /* Green: actions and identity only */
-      --forest-dark:   #14532D;   /* MkColors.primaryDark */
-      --forest-mid:    #1B7A3E;   /* MkColors.primary */
-      --forest-light:  #1B7A3E;
-      --leaf-green:    #1B7A3E;
-      --leaf-bright:   #3FA463;
-      --leaf-pale:     #EEF7F0;   /* selected states, icon chips */
-      /* Accent: small highlights only, never a fill behind body text */
-      --sun-gold:      #9A5B00;   /* text-safe amber (MkColors.warning) */
-      --sun-amber:     #E0A008;
-      --accent-soft:   #FDF1D6;
-      /* Surfaces */
-      --cream-bg:      #FFFFFF;   /* legacy name kept for page templates */
-      --cream-card:    #FFFFFF;
-      --surface:       #FFFFFF;
-      --surface-card:  #FFFFFF;
-      --surface-soft:  #F4F7F4;   /* the only tinted surface (MkColors.surfaceMuted) */
-      --surface-sunken:#F4F7F4;
-      /* Ink */
-      --ink-dark:      #0F1511;
-      --ink-body:      #2E3631;
-      --ink-muted:     #5A645E;   /* 5.9:1 on white */
-      --ink-faint:     #5A645E;   /* was #8A938C (3.2:1); faint text must still be read */
-      /* Lines */
-      --border-light:  #E5EAE6;
-      --border-mid:    #CDD6CF;
-      --line:          #E5EAE6;
-      /* Shape */
-      --radius-2xl:    24px;
-      --radius-xl:     16px;      /* MkRadii.card */
-      --radius-lg:     14px;      /* MkRadii.button */
-      --radius-md:     10px;
-      --shadow-xs:     0 1px 2px rgba(15,21,17,.05);
-      --shadow-sm:     0 1px 3px rgba(15,21,17,.06), 0 1px 2px rgba(15,21,17,.04);
-      --shadow-md:     0 8px 24px rgba(15,21,17,.08);
-      --shadow-lg:     0 16px 40px rgba(15,21,17,.12);
-      --nav-h:         68px;
-    }
+    /* Tokens live in public/css/mk-tokens.css (generated from design/tokens.json). */
 
     /* =============================================
        RESET & BASE
@@ -91,7 +47,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      font-family: var(--mk-font);
       color: var(--ink-body);
       background: #fff;
       font-size: 16px;
@@ -455,6 +411,7 @@
     <!-- Primary nav links (Grouped & Uncongested) -->
     <ul class="nav-links" role="list">
       <li><a href="/" class="{{ request()->is('/') ? 'active' : '' }}" data-i18n="nav_home">Home</a></li>
+      <li><a href="/forum" class="{{ request()->is('forum*') ? 'active' : '' }}">Jukwaa</a></li>
       <li><a href="/verify" class="{{ request()->is('verify') ? 'active' : '' }}"><span data-i18n="nav_verify">Verify</span></a></li>
 
       <!-- Solutions Dropdown -->
@@ -506,7 +463,7 @@
         <button class="lang-btn" id="btnEn" onclick="mkSwitchLang('en')">EN</button>
       </div>
       <a href="/login" class="btn btn-outline btn-sm" data-i18n="nav_login">Ingia</a>
-      <a href="/download" class="btn btn-primary btn-sm" data-i18n="nav_download">Pakua App</a>
+      <a href="/register" class="btn btn-primary btn-sm" data-i18n="nav_download">Jisajili</a>
 
       <!-- Hamburger -->
       <button class="hamburger" id="hamburger-btn" aria-label="Open navigation menu" aria-expanded="false" onclick="toggleDrawer()">
@@ -530,7 +487,8 @@
     <a href="/solutions" onclick="toggleDrawer()"><span data-i18n="nav_solutions">All Solutions</span></a>
     <a href="/technology" onclick="toggleDrawer()"><span data-i18n="nav_tech">Technology & AI</span></a>
 
-    <div class="drawer-group" data-i18n="nav_community_group">COMMUNITY</div>
+    <div class="drawer-group" data-i18n="nav_community_group">JAMII</div>
+    <a href="/forum" onclick="toggleDrawer()">Jukwaa</a>
     <a href="/community" onclick="toggleDrawer()"><span data-i18n="nav_community">Community Hub</span></a>
     <a href="/stories" onclick="toggleDrawer()"><span data-i18n="nav_stories">Farmer Stories</span></a>
 
@@ -550,7 +508,7 @@
   </div>
   <div class="drawer-footer">
     <a href="/login" class="btn btn-outline" data-i18n="nav_login">Ingia</a>
-    <a href="/download" class="btn btn-primary" data-i18n="nav_download">Pakua App</a>
+    <a href="/register" class="btn btn-primary" data-i18n="nav_download">Jisajili</a>
   </div>
 </nav>
 
@@ -590,6 +548,7 @@
       <div>
         <h4 class="foot-col-title" data-i18n="foot_solutions">SULUHISHO</h4>
         <ul class="foot-links">
+          <li><span>Soko, skana, na SMS bado hazijawashwa.</span></li>
           <li><a href="/solutions#plant-scanner" data-i18n="foot_scanner">AI Plant Scanner</a></li>
           <li><a href="/solutions#mkulima-bot" data-i18n="foot_bot">Mkulima AI</a></li>
           <li><a href="/solutions#marketplace" data-i18n="foot_market">Soko la Kilimo</a></li>
@@ -605,7 +564,8 @@
         <ul class="foot-links">
           <li><a href="/pitch-deck" data-i18n="foot_pitch">Pitch Deck</a></li>
           <li><a href="/technology" data-i18n="foot_tech">Teknolojia</a></li>
-          <li><a href="/download" data-i18n="foot_app">Pakua App</a></li>
+          <li><a href="/forum">Jukwaa</a></li>
+          <li><a href="/download" data-i18n="foot_app">App (haijachapishwa)</a></li>
           <li><a href="/api/health" target="_blank" data-i18n="foot_api">API Status</a></li>
           <li><a href="/privacy" data-i18n="foot_privacy">Faragha</a></li>
           <li><a href="/terms" data-i18n="foot_terms">Masharti</a></li>
@@ -615,7 +575,7 @@
 
     <div class="foot-bottom">
       <span>MkulimaForum &copy; {{ date('Y') }} &bull; <span data-i18n="foot_motto">Shiriki. Jifunze. Endelea.</span></span>
-      <span>Tanzania &bull; Built for East African Farmers &bull; Powered by Mkulima AI</span>
+      <span>Tanzania</span>
     </div>
   </div>
 </footer>
@@ -627,15 +587,13 @@
      home page meant the next 5,000+ pixels — there was no call to action on
      screen at all. Hidden above 700px, where the header nav already carries
      these actions. --}}
-<div class="mobile-action-bar" role="navigation" aria-label="Vitendo vikuu">
-  <a href="/download" class="btn btn-primary">
-    <x-icon name="download" :size="18" />
-    <span data-i18n="nav_download">Pakua App</span>
-  </a>
-  <a href="/login" class="btn btn-quiet" aria-label="Ingia kwenye akaunti yako">
-    <span data-i18n="nav_login">Ingia</span>
-  </a>
-</div>
+<nav class="mk-tabbar" aria-label="Urambazaji wa simu">
+  <a href="/" @if(request()->is('/')) aria-current="page" @endif>Nyumbani</a>
+  <a href="/#bei">Bei</a>
+  <a href="/#hewa">Hewa</a>
+  <a href="{{ route('forum.index') }}" @if(request()->is('forum*')) aria-current="page" @endif>Jukwaa</a>
+  <a href="{{ route('login') }}" @if(request()->routeIs('login')) aria-current="page" @endif>Ingia</a>
+</nav>
 
 <!-- ============================================================
      GLOBAL SCRIPTS: i18n + Nav
@@ -648,7 +606,7 @@ const MK_TRANSLATIONS = {
     nav_solutions_group:'Suluhisho', nav_community_group:'Jamii', nav_company_group:'Taasisi',
     nav_impact:'Athari', nav_partners:'Washirika', nav_pitchdeck:'Pitch Deck',
     nav_more:'Zaidi', nav_stories:'Hadithi za Wakulima', nav_tech:'Teknolojia na AI',
-    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'Pakua App', nav_login:'Ingia', nav_webapp:'Web App',
+    nav_contact:'Wasiliana', nav_api:'Hali ya API', nav_download:'Jisajili', nav_login:'Ingia', nav_webapp:'Web App',
     foot_tagline:'Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania.',
     foot_contact_link:'Wasiliana Nasi →',
     foot_company:'KAMPUNI', foot_about:'Kuhusu Sisi', foot_impact:'Athari Zetu',
@@ -656,7 +614,7 @@ const MK_TRANSLATIONS = {
     foot_solutions:'SULUHISHO', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
     foot_market:'Soko la Kilimo', foot_verify:'Kagua Pembejeo', foot_weather:'Hali ya Hewa', foot_offline:'Offline AI',
     foot_resources:'RASILIMALI', foot_pitch:'Pitch Deck', foot_tech:'Teknolojia',
-    foot_app:'Pakua App', foot_api:'Hali ya API', foot_privacy:'Faragha', foot_terms:'Masharti',
+    foot_app:'App (haijachapishwa)', foot_api:'Hali ya API', foot_privacy:'Faragha', foot_terms:'Masharti',
     foot_motto:'Shiriki. Jifunze. Endelea.',
   },
   en: {
@@ -664,7 +622,7 @@ const MK_TRANSLATIONS = {
     nav_solutions_group:'Solutions', nav_community_group:'Community', nav_company_group:'Company',
     nav_impact:'Impact', nav_partners:'Partners', nav_pitchdeck:'Pitch Deck',
     nav_more:'More', nav_stories:'Farmer Stories', nav_tech:'Technology & AI',
-    nav_contact:'Contact', nav_api:'API Status', nav_download:'Download App', nav_login:'Login', nav_webapp:'Web App',
+    nav_contact:'Contact', nav_api:'API Status', nav_download:'Register', nav_login:'Login', nav_webapp:'Web App',
     foot_tagline:'A digital platform connecting farmers, agronomists, markets, and AI technology across Tanzania and East Africa.',
     foot_contact_link:'Contact Us →',
     foot_company:'COMPANY', foot_about:'About Us', foot_impact:'Our Impact',
@@ -672,7 +630,7 @@ const MK_TRANSLATIONS = {
     foot_solutions:'SOLUTIONS', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
     foot_market:'Agri Marketplace', foot_verify:'Input Verification', foot_weather:'Weather Intelligence', foot_offline:'Offline AI',
     foot_resources:'RESOURCES', foot_pitch:'Pitch Deck', foot_tech:'Technology',
-    foot_app:'Download App', foot_api:'API Status', foot_privacy:'Privacy', foot_terms:'Terms',
+    foot_app:'App (not published)', foot_api:'API Status', foot_privacy:'Privacy', foot_terms:'Terms',
     foot_motto:'Share. Learn. Grow.',
   }
 };

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'mk_tokens.dart';
 
 /// MkulimaForum's palette: a white canvas carrying agricultural green.
 ///
@@ -17,52 +18,52 @@ class MkColors {
   MkColors._();
 
   // ── Brand green ───────────────────────────────────────────────────
-  static const Color primary = Color(0xFF1B7A3E);
-  static const Color primaryDark = Color(0xFF14532D);
-  static const Color leafGreen = Color(0xFF1B7A3E);
-  static const Color leafBright = Color(0xFF3FA463);
-  static const Color leafPale = Color(0xFFEEF7F0);
+  static const Color primary = MkTokens.colorPrimary;
+  static const Color primaryDark = MkTokens.colorPrimaryDark;
+  static const Color leafGreen = MkTokens.colorLeaf;
+  static const Color leafBright = MkTokens.colorLeaf;
+  static const Color leafPale = MkTokens.colorLeafPale;
 
   /// Retained for source compatibility, and it is genuinely ink: two thirds
   /// of its uses are Text colours. Background uses were changed to `primary`
   /// individually rather than by redefining this, which would have produced
   /// green labels on green buttons.
-  static const Color charcoal = Color(0xFF0F1511);
+  static const Color charcoal = MkTokens.colorInk;
 
   // ── Accent, now genuinely an accent ───────────────────────────────
-  static const Color accent = Color(0xFFE0A008);
-  static const Color accentSoft = Color(0xFFFDF1D6);
+  static const Color accent = MkTokens.colorEarth;
+  static const Color accentSoft = MkTokens.colorWarningSoft;
 
   // ── Ink ───────────────────────────────────────────────────────────
-  static const Color ink = Color(0xFF0F1511);
+  static const Color ink = MkTokens.colorInk;
 
   /// Darkened from #626D66 so 13px captions clear 4.5:1 on white with room
   /// to spare in direct sunlight (about 6:1).
-  static const Color muted = Color(0xFF5A645E);
+  static const Color muted = MkTokens.colorMuted;
 
   // ── Surfaces: white first ─────────────────────────────────────────
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceRaised = Color(0xFFFFFFFF);
-  static const Color surfaceMuted = Color(0xFFF4F7F4);
-  static const Color border = Color(0xFFE5EAE6);
+  static const Color surface = MkTokens.colorSurface;
+  static const Color surfaceRaised = MkTokens.colorSurface;
+  static const Color surfaceMuted = MkTokens.colorSurfaceMuted;
+  static const Color border = MkTokens.colorBorder;
 
   // ── Semantic ──────────────────────────────────────────────────────
-  static const Color danger = Color(0xFFB3261E);
-  static const Color success = Color(0xFF1B7A3E);
+  static const Color danger = MkTokens.colorDanger;
+  static const Color success = MkTokens.colorPrimary;
 
   /// Darkened from #B26A00, which was about 4:1 on white and failed at 13px.
-  static const Color warning = Color(0xFF9A5B00);
+  static const Color warning = MkTokens.colorWarning;
 
   /// Status only (an order in transit, a payment being processed): the one
   /// non-green hue, and blue rather than a second green so it differs from
   /// success in lightness and hue for colour-blind readers.
-  static const Color info = Color(0xFF2257A8);
-  static const Color infoSoft = Color(0xFFE8EFFA);
-  static const Color dangerSoft = Color(0xFFFCEDEC);
+  static const Color info = MkTokens.colorInfo;
+  static const Color infoSoft = MkTokens.colorInfoSoft;
+  static const Color dangerSoft = MkTokens.colorDangerSoft;
 
   /// Text that sits on [accentSoft], e.g. the offline banner. Amber text on
   /// pale amber fails contrast; this brown passes at 13px.
-  static const Color onAccentSoft = Color(0xFF5C3A00);
+  static const Color onAccentSoft = MkTokens.colorWarning;
 
   /// Skeleton placeholder fill.
   static const Color skeleton = Color(0xFFEDF1EE);
@@ -116,9 +117,9 @@ class MkText {
 
 class MkRadii {
   MkRadii._();
-  static const double card = 16;
-  static const double button = 14;
-  static const double sheet = 24;
+  static const double card = MkTokens.radiusLg;
+  static const double button = MkTokens.radiusMd;
+  static const double sheet = MkTokens.radiusXl;
 }
 
 /// Material's defaults put several text roles at 11-12px (labelSmall,
