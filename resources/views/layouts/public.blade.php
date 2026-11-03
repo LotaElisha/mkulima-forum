@@ -8,6 +8,8 @@
   <meta name="description" content="@yield('meta_description', 'MkulimaForum is an AI-powered digital agriculture ecosystem connecting Tanzania farmers with knowledge, markets, trusted inputs, weather intelligence, and practical farming support.')">
   <meta name="theme-color" content="#FFFFFF">
   <link rel="canonical" href="{{ url()->current() }}">
+  <link rel="icon" type="image/jpeg" href="/images/logo-icon.jpg">
+  <link rel="apple-touch-icon" href="/images/logo-icon.jpg">
 
   {{-- Open Graph --}}
   <meta property="og:type" content="website">
@@ -176,7 +178,8 @@
     }
     .nav-wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
     .nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; min-height: 44px; }
-    .nav-logo img { height: 40px; width: auto; object-fit: contain; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; }
+    .brand-word { font-weight: 800; letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
     .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; flex: 1; justify-content: center; }
     .nav-links a, .nav-dropdown-trigger {
       display: flex; align-items: center; gap: 5px; min-height: 44px; padding: 0 14px;
@@ -265,7 +268,6 @@
     #site-footer { background: var(--surface-soft); color: var(--ink-body); padding: 64px 0 0; border-top: 1px solid var(--border-light); }
     .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 48px; }
     @media(max-width: 920px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
-    .foot-brand img { height: 40px; width: auto; }
     .foot-brand p { font-size: 15px; margin-top: 14px; color: var(--ink-muted); line-height: 1.6; max-width: 26rem; }
     .foot-contact { display: inline-flex; align-items: center; min-height: 44px; margin-top: 8px; font-weight: 600; color: var(--forest-dark); }
     .foot-col-title { font-weight: 700; font-size: 13px; color: var(--ink-dark); margin-bottom: 10px; letter-spacing: .08em; text-transform: uppercase; }
@@ -404,8 +406,8 @@
 <header id="site-header">
   <div class="wrap nav-wrap">
     <!-- Logo -->
-    <a href="/" class="nav-logo">
-      <img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum">
+    <a href="/" class="nav-logo" aria-label="MkulimaForum, nyumbani">
+      <x-brand :settings="$settings ?? []" :size="40" />
     </a>
 
     <!-- Primary nav links (Grouped & Uncongested) -->
@@ -476,7 +478,7 @@
 <!-- Mobile Drawer (Clean Grouped Mobile Menu) -->
 <nav id="nav-drawer" aria-label="Mobile navigation" aria-hidden="true" inert>
   <div class="drawer-header">
-    <a href="/" class="nav-logo"><img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum"></a>
+    <a href="/" class="nav-logo" aria-label="MkulimaForum, nyumbani"><x-brand :settings="$settings ?? []" :size="36" /></a>
     <button class="drawer-close" onclick="toggleDrawer()" aria-label="Funga menyu"><x-icon name="close" :size="24" /></button>
   </div>
   <div class="drawer-links">
@@ -527,7 +529,7 @@
     <div class="foot-grid">
       <!-- Brand -->
       <div class="foot-brand">
-        <img src="{{ $settings['logo_url'] ?? '/images/brand-banner.png' }}" alt="MkulimaForum">
+        <x-brand :settings="$settings ?? []" :size="44" />
         <p data-i18n="foot_tagline">Jukwaa la kidigitali linalowaunganisha wakulima, wataalamu, masoko, na teknolojia ya AI nchini Tanzania na Afrika Mashariki.</p>
         <a href="/contact" class="foot-contact" data-i18n="foot_contact_link">Wasiliana Nasi →</a>
       </div>
@@ -569,6 +571,7 @@
           <li><a href="/api/health" target="_blank" data-i18n="foot_api">API Status</a></li>
           <li><a href="/privacy" data-i18n="foot_privacy">Faragha</a></li>
           <li><a href="/terms" data-i18n="foot_terms">Masharti</a></li>
+          <li><a href="/delete-account" data-i18n="foot_delete">Kufuta Akaunti</a></li>
         </ul>
       </div>
     </div>
@@ -614,7 +617,7 @@ const MK_TRANSLATIONS = {
     foot_solutions:'SULUHISHO', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
     foot_market:'Soko la Kilimo', foot_verify:'Kagua Pembejeo', foot_weather:'Hali ya Hewa', foot_offline:'Offline AI',
     foot_resources:'RASILIMALI', foot_pitch:'Pitch Deck', foot_tech:'Teknolojia',
-    foot_app:'App (haijachapishwa)', foot_api:'Hali ya API', foot_privacy:'Faragha', foot_terms:'Masharti',
+    foot_app:'App (haijachapishwa)', foot_api:'Hali ya API', foot_privacy:'Faragha', foot_terms:'Masharti', foot_delete:'Kufuta Akaunti',
     foot_motto:'Shiriki. Jifunze. Endelea.',
   },
   en: {
@@ -630,7 +633,7 @@ const MK_TRANSLATIONS = {
     foot_solutions:'SOLUTIONS', foot_scanner:'AI Plant Scanner', foot_bot:'Mkulima AI',
     foot_market:'Agri Marketplace', foot_verify:'Input Verification', foot_weather:'Weather Intelligence', foot_offline:'Offline AI',
     foot_resources:'RESOURCES', foot_pitch:'Pitch Deck', foot_tech:'Technology',
-    foot_app:'App (not published)', foot_api:'API Status', foot_privacy:'Privacy', foot_terms:'Terms',
+    foot_app:'App (not published)', foot_api:'API Status', foot_privacy:'Privacy', foot_terms:'Terms', foot_delete:'Delete Account',
     foot_motto:'Share. Learn. Grow.',
   }
 };

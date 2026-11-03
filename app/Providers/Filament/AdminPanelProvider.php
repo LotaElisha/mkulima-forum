@@ -31,6 +31,11 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile()
             ->brandName('Mkulima Forum')
+            // The original farmer emblem, so the admin tab and header match
+            // the public site and the app.
+            ->brandLogo(asset('images/logo-icon.jpg'))
+            ->brandLogoHeight('2.25rem')
+            ->favicon(asset('images/logo-icon.jpg'))
             ->colors([
                 'primary' => Color::hex('#166534'),
             ])

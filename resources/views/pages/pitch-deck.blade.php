@@ -120,10 +120,10 @@
       </p>
       <div class="pitch-actions">
         @if(isset($settings['pitch_deck_url']) && $settings['pitch_deck_url'])
-        <button onclick="openPDF('{{ $settings['pitch_deck_url'] }}')" class="btn btn-primary btn-lg" data-i18n="pitch_view_btn">👁️ Tazama Pitch Deck Online</button>
-        <a href="{{ $settings['pitch_deck_url'] }}" target="_blank" rel="noopener" download class="btn btn-outline btn-lg" data-i18n="pitch_dl_btn">⬇️ Pakua PDF</a>
+        <button onclick="openPDF('{{ $settings['pitch_deck_url'] }}')" class="btn btn-primary btn-lg" data-i18n="pitch_view_btn">Tazama Pitch Deck Online</button>
+        <a href="{{ $settings['pitch_deck_url'] }}" target="_blank" rel="noopener" download class="btn btn-outline btn-lg" data-i18n="pitch_dl_btn">Pakua PDF</a>
         @else
-        <a href="/contact" class="btn btn-primary btn-lg" data-i18n="pitch_request_btn">📬 Omba Nakala ya Pitch Deck</a>
+        <a href="/contact" class="btn btn-primary btn-lg" data-i18n="pitch_request_btn">Omba Nakala ya Pitch Deck</a>
         @endif
       </div>
     </div>
@@ -177,8 +177,8 @@
     </div>
     <div class="viewer-frame">
       <div class="viewer-bar">
-        <span class="viewer-file">📄 MkulimaForum_Pitch_Deck.pdf</span>
-        <a href="{{ $settings['pitch_deck_url'] }}" target="_blank" rel="noopener" download class="btn btn-outline btn-sm" data-i18n="viewer_dl_btn">⬇️ Pakua</a>
+        <span class="viewer-file"><x-icon name="file" :size="24" /> MkulimaForum_Pitch_Deck.pdf</span>
+        <a href="{{ $settings['pitch_deck_url'] }}" target="_blank" rel="noopener" download class="btn btn-outline btn-sm" data-i18n="viewer_dl_btn">Pakua</a>
       </div>
       <iframe
         src="{{ $settings['pitch_deck_url'] }}#toolbar=1&view=FitH"
@@ -193,8 +193,8 @@
       <h2 data-i18n="no_deck_title">Pitch Deck Haijapakiwa Bado</h2>
       <p data-i18n="no_deck_desc">Admin ya MkulimaForum bado haijapakia faili ya Pitch Deck. Inaweza kupakiwa kupitia Admin Dashboard → Mipangilio → Ukurasa wa Kutua.</p>
       <div class="no-pitch-actions">
-        <a href="/contact" class="btn btn-primary" data-i18n="no_deck_request_btn">📬 Omba Nakala ya Pitch Deck</a>
-        <a href="/admin" class="btn btn-outline btn-sm" data-i18n="no_deck_admin_btn">🔐 Admin Dashboard</a>
+        <a href="/contact" class="btn btn-primary" data-i18n="no_deck_request_btn">Omba Nakala ya Pitch Deck</a>
+        <a href="/admin" class="btn btn-outline btn-sm" data-i18n="no_deck_admin_btn">Admin Dashboard</a>
       </div>
     </div>
     @endif
@@ -211,8 +211,8 @@
         <p style="margin-top:12px;" data-i18n="nda_desc">Tupo tayari kushiriki taarifa zaidi za kifedha, mkakati wa biashara, na maelezo ya kina zaidi kwa wawekezaji wanaovutika. Wasiliana nasi kupanga mazungumzo.</p>
       </div>
       <div class="investment-actions">
-        <a href="/contact?type=investor" class="btn btn-primary" data-i18n="nda_contact_btn">📬 Wasiliana na Timu</a>
-        <a href="/impact" class="btn btn-outline" data-i18n="nda_impact_btn">📊 Angalia Athari →</a>
+        <a href="/contact?type=investor" class="btn btn-primary" data-i18n="nda_contact_btn">Wasiliana na Timu</a>
+        <a href="/impact" class="btn btn-outline" data-i18n="nda_impact_btn">Angalia Athari →</a>
       </div>
     </div>
   </div>
@@ -222,10 +222,10 @@
 <div id="pdfModal" onclick="closePDFModal(event)" role="dialog" aria-label="Pitch Deck Viewer" aria-modal="true">
   <div class="pdf-modal-card" onclick="event.stopPropagation()">
     <div class="pdf-modal-header">
-      <h4 data-i18n="pd_deck_modal_title">📊 MkulimaForum Pitch Deck</h4>
+      <h4 data-i18n="pd_deck_modal_title">MkulimaForum Pitch Deck</h4>
       <div class="pdf-modal-actions">
-        <a id="pdfDownloadBtn" href="#" target="_blank" rel="noopener" download class="btn btn-outline btn-sm" data-i18n="pd_download_btn">⬇️ Download</a>
-        <button class="pdf-close-btn" onclick="closePDF()" aria-label="Close PDF viewer">✕</button>
+        <a id="pdfDownloadBtn" href="#" target="_blank" rel="noopener" download class="btn btn-outline btn-sm" data-i18n="pd_download_btn">Download</a>
+        <button class="pdf-close-btn" onclick="closePDF()" aria-label="Close PDF viewer"><x-icon name="close" :size="24" /></button>
       </div>
     </div>
     <iframe id="pdfFrame" title="Pitch Deck Viewer"></iframe>
@@ -259,7 +259,7 @@ mkPageTranslations = {
   sw: {
     pitch_badge:'INVESTOR PRESENTATION', pitch_hero_title:'MkulimaForum — AI Agriculture Platform for East Africa',
     pitch_hero_sub:'Tazama muhtasari kamili wa mradi wetu, fursa ya soko, muundo wa biashara, teknolojia ya AI, na athari tunazolenga.',
-    pitch_view_btn:'👁️ Tazama Pitch Deck Online', pitch_dl_btn:'⬇️ Pakua PDF', pitch_request_btn:'📬 Omba Nakala ya Pitch Deck',
+    pitch_view_btn:'Tazama Pitch Deck Online', pitch_dl_btn:'Pakua PDF', pitch_request_btn:'Omba Nakala ya Pitch Deck',
     deck_eyebrow:'KATIKA PITCH DECK', deck_title:'Deck Inajumuisha Nini',
     pd0_title:'Tatizo na Fursa', pd0_desc:'Tatizo na fursa ya soko ya Afrika Mashariki',
     pd1_title:'Dhamira na Maono', pd1_desc:'Dhamira yetu, maono, na mkakati',
@@ -269,19 +269,19 @@ mkPageTranslations = {
     pd5_title:'Fursa ya Soko', pd5_desc:'Ukubwa wa soko na ramani ya upanuzi',
     pd6_title:'Ramani ya Barabara', pd6_desc:'Hatua za maendeleo na mpango wa kwenda sokoni',
     pd7_title:'Timu', pd7_desc:'Timu ya uongozi na washauri',
-    viewer_eyebrow:'TAZAMA ONLINE', viewer_title:'Soma Pitch Deck Hapa', viewer_dl_btn:'⬇️ Pakua',
+    viewer_eyebrow:'TAZAMA ONLINE', viewer_title:'Soma Pitch Deck Hapa', viewer_dl_btn:'Pakua',
     no_deck_title:'Pitch Deck Haijapakiwa Bado',
     no_deck_desc:'Admin ya MkulimaForum bado haijapakia faili ya Pitch Deck. Inaweza kupakiwa kupitia Admin Dashboard → Mipangilio.',
-    no_deck_request_btn:'📬 Omba Nakala ya Pitch Deck', no_deck_admin_btn:'🔐 Admin Dashboard',
+    no_deck_request_btn:'Omba Nakala ya Pitch Deck', no_deck_admin_btn:'Admin Dashboard',
     nda_badge:'UWEKEZAJI', nda_title:'Unatafuta Taarifa Zaidi za Uwekezaji?',
     nda_desc:'Tupo tayari kushiriki taarifa zaidi za kifedha, mkakati wa biashara, na maelezo ya kina zaidi kwa wawekezaji wanaovutika.',
-    nda_contact_btn:'📬 Wasiliana na Timu', nda_impact_btn:'📊 Angalia Athari →',
-    pd_deck_modal_title:'📊 Pitch Deck ya MkulimaForum', pd_download_btn:'⬇️ Pakua',
+    nda_contact_btn:'Wasiliana na Timu', nda_impact_btn:'Angalia Athari →',
+    pd_deck_modal_title:'Pitch Deck ya MkulimaForum', pd_download_btn:'Pakua',
   },
   en: {
     pitch_badge:'INVESTOR PRESENTATION', pitch_hero_title:'MkulimaForum — AI Agriculture Platform for East Africa',
     pitch_hero_sub:"View a complete overview of our project, market opportunity, business model, AI technology, and the impact we're targeting for smallholder farmers.",
-    pitch_view_btn:'👁️ View Pitch Deck Online', pitch_dl_btn:'⬇️ Download PDF', pitch_request_btn:'📬 Request a Copy',
+    pitch_view_btn:'View Pitch Deck Online', pitch_dl_btn:'Download PDF', pitch_request_btn:'Request a Copy',
     deck_eyebrow:'INSIDE THE DECK', deck_title:'What the Pitch Deck Covers',
     pd0_title:'Problem & Opportunity', pd0_desc:'The problem and East Africa market opportunity',
     pd1_title:'Mission & Vision', pd1_desc:'Our mission, vision, and strategic approach',
@@ -291,14 +291,14 @@ mkPageTranslations = {
     pd5_title:'Market Opportunity', pd5_desc:'Market size and expansion roadmap',
     pd6_title:'Roadmap', pd6_desc:'Development milestones and go-to-market plan',
     pd7_title:'Team', pd7_desc:'Leadership and advisory team',
-    viewer_eyebrow:'VIEW ONLINE', viewer_title:'Read the Pitch Deck Here', viewer_dl_btn:'⬇️ Download',
+    viewer_eyebrow:'VIEW ONLINE', viewer_title:'Read the Pitch Deck Here', viewer_dl_btn:'Download',
     no_deck_title:'Pitch Deck Not Yet Uploaded',
     no_deck_desc:'The MkulimaForum admin has not yet uploaded the Pitch Deck file. It can be uploaded via Admin Dashboard → Settings → Landing Page.',
-    no_deck_request_btn:'📬 Request a Copy of the Deck', no_deck_admin_btn:'🔐 Admin Dashboard',
+    no_deck_request_btn:'Request a Copy of the Deck', no_deck_admin_btn:'Admin Dashboard',
     nda_badge:'INVESTMENT', nda_title:'Looking for More Detailed Investment Information?',
     nda_desc:"We're happy to share detailed financial information, business strategy, and in-depth materials with interested investors. Contact us to schedule a conversation.",
-    nda_contact_btn:'📬 Contact the Team', nda_impact_btn:'📊 View Our Impact →',
-    pd_deck_modal_title:'📊 MkulimaForum Pitch Deck', pd_download_btn:'⬇️ Download',
+    nda_contact_btn:'Contact the Team', nda_impact_btn:'View Our Impact →',
+    pd_deck_modal_title:'MkulimaForum Pitch Deck', pd_download_btn:'Download',
   }
 };
 </script>

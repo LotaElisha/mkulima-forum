@@ -176,6 +176,13 @@ Route::get('/privacy', function () use ($publicSettings) {
     return view('pages.privacy', compact('settings'));
 })->name('privacy');
 
+// Account deletion instructions. Google Play requires a public URL for this.
+Route::get('/delete-account', function () use ($publicSettings) {
+    $settings = $publicSettings();
+
+    return view('pages.delete-account', compact('settings'));
+})->name('delete-account');
+
 Route::get('/terms', function () use ($publicSettings) {
     $settings = $publicSettings();
 

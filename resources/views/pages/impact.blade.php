@@ -180,7 +180,7 @@
     <h2 data-i18n="inv_title">Wekezaji: Unatafuta Athari ya Kweli?</h2>
     <p data-i18n="inv_sub">Tazama Pitch Deck yetu yenye maelezo ya muundo wa biashara, mkakati wa ukuaji, na athari tunazotarajiwa kwa wakulima wa Afrika Mashariki.</p>
     <div class="cta-actions">
-      <a href="/pitch-deck" class="btn btn-primary btn-lg" data-i18n="inv_pitch_btn">📊 Tazama Pitch Deck</a>
+      <a href="/pitch-deck" class="btn btn-primary btn-lg" data-i18n="inv_pitch_btn">Tazama Pitch Deck</a>
       <a href="/contact" class="btn btn-outline btn-lg" data-i18n="inv_contact_btn">Wasiliana Nasi →</a>
     </div>
   </div>
@@ -214,7 +214,7 @@ mkPageTranslations = {
     method_cta:'Shirikiana na Utafiti Wetu →',
     inv_title:'Wekezaji: Unatafuta Athari ya Kweli?',
     inv_sub:'Tazama Pitch Deck yetu yenye maelezo ya muundo wa biashara, mkakati wa ukuaji, na athari tunazotarajiwa.',
-    inv_pitch_btn:'📊 Tazama Pitch Deck', inv_contact_btn:'Wasiliana Nasi →',
+    inv_pitch_btn:'Tazama Pitch Deck', inv_contact_btn:'Wasiliana Nasi →',
   },
   en: {
     impact_eyebrow:'OUR IMPACT', impact_title:'Technology Creating Measurable Agricultural Change',
@@ -239,7 +239,7 @@ mkPageTranslations = {
     method_cta:'Partner in Our Research →',
     inv_title:'Investors: Looking for Measurable Impact?',
     inv_sub:'View our pitch deck covering business model, growth strategy, and projected impact for East African smallholder farmers.',
-    inv_pitch_btn:'📊 View Pitch Deck', inv_contact_btn:'Contact Us →',
+    inv_pitch_btn:'View Pitch Deck', inv_contact_btn:'Contact Us →',
   }
 };
 </script>

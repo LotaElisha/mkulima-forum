@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const targetUrl = safeExternalUrl(c.click_to_chat_url || c.url);
       const isSw = MK_LANG === 'sw';
       const officialBadge = c.is_official 
-        ? `<span class="official-tag">✓ ${isSw ? 'Rasmi Mkulima Forum' : 'Official Mkulima Forum'}</span>` 
+        ? `<span class="official-tag">${isSw ? 'Rasmi Mkulima Forum' : 'Official Mkulima Forum'}</span>` 
         : '';
 
       const descText = typeof c.description === 'object' && c.description !== null
@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         : (c.description || (isSw ? 'Jiunge na wakulima wengine kupata taarifa za kilimo.' : 'Join other farmers to get agricultural updates.'));
 
       const btnText = c.channel_type === 'WHATSAPP_BUSINESS'
-        ? (isSw ? '📲 Anza Mazungumzo' : '📲 Start Chat')
-        : (isSw ? '🔗 Jiunge Sasa' : '🔗 Join Channel');
+        ? (isSw ? 'Anza Mazungumzo' : 'Start Chat')
+        : (isSw ? 'Jiunge Sasa' : 'Join Channel');
 
       return `
         <div class="comm-card">

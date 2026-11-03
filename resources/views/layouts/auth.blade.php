@@ -17,6 +17,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#FFFFFF">
+  <link rel="icon" type="image/jpeg" href="/images/logo-icon.jpg">
   <meta name="robots" content="noindex, nofollow">
   <title>@yield('title', 'MkulimaForum')</title>
   <link rel="stylesheet" href="{{ asset('css/mk-tokens.css') }}">
@@ -47,11 +48,8 @@
       color:var(--ink); text-decoration:none;
     }
     .auth-brand:hover{text-decoration:none}
-    .auth-brand .mark{
-      width:34px; height:34px; border-radius:10px; flex:none;
-      background:var(--green-600); color:#fff;
-      display:grid; place-items:center;
-    }
+    .brand{display:inline-flex; align-items:center; gap:10px}
+    .brand-word{font-weight:800; letter-spacing:-.02em; line-height:1}
 
     .auth-card{background:var(--surface)}
     @media(min-width:520px){
@@ -157,14 +155,8 @@
 </head>
 <body>
   <main class="auth-shell">
-    <a class="auth-brand" href="/">
-      <span class="mark" aria-hidden="true">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-        </svg>
-      </span>
-      MkulimaForum
+    <a class="auth-brand" href="/" aria-label="MkulimaForum, nyumbani">
+      <x-brand :size="38" />
     </a>
 
     <section class="auth-card">
