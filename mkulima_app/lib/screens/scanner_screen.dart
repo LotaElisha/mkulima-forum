@@ -2,39 +2,42 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import '../core/format.dart';
 import '../core/strings.dart';
 import '../core/theme.dart';
-import '../services/api_service.dart';
 import '../providers/auth_provider.dart';
 import '../providers/connectivity_provider.dart';
-import '../widgets/mk_button.dart';
+import '../services/api_service.dart';
+import '../services/scan_queue.dart';
+import 'agronomists_screen.dart';
+import 'disease_library_screen.dart';
+import 'marketplace_screen.dart';
 
-/// Standalone page wrapper so the flagship AI Plant Scanner can be pushed
-/// from anywhere (App Bar button, center FAB, home hero) with one tap.
+/// Standalone page so the scanner can be pushed from anywhere, as well as
+/// being the centre tab.
 class ScannerPage extends StatelessWidget {
   const ScannerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Column(
-          children: [
-            Text(MkStrings.scannerBrand, style: TextStyle(fontSize: 17)),
-            Text(
-              MkStrings.scannerTagline,
-              style: TextStyle(fontSize: 13, color: MkColors.muted),
-            ),
-          ],
-        ),
-        backgroundColor: MkColors.surface,
-        foregroundColor: MkColors.charcoal,
-      ),
+      appBar: AppBar(title: const Text(MkStrings.scannerBrand)),
       body: const ScannerScreen(),
     );
   }
 }
 
+/// AI Plant Scanner.
+///
+/// What runs where, stated plainly because the UI must not claim more:
+///   * Diagnosis is Gemini Vision on the server (POST /scanner/scan). It
+///     needs a connection and an AI key configured in admin; when either is
+///     missing the server answers "analysis unavailable" and so do we.
+///   * Offline, the photo is kept on the phone (ScanQueue) and diagnosed
+///     automatically when the connection returns.
+///   * The disease library is bundled and readable offline.
+///   * There is no on-device model. Nothing here names a disease without
+///     the server having looked at the photo.
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({super.key});
 
@@ -43,211 +46,274 @@ class ScannerScreen extends StatefulWidget {
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
-  // Bytes instead of dart:io File so the scanner works on mobile AND web
-  // (Image.file / MultipartFile.fromFile crash on Flutter Web).
   Uint8List? _imageBytes;
   String _imageName = 'plant.jpg';
   bool _isScanning = false;
+  bool _syncing = false;
+  bool _wasOnline = true;
   Map<String, dynamic>? _result;
+  String? _unavailable;
+  List<PendingScan> _pending = [];
 
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, maxWidth: 1024);
-    if (picked != null) {
-      final bytes = await picked.readAsBytes();
-      if (!mounted) return;
-      setState(() {
-        _imageBytes = bytes;
-        _imageName = picked.name;
-        _result = null;
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    _loadPending();
   }
 
-  Future<void> _scanDisease() async {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final online = context.watch<ConnectivityProvider>().isOnline;
+    if (online && !_wasOnline) _syncPending();
+    _wasOnline = online;
+  }
+
+  Future<void> _loadPending() async {
+    final pending = await ScanQueue.all();
+    if (mounted) setState(() => _pending = pending);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picked = await ImagePicker().pickImage(source: source, maxWidth: 1024, imageQuality: 85);
+    if (picked == null) return;
+    final bytes = await picked.readAsBytes();
+    if (!mounted) return;
+    setState(() {
+      _imageBytes = bytes;
+      _imageName = picked.name;
+      _result = null;
+      _unavailable = null;
+    });
+  }
+
+  Future<void> _diagnose() async {
     if (_imageBytes == null) return;
-
-    final authenticated = await AuthProvider.requireAuth(
-      context,
-      action: 'kukagua ugonjwa wa mmea',
-    );
-    if (!authenticated || !mounted) return;
-
-    setState(() => _isScanning = true);
-
+    if (!context.read<ConnectivityProvider>().isOnline) {
+      await _saveForLater();
+      return;
+    }
+    final ok = await AuthProvider.requireAuth(context, action: 'kukagua ugonjwa wa mmea');
+    if (!ok || !mounted) return;
+    setState(() {
+      _isScanning = true;
+      _unavailable = null;
+    });
     try {
-      final api = Provider.of<ApiService>(context, listen: false);
-      final result = await api.scanDisease(_imageBytes!, _imageName);
+      final result = await context.read<ApiService>().scanDisease(_imageBytes!, _imageName);
+      if (!mounted) return;
       setState(() {
         _result = result;
         _isScanning = false;
       });
     } catch (e) {
-      setState(() => _isScanning = false);
       if (!mounted) return;
+      setState(() {
+        _isScanning = false;
+        _unavailable = ApiService.formatError(e);
+      });
+    }
+  }
+
+  Future<void> _saveForLater() async {
+    final saved = await ScanQueue.add(_imageBytes!, _imageName);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(saved
+          ? 'Picha imehifadhiwa. Itakaguliwa ukirudi mtandaoni.'
+          : 'Picha ${ScanQueue.maxItems} zinasubiri tayari. Rudi mtandaoni kwanza.'),
+    ));
+    if (saved) {
+      setState(() {
+        _imageBytes = null;
+        _result = null;
+        _unavailable = null;
+      });
+      _loadPending();
+    }
+  }
+
+  Future<void> _syncPending() async {
+    if (_syncing || _pending.isEmpty) return;
+    if (!context.read<AuthProvider>().isAuthenticated) return;
+    setState(() => _syncing = true);
+    final api = context.read<ApiService>();
+    var done = 0;
+    for (final scan in List.of(_pending)) {
+      try {
+        final result = await api.scanDisease(scan.bytes, scan.name);
+        await ScanQueue.remove(scan.id);
+        done++;
+        if (!mounted) return;
+        setState(() {
+          _imageBytes = scan.bytes;
+          _result = result;
+        });
+      } catch (_) {
+        break; // Keep the rest queued; retry on the next reconnect.
+      }
+    }
+    await _loadPending();
+    if (!mounted) return;
+    setState(() => _syncing = false);
+    if (done > 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kosa: ${ApiService.formatError(e)}')),
+        SnackBar(content: Text('Picha $done zilizosubiri zimekaguliwa.')),
       );
     }
   }
 
+  void _push(Widget screen) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+
   @override
   Widget build(BuildContext context) {
-    final connectivity = Provider.of<ConnectivityProvider>(context);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          if (!connectivity.isOnline)
-            Card(
-              color: MkColors.accentSoft,
-              child: const Padding(
-                padding: EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Icon(Icons.wifi_off, color: MkColors.warning),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Hakuna mtandao. Tumia AI ya ndani (inakuja).',
-                        style: TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          const SizedBox(height: 16),
-          if (_imageBytes != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.memory(
-                _imageBytes!,
-                height: 250,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            )
-          else
-            Container(
-              height: 250,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: MkColors.border,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.camera_alt, size: 60, color: MkColors.muted),
-                  const SizedBox(height: 12),
-                  Text(
-                    MkStrings.scanPlant,
-                    style: TextStyle(color: MkColors.muted),
-                  ),
-                ],
-              ),
-            ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _pickImage(ImageSource.camera),
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text('Kamera'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MkColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _pickImage(ImageSource.gallery),
-                  icon: const Icon(Icons.photo_library),
-                  label: const Text('Ghalari'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                ),
-              ),
-            ],
+    final online = context.watch<ConnectivityProvider>().isOnline;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: online ? MkColors.leafPale : MkColors.accentSoft,
+            borderRadius: BorderRadius.circular(MkRadii.card),
           ),
-          const SizedBox(height: 16),
-          if (_imageBytes != null)
-            MkButton(
-              label: MkStrings.titleScanner,
-              icon: Icons.biotech,
-              loading: _isScanning,
-              onPressed: _scanDisease,
-            ),
-          if (_result != null) ...[
-            const SizedBox(height: 24),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.medical_services, color: MkColors.danger),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Matokeo ya Uchunguzi',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    _buildResultRow(
-                      'Ugonjwa',
-                      _result!['disease_name'] ?? 'Haijulikani',
-                    ),
-                    _buildResultRow(
-                      'Uthibitisho',
-                      '${((_result!['confidence'] ?? 0) * 100).toStringAsFixed(1)}%',
-                    ),
-                    _buildResultRow(
-                      'Dalili',
-                      _result!['symptoms'] ?? 'Hakuna maelezo',
-                    ),
-                    _buildResultRow(
-                      'Tiba',
-                      _result!['treatment'] ?? 'Hakuna maelezo',
-                    ),
-                    _buildResultRow(
-                      'Kinga',
-                      _result!['prevention'] ?? 'Hakuna maelezo',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+          child: Text(
+            online
+                ? 'Uko mtandaoni: picha itakaguliwa na AI papo hapo.'
+                : 'Hakuna mtandao. Piga picha sasa; itahifadhiwa na kukaguliwa ukirudi '
+                    'mtandaoni. Maktaba ya magonjwa inafanya kazi bila mtandao.',
+            style: MkText.body,
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (_imageBytes != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(MkRadii.card),
+            child: AspectRatio(aspectRatio: 4 / 3, child: Image.memory(_imageBytes!, fit: BoxFit.cover)),
+          ),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: _isScanning
+              ? null
+              : _imageBytes == null
+                  ? () => _pickImage(ImageSource.camera)
+                  : _diagnose,
+          icon: Icon(_imageBytes == null
+              ? Icons.camera_alt_rounded
+              : online
+                  ? Icons.biotech_outlined
+                  : Icons.save_alt_outlined),
+          label: Text(_isScanning
+              ? 'AI inachambua...'
+              : _imageBytes == null
+                  ? 'Piga picha ya mmea'
+                  : online
+                      ? 'Kagua kwa AI'
+                      : 'Hifadhi, kagua nikirudi mtandaoni'),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+        ),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          onPressed: _isScanning ? null : () => _pickImage(ImageSource.gallery),
+          icon: const Icon(Icons.photo_library_outlined),
+          label: Text(_imageBytes == null ? 'Chagua kutoka ghalari' : 'Chagua picha nyingine'),
+          style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48), foregroundColor: MkColors.ink),
+        ),
+        if (_unavailable != null) ...[
+          const SizedBox(height: 12),
+          Text('Uchunguzi haukufanyika: $_unavailable', style: MkText.bodyMuted),
+          TextButton(onPressed: _saveForLater, child: const Text('Hifadhi, jaribu baadaye')),
         ],
-      ),
+        if (_result != null) ...[
+          const SizedBox(height: 16),
+          _ResultCard(
+            result: _result!,
+            onAgronomist: () => _push(const AgronomistsScreen()),
+            onInputs: () => _push(const MarketplaceScreen(standalone: true)),
+          ),
+        ],
+        if (_pending.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          ListTile(
+            tileColor: MkColors.surfaceMuted,
+            leading: const Icon(Icons.schedule_outlined),
+            title: Text(_syncing ? 'Inakagua picha zilizosubiri...' : 'Picha ${_pending.length} zinasubiri kukaguliwa'),
+            trailing: online && !_syncing ? TextButton(onPressed: _syncPending, child: const Text('Kagua sasa')) : null,
+          ),
+        ],
+        const SizedBox(height: 16),
+        ListTile(
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: MkColors.border),
+            borderRadius: BorderRadius.circular(MkRadii.card),
+          ),
+          leading: const Icon(Icons.menu_book_outlined, color: MkColors.primary),
+          title: const Text('Maktaba ya magonjwa'),
+          subtitle: const Text('Dalili, tiba na kinga. Inafanya kazi bila mtandao.'),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => _push(const DiseaseLibraryScreen()),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildResultRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+class _ResultCard extends StatelessWidget {
+  final Map<String, dynamic> result;
+  final VoidCallback onAgronomist;
+  final VoidCallback onInputs;
+  const _ResultCard({required this.result, required this.onAgronomist, required this.onInputs});
+
+  @override
+  Widget build(BuildContext context) {
+    final confidence = parseNum(result['confidence'] ?? result['confidence_score']);
+    String? text(String k) {
+      final v = result[k];
+      return v == null || v.toString().trim().isEmpty ? null : v.toString();
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(color: MkColors.border),
+        borderRadius: BorderRadius.circular(MkRadii.card),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+          const Text('Matokeo ya uchunguzi', style: MkText.caption),
+          Text(text('disease_name') ?? 'Haijulikani', style: MkText.page),
+          if (confidence != null && confidence > 0)
+            Text(
+              'Uhakika wa AI: ${(confidence <= 1 ? confidence * 100 : confidence).toStringAsFixed(0)}%',
+              style: MkText.label.copyWith(color: MkColors.primary),
             ),
+          for (final (label, key) in const [
+            ('Maelezo', 'description'),
+            ('Dalili', 'symptoms'),
+            ('Tiba', 'treatment'),
+            ('Tiba', 'treatment_recommendation'),
+            ('Kinga', 'prevention'),
+          ])
+            if (text(key) case final value?) ...[
+              const SizedBox(height: 10),
+              Text(label, style: MkText.label),
+              Text(value, style: MkText.body),
+            ],
+          const SizedBox(height: 12),
+          const Text(
+            'AI inaweza kukosea. Thibitisha na mtaalamu kabla ya kununua dawa; tumia dawa '
+            'zilizosajiliwa na TPHPA.',
+            style: MkText.caption,
           ),
-          Expanded(child: Text(value)),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            children: [
+              FilledButton(onPressed: onAgronomist, child: const Text('Ongea na mtaalamu')),
+              OutlinedButton(onPressed: onInputs, child: const Text('Tafuta pembejeo')),
+            ],
+          ),
         ],
       ),
     );

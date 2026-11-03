@@ -9,8 +9,7 @@ import 'home_tab.dart';
 import 'marketplace_screen.dart';
 import 'forum_screen.dart';
 import 'profile_screen.dart';
-import 'market_prices_screen.dart';
-import 'weather_screen.dart';
+import 'scanner_screen.dart';
 import 'notifications_screen.dart';
 import 'login_modal.dart';
 
@@ -30,31 +29,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  /// 0 Nyumbani, 1 Soko (bado si kichupo kikuu), 2 Jukwaa, 3 Wasifu.
-  /// Bei na hali ya hewa zinafunguliwa juu ya ukurasa, si kama kichupo.
+  /// Slots: 0 Nyumbani, 1 Pembejeo, 2 Scan (centre), 3 Jukwaa, 4 Wasifu.
+  /// Weather lives on Home as a compact card, not in the bar.
   int _currentIndex = 0;
-
-  int get _selectedSlot => switch (_currentIndex) {
-    2 => 3,
-    3 => 4,
-    _ => 0,
-  };
-
-  void _onSlotSelected(int slot) {
-    if (slot == 1) {
-      Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const MarketPricesScreen()));
-      return;
-    }
-    if (slot == 2) {
-      Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const WeatherScreen()));
-      return;
-    }
-    setState(() => _currentIndex = switch (slot) { 3 => 2, 4 => 3, _ => 0 });
-  }
 
   void _openNotifications(AuthProvider auth) {
     if (!auth.isAuthenticated) {
@@ -73,13 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final screens = [
       HomeTab(onSwitchTab: (i) => setState(() => _currentIndex = i)),
       const MarketplaceScreen(),
+      const ScannerScreen(),
       const ForumScreen(),
       const ProfileScreen(),
     ];
 
     const titles = [
       MkStrings.titleHome,
-      MkStrings.navMarket,
+      'Pembejeo',
+      MkStrings.scannerBrand,
       MkStrings.navForum,
       MkStrings.titleProfile,
     ];
@@ -110,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
           border: Border(top: BorderSide(color: MkColors.border)),
         ),
         child: NavigationBar(
-          selectedIndex: _selectedSlot,
-          onDestinationSelected: _onSlotSelected,
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (i) => setState(() => _currentIndex = i),
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
@@ -119,12 +98,18 @@ class _HomeScreenState extends State<HomeScreen> {
               label: MkStrings.navHome,
             ),
             NavigationDestination(
-              icon: Icon(Icons.show_chart),
-              label: 'Bei',
+              icon: Icon(Icons.storefront_outlined),
+              selectedIcon: Icon(Icons.storefront),
+              label: 'Pembejeo',
             ),
+            // The scanner is the flagship: a filled green disc in the centre.
             NavigationDestination(
-              icon: Icon(Icons.wb_sunny_outlined),
-              label: 'Hewa',
+              icon: CircleAvatar(
+                radius: 22,
+                backgroundColor: MkColors.primary,
+                child: Icon(Icons.document_scanner_outlined, color: Colors.white),
+              ),
+              label: 'Scan',
             ),
             NavigationDestination(
               icon: Icon(Icons.forum_outlined),

@@ -10,8 +10,16 @@ import '../widgets/mk_skeleton.dart';
 import '../widgets/mk_product_tile.dart';
 import 'product_detail_screen.dart';
 
+/// Pembejeo — the agrodealer marketplace: seeds, fertilizer and crop
+/// protection from input dealers. Not a produce market: farmers selling
+/// maize or beans is a separate service ("Soko la mazao").
+///
+/// [standalone] is true when pushed from "Huduma zote" (it then has its own
+/// app bar); as a bottom-nav tab the shell provides the bar.
 class MarketplaceScreen extends StatefulWidget {
-  const MarketplaceScreen({super.key});
+  final bool standalone;
+
+  const MarketplaceScreen({super.key, this.standalone = false});
 
   @override
   State<MarketplaceScreen> createState() => _MarketplaceScreenState();
@@ -25,20 +33,51 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   final _searchController = TextEditingController();
   String? _selectedCategory;
 
-  final List<String> _categories = [
-    'All',
-    'Mbegu',
-    'Mbolea',
-    'Dawa za Wadudu',
-    'Mazao',
-    'Mifugo',
-    'Mashine',
-  ];
+  /// Input categories from the API, as (id, label). Loaded rather than
+  /// hard-coded: the old list filtered a category id against a Swahili label,
+  /// so every chip showed an empty grid, and it mixed in produce and
+  /// livestock, which are not inputs.
+  List<({String id, String label})> _categories = [];
+
+  /// Swahili names by slug; categories added in admin fall back to their name.
+  static const _labels = {
+    'seeds': 'Mbegu',
+    'fertilizers': 'Mbolea',
+    'pesticides': 'Viuatilifu',
+    'herbicides': 'Viuatilifu vya magugu',
+    'fungicides': 'Dawa za fangasi',
+    'insecticides': 'Dawa za wadudu',
+    'plant-nutrients': 'Virutubisho',
+    'tools': 'Zana',
+    'animal-feed': 'Chakula cha mifugo',
+    'irrigation': 'Umwagiliaji',
+    'other-inputs': 'Nyingine',
+  };
 
   @override
   void initState() {
     super.initState();
+    _loadCategories();
     _loadProducts();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final r = await context.read<ApiService>().get('/marketplace/categories');
+      final list = (r.data['categories'] as List?) ?? [];
+      if (!mounted) return;
+      setState(() {
+        _categories = [
+          for (final c in list)
+            (
+              id: c['id'].toString(),
+              label: _labels[c['slug']] ?? (c['name'] ?? '').toString(),
+            ),
+        ];
+      });
+    } catch (_) {
+      // Chips are optional; search and the full list still work.
+    }
   }
 
   @override
@@ -87,65 +126,49 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
           name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           description.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesCategory =
-          _selectedCategory == null ||
-          _selectedCategory == 'All' ||
-          category == _selectedCategory;
+          _selectedCategory == null || category == _selectedCategory;
       return matchesSearch && matchesCategory;
     }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    // The shell's app bar already says "Soko", so the screen opens straight
-    // onto search and categories rather than repeating a large title.
-    return Column(
+    final body = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Text(
+            'Pata pembejeo bora kutoka kwa wauzaji wa pembejeo.',
+            style: MkText.bodyMuted,
+          ),
+        ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextField(
             controller: _searchController,
             onChanged: (value) => setState(() => _searchQuery = value),
             textInputAction: TextInputAction.search,
             decoration: const InputDecoration(
-              hintText: 'Tafuta mbegu, mazao, vifaa...',
+              hintText: 'Tafuta mbegu, mbolea, viuatilifu...',
               prefixIcon: Icon(Icons.search),
               fillColor: MkColors.surfaceMuted,
             ),
           ),
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 48,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            scrollDirection: Axis.horizontal,
-            itemCount: _categories.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              final category = _categories[index];
-              final selected =
-                  _selectedCategory == category ||
-                  (category == 'All' && _selectedCategory == null);
-              return FilterChip(
-                label: Text(category == 'All' ? 'Zote' : category),
-                selected: selected,
-                showCheckmark: false,
-                side: BorderSide(
-                  color: selected ? MkColors.primary : MkColors.border,
-                ),
-                labelStyle: TextStyle(
-                  fontSize: 15,
-                  color: selected ? MkColors.primaryDark : MkColors.ink,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                ),
-                onSelected: (_) => setState(
-                  () => _selectedCategory = category == 'All' ? null : category,
-                ),
-              );
-            },
+        if (_categories.isNotEmpty)
+          SizedBox(
+            height: 48,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              children: [
+                _chip(null, 'Zote'),
+                for (final c in _categories) _chip(c.id, c.label),
+              ],
+            ),
           ),
-        ),
         Expanded(
           child: _isLoading
               ? const SingleChildScrollView(child: MkGridSkeleton())
@@ -156,6 +179,28 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
               : _buildProductGrid(),
         ),
       ],
+    );
+
+    if (!widget.standalone) return body;
+    return Scaffold(appBar: AppBar(title: const Text('Pembejeo')), body: body);
+  }
+
+  Widget _chip(String? id, String label) {
+    final selected = _selectedCategory == id;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: FilterChip(
+        label: Text(label),
+        selected: selected,
+        showCheckmark: false,
+        side: BorderSide(color: selected ? MkColors.primary : MkColors.border),
+        labelStyle: TextStyle(
+          fontSize: 15,
+          color: selected ? MkColors.primaryDark : MkColors.ink,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+        ),
+        onSelected: (_) => setState(() => _selectedCategory = id),
+      ),
     );
   }
 
@@ -174,7 +219,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       title: MkStrings.noProductsFound,
       subtitle: filtering
           ? 'Jaribu neno jingine, au angalia aina zote.'
-          : 'Bidhaa za wauzaji zitaonekana hapa zikiwekwa sokoni.',
+          : 'Pembejeo za wauzaji zitaonekana hapa zikiwekwa.',
       actionLabel: filtering ? 'Ona bidhaa zote' : null,
       onAction: filtering
           ? () => setState(() {
