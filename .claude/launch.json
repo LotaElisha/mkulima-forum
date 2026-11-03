@@ -21,15 +21,22 @@
         "web-server",
         "--web-port",
         "5051",
-        "--dart-define=API_URL=http://localhost:8000/api"
+        "--dart-define=API_URL=http://localhost:8010/api"
       ],
       "cwd": "mkulima_app",
       "port": 5051
     },
     {
       "name": "landing",
-      "runtimeExecutable": "php",
+      "runtimeExecutable": "env",
       "runtimeArgs": [
+        "DB_CONNECTION=pgsql",
+        "DB_HOST=127.0.0.1",
+        "DB_PORT=5432",
+        "DB_DATABASE=mkulima_dev",
+        "DB_USERNAME=mkulima",
+        "DB_PASSWORD=secret",
+        "php",
         "artisan",
         "serve",
         "--port=8001",
@@ -39,14 +46,21 @@
     },
     {
       "name": "api",
-      "runtimeExecutable": "php",
+      "runtimeExecutable": "env",
       "runtimeArgs": [
+        "DB_CONNECTION=pgsql",
+        "DB_HOST=127.0.0.1",
+        "DB_PORT=5432",
+        "DB_DATABASE=mkulima_dev",
+        "DB_USERNAME=mkulima",
+        "DB_PASSWORD=secret",
+        "php",
         "artisan",
         "serve",
-        "--port=8000",
+        "--port=8010",
         "--no-reload"
       ],
-      "port": 8000
+      "port": 8010
     }
   ]
 }

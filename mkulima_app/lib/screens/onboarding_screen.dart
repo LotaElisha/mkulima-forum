@@ -1,5 +1,6 @@
 import '../core/theme.dart';
 import 'package:flutter/material.dart';
+import '../widgets/mkulima_logo.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -114,29 +115,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Branded Material icon container
-                        Container(
-                          width: 200,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                (p['color'] as Color).withValues(alpha: 0.2),
-                                (p['color'] as Color).withValues(alpha: 0.05),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                        // The welcome page shows the real emblem; the
+                        // feature pages keep their icons.
+                        if (index == 0)
+                          const MkulimaLogo(size: 200)
+                        else
+                          Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  (p['color'] as Color).withValues(alpha: 0.2),
+                                  (p['color'] as Color).withValues(alpha: 0.05),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              shape: BoxShape.circle,
                             ),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Icon(
-                              p['icon'] as IconData,
-                              size: 80,
-                              color: p['color'] as Color,
+                            child: Center(
+                              child: Icon(
+                                p['icon'] as IconData,
+                                size: 80,
+                                color: p['color'] as Color,
+                              ),
                             ),
                           ),
-                        ),
                         const SizedBox(height: 48),
                         Text(
                           p['title'] as String,

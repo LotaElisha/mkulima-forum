@@ -13,6 +13,7 @@ import 'weather_screen.dart';
 import 'market_prices_screen.dart';
 import '../core/format.dart';
 import '../widgets/mk_badge.dart';
+import '../widgets/mkulima_logo.dart';
 import '../widgets/mk_section_header.dart';
 import '../widgets/mk_skeleton.dart';
 
@@ -118,15 +119,8 @@ class _HomeTabState extends State<HomeTab> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: MkColors.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.eco_outlined, color: Colors.white),
-                ),
+                // The original farmer emblem, not a generic leaf tile.
+                const MkulimaLogo(size: 44),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
