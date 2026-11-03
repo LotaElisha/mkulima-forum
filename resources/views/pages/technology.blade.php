@@ -96,18 +96,18 @@
     <h2 class="section-title" style="margin-bottom:32px;" data-i18n="stack_title">Teknolojia Inayofanya Kazi Nyuma ya Pazia</h2>
     <div class="tech-stack-grid">
       @foreach([
-        ['🤖','AI ya wingu — haijawashwa','Cloud AI — not switched on','Utambuzi wa magonjwa na mazungumzo ya AI havijawashwa. Hatuwasilishi Gemini kama huduma inayofanya kazi.','Disease diagnosis and AI chat are not switched on. Gemini is not a live service here.','tc0',['Haijawashwa','Si huduma ya sasa']],
-        ['🧠','AI kwenye simu — haijawashwa','On-device AI — not switched on','Hakuna modeli inayoendesha ndani ya simu bila intaneti.','No model runs on the phone without internet.','tc1',['Haijawashwa','Inahitaji intaneti']],
-        ['👁️','Utambuzi wa picha — haijawashwa','Image diagnosis — not switched on','Kupiga picha ya jani na kupata utambuzi bado hakufanyi kazi.','Photographing a leaf and receiving a diagnosis does not work yet.','tc2',['Haijawashwa']],
-        ['📴','SMS na USSD — haijawashwa','SMS and USSD — not switched on','Huduma za SMS na USSD hazitumwi. Programu inahitaji intaneti.','SMS and USSD are not sent. The app needs an internet connection.','tc3',['Haijawashwa','Inahitaji intaneti']],
-        ['🗄️','Msingi wa Data','Data Infrastructure','PostgreSQL iliyo na pgvector inashughulikia utafutaji wa mfano wa kulingana (semantic search) kwa maktaba ya maarifa ya kilimo. Redis inashughulikia akiba, vipindi vya mtumiaji, na foleni za kazi za usuli.','PostgreSQL with pgvector extension handles semantic search across the agronomy knowledge base. Redis manages caching, user sessions, and background job queues for scalable performance.','tc4',['PostgreSQL + pgvector','Redis Cache','Semantic Search']],
-        ['💳','Malipo — haijawashwa','Payments — not switched on','M-Pesa, Tigo Pesa, na escrow havijawashwa kwenye toleo hili.','M-Pesa, Tigo Pesa, and escrow are not switched on in this release.','tc5',['Haijawashwa']],
-        ['🔐','Usalama na Faragha','Security & Privacy','Laravel Sanctum inashughulikia uthibitisho wa mtumiaji na kuzuia API. Maelezo ya kibinafsi ya mtumiaji yanalindwa na sera kali ya faragha. Hifadhidata imeundwa kwa muundo wa data za hatari ndogo.','Laravel Sanctum handles user authentication and API token management. User personal data is protected by strict privacy policies. Database is designed with minimal personally-identifiable data architecture.','tc6',['Sanctum Auth','API Security','Data Privacy']],
-        ['📱','Mfumo wa App ya Simu','Mobile App Platform','App ya MkulimaForum imejengwa kwa Flutter, inayoruhusu kutolewa kwa Android na iOS kutoka msingi mmoja wa msimbo. Imeboreshwa kwa simu za android za bei ya chini zinazotumika zaidi Tanzania.','MkulimaForum app is built with Flutter, enabling Android and iOS deployment from a single codebase. Optimized for lower-end Android devices common among Tanzanian smallholder farmers.','tc7',['Flutter','Android','iOS','Material 3']],
+        ['bot','AI ya wingu — haijawashwa','Cloud AI — not switched on','Utambuzi wa magonjwa na mazungumzo ya AI havijawashwa. Hatuwasilishi Gemini kama huduma inayofanya kazi.','Disease diagnosis and AI chat are not switched on. Gemini is not a live service here.','tc0',['Haijawashwa','Si huduma ya sasa']],
+        ['cpu','AI kwenye simu — haijawashwa','On-device AI — not switched on','Hakuna modeli inayoendesha ndani ya simu bila intaneti.','No model runs on the phone without internet.','tc1',['Haijawashwa','Inahitaji intaneti']],
+        ['eye','Utambuzi wa picha — haijawashwa','Image diagnosis — not switched on','Kupiga picha ya jani na kupata utambuzi bado hakufanyi kazi.','Photographing a leaf and receiving a diagnosis does not work yet.','tc2',['Haijawashwa']],
+        ['wifi-off','SMS na USSD — haijawashwa','SMS and USSD — not switched on','Huduma za SMS na USSD hazitumwi. Programu inahitaji intaneti.','SMS and USSD are not sent. The app needs an internet connection.','tc3',['Haijawashwa','Inahitaji intaneti']],
+        ['database','Msingi wa Data','Data Infrastructure','PostgreSQL iliyo na pgvector inashughulikia utafutaji wa mfano wa kulingana (semantic search) kwa maktaba ya maarifa ya kilimo. Redis inashughulikia akiba, vipindi vya mtumiaji, na foleni za kazi za usuli.','PostgreSQL with pgvector extension handles semantic search across the agronomy knowledge base. Redis manages caching, user sessions, and background job queues for scalable performance.','tc4',['PostgreSQL + pgvector','Redis Cache','Semantic Search']],
+        ['card','Malipo — haijawashwa','Payments — not switched on','M-Pesa, Tigo Pesa, na escrow havijawashwa kwenye toleo hili.','M-Pesa, Tigo Pesa, and escrow are not switched on in this release.','tc5',['Haijawashwa']],
+        ['lock','Usalama na Faragha','Security & Privacy','Laravel Sanctum inashughulikia uthibitisho wa mtumiaji na kuzuia API. Maelezo ya kibinafsi ya mtumiaji yanalindwa na sera kali ya faragha. Hifadhidata imeundwa kwa muundo wa data za hatari ndogo.','Laravel Sanctum handles user authentication and API token management. User personal data is protected by strict privacy policies. Database is designed with minimal personally-identifiable data architecture.','tc6',['Sanctum Auth','API Security','Data Privacy']],
+        ['phone','Mfumo wa App ya Simu','Mobile App Platform','App ya MkulimaForum imejengwa kwa Flutter, inayoruhusu kutolewa kwa Android na iOS kutoka msingi mmoja wa msimbo. Imeboreshwa kwa simu za android za bei ya chini zinazotumika zaidi Tanzania.','MkulimaForum app is built with Flutter, enabling Android and iOS deployment from a single codebase. Optimized for lower-end Android devices common among Tanzanian smallholder farmers.','tc7',['Flutter','Android','iOS','Material 3']],
       ] as $t)
       <div class="tech-card fade-up">
         <div class="tech-card-head">
-          <div class="card-icon">@if($t[0] === '🤖')<x-icon name="globe" :size="22" />@elseif($t[0] === '🧠')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>@elseif($t[0] === '👁️')<x-icon name="scan" :size="22" />@elseif($t[0] === '📴')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h.01"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M5 12.9a10 10 0 0 1 5.2-2.7"/><path d="M19 12.9a10 10 0 0 0-2.1-1.5"/><path d="M2 8.8a15 15 0 0 1 4.2-2.6"/><path d="M22 8.8A15 15 0 0 0 11 4.6"/><path d="m2 2 20 20"/></svg>@elseif($t[0] === '🗄️')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>@elseif($t[0] === '💳')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>@elseif($t[0] === '🔐')<x-icon name="shield" :size="22" />@elseif($t[0] === '📱')<x-icon name="phone" :size="22" />@endif</div>
+          <div class="card-icon">@if($t[0] === '')<x-icon name="globe" :size="22" />@elseif($t[0] === '')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>@elseif($t[0] === '')<x-icon name="scan" :size="22" />@elseif($t[0] === '')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h.01"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M5 12.9a10 10 0 0 1 5.2-2.7"/><path d="M19 12.9a10 10 0 0 0-2.1-1.5"/><path d="M2 8.8a15 15 0 0 1 4.2-2.6"/><path d="M22 8.8A15 15 0 0 0 11 4.6"/><path d="m2 2 20 20"/></svg>@elseif($t[0] === '')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>@elseif($t[0] === '')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>@elseif($t[0] === '')<x-icon name="shield" :size="22" />@elseif($t[0] === '')<x-icon name="phone" :size="22" />@endif</div>
           <h3 data-i18n="{{ $t[5] }}_title">{{ $t[1] }}</h3>
         </div>
         <p data-i18n="{{ $t[5] }}_desc">{{ $t[3] }}</p>
@@ -140,12 +140,12 @@
 
       <div class="google-uses-grid">
         @foreach([
-          ['⚡','Scanner — haijawashwa','Utambuzi wa magonjwa kwa picha haujawashwa.','Scanner — not switched on','Photo diagnosis is not switched on.','gc0'],
-          ['🔍','Ushauri wa AI — haijawashwa','Ushauri wa mazao unaotumia AI haujawashwa. Hali ya hewa inayopatikana ni ya huduma ya hali ya hewa, si AI.','AI advice — not switched on','AI crop advice is not switched on. Weather that is available comes from a weather service, not from an AI model.','gc1'],
-          ['🛠️','Google AI Studio','Ubunifu wa kwanza na majaribio ya mfano. Si huduma inayotolewa kwa wakulima.','Google AI Studio','Prototype experiments only. Not a service offered to farmers.','gc2'],
+          ['zap','Scanner — haijawashwa','Utambuzi wa magonjwa kwa picha haujawashwa.','Scanner — not switched on','Photo diagnosis is not switched on.','gc0'],
+          ['search','Ushauri wa AI — haijawashwa','Ushauri wa mazao unaotumia AI haujawashwa. Hali ya hewa inayopatikana ni ya huduma ya hali ya hewa, si AI.','AI advice — not switched on','AI crop advice is not switched on. Weather that is available comes from a weather service, not from an AI model.','gc1'],
+          ['wrench','Google AI Studio','Ubunifu wa kwanza na majaribio ya mfano. Si huduma inayotolewa kwa wakulima.','Google AI Studio','Prototype experiments only. Not a service offered to farmers.','gc2'],
         ] as $g)
         <div class="google-use">
-          <div class="card-icon">@if($g[0] === '⚡')<x-icon name="sun" :size="22" />@elseif($g[0] === '🔍')<x-icon name="search" :size="22" />@elseif($g[0] === '🛠️')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>@endif</div>
+          <div class="card-icon">@if($g[0] === '')<x-icon name="sun" :size="22" />@elseif($g[0] === '')<x-icon name="search" :size="22" />@elseif($g[0] === '')<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>@endif</div>
           <h4 data-i18n="{{ $g[5] }}_title">{{ $g[1] }}</h4>
           <p data-i18n="{{ $g[5] }}_desc">{{ $g[2] }}</p>
         </div>
@@ -170,16 +170,16 @@
     <div class="arch-flow-container fade-up">
       {{-- Farmer --}}
       <div class="flow-row">
-        <div class="flow-node farmer">👨‍🌾 <span data-i18n="arch_farmer">Mkulima</span></div>
+        <div class="flow-node farmer"><x-icon name="user" :size="18" /> <span data-i18n="arch_farmer">Mkulima</span></div>
       </div>
       <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
       <div class="flow-label" data-i18n="arch_via">Kupitia</div>
 
       {{-- Channels --}}
       <div class="flow-row">
-        <div class="flow-node">📱 <span data-i18n="arch_app">App ya Simu</span></div>
-        <div class="flow-node">🌐 <span data-i18n="arch_web">Wavuti</span></div>
-        <div class="flow-node">📲 SMS / USSD — haijawashwa</div>
+        <div class="flow-node"><x-icon name="phone" :size="18" /> <span data-i18n="arch_app">App ya Simu</span></div>
+        <div class="flow-node"><x-icon name="globe" :size="18" /> <span data-i18n="arch_web">Wavuti</span></div>
+        <div class="flow-node"><x-icon name="phone" :size="18" /> SMS / USSD — haijawashwa</div>
       </div>
       <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
       <div class="flow-label" data-i18n="arch_platform">MkulimaForum Platform (Laravel API + Flutter)</div>
@@ -196,15 +196,15 @@
         <div class="flow-node ai">AI ya magonjwa — haijawashwa</div>
         <div class="flow-node ai">SMS — haijawashwa</div>
         <div class="flow-node ai">Malipo — haijawashwa</div>
-        <div class="flow-node ai">📊 Agri Knowledge Base</div>
-        <div class="flow-node ai">⛅ Weather Data</div>
-        <div class="flow-node ai">🛒 Market Data</div>
+        <div class="flow-node ai"><x-icon name="chart" :size="18" /> Agri Knowledge Base</div>
+        <div class="flow-node ai"><x-icon name="cloud-sun" :size="18" /> Weather Data</div>
+        <div class="flow-node ai"><x-icon name="cart" :size="18" /> Market Data</div>
       </div>
       <div class="flow-arrow"><x-icon name="chevron-down" :size="24" /></div>
 
       {{-- Output --}}
       <div class="flow-row">
-        <div class="flow-node output" data-i18n="arch_output">✅ Ushauri unaoweza kutumika kwa Mkulima</div>
+        <div class="flow-node output" data-i18n="arch_output">Ushauri unaoweza kutumika kwa Mkulima</div>
       </div>
     </div>
   </div>
@@ -227,7 +227,7 @@
     <p data-i18n="t_cta_sub">Tupo tayari kuzungumza na watafiti, washirika wa teknolojia, na watengenezaji wa mfumo kuhusu mfumo wetu wa AI.</p>
     <div class="btn-row">
       <a href="/contact" class="btn btn-primary btn-lg" data-i18n="t_cta_contact">Wasiliana Nasi →</a>
-      <a href="/pitch-deck" class="btn btn-outline btn-lg" data-i18n="t_cta_pitch">📊 Pitch Deck</a>
+      <a href="/pitch-deck" class="btn btn-outline btn-lg" data-i18n="t_cta_pitch">Pitch Deck</a>
     </div>
   </div>
 </section>
@@ -258,13 +258,13 @@ mkPageTranslations = {
     arch_eyebrow:'MTIRIRIKO WA AI', arch_title:'Jinsi AI Inavyofikia Mkulima',
     arch_farmer:'Mkulima', arch_via:'Kupitia', arch_app:'App ya Simu', arch_web:'Wavuti',
     arch_platform:'Jukwaa la MkulimaForum (Laravel API + Flutter)', arch_routed:'Inaelekeza kwa',
-    arch_output:'✅ Ushauri unaoweza kutumika kwa Mkulima',
+    arch_output:'Ushauri unaoweza kutumika kwa Mkulima',
     privacy_eyebrow:'FARAGHA NA UWAJIBIKAJI', privacy_title:'AI Inayowajibika',
     privacy_desc:'MkulimaForum inaamini katika uwazi wa AI na ulinzi wa data za wakulima. Hatuzidishi wala kuuza data za kibinafsi za wakulima.',
     privacy_cta:'Jifunze Zaidi Kuhusu Sera Yetu →',
     t_cta_title:'Una Swali Kuhusu Teknolojia Yetu?',
     t_cta_sub:'Tupo tayari kuzungumza na watafiti, washirika wa teknolojia, na watengenezaji wa mfumo kuhusu mfumo wetu wa AI.',
-    t_cta_contact:'Wasiliana Nasi →', t_cta_pitch:'📊 Pitch Deck',
+    t_cta_contact:'Wasiliana Nasi →', t_cta_pitch:'Pitch Deck',
   },
   en: {
     tech_eyebrow:'TECHNOLOGY', tech_title:'What works today',
@@ -287,13 +287,13 @@ mkPageTranslations = {
     arch_eyebrow:'AI FLOW', arch_title:'How AI Reaches the Farmer',
     arch_farmer:'Farmer', arch_via:'Via', arch_app:'Mobile App', arch_web:'Web',
     arch_platform:'MkulimaForum Platform (Laravel API + Flutter)', arch_routed:'Routes to',
-    arch_output:'✅ Actionable farmer recommendation delivered',
+    arch_output:'Actionable farmer recommendation delivered',
     privacy_eyebrow:'PRIVACY & RESPONSIBILITY', privacy_title:'Responsible AI',
     privacy_desc:'MkulimaForum does not sell or misuse personal farmer data.',
     privacy_cta:'Learn More About Our Policy →',
     t_cta_title:'Questions About Our Technology?',
     t_cta_sub:"We are happy to speak with researchers, technology partners, and system developers about our AI architecture.",
-    t_cta_contact:'Contact Us →', t_cta_pitch:'📊 Pitch Deck',
+    t_cta_contact:'Contact Us →', t_cta_pitch:'Pitch Deck',
   }
 };
 </script>

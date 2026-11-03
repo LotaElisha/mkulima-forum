@@ -8,6 +8,7 @@ use App\Models\Transporter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 /**
  * EF-005 Logistics: transporter directory + freight request lifecycle.
@@ -90,6 +91,8 @@ class LogisticsController extends Controller
             'dropoff_coords' => ['nullable', 'array'],
             'cargo_weight_kg' => ['nullable', 'numeric', 'min:0'],
             'cargo_description' => ['nullable', 'string', 'max:2000'],
+            'cargo_type' => ['nullable', Rule::in(FreightRequest::CARGO_TYPES)],
+            'vehicle_type' => ['nullable', Rule::in(FreightRequest::VEHICLE_TYPES)],
             'pickup_at' => ['nullable', 'date', 'after:now'],
             'order_id' => ['nullable', 'integer', 'exists:orders,id'],
         ]);

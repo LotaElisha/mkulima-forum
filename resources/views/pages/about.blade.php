@@ -199,14 +199,14 @@
         <h2 class="section-title" data-i18n="tz_title">Fursa ya Kubadilisha Kilimo</h2>
         <div class="tz-pills">
           @foreach([
-            ['🌾','Wakulima wengi wadogo wadogo','Large smallholder farming population'],
-            ['📱','Ukuaji wa matumizi ya simu','Growing smartphone adoption'],
-            ['💳','Miundombinu ya pesa za simu','Strong mobile money infrastructure'],
-            ['🗣️','Kiswahili kama lugha ya pamoja','Swahili as a shared language'],
-            ['📊','Masoko yaliyogawanyika','Fragmented produce markets'],
-            ['🌍','Uwezekano wa kupanuka Afrika Mashariki','Scalable across East Africa'],
+            ['leaf','Wakulima wengi wadogo wadogo','Large smallholder farming population'],
+            ['phone','Ukuaji wa matumizi ya simu','Growing smartphone adoption'],
+            ['card','Miundombinu ya pesa za simu','Strong mobile money infrastructure'],
+            ['message','Kiswahili kama lugha ya pamoja','Swahili as a shared language'],
+            ['chart','Masoko yaliyogawanyika','Fragmented produce markets'],
+            ['globe','Uwezekano wa kupanuka Afrika Mashariki','Scalable across East Africa'],
           ] as $pill)
-          <div class="tz-pill" data-i18n="tz_pill_{{ $loop->index }}">{{ $pill[0] }} {{ $pill[1] }}</div>
+          <div class="tz-pill"><x-icon :name="$pill[0]" :size="16" /><span data-i18n="tz_pill_{{ $loop->index }}">{{ $pill[1] }}</span></div>
           @endforeach
         </div>
       </div>
@@ -249,12 +249,12 @@
     {{-- Placeholder team cards - admin-editable later --}}
     <div class="team-grid">
       @foreach([
-        ['👤','Founder & CEO','Mkurugenzi Mtendaji na Mwanzilishi'],
-        ['👤','CTO — Head of Technology','Mkuu wa Teknolojia'],
-        ['👤','Head of Agronomy','Mkuu wa Taaluma za Kilimo'],
-        ['👤','Head of Partnerships','Mkuu wa Ushirikiano'],
-        ['👤','Lead Mobile Developer','Msanidi Mkuu wa App'],
-        ['👤','AI / ML Engineer','Mhandisi wa AI na ML'],
+        ['user','Founder & CEO','Mkurugenzi Mtendaji na Mwanzilishi'],
+        ['user','CTO — Head of Technology','Mkuu wa Teknolojia'],
+        ['user','Head of Agronomy','Mkuu wa Taaluma za Kilimo'],
+        ['user','Head of Partnerships','Mkuu wa Ushirikiano'],
+        ['user','Lead Mobile Developer','Msanidi Mkuu wa App'],
+        ['user','AI / ML Engineer','Mhandisi wa AI na ML'],
       ] as $member)
       <div class="team-card fade-up">
         <div class="team-avatar"><x-icon name="groups" /></div>
@@ -304,9 +304,9 @@ mkPageTranslations = {
     p_trust_title:'Uaminifu', p_trust_desc:'Tunakuza taarifa zilizothibitishwa, pembejeo zinazoaminika, masoko ya uwazi, na AI inayowajibika.',
     tz_eyebrow:'KWA NINI TANZANIA', tz_title:'Fursa ya Kubadilisha Kilimo',
     tz_card_title:'Tanzania: Soko Bora la Kuanza', tz_card_desc:'Tanzania ni moja ya nchi zenye idadi kubwa ya wakulima wadogo wadogo Afrika Mashariki, na kilimo ni msingi mkuu wa uchumi na maisha.',
-    tz_pill_0:'🌾 Wakulima wengi wadogo wadogo', tz_pill_1:'📱 Ukuaji wa matumizi ya simu',
-    tz_pill_2:'💳 Miundombinu ya pesa za simu', tz_pill_3:'🗣️ Kiswahili kama lugha ya pamoja',
-    tz_pill_4:'📊 Masoko yaliyogawanyika', tz_pill_5:'🌍 Uwezekano wa kupanuka Afrika Mashariki',
+    tz_pill_0:'Wakulima wengi wadogo wadogo', tz_pill_1:'Ukuaji wa matumizi ya simu',
+    tz_pill_2:'Miundombinu ya pesa za simu', tz_pill_3:'Kiswahili kama lugha ya pamoja',
+    tz_pill_4:'Masoko yaliyogawanyika', tz_pill_5:'Uwezekano wa kupanuka Afrika Mashariki',
     tech_eyebrow:'MKAKATI WA TEKNOLOJIA', tech_title:'Kilicho washwa, na kisicho washwa',
     tech_sub:'Orodha hii inasema kinachofanya kazi sasa. Vilivyobaki havijawashwa.',
     tech_cta:'Gundua Teknolojia Yetu →',
@@ -337,9 +337,9 @@ mkPageTranslations = {
     p_trust_title:'Trust', p_trust_desc:'We promote verified information, trusted agricultural inputs, transparent markets, and responsible AI.',
     tz_eyebrow:'WHY TANZANIA', tz_title:'An Ideal Market to Transform',
     tz_card_title:'Tanzania: An Ideal Launch Market', tz_card_desc:'Tanzania has one of East Africa\'s largest smallholder farming populations, with agriculture as a primary economic and livelihood driver.',
-    tz_pill_0:'🌾 Large smallholder farming population', tz_pill_1:'📱 Growing smartphone adoption',
-    tz_pill_2:'💳 Strong mobile money infrastructure', tz_pill_3:'🗣️ Swahili as a shared language',
-    tz_pill_4:'📊 Fragmented produce markets', tz_pill_5:'🌍 Scalable across East Africa',
+    tz_pill_0:'Large smallholder farming population', tz_pill_1:'Growing smartphone adoption',
+    tz_pill_2:'Strong mobile money infrastructure', tz_pill_3:'Swahili as a shared language',
+    tz_pill_4:'Fragmented produce markets', tz_pill_5:'Scalable across East Africa',
     tech_eyebrow:'TECHNOLOGY APPROACH', tech_title:'What is on, and what is not',
     tech_sub:'This list says what works today. The rest is not switched on.',
     tech_cta:'Explore Our Technology →',

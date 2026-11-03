@@ -115,14 +115,14 @@
     </div>
     <div class="tech-eco-grid">
       @foreach([
-        ['🤖','Utambuzi wa magonjwa','Haijawashwa','—'],
-        ['🧠','AI bila intaneti','Haijawashwa','—'],
-        ['☁️','Google Cloud','Infrastructure','G'],
-        ['🔍','Google Search','Grounding / RAG','G'],
-        ['📱','Flutter','Cross-Platform App','F'],
-        ['⚡','Laravel','API Backend','L'],
-        ['🗄️','PostgreSQL','Database (pgvector)','P'],
-        ['🔐','Sanctum','Auth & Security','S'],
+        ['bot','Utambuzi wa magonjwa','Haijawashwa','—'],
+        ['cpu','AI bila intaneti','Haijawashwa','—'],
+        ['cloud','Google Cloud','Infrastructure','G'],
+        ['search','Google Search','Grounding / RAG','G'],
+        ['phone','Flutter','Cross-Platform App','F'],
+        ['zap','Laravel','API Backend','L'],
+        ['database','PostgreSQL','Database (pgvector)','P'],
+        ['lock','Sanctum','Auth & Security','S'],
       ] as $tech)
       <div class="tech-eco-card fade-up">
         <div class="tech-mark" aria-hidden="true">{{ $tech[3] }}</div>
@@ -149,12 +149,12 @@
         <p class="bp-sub" data-i18n="bp_sub">Tuna nafasi za ushirikiano katika maeneo mbalimbali. Chagua aina ya ushirikiano inayokufaa na tutawasiliana nawe.</p>
         <div class="bp-options">
           @foreach([
-            ['💻','Ushirikiano wa Teknolojia','Technology Partnership'],
-            ['📦','Ufikiaji wa Soko','Market Access'],
-            ['🔬','Utafiti wa Pamoja','Research Collaboration'],
-            ['👨‍🌾','Mipango ya Wakulima','Farmer Programs'],
-            ['🏪','Mtandao wa Wauzaji','Agro-dealer Network'],
-            ['🏛️','Ushirikiano wa Serikali','Government Collaboration'],
+            ['laptop','Ushirikiano wa Teknolojia','Technology Partnership'],
+            ['package','Ufikiaji wa Soko','Market Access'],
+            ['flask','Utafiti wa Pamoja','Research Collaboration'],
+            ['user','Mipango ya Wakulima','Farmer Programs'],
+            ['storefront','Mtandao wa Wauzaji','Agro-dealer Network'],
+            ['landmark','Ushirikiano wa Serikali','Government Collaboration'],
           ] as $opt)
           <div class="bp-option">
             <x-icon name="check-circle" />
@@ -198,8 +198,7 @@
             <label for="pf_message" data-i18n="form_message">Ujumbe / Maelezo</label>
             <textarea id="pf_message" rows="4" required data-i18n-ph="form_msg_ph" placeholder="Eleza fursa ya ushirikiano au swali lako..."></textarea>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg" style="justify-content:center;" data-i18n="form_submit">
-            🤝 Tuma Ombi la Ushirikiano
+          <button type="submit" class="btn btn-primary btn-lg" style="justify-content:center;" data-i18n="form_submit">Tuma Ombi la Ushirikiano
           </button>
           <div id="pf_result" style="display:none; padding:14px; border-radius:10px; font-size:.9rem; font-weight:600;"></div>
         </form>
@@ -219,7 +218,7 @@ async function handlePartnerForm(e) {
   result.style.display = 'block';
   result.style.background = 'var(--leaf-pale)';
   result.style.color = 'var(--forest-dark)';
-  result.textContent = MK_LANG === 'sw' ? '✓ Asante! Tumeipokea ombi lako. Tutawasiliana nawe hivi karibuni.' : '✓ Thank you! We have received your partnership request and will be in touch shortly.';
+  result.textContent = MK_LANG === 'sw' ? 'Asante! Tumeipokea ombi lako. Tutawasiliana nawe hivi karibuni.' : 'Thank you! We have received your partnership request and will be in touch shortly.';
   e.target.reset();
 }
 
@@ -247,7 +246,7 @@ mkPageTranslations = {
     opt_tech:'Ushirikiano wa Teknolojia', opt_market:'Ufikiaji wa Soko', opt_research:'Utafiti wa Pamoja',
     opt_farmer:'Mipango ya Wakulima', opt_agro:'Mtandao wa Wauzaji', opt_govt:'Ushirikiano wa Serikali', opt_other:'Nyingine',
     form_message:'Ujumbe / Maelezo', form_msg_ph:'Eleza fursa ya ushirikiano au swali lako...',
-    form_submit:'🤝 Tuma Ombi la Ushirikiano',
+    form_submit:'Tuma Ombi la Ushirikiano',
   },
   en: {
     partners_eyebrow:'PARTNERS', partners_title:"Let's Transform Agriculture Together",
@@ -272,7 +271,7 @@ mkPageTranslations = {
     opt_tech:'Technology Partnership', opt_market:'Market Access', opt_research:'Research Collaboration',
     opt_farmer:'Farmer Programs', opt_agro:'Agro-dealer Network', opt_govt:'Government Collaboration', opt_other:'Other',
     form_message:'Message / Description', form_msg_ph:'Describe your partnership opportunity or question...',
-    form_submit:'🤝 Send Partnership Request',
+    form_submit:'Send Partnership Request',
   }
 };
 </script>

@@ -120,12 +120,12 @@
 {{--
 @foreach($stories as $story)
 <div class="story-card">
-  <div class="story-card-img">🌾</div>
+  <div class="story-card-img"><x-icon name="leaf" :size="24" /></div>
   <div class="story-card-body">
     <span class="story-cat-badge">{{ $story->category }}</span>
     <div class="story-quote">{{ $story->quote }}</div>
     <div class="story-person">
-      <div class="story-avatar">👤</div>
+      <div class="story-avatar"><x-icon name="user" :size="24" /></div>
       <div class="story-meta">
         <h4>{{ $story->farmer_name }}</h4>
         <p>{{ $story->location }} • {{ $story->primary_crop }}</p>
@@ -166,7 +166,7 @@
         <h2 class="section-title" data-i18n="share_title">Je, Unatumia MkulimaForum?</h2>
         <p class="share-lead" data-i18n="share_sub">Ungependa kushiriki uzoefu wako ili kuwasaidia wakulima wengine? Wasiliana nasi na hadithi yako.</p>
         <div class="share-actions">
-          <a href="/contact?type=story" class="btn btn-primary btn-lg" data-i18n="share_btn">🌾 Shiriki Hadithi Yangu</a>
+          <a href="/contact?type=story" class="btn btn-primary btn-lg" data-i18n="share_btn">Shiriki Hadithi Yangu</a>
           <a href="/solutions" class="btn btn-outline" data-i18n="share_solutions_btn">Gundua Suluhisho Zetu →</a>
         </div>
         <div class="share-note">
@@ -186,7 +186,7 @@
     <h2 data-i18n="s_cta_title">Kuwa Sehemu ya Safari Yetu</h2>
     <p data-i18n="s_cta_sub">Pakua app, anza kuitumia, na ushiriki uzoefu wako ili kusaidia wakulima wengine Tanzania.</p>
     <div class="btn-row">
-      <a href="/download" class="btn btn-primary btn-lg" data-i18n="s_cta_dl">⬇️ Pakua App</a>
+      <a href="/download" class="btn btn-primary btn-lg" data-i18n="s_cta_dl">Pakua App</a>
       <a href="/impact" class="btn btn-outline btn-lg" data-i18n="s_cta_impact">Angalia Athari Zetu →</a>
     </div>
   </div>
@@ -219,10 +219,10 @@ mkPageTranslations = {
     f2_title:'Matokeo', f2_desc:'Nini kilimabadilika.',
     share_eyebrow:'SHIRIKI HADITHI YAKO', share_title:'Je, Unatumia MkulimaForum?',
     share_sub:'Ungependa kushiriki uzoefu wako ili kuwasaidia wakulima wengine? Wasiliana nasi na hadithi yako.',
-    share_btn:'🌾 Shiriki Hadithi Yangu', share_solutions_btn:'Gundua Suluhisho Zetu →',
+    share_btn:'Shiriki Hadithi Yangu', share_solutions_btn:'Gundua Suluhisho Zetu →',
     share_note:'Hadithi zote zinathibitishwa kabla ya kuchapishwa. Taarifa za kibinafsi zinalindwa na sera ya faragha ya MkulimaForum.',
     s_cta_title:'Kuwa Sehemu ya Safari Yetu', s_cta_sub:'Pakua app, anza kuitumia, na ushiriki uzoefu wako ili kusaidia wakulima wengine Tanzania.',
-    s_cta_dl:'⬇️ Pakua App', s_cta_impact:'Angalia Athari Zetu →',
+    s_cta_dl:'Pakua App', s_cta_impact:'Angalia Athari Zetu →',
   },
   en: {
     stories_eyebrow:'FARMER STORIES',
@@ -240,10 +240,10 @@ mkPageTranslations = {
     f2_title:'Outcome', f2_desc:'What changed as a result.',
     share_eyebrow:'SHARE YOUR STORY', share_title:'Are You Using MkulimaForum?',
     share_sub:"Would you like to share your experience to help other farmers? Get in touch with your story.",
-    share_btn:'🌾 Share My Story', share_solutions_btn:'Explore Our Solutions →',
+    share_btn:'Share My Story', share_solutions_btn:'Explore Our Solutions →',
     share_note:'All stories are verified before publication. Personal information is protected by the MkulimaForum Privacy Policy.',
     s_cta_title:'Be Part of Our Journey', s_cta_sub:'Download the app, start using it, and share your experience to help other farmers across Tanzania.',
-    s_cta_dl:'⬇️ Download App', s_cta_impact:'View Our Impact →',
+    s_cta_dl:'Download App', s_cta_impact:'View Our Impact →',
   }
 };
 </script>

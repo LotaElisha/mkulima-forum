@@ -10,14 +10,18 @@ import '../services/api_service.dart';
 import 'search_screen.dart';
 import 'forum_screen.dart';
 import 'weather_screen.dart';
-import 'market_prices_screen.dart';
+import 'product_detail_screen.dart';
+import 'services_directory_screen.dart';
+import '../core/services_catalog.dart';
+import '../models/product.dart';
 import '../core/format.dart';
-import '../widgets/mk_badge.dart';
+import '../widgets/mkulima_logo.dart';
 import '../widgets/mk_section_header.dart';
 import '../widgets/mk_skeleton.dart';
 
-/// Nyumbani — task-first homepage: greeting, search, weather, the plant
-/// scanner card, four services, today's prices and trending discussions.
+/// Nyumbani — greeting, search, compact weather, eight service shortcuts
+/// (with "Huduma zote" for the rest), agrodealer inputs, and trending
+/// discussions. The scanner is the centre tab, so it is not repeated here.
 ///
 /// Everything sits on white. The scanner card used to be a near-black slab
 /// across the top of the screen; it is now a bordered white card whose one
@@ -35,7 +39,8 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   List<dynamic> _trending = [];
-  List<dynamic> _prices = [];
+  List<dynamic> _inputs = [];
+  bool _loadingInputs = true;
   Map<String, dynamic>? _weather;
   bool _loadingThreads = true;
 
@@ -50,7 +55,7 @@ class _HomeTabState extends State<HomeTab> {
 
     // Each block loads independently, so a slow price feed never holds up
     // the discussions, and a failure hides only its own section.
-    await Future.wait([_loadThreads(api), _loadWeather(api), _loadPrices(api)]);
+    await Future.wait([_loadThreads(api), _loadWeather(api), _loadInputs(api)]);
   }
 
   Future<void> _loadThreads(ApiService api) async {
@@ -81,15 +86,28 @@ class _HomeTabState extends State<HomeTab> {
     } catch (_) {}
   }
 
-  Future<void> _loadPrices(ApiService api) async {
-    // Hidden unless the server has real prices; never filled with samples.
+  Future<void> _loadInputs(ApiService api) async {
+    // Real agrodealer products only; the section says so when there are none.
     try {
-      final response = await api.get('/v1/market-prices');
-      final data = response.data['data'];
-      if (mounted && data is List) {
-        setState(() => _prices = data.take(3).toList());
+      final products = await api.getProducts();
+      if (mounted) {
+        setState(() {
+          _inputs = products.take(6).toList();
+          _loadingInputs = false;
+        });
       }
-    } catch (_) {}
+    } catch (_) {
+      if (mounted) setState(() => _loadingInputs = false);
+    }
+  }
+
+  void _openService(String key) {
+    // Pembejeo is a bottom-nav tab: switch to it rather than stacking a copy.
+    if (key == 'pembejeo' && widget.onSwitchTab != null) {
+      widget.onSwitchTab!(1);
+      return;
+    }
+    MkServices.open(context, MkServices.byKey(key));
   }
 
   void _push(Widget screen) {
@@ -118,15 +136,8 @@ class _HomeTabState extends State<HomeTab> {
           children: [
             Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: MkColors.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.eco_outlined, color: Colors.white),
-                ),
+                // The original farmer emblem, not a generic leaf tile.
+                const MkulimaLogo(size: 44),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -181,38 +192,80 @@ class _HomeTabState extends State<HomeTab> {
 
             const SizedBox(height: 16),
             MkSectionHeader(
-              title: 'Bei za soko',
-              actionLabel: 'Zote',
-              onAction: () => _push(const MarketPricesScreen()),
+              title: 'Huduma karibu nawe',
+              actionLabel: 'Huduma zote',
+              onAction: () => _push(const ServicesDirectoryScreen()),
             ),
-            if (_prices.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Text(
-                  'Bado hakuna bei iliyoandikwa.',
-                  style: MkText.bodyMuted,
-                ),
-              )
-            else
-              _PriceTable(prices: _prices),
+            const SizedBox(height: 8),
+            GridView.count(
+              crossAxisCount: 4,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 4,
+              // Fixed tile height: two lines of 13px Swahili under the icon.
+              childAspectRatio: 0.78,
+              children: [
+                for (final key in MkServices.homeKeys)
+                  _ServiceIcon(
+                    service: MkServices.byKey(key),
+                    onTap: () => _openService(key),
+                  ),
+              ],
+            ),
 
             const SizedBox(height: 20),
+            MkSectionHeader(
+              title: 'Pembejeo karibu nawe',
+              actionLabel: 'Zote',
+              onAction: () => _openService('pembejeo'),
+            ),
+            const SizedBox(height: 8),
+            if (_loadingInputs)
+              const MkSkeleton(height: 132, radius: 16)
+            else if (_inputs.isEmpty)
+              const Text(
+                'Bado hakuna pembejeo zilizowekwa na wauzaji.',
+                style: MkText.bodyMuted,
+              )
+            else
+              SizedBox(
+                height: 148,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _inputs.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 10),
+                  itemBuilder: (context, i) => _InputCard(
+                    product: _inputs[i] as Product,
+                    onTap: () => _push(
+                      ProductDetailScreen(product: _inputs[i] as Product),
+                    ),
+                  ),
+                ),
+              ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => _openService('pembejeo'),
+                style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
+                child: const Text('Angalia pembejeo zote →'),
+              ),
+            ),
+
+            const SizedBox(height: 12),
             MkSectionHeader(
               title: 'Mijadala inayovuma',
               actionLabel: 'Zote',
               onAction: () => widget.onSwitchTab != null
-                  ? widget.onSwitchTab!(2)
+                  ? widget.onSwitchTab!(3)
                   : _push(const ForumScreen()),
             ),
             if (_loadingThreads)
               const MkListSkeleton(rows: 3, padding: EdgeInsets.only(top: 8))
             else if (_trending.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                  'Bado hakuna mijadala. Kusoma kumewashwa; kuandika bado hakijawashwa.',
-                  style: MkText.bodyMuted,
-                ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Text('Bado hakuna mijadala.', style: MkText.bodyMuted),
               )
             else
               for (final (i, t) in _trending.indexed)
@@ -226,19 +279,6 @@ class _HomeTabState extends State<HomeTab> {
                     ),
                   ),
                 ),
-
-            const SizedBox(height: 20),
-            const Text('Bado hazijawashwa', style: MkText.section),
-            const SizedBox(height: 8),
-            const Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _SoonChip('Soko na malipo'),
-                _SoonChip('Utambuzi wa magonjwa'),
-                _SoonChip('SMS na USSD'),
-              ],
-            ),
           ],
         ),
       ),
@@ -278,16 +318,6 @@ class _LeadCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class _SoonChip extends StatelessWidget {
-  final String label;
-  const _SoonChip(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return MkBadge('Inakuja hivi karibuni · $label');
   }
 }
 
@@ -389,83 +419,6 @@ class _WeatherStrip extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PriceTable extends StatelessWidget {
-  final List<dynamic> prices;
-
-  const _PriceTable({required this.prices});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: MkColors.border),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        children: [
-          for (final (i, p) in prices.indexed)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                border: i < prices.length - 1
-                    ? const Border(bottom: BorderSide(color: MkColors.border))
-                    : null,
-              ),
-              child: _PriceRow(price: p),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PriceRow extends StatelessWidget {
-  final dynamic price;
-
-  const _PriceRow({required this.price});
-
-  @override
-  Widget build(BuildContext context) {
-    final trend = price['trend']?.toString() ?? 'stable';
-    // Lightness differs as well as hue, so up and down stay distinguishable
-    // for colour-blind readers; the arrow carries the meaning regardless.
-    final (arrow, colour, meaning) = switch (trend) {
-      'up' => (Icons.arrow_upward, MkColors.primary, 'inapanda'),
-      'down' => (Icons.arrow_downward, MkColors.danger, 'inashuka'),
-      _ => (Icons.remove, MkColors.muted, 'haijabadilika'),
-    };
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('${price['commodity'] ?? ''}', style: MkText.label),
-              Text(
-                [
-                  price['market'],
-                  if (price['unit'] != null) 'kwa ${price['unit']}',
-                ].whereType<Object>().join(' · '),
-                style: MkText.caption,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '${mkAmount(num.tryParse('${price['min_price']}'))}–'
-          '${mkAmount(num.tryParse('${price['max_price']}'))}',
-          style: MkText.label.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(width: 6),
-        Icon(arrow, size: 18, color: colour, semanticLabel: meaning),
-      ],
     );
   }
 }
@@ -579,6 +532,103 @@ class _ExpertPill extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ServiceIcon extends StatelessWidget {
+  final MkService service;
+  final VoidCallback onTap;
+  const _ServiceIcon({required this.service, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Column(
+        children: [
+          const SizedBox(height: 4),
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: service.isLive ? MkColors.leafPale : MkColors.surfaceMuted,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              service.icon,
+              color: service.isLive ? MkColors.primary : MkColors.muted,
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            service.label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: MkText.caption.copyWith(color: MkColors.ink, height: 1.15),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InputCard extends StatelessWidget {
+  final Product product;
+  final VoidCallback onTap;
+  const _InputCard({required this.product, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: MkColors.surface,
+      borderRadius: BorderRadius.circular(MkRadii.card),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(MkRadii.card),
+        child: Container(
+          width: 140,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            border: Border.all(color: MkColors.border),
+            borderRadius: BorderRadius.circular(MkRadii.card),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 52,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: MkColors.leafPale,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.eco_outlined, color: MkColors.primary),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                product.name,
+                style: MkText.label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const Spacer(),
+              Text(
+                '${mkMoney(product.price)} / ${product.unit}',
+                style: MkText.caption.copyWith(
+                  color: MkColors.primary,
+                  fontWeight: FontWeight.w700,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

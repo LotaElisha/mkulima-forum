@@ -9,7 +9,7 @@ class ServiceProvider extends Model
 {
     protected $fillable = [
         'tenant_id', 'user_id', 'uuid', 'service_type', 'business_name', 'bio',
-        'specializations', 'region', 'district', 'license_number',
+        'specializations', 'region', 'district', 'latitude', 'longitude', 'license_number',
         'verification_status', 'consultation_fee', 'visit_fee', 'availability',
         'rating', 'rating_count', 'is_active',
     ];
@@ -20,6 +20,8 @@ class ServiceProvider extends Model
         'consultation_fee' => 'decimal:2',
         'visit_fee' => 'decimal:2',
         'rating' => 'decimal:2',
+        'latitude' => 'float',
+        'longitude' => 'float',
         'is_active' => 'boolean',
     ];
 

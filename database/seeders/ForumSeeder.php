@@ -83,6 +83,12 @@ class ForumSeeder extends Seeder
                         ]
                     );
                 }
+
+                // The API serves the stored counter, which the reply endpoint
+                // increments; seeded replies bypass that endpoint.
+                $thread->update([
+                    'reply_count' => ForumReply::where('forum_thread_id', $thread->id)->count(),
+                ]);
             }
         }
 

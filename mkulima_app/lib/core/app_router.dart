@@ -2,6 +2,8 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
 
+import '../screens/agronomists_screen.dart';
+import '../screens/equipment_screen.dart';
 import '../screens/account_identities_screen.dart';
 import '../screens/become_seller_screen.dart';
 import '../screens/cart_screen.dart';
@@ -117,6 +119,14 @@ GoRouter buildAppRouter(AuthProvider auth) {
         builder: (context, state) => const MkulimaBotScreen(),
       ),
 
+      GoRoute(
+        path: '/agronomists',
+        builder: (context, state) => const AgronomistsScreen(),
+      ),
+      GoRoute(
+        path: '/equipment',
+        builder: (context, state) => const EquipmentScreen(),
+      ),
       GoRoute(path: '/drone', builder: (context, state) => const DroneScreen()),
       GoRoute(path: '/iot', builder: (context, state) => const IoTScreen()),
       GoRoute(path: '/ivr', builder: (context, state) => const IvrScreen()),

@@ -98,7 +98,7 @@
         </div>
       </div>
       <div class="hero-chips">
-        @foreach(['📷 Plant Scanner','🤖 Mkulima AI','🛒 Soko','🛡️ Kagua','⛅ Hali ya Hewa','📱 Offline AI','👥 Jamii','📈 Masoko'] as $chip)
+        @foreach(['Plant Scanner','Mkulima AI','Soko','Kagua','Hali ya Hewa','Offline AI','Jamii','Masoko'] as $chip)
         <span class="tag">{{ $chip }}</span>
         @endforeach
       </div>
@@ -137,7 +137,7 @@
       <h4 data-i18n="s1_visual_title">Mkulima AI Vision</h4>
       <p data-i18n="s1_visual_sub">Inachambua picha ya mmea kwa muda wa sekunde 1–3</p>
       <div class="sol-mock">
-        <div class="sol-mock-label">⚡ MATOKEO YA AI</div>
+        <div class="sol-mock-label"><x-icon name="zap" :size="24" /> MATOKEO YA AI</div>
         <div class="sol-mock-title">Kutu ya Majani — Leaf Rust</div>
         <div class="sol-mock-meta">Uhakika: 94.7% • TFRA Tiba: Fungicide Z4</div>
       </div>
@@ -289,7 +289,7 @@
       <h4 data-i18n="s6_visual_title">Offline-First Architecture</h4>
       <p data-i18n="s6_visual_sub">Inafanya kazi hata bila intaneti kabisa</p>
       <div class="sol-mock">
-        <div class="sol-mock-label">📲 SMS: 15500</div>
+        <div class="sol-mock-label"><x-icon name="phone" :size="24" /> SMS: 15500</div>
         <div class="sol-mock-title">"BEI MAHINDI DODOMA"</div>
       </div>
     </div>
@@ -358,7 +358,7 @@
     <h2 data-i18n="sol_cta_title">Anza Kutumia Mfumo Wetu</h2>
     <p data-i18n="sol_cta_sub">Pakua app ya MkulimaForum au wasiliana nasi kwa ushirikiano wa kibiashara au teknolojia.</p>
     <div class="cta-actions">
-      <a href="/download" class="btn btn-primary btn-lg" data-i18n="sol_dl_btn">⬇️ Pakua App</a>
+      <a href="/download" class="btn btn-primary btn-lg" data-i18n="sol_dl_btn">Pakua App</a>
       <a href="/contact" class="btn btn-outline btn-lg" data-i18n="sol_contact_btn">Wasiliana Nasi →</a>
     </div>
   </div>
@@ -409,7 +409,7 @@ mkPageTranslations = {
     s8_visual_title:'Taarifa za Soko', s8_visual_sub:'Maamuzi bora ya kuuza mazao',
     sol_cta_title:'Anza Kutumia Mfumo Wetu',
     sol_cta_sub:'Pakua app ya MkulimaForum au wasiliana nasi kwa ushirikiano wa kibiashara au teknolojia.',
-    sol_dl_btn:'⬇️ Pakua App', sol_contact_btn:'Wasiliana Nasi →',
+    sol_dl_btn:'Pakua App', sol_contact_btn:'Wasiliana Nasi →',
   },
   en: {
     sol_eyebrow:'ONE PLATFORM. MANY SOLUTIONS.',
@@ -451,7 +451,7 @@ mkPageTranslations = {
     s8_visual_title:'Market Intelligence', s8_visual_sub:'Better decisions for selling your harvest',
     sol_cta_title:'Start Using Our Platform',
     sol_cta_sub:'Download the MkulimaForum app or contact us for commercial or technology partnerships.',
-    sol_dl_btn:'⬇️ Download App', sol_contact_btn:'Contact Us →',
+    sol_dl_btn:'Download App', sol_contact_btn:'Contact Us →',
   }
 };
 </script>

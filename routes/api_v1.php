@@ -1,6 +1,9 @@
 <?php
 
+use App\Actions\Equipment\DecideRental;
+use App\Http\Controllers\Api\V1\AgronomistController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\EquipmentController;
 use App\Http\Controllers\Api\V1\ForumController;
 use App\Http\Controllers\Api\V1\MarketPriceController;
 use App\Http\Controllers\Api\V1\WeatherController;
@@ -37,4 +40,23 @@ Route::prefix('v1')->group(function () {
     Route::get('/forum/categories/{uuid}/threads', [ForumController::class, 'threads']);
     Route::get('/forum/threads', [ForumController::class, 'threads']);
     Route::get('/forum/threads/{uuid}', [ForumController::class, 'show']);
+
+    // Find an agronomist nearby. ?lat&lng&radius_km, or ?region.
+    Route::get('/agronomists', [AgronomistController::class, 'index'])->middleware('throttle:60,1');
+    Route::get('/agronomists/{uuid}', [AgronomistController::class, 'show']);
+
+    // Equipment rentals. Browsing is public; listing and renting need an account.
+    Route::get('/equipment/categories', [EquipmentController::class, 'categories']);
+    Route::get('/equipment', [EquipmentController::class, 'index'])->middleware('throttle:60,1');
+    Route::get('/equipment/{uuid}', [EquipmentController::class, 'show']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/equipment', [EquipmentController::class, 'store'])->middleware('throttle:10,1');
+        Route::patch('/equipment/{uuid}/status', [EquipmentController::class, 'updateStatus']);
+        Route::get('/me/equipment', [EquipmentController::class, 'mine']);
+        Route::post('/equipment/{uuid}/rentals', [EquipmentController::class, 'requestRental'])->middleware('throttle:10,1');
+        Route::get('/me/rentals', [EquipmentController::class, 'rentals']);
+        Route::post('/rentals/{uuid}/{action}', [EquipmentController::class, 'decide'])
+            ->whereIn('action', DecideRental::actions());
+    });
 });

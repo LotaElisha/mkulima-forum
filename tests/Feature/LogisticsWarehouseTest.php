@@ -147,6 +147,27 @@ class LogisticsWarehouseTest extends TestCase
         $this->assertEquals(1, $transporter->rating_count);
     }
 
+    public function test_freight_records_cargo_type_and_vehicle(): void
+    {
+        Sanctum::actingAs($this->farmer);
+        $this->postJson('/api/logistics/freight', [
+            'pickup_location' => 'Shamba, Mvomero',
+            'dropoff_location' => 'Ghala la Morogoro',
+            'cargo_type' => 'produce',
+            'vehicle_type' => 'canter',
+            'cargo_weight_kg' => 3000,
+        ])->assertCreated()
+            ->assertJsonPath('freight.cargo_type', 'produce')
+            ->assertJsonPath('freight.vehicle_type', 'canter');
+
+        $this->postJson('/api/logistics/freight', [
+            'pickup_location' => 'A',
+            'dropoff_location' => 'B',
+            'cargo_type' => 'rocket',
+            'vehicle_type' => 'helicopter',
+        ])->assertUnprocessable()->assertJsonValidationErrors(['cargo_type', 'vehicle_type']);
+    }
+
     public function test_unverified_transporter_cannot_quote(): void
     {
         Sanctum::actingAs($this->farmer);
