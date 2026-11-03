@@ -75,7 +75,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final picked = await ImagePicker().pickImage(source: source, maxWidth: 1024, imageQuality: 85);
+    final picked = await ImagePicker().pickImage(
+      source: source,
+      maxWidth: 1024,
+      imageQuality: 85,
+    );
     if (picked == null) return;
     final bytes = await picked.readAsBytes();
     if (!mounted) return;
@@ -93,14 +97,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
       await _saveForLater();
       return;
     }
-    final ok = await AuthProvider.requireAuth(context, action: 'kukagua ugonjwa wa mmea');
+    final ok = await AuthProvider.requireAuth(
+      context,
+      action: 'kukagua ugonjwa wa mmea',
+    );
     if (!ok || !mounted) return;
     setState(() {
       _isScanning = true;
       _unavailable = null;
     });
     try {
-      final result = await context.read<ApiService>().scanDisease(_imageBytes!, _imageName);
+      final result = await context.read<ApiService>().scanDisease(
+        _imageBytes!,
+        _imageName,
+      );
       if (!mounted) return;
       setState(() {
         _result = result;
@@ -118,11 +128,15 @@ class _ScannerScreenState extends State<ScannerScreen> {
   Future<void> _saveForLater() async {
     final saved = await ScanQueue.add(_imageBytes!, _imageName);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(saved
-          ? 'Picha imehifadhiwa. Itakaguliwa ukirudi mtandaoni.'
-          : 'Picha ${ScanQueue.maxItems} zinasubiri tayari. Rudi mtandaoni kwanza.'),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          saved
+              ? 'Picha imehifadhiwa. Itakaguliwa ukirudi mtandaoni.'
+              : 'Picha ${ScanQueue.maxItems} zinasubiri tayari. Rudi mtandaoni kwanza.',
+        ),
+      ),
+    );
     if (saved) {
       setState(() {
         _imageBytes = null;
@@ -163,7 +177,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
     }
   }
 
-  void _push(Widget screen) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+  void _push(Widget screen) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +196,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             online
                 ? 'Uko mtandaoni: picha itakaguliwa na AI papo hapo.'
                 : 'Hakuna mtandao. Piga picha sasa; itahifadhiwa na kukaguliwa ukirudi '
-                    'mtandaoni. Maktaba ya magonjwa inafanya kazi bila mtandao.',
+                      'mtandaoni. Maktaba ya magonjwa inafanya kazi bila mtandao.',
             style: MkText.body,
           ),
         ),
@@ -189,40 +204,60 @@ class _ScannerScreenState extends State<ScannerScreen> {
         if (_imageBytes != null)
           ClipRRect(
             borderRadius: BorderRadius.circular(MkRadii.card),
-            child: AspectRatio(aspectRatio: 4 / 3, child: Image.memory(_imageBytes!, fit: BoxFit.cover)),
+            child: AspectRatio(
+              aspectRatio: 4 / 3,
+              child: Image.memory(_imageBytes!, fit: BoxFit.cover),
+            ),
           ),
         const SizedBox(height: 12),
         FilledButton.icon(
           onPressed: _isScanning
               ? null
               : _imageBytes == null
-                  ? () => _pickImage(ImageSource.camera)
-                  : _diagnose,
-          icon: Icon(_imageBytes == null
-              ? Icons.camera_alt_rounded
-              : online
-                  ? Icons.biotech_outlined
-                  : Icons.save_alt_outlined),
-          label: Text(_isScanning
-              ? 'AI inachambua...'
-              : _imageBytes == null
-                  ? 'Piga picha ya mmea'
-                  : online
-                      ? 'Kagua kwa AI'
-                      : 'Hifadhi, kagua nikirudi mtandaoni'),
+              ? () => _pickImage(ImageSource.camera)
+              : _diagnose,
+          icon: Icon(
+            _imageBytes == null
+                ? Icons.camera_alt_rounded
+                : online
+                ? Icons.biotech_outlined
+                : Icons.save_alt_outlined,
+          ),
+          label: Text(
+            _isScanning
+                ? 'AI inachambua...'
+                : _imageBytes == null
+                ? 'Piga picha ya mmea'
+                : online
+                ? 'Kagua kwa AI'
+                : 'Hifadhi, kagua nikirudi mtandaoni',
+          ),
           style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
         ),
         const SizedBox(height: 8),
         OutlinedButton.icon(
           onPressed: _isScanning ? null : () => _pickImage(ImageSource.gallery),
           icon: const Icon(Icons.photo_library_outlined),
-          label: Text(_imageBytes == null ? 'Chagua kutoka ghalari' : 'Chagua picha nyingine'),
-          style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48), foregroundColor: MkColors.ink),
+          label: Text(
+            _imageBytes == null
+                ? 'Chagua kutoka ghalari'
+                : 'Chagua picha nyingine',
+          ),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(48),
+            foregroundColor: MkColors.ink,
+          ),
         ),
         if (_unavailable != null) ...[
           const SizedBox(height: 12),
-          Text('Uchunguzi haukufanyika: $_unavailable', style: MkText.bodyMuted),
-          TextButton(onPressed: _saveForLater, child: const Text('Hifadhi, jaribu baadaye')),
+          Text(
+            'Uchunguzi haukufanyika: $_unavailable',
+            style: MkText.bodyMuted,
+          ),
+          TextButton(
+            onPressed: _saveForLater,
+            child: const Text('Hifadhi, jaribu baadaye'),
+          ),
         ],
         if (_result != null) ...[
           const SizedBox(height: 16),
@@ -234,24 +269,42 @@ class _ScannerScreenState extends State<ScannerScreen> {
         ],
         if (_pending.isNotEmpty) ...[
           const SizedBox(height: 16),
-          ListTile(
-            tileColor: MkColors.surfaceMuted,
-            leading: const Icon(Icons.schedule_outlined),
-            title: Text(_syncing ? 'Inakagua picha zilizosubiri...' : 'Picha ${_pending.length} zinasubiri kukaguliwa'),
-            trailing: online && !_syncing ? TextButton(onPressed: _syncPending, child: const Text('Kagua sasa')) : null,
+          Card(
+            margin: EdgeInsets.zero,
+            color: MkColors.surfaceMuted,
+            child: ListTile(
+              leading: const Icon(Icons.schedule_outlined),
+              title: Text(
+                _syncing
+                    ? 'Inakagua picha zilizosubiri...'
+                    : 'Picha ${_pending.length} zinasubiri kukaguliwa',
+              ),
+              trailing: online && !_syncing
+                  ? TextButton(
+                      onPressed: _syncPending,
+                      child: const Text('Kagua sasa'),
+                    )
+                  : null,
+            ),
           ),
         ],
         const SizedBox(height: 16),
-        ListTile(
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(color: MkColors.border),
-            borderRadius: BorderRadius.circular(MkRadii.card),
+        // Own Card (own Material): a bare ListTile paints its border on the
+        // Scaffold, which left the border behind when the banner above grew.
+        Card(
+          margin: EdgeInsets.zero,
+          child: ListTile(
+            leading: const Icon(
+              Icons.menu_book_outlined,
+              color: MkColors.primary,
+            ),
+            title: const Text('Maktaba ya magonjwa'),
+            subtitle: const Text(
+              'Dalili, tiba na kinga. Inafanya kazi bila mtandao.',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _push(const DiseaseLibraryScreen()),
           ),
-          leading: const Icon(Icons.menu_book_outlined, color: MkColors.primary),
-          title: const Text('Maktaba ya magonjwa'),
-          subtitle: const Text('Dalili, tiba na kinga. Inafanya kazi bila mtandao.'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => _push(const DiseaseLibraryScreen()),
         ),
       ],
     );
@@ -262,11 +315,17 @@ class _ResultCard extends StatelessWidget {
   final Map<String, dynamic> result;
   final VoidCallback onAgronomist;
   final VoidCallback onInputs;
-  const _ResultCard({required this.result, required this.onAgronomist, required this.onInputs});
+  const _ResultCard({
+    required this.result,
+    required this.onAgronomist,
+    required this.onInputs,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final confidence = parseNum(result['confidence'] ?? result['confidence_score']);
+    final confidence = parseNum(
+      result['confidence'] ?? result['confidence_score'],
+    );
     String? text(String k) {
       final v = result[k];
       return v == null || v.toString().trim().isEmpty ? null : v.toString();
@@ -310,8 +369,14 @@ class _ResultCard extends StatelessWidget {
           Wrap(
             spacing: 8,
             children: [
-              FilledButton(onPressed: onAgronomist, child: const Text('Ongea na mtaalamu')),
-              OutlinedButton(onPressed: onInputs, child: const Text('Tafuta pembejeo')),
+              FilledButton(
+                onPressed: onAgronomist,
+                child: const Text('Ongea na mtaalamu'),
+              ),
+              OutlinedButton(
+                onPressed: onInputs,
+                child: const Text('Tafuta pembejeo'),
+              ),
             ],
           ),
         ],

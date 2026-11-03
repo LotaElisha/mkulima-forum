@@ -28,10 +28,16 @@ class LogisticsScreen extends StatelessWidget {
           bottom: const TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            tabs: [Tab(text: 'Omba usafiri'), Tab(text: 'Maombi yangu'), Tab(text: 'Wasafirishaji')],
+            tabs: [
+              Tab(text: 'Omba usafiri'),
+              Tab(text: 'Maombi yangu'),
+              Tab(text: 'Wasafirishaji'),
+            ],
           ),
         ),
-        body: const TabBarView(children: [_RequestForm(), _MyRequests(), _Transporters()]),
+        body: const TabBarView(
+          children: [_RequestForm(), _MyRequests(), _Transporters()],
+        ),
       ),
     );
   }
@@ -72,7 +78,8 @@ class _RequestForm extends StatefulWidget {
   State<_RequestForm> createState() => _RequestFormState();
 }
 
-class _RequestFormState extends State<_RequestForm> with AutomaticKeepAliveClientMixin {
+class _RequestFormState extends State<_RequestForm>
+    with AutomaticKeepAliveClientMixin {
   final _form = GlobalKey<FormState>();
   final _pickup = TextEditingController();
   final _dropoff = TextEditingController();
@@ -109,20 +116,34 @@ class _RequestFormState extends State<_RequestForm> with AutomaticKeepAliveClien
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
-    final ok = await AuthProvider.requireAuth(context, action: 'kuomba usafiri');
+    final ok = await AuthProvider.requireAuth(
+      context,
+      action: 'kuomba usafiri',
+    );
     if (!ok || !mounted) return;
 
     setState(() => _sending = true);
     try {
-      await context.read<ApiService>().post('/logistics/freight', data: {
-        'pickup_location': _pickup.text.trim(),
-        'dropoff_location': _dropoff.text.trim(),
-        'cargo_type': _cargo,
-        if (_vehicle != null) 'vehicle_type': _vehicle,
-        if (_weight.text.trim().isNotEmpty) 'cargo_weight_kg': num.tryParse(_weight.text.trim()),
-        if (_details.text.trim().isNotEmpty) 'cargo_description': _details.text.trim(),
-        if (_date != null) 'pickup_at': DateTime(_date!.year, _date!.month, _date!.day, 8).toIso8601String(),
-      });
+      await context.read<ApiService>().post(
+        '/logistics/freight',
+        data: {
+          'pickup_location': _pickup.text.trim(),
+          'dropoff_location': _dropoff.text.trim(),
+          'cargo_type': _cargo,
+          if (_vehicle != null) 'vehicle_type': _vehicle,
+          if (_weight.text.trim().isNotEmpty)
+            'cargo_weight_kg': num.tryParse(_weight.text.trim()),
+          if (_details.text.trim().isNotEmpty)
+            'cargo_description': _details.text.trim(),
+          if (_date != null)
+            'pickup_at': DateTime(
+              _date!.year,
+              _date!.month,
+              _date!.day,
+              8,
+            ).toIso8601String(),
+        },
+      );
       if (!mounted) return;
       _form.currentState!.reset();
       _pickup.clear();
@@ -135,13 +156,19 @@ class _RequestFormState extends State<_RequestForm> with AutomaticKeepAliveClien
         _vehicle = null;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ombi limetumwa. Wasafirishaji waliothibitishwa watatuma bei.')),
+        const SnackBar(
+          content: Text(
+            'Ombi limetumwa. Wasafirishaji waliothibitishwa watatuma bei.',
+          ),
+        ),
       );
       DefaultTabController.of(context).animateTo(1);
     } catch (e) {
       if (!mounted) return;
       setState(() => _sending = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
     }
   }
 
@@ -171,19 +198,31 @@ class _RequestFormState extends State<_RequestForm> with AutomaticKeepAliveClien
           TextFormField(
             controller: _pickup,
             maxLength: 255,
-            decoration: const InputDecoration(labelText: 'Mahali pa kubeba', hintText: 'Mf. Shamba, Kijiji cha Mkundi, Mvomero'),
-            validator: (v) => (v ?? '').trim().length < 3 ? 'Andika mahali pa kubeba' : null,
+            decoration: const InputDecoration(
+              labelText: 'Mahali pa kubeba',
+              hintText: 'Mf. Shamba, Kijiji cha Mkundi, Mvomero',
+            ),
+            validator: (v) =>
+                (v ?? '').trim().length < 3 ? 'Andika mahali pa kubeba' : null,
           ),
           TextFormField(
             controller: _dropoff,
             maxLength: 255,
-            decoration: const InputDecoration(labelText: 'Mahali pa kufikisha', hintText: 'Mf. Soko la Mawenzi, Morogoro'),
-            validator: (v) => (v ?? '').trim().length < 3 ? 'Andika mahali pa kufikisha' : null,
+            decoration: const InputDecoration(
+              labelText: 'Mahali pa kufikisha',
+              hintText: 'Mf. Soko la Mawenzi, Morogoro',
+            ),
+            validator: (v) => (v ?? '').trim().length < 3
+                ? 'Andika mahali pa kufikisha'
+                : null,
           ),
           TextFormField(
             controller: _weight,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Uzito kwa kilo (si lazima)', hintText: 'Mf. 800 (magunia 8 ya kilo 100)'),
+            decoration: const InputDecoration(
+              labelText: 'Uzito kwa kilo (si lazima)',
+              hintText: 'Mf. 800 (magunia 8 ya kilo 100)',
+            ),
             validator: (v) {
               if ((v ?? '').trim().isEmpty) return null;
               final n = num.tryParse(v!.trim());
@@ -193,10 +232,16 @@ class _RequestFormState extends State<_RequestForm> with AutomaticKeepAliveClien
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             initialValue: _vehicle,
-            decoration: const InputDecoration(labelText: 'Aina ya gari (si lazima)'),
+            decoration: const InputDecoration(
+              labelText: 'Aina ya gari (si lazima)',
+            ),
             items: [
-              const DropdownMenuItem(value: null, child: Text('Yoyote inayofaa')),
-              for (final e in _vehicleTypes.entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
+              const DropdownMenuItem(
+                value: null,
+                child: Text('Yoyote inayofaa'),
+              ),
+              for (final e in _vehicleTypes.entries)
+                DropdownMenuItem(value: e.key, child: Text(e.value)),
             ],
             onChanged: (v) => setState(() => _vehicle = v),
           ),
@@ -204,20 +249,32 @@ class _RequestFormState extends State<_RequestForm> with AutomaticKeepAliveClien
           OutlinedButton.icon(
             onPressed: _pickDate,
             icon: const Icon(Icons.calendar_today_outlined, size: 18),
-            label: Text(_date == null ? 'Siku ya kubeba (si lazima)' : 'Siku: ${_date!.day}/${_date!.month}/${_date!.year}'),
-            style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48), foregroundColor: MkColors.ink),
+            label: Text(
+              _date == null
+                  ? 'Siku ya kubeba (si lazima)'
+                  : 'Siku: ${_date!.day}/${_date!.month}/${_date!.year}',
+            ),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              foregroundColor: MkColors.ink,
+            ),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _details,
             maxLines: 2,
             maxLength: 2000,
-            decoration: const InputDecoration(labelText: 'Maelezo (si lazima)', hintText: 'Mf. Magunia 8 ya mahindi, barabara ya vumbi'),
+            decoration: const InputDecoration(
+              labelText: 'Maelezo (si lazima)',
+              hintText: 'Mf. Magunia 8 ya mahindi, barabara ya vumbi',
+            ),
           ),
           const SizedBox(height: 8),
           FilledButton(
             onPressed: _sending ? null : _submit,
-            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(52),
+            ),
             child: Text(_sending ? 'Inatuma...' : 'Tuma ombi la usafiri'),
           ),
           const SizedBox(height: 8),
@@ -279,11 +336,16 @@ class _MyRequestsState extends State<_MyRequests> {
 
   Future<void> _setStatus(String uuid, String status) async {
     try {
-      await context.read<ApiService>().put('/logistics/freight/$uuid', data: {'status': status});
+      await context.read<ApiService>().put(
+        '/logistics/freight/$uuid',
+        data: {'status': status},
+      );
       _load();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(ApiService.formatError(e))));
     }
   }
 
@@ -296,12 +358,25 @@ class _MyRequestsState extends State<_MyRequests> {
         title: 'Ingia kuona maombi yako',
         actionLabel: 'Ingia',
         onAction: () async {
-          if (await AuthProvider.requireAuth(context, action: 'kuona maombi ya usafiri')) _load();
+          if (await AuthProvider.requireAuth(
+            context,
+            action: 'kuona maombi ya usafiri',
+          )) {
+            _load();
+          }
         },
       );
     }
-    if (_loading) return const MkListSkeleton(rows: 4, padding: EdgeInsets.all(16));
-    if (_failed) return MkErrorState(title: 'Hatukuweza kupakia maombi', message: 'Jaribu tena.', onRetry: _load);
+    if (_loading) {
+      return const MkListSkeleton(rows: 4, padding: EdgeInsets.all(16));
+    }
+    if (_failed) {
+      return MkErrorState(
+        title: 'Hatukuweza kupakia maombi',
+        message: 'Jaribu tena.',
+        onRetry: _load,
+      );
+    }
     if (_items.isEmpty) {
       return const MkEmptyState(
         icon: Icons.local_shipping_outlined,
@@ -343,7 +418,11 @@ class _MyRequestsState extends State<_MyRequests> {
                     Text(
                       _statusLabels[status] ?? status,
                       style: MkText.label.copyWith(
-                        color: status == 'quoted' ? MkColors.accent : (status == 'cancelled' ? MkColors.muted : MkColors.primary),
+                        color: status == 'quoted'
+                            ? MkColors.accent
+                            : (status == 'cancelled'
+                                  ? MkColors.muted
+                                  : MkColors.primary),
                       ),
                     ),
                   ],
@@ -352,8 +431,10 @@ class _MyRequestsState extends State<_MyRequests> {
                 Text(
                   [
                     _cargoTypes[f['cargo_type']] ?? 'Mzigo',
-                    if (parseNum(f['cargo_weight_kg']) != null) 'kg ${parseNum(f['cargo_weight_kg'])!.round()}',
-                    if (f['vehicle_type'] != null) _vehicleTypes[f['vehicle_type']] ?? f['vehicle_type'],
+                    if (parseNum(f['cargo_weight_kg']) != null)
+                      'kg ${parseNum(f['cargo_weight_kg'])!.round()}',
+                    if (f['vehicle_type'] != null)
+                      _vehicleTypes[f['vehicle_type']] ?? f['vehicle_type'],
                   ].join(' · '),
                   style: MkText.bodyMuted,
                 ),
@@ -372,12 +453,17 @@ class _MyRequestsState extends State<_MyRequests> {
                       if (status == 'quoted')
                         FilledButton(
                           onPressed: () => _setStatus(f['uuid'], 'accepted'),
-                          style: FilledButton.styleFrom(minimumSize: const Size(0, 44)),
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(0, 44),
+                          ),
                           child: const Text('Kubali bei'),
                         ),
                       TextButton(
                         onPressed: () => _setStatus(f['uuid'], 'cancelled'),
-                        style: TextButton.styleFrom(minimumSize: const Size(0, 44), foregroundColor: MkColors.danger),
+                        style: TextButton.styleFrom(
+                          minimumSize: const Size(0, 44),
+                          foregroundColor: MkColors.danger,
+                        ),
                         child: const Text('Sitisha'),
                       ),
                     ],
@@ -447,8 +533,12 @@ class _TransportersState extends State<_Transporters> {
             initialValue: _region,
             decoration: const InputDecoration(labelText: 'Mkoa'),
             items: [
-              const DropdownMenuItem(value: null, child: Text('Tanzania nzima')),
-              for (final r in tanzaniaRegions) DropdownMenuItem(value: r, child: Text(r)),
+              const DropdownMenuItem(
+                value: null,
+                child: Text('Tanzania nzima'),
+              ),
+              for (final r in tanzaniaRegions)
+                DropdownMenuItem(value: r, child: Text(r)),
             ],
             onChanged: (v) {
               setState(() => _region = v);
@@ -460,38 +550,49 @@ class _TransportersState extends State<_Transporters> {
           child: _loading
               ? const MkListSkeleton(rows: 4, padding: EdgeInsets.all(16))
               : _failed
-                  ? MkErrorState(title: 'Hatukuweza kupakia wasafirishaji', message: 'Jaribu tena.', onRetry: _load)
-                  : _items.isEmpty
-                      ? const MkEmptyState(
-                          icon: Icons.local_shipping_outlined,
-                          title: 'Hakuna msafirishaji aliyethibitishwa hapa bado',
-                          subtitle: 'Bado unaweza kutuma ombi; litaonekana kwa wasafirishaji wanapothibitishwa.',
-                        )
-                      : ListView.separated(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _items.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 8),
-                          itemBuilder: (context, i) {
-                            final t = Map<String, dynamic>.from(_items[i] as Map);
-                            final capacity = parseNum(t['capacity_kg']);
-                            return ListTile(
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(color: MkColors.border),
-                                borderRadius: BorderRadius.circular(MkRadii.card),
-                              ),
-                              leading: const CircleAvatar(
-                                backgroundColor: MkColors.leafPale,
-                                child: Icon(Icons.local_shipping_outlined, color: MkColors.primary),
-                              ),
-                              title: Text(t['user']?['name'] ?? 'Msafirishaji'),
-                              subtitle: Text([
-                                _vehicleTypes[t['vehicle_type']] ?? t['vehicle_type'] ?? '',
-                                t['base_region'] ?? '',
-                                if (capacity != null) 'hadi kg ${capacity.round()}',
-                              ].where((s) => s.toString().isNotEmpty).join(' · ')),
-                            );
-                          },
+              ? MkErrorState(
+                  title: 'Hatukuweza kupakia wasafirishaji',
+                  message: 'Jaribu tena.',
+                  onRetry: _load,
+                )
+              : _items.isEmpty
+              ? const MkEmptyState(
+                  icon: Icons.local_shipping_outlined,
+                  title: 'Hakuna msafirishaji aliyethibitishwa hapa bado',
+                  subtitle:
+                      'Bado unaweza kutuma ombi; litaonekana kwa wasafirishaji wanapothibitishwa.',
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _items.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
+                  itemBuilder: (context, i) {
+                    final t = Map<String, dynamic>.from(_items[i] as Map);
+                    final capacity = parseNum(t['capacity_kg']);
+                    return Card(
+                      margin: EdgeInsets.zero,
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: MkColors.leafPale,
+                          child: Icon(
+                            Icons.local_shipping_outlined,
+                            color: MkColors.primary,
+                          ),
                         ),
+                        title: Text(t['user']?['name'] ?? 'Msafirishaji'),
+                        subtitle: Text(
+                          [
+                            _vehicleTypes[t['vehicle_type']] ??
+                                t['vehicle_type'] ??
+                                '',
+                            t['base_region'] ?? '',
+                            if (capacity != null) 'hadi kg ${capacity.round()}',
+                          ].where((s) => s.toString().isNotEmpty).join(' · '),
+                        ),
+                      ),
+                    );
+                  },
+                ),
         ),
       ],
     );
