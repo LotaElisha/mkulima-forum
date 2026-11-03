@@ -24,6 +24,9 @@ class DesignSystemTest extends TestCase
 
     public function test_the_home_page_leads_with_live_tools_and_marks_the_rest(): void
     {
+        // No AI key: the scanner card must say it is not live yet.
+        config(['services.gemini.api_key' => '']);
+
         $this->get('/')
             ->assertOk()
             ->assertSee('Bei za soko', false)
