@@ -5,6 +5,8 @@ namespace App\Actions\Home;
 use App\Models\ForumThread;
 use App\Models\MarketPrice;
 use App\Models\WeatherCache;
+use App\Services\AI\AIService;
+use App\Support\AppDownload;
 use Throwable;
 
 /**
@@ -14,7 +16,7 @@ use Throwable;
 class PublicHome
 {
     /**
-     * @return array{weather: array, prices: list<array>, threads: list<array>}
+     * @return array{weather: array, prices: list<array>, threads: list<array>, app: array}
      */
     public function __invoke(): array
     {
@@ -22,6 +24,29 @@ class PublicHome
             'weather' => $this->weather(),
             'prices' => $this->prices(),
             'threads' => $this->threads(),
+            'app' => $this->app(),
+        ];
+    }
+
+    /**
+     * What the landing page may promise about the app, read from the server
+     * rather than written into the copy: a download button only when a real
+     * APK is published, and AI diagnosis only when a key is configured.
+     *
+     * @return array{android: ?array, web: bool, scanner_ai: bool}
+     */
+    private function app(): array
+    {
+        try {
+            $scannerAi = app(AIService::class)->configuredApiKey() !== '';
+        } catch (Throwable) {
+            $scannerAi = false;
+        }
+
+        return [
+            'android' => AppDownload::android(),
+            'web' => AppDownload::hasWebBuild(),
+            'scanner_ai' => $scannerAi,
         ];
     }
 
