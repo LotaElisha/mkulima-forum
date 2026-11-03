@@ -79,6 +79,9 @@ class ServiceBookingController extends Controller
             'consultation_fee' => ['nullable', 'numeric', 'min:0'],
             'visit_fee' => ['nullable', 'numeric', 'min:0'],
             'availability' => ['nullable', 'array'],
+            // Optional farm-visit base, so farmers can find the provider by distance.
+            'latitude' => ['nullable', 'numeric', 'between:-90,90', 'required_with:longitude'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180', 'required_with:latitude'],
         ]);
 
         $validated['tenant_id'] = $user->tenant_id;

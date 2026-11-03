@@ -11,6 +11,8 @@ import 'search_screen.dart';
 import 'forum_screen.dart';
 import 'weather_screen.dart';
 import 'market_prices_screen.dart';
+import 'agronomists_screen.dart';
+import 'equipment_screen.dart';
 import '../core/format.dart';
 import '../widgets/mk_badge.dart';
 import '../widgets/mkulima_logo.dart';
@@ -174,6 +176,34 @@ class _HomeTabState extends State<HomeTab> {
               ),
 
             const SizedBox(height: 16),
+            const Text('Huduma karibu nawe', style: MkText.section),
+            const SizedBox(height: 8),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _ServiceTile(
+                      icon: Icons.person_search_outlined,
+                      title: 'Mtaalamu wa kilimo',
+                      subtitle: 'Pata ushauri karibu',
+                      onTap: () => _push(const AgronomistsScreen()),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _ServiceTile(
+                      icon: Icons.agriculture_outlined,
+                      title: 'Kukodi zana',
+                      subtitle: 'Trekta, pampu na zaidi',
+                      onTap: () => _push(const EquipmentScreen()),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
             MkSectionHeader(
               title: 'Bei za soko',
               actionLabel: 'Zote',
@@ -234,6 +264,58 @@ class _HomeTabState extends State<HomeTab> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ServiceTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _ServiceTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: MkColors.surface,
+      borderRadius: BorderRadius.circular(MkRadii.card),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(MkRadii.card),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 112),
+          padding: const EdgeInsets.all(MkTokens.space4),
+          decoration: BoxDecoration(
+            border: Border.all(color: MkColors.border),
+            borderRadius: BorderRadius.circular(MkRadii.card),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: MkColors.leafPale,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: MkColors.primary, size: 22),
+              ),
+              const SizedBox(height: 10),
+              Text(title, style: MkText.title, maxLines: 2),
+              const SizedBox(height: 2),
+              Text(subtitle, style: MkText.caption, maxLines: 2),
+            ],
+          ),
         ),
       ),
     );

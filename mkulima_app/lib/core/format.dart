@@ -9,3 +9,11 @@ String mkMoney(num? amount) =>
 
 /// A bare amount with separators, for places that add their own unit.
 String mkAmount(num? amount) => _thousands.format((amount ?? 0).round());
+
+/// A number the API may send as a number or a string. Laravel serialises
+/// decimal columns as strings ("45000.00"), and `as num` on one throws.
+double? parseNum(dynamic value) {
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
+}
