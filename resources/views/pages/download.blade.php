@@ -61,7 +61,9 @@
       </div>
       <div class="dl-tags">
         <span class="tag">Android</span>
-        <span class="tag">Toleo {{ config('app.version', '1.0.0') }}</span>
+        @if($androidBuild['version'])
+          <span class="tag">Toleo {{ $androidBuild['version'] }}</span>
+        @endif
         <span class="tag">Takriban {{ $androidBuild['human'] }}</span>
       </div>
       <div class="dl-note">

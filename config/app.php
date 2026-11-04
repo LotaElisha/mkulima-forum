@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | Fallback only. The download page prefers the version recorded beside the
+    | published APK by scripts/build-mobile.sh, so the label always describes
+    | the file actually being served. Null means "unknown" and is not shown.
+    |
+    */
+
+    'version' => env('APP_VERSION') ?: null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

@@ -22,7 +22,7 @@ language is Swahili. Design floor is 360px wide.
 ## Commands
 
 ```bash
-php artisan test                      # 181 tests, all passing - keep it that way
+php artisan test                      # 249 tests (247 pass, 2 skipped) - keep it that way
 php artisan mkulima:preflight         # gates a deploy on every blocking item
 cd mkulima_app && ./scripts/verify.sh # pub get, codegen, analyze, test, APK
 ```
