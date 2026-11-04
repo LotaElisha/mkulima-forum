@@ -325,12 +325,16 @@ class ApiService {
   }
 
   // Disease Scanner APIs
+  /// [cropType] is one of the server's crop keys (maize, tomato, ...), or
+  /// null when the farmer did not say. It narrows the AI prompt.
   Future<Map<String, dynamic>> scanDisease(
     Uint8List imageBytes,
-    String filename,
-  ) async {
+    String filename, {
+    String? cropType,
+  }) async {
     final formData = FormData.fromMap({
       'image': MultipartFile.fromBytes(imageBytes, filename: filename),
+      'crop_type': ?cropType,
     });
     final response = await _dio.post('/scanner/scan', data: formData);
     return _asMap(
@@ -472,10 +476,7 @@ class ApiService {
       }
     }
 
-    final response = await _dio.get(
-      '/weather/report',
-      queryParameters: query,
-    );
+    final response = await _dio.get('/weather/report', queryParameters: query);
     return v1Data(response.data);
   }
 

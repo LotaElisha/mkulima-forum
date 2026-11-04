@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/strings.dart';
-import '../core/mk_tokens.dart';
 import '../core/theme.dart';
 import '../providers/auth_provider.dart';
 import 'notifications_screen.dart';
@@ -18,14 +17,19 @@ import '../core/format.dart';
 import '../widgets/mkulima_logo.dart';
 import '../widgets/mk_section_header.dart';
 import '../widgets/mk_skeleton.dart';
+import '../widgets/mk_illustrations.dart';
+import 'scanner_screen.dart';
 
-/// Nyumbani — greeting, search, compact weather, eight service shortcuts
-/// (with "Huduma zote" for the rest), agrodealer inputs, and trending
-/// discussions. The scanner is the centre tab, so it is not repeated here.
+/// Nyumbani, laid out to the owner's mockup (2026-11-04): brand header, a
+/// painted landscape hero with greeting and search, a deep-green weather card,
+/// the Mkulima AI scanner card, eight service tiles, agrodealer inputs and
+/// trending discussions.
 ///
-/// Everything sits on white. The scanner card used to be a near-black slab
-/// across the top of the screen; it is now a bordered white card whose one
-/// green button is the loudest thing above the fold.
+/// The owner chose this greener look over the earlier "90% white" rule. What
+/// did not carry over from the mockup, on purpose: the search mic (there is no
+/// voice search), "Agrodealer Verified" badges (products carry no such flag),
+/// and any claim that the AI diagnoses offline (it runs on the server; offline
+/// the photo is kept and checked later).
 class HomeTab extends StatefulWidget {
   /// Lets the shell switch bottom-nav tabs (Soko/Jukwaa) instead of pushing
   /// duplicate screens.
@@ -81,7 +85,7 @@ class _HomeTabState extends State<HomeTab> {
     try {
       final report = await api.getWeather();
       if (mounted && report['available'] == true) {
-        setState(() => _weather = report['current'] as Map<String, dynamic>?);
+        setState(() => _weather = report);
       }
     } catch (_) {}
   }
@@ -127,194 +131,297 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
     final firstName = user?.name.trim().split(RegExp(r'\s+')).first;
-    return SafeArea(
-      bottom: false,
-      child: RefreshIndicator(
-        onRefresh: _load,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          children: [
-            Row(
-              children: [
-                // The original farmer emblem, not a generic leaf tile.
-                const MkulimaLogo(size: 44),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        firstName == null || firstName.isEmpty
-                            ? 'Karibu Mkulima'
-                            : '${MkStrings.greeting}, $firstName',
-                        style: MkText.section.copyWith(fontSize: 20),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+    final greeting = firstName == null || firstName.isEmpty
+        ? 'Karibu Mkulima'
+        : 'Karibu, $firstName';
+
+    return ColoredBox(
+      color: MkColors.surface,
+      child: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          onRefresh: _load,
+          child: ListView(
+            padding: const EdgeInsets.only(bottom: 24),
+            children: [
+              _BrandHeader(onNotifications: _openNotifications),
+              _Hero(
+                greeting: greeting,
+                onSearch: () => _push(const SearchScreen()),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: _WeatherCard(
+                  report: _weather,
+                  onTap: () => _push(const WeatherScreen()),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: _ScannerCard(
+                  onScan: () => widget.onSwitchTab != null
+                      ? widget.onSwitchTab!(2)
+                      : _push(const ScannerPage()),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    MkSectionHeader(
+                      title: 'Huduma Karibu Nawe',
+                      actionLabel: 'Huduma Zote',
+                      onAction: () => _push(const ServicesDirectoryScreen()),
+                    ),
+                    const SizedBox(height: 8),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: MkServices.homeKeys.length,
+                      // Fixed height, not an aspect ratio: Swahili labels wrap
+                      // to two lines at 360px and must not clip.
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 6,
+                            mainAxisExtent: 128,
+                          ),
+                      itemBuilder: (context, i) {
+                        final key = MkServices.homeKeys[i];
+                        return _ServiceTile(
+                          service: MkServices.byKey(key),
+                          subtitle: _homeSubtitles[key],
+                          onTap: () => _openService(key),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    MkSectionHeader(
+                      title: 'Pembejeo (Agrodealers)',
+                      actionLabel: 'Angalia Zote',
+                      onAction: () => _openService('pembejeo'),
+                    ),
+                    const Text(
+                      'Nunua mbegu, mbolea, viuatilifu na pembejeo nyingine '
+                      'kutoka kwa wauzaji wa pembejeo.',
+                      style: MkText.caption,
+                    ),
+                    const SizedBox(height: 10),
+                    if (_loadingInputs)
+                      const MkSkeleton(height: 196, radius: 16)
+                    else if (_inputs.isEmpty)
                       const Text(
-                        'Kilimo bora huanza na taarifa sahihi',
-                        style: MkText.caption,
+                        'Bado hakuna pembejeo zilizowekwa na wauzaji.',
+                        style: MkText.bodyMuted,
+                      )
+                    else
+                      SizedBox(
+                        height: 204,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          clipBehavior: Clip.none,
+                          itemCount: _inputs.length,
+                          separatorBuilder: (_, _) => const SizedBox(width: 10),
+                          itemBuilder: (context, i) => _InputCard(
+                            product: _inputs[i] as Product,
+                            onTap: () => _push(
+                              ProductDetailScreen(
+                                product: _inputs[i] as Product,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-                IconButton.outlined(
-                  tooltip: 'Arifa',
-                  onPressed: _openNotifications,
-                  style: IconButton.styleFrom(
-                    minimumSize: const Size(44, 44),
-                    side: const BorderSide(color: MkColors.border),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 20),
+                    MkSectionHeader(
+                      title: 'Mijadala Inayovuma',
+                      actionLabel: 'Zote',
+                      onAction: () => widget.onSwitchTab != null
+                          ? widget.onSwitchTab!(3)
+                          : _push(const ForumScreen()),
                     ),
-                  ),
-                  icon: const Icon(Icons.notifications_none_outlined),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            _SearchField(onTap: () => _push(const SearchScreen())),
-
-            const SizedBox(height: 12),
-            if (_weather != null)
-              _WeatherStrip(
-                weather: _weather!,
-                onTap: () => _push(const WeatherScreen()),
-              )
-            else
-              _LeadCard(
-                title: 'Hali ya hewa',
-                body: 'Hakuna taarifa kwa sasa. Hatutungi namba.',
-                action: 'Angalia',
-                onTap: () => _push(const WeatherScreen()),
-              ),
-
-            const SizedBox(height: 16),
-            MkSectionHeader(
-              title: 'Huduma karibu nawe',
-              actionLabel: 'Huduma zote',
-              onAction: () => _push(const ServicesDirectoryScreen()),
-            ),
-            const SizedBox(height: 8),
-            GridView.count(
-              crossAxisCount: 4,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 4,
-              // Fixed tile height: two lines of 13px Swahili under the icon.
-              childAspectRatio: 0.78,
-              children: [
-                for (final key in MkServices.homeKeys)
-                  _ServiceIcon(
-                    service: MkServices.byKey(key),
-                    onTap: () => _openService(key),
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-            MkSectionHeader(
-              title: 'Pembejeo karibu nawe',
-              actionLabel: 'Zote',
-              onAction: () => _openService('pembejeo'),
-            ),
-            const SizedBox(height: 8),
-            if (_loadingInputs)
-              const MkSkeleton(height: 132, radius: 16)
-            else if (_inputs.isEmpty)
-              const Text(
-                'Bado hakuna pembejeo zilizowekwa na wauzaji.',
-                style: MkText.bodyMuted,
-              )
-            else
-              SizedBox(
-                height: 148,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _inputs.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 10),
-                  itemBuilder: (context, i) => _InputCard(
-                    product: _inputs[i] as Product,
-                    onTap: () => _push(
-                      ProductDetailScreen(product: _inputs[i] as Product),
-                    ),
-                  ),
+                    const SizedBox(height: 4),
+                    if (_loadingThreads)
+                      const MkListSkeleton(
+                        rows: 3,
+                        padding: EdgeInsets.only(top: 8),
+                      )
+                    else if (_trending.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          'Bado hakuna mijadala.',
+                          style: MkText.bodyMuted,
+                        ),
+                      )
+                    else
+                      for (final t in _trending)
+                        _TrendingRow(
+                          thread: t,
+                          onTap: () => _push(
+                            ThreadDetailScreen(
+                              threadId: t['uuid'],
+                              threadTitle: t['title'] ?? '',
+                            ),
+                          ),
+                        ),
+                  ],
                 ),
               ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => _openService('pembejeo'),
-                style: TextButton.styleFrom(minimumSize: const Size(0, 44)),
-                child: const Text('Angalia pembejeo zote →'),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-            MkSectionHeader(
-              title: 'Mijadala inayovuma',
-              actionLabel: 'Zote',
-              onAction: () => widget.onSwitchTab != null
-                  ? widget.onSwitchTab!(3)
-                  : _push(const ForumScreen()),
-            ),
-            if (_loadingThreads)
-              const MkListSkeleton(rows: 3, padding: EdgeInsets.only(top: 8))
-            else if (_trending.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text('Bado hakuna mijadala.', style: MkText.bodyMuted),
-              )
-            else
-              for (final (i, t) in _trending.indexed)
-                _TrendingRow(
-                  thread: t,
-                  divider: i < _trending.length - 1,
-                  onTap: () => _push(
-                    ThreadDetailScreen(
-                      threadId: t['uuid'],
-                      threadTitle: t['title'] ?? '',
-                    ),
-                  ),
-                ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _LeadCard extends StatelessWidget {
-  final String title;
-  final String body;
-  final String action;
-  final VoidCallback onTap;
+/// English glosses under the Swahili tile labels, as in the design.
+const _homeSubtitles = {
+  'agronomists': 'Agronomist',
+  'equipment': 'Equipment',
+  'pembejeo': 'Agrodealers',
+  'logistics': 'Logistics',
+  'iot': 'IoT & Smart',
+  'prices': 'Market Prices',
+  'produce_market': 'Produce Market',
+  'farm': 'Farm Services',
+};
 
-  const _LeadCard({
-    required this.title,
-    required this.body,
-    required this.action,
-    required this.onTap,
-  });
+/// Tile labels on Home. Shorter than the directory's where the design is.
+const _homeLabels = {'iot': 'Teknolojia'};
+
+class _BrandHeader extends StatelessWidget {
+  final VoidCallback onNotifications;
+  const _BrandHeader({required this.onNotifications});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(MkTokens.space4),
-      decoration: BoxDecoration(
-        border: Border.all(color: MkColors.border),
-        borderRadius: BorderRadius.circular(MkRadii.card),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+      child: Row(
         children: [
-          Text(title, style: MkText.title),
-          const SizedBox(height: 4),
-          Text(body, style: MkText.bodyMuted),
-          const SizedBox(height: 8),
-          TextButton(onPressed: onTap, child: Text(action)),
+          const MkulimaLogo(size: 48),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Mkulima ',
+                        style: TextStyle(color: MkColors.primary),
+                      ),
+                      TextSpan(
+                        text: 'Forum',
+                        style: TextStyle(color: MkColors.brandOrange),
+                      ),
+                    ],
+                  ),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    height: 1.1,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                const Text(
+                  'Afya ya mimea, Maarifa, Huduma na Soko la Kilimo',
+                  style: MkText.caption,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconButton.outlined(
+            tooltip: 'Arifa',
+            onPressed: onNotifications,
+            style: IconButton.styleFrom(
+              minimumSize: const Size(48, 48),
+              backgroundColor: MkColors.surface,
+              side: const BorderSide(color: MkColors.border),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+            icon: const Icon(
+              Icons.notifications_none_outlined,
+              color: MkColors.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Hero extends StatelessWidget {
+  final String greeting;
+  final VoidCallback onSearch;
+  const _Hero({required this.greeting, required this.onSearch});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 196,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          const MkLandscape(),
+          // Scrim so white text holds contrast over the painted sky.
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color(0xE614532D),
+                  Color(0x9914532D),
+                  Color(0x0014532D),
+                ],
+                stops: [0, 0.55, 1],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  greeting,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    height: 1.15,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Kilimo bora huanza na taarifa sahihi',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const Spacer(),
+                _SearchField(onTap: onSearch),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -330,34 +437,34 @@ class _SearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'Tafuta bidhaa, mijadala, bei',
+      label: 'Tafuta huduma, pembejeo, wataalamu',
       excludeSemantics: true,
       child: Material(
-        color: MkColors.surfaceMuted,
-        borderRadius: BorderRadius.circular(14),
+        color: MkColors.surface,
+        elevation: 2,
+        shadowColor: const Color(0x33000000),
+        borderRadius: BorderRadius.circular(16),
         child: InkWell(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           onTap: onTap,
-          child: Container(
-            height: 48,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: MkColors.border),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.search, color: MkColors.muted),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Tafuta mbegu, mbolea, mijadala…',
-                    style: MkText.bodyMuted,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+          child: const SizedBox(
+            height: 52,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 14),
+              child: Row(
+                children: [
+                  Icon(Icons.search, color: MkColors.ink),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Tafuta huduma, pembejeo, wataalamu…',
+                      style: MkText.bodyMuted,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -366,55 +473,270 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-class _WeatherStrip extends StatelessWidget {
-  final Map<String, dynamic> weather;
+/// Deep green weather card. Real data only: when the service has nothing the
+/// card says so instead of showing a number.
+class _WeatherCard extends StatelessWidget {
+  final Map<String, dynamic>? report;
   final VoidCallback onTap;
 
-  const _WeatherStrip({required this.weather, required this.onTap});
+  const _WeatherCard({required this.report, required this.onTap});
+
+  static IconData _iconFor(String desc) {
+    final lower = desc.toLowerCase();
+    if (lower.contains('rain') || lower.contains('mvua')) {
+      return Icons.thunderstorm_outlined;
+    }
+    if (lower.contains('cloud') || lower.contains('mawingu')) {
+      return Icons.wb_cloudy_outlined;
+    }
+    return Icons.wb_sunny_outlined;
+  }
+
+  static String _deg(dynamic v) {
+    final n = parseNum(v);
+    return n == null ? '–' : '${n.round()}°';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final desc = (weather['description'] ?? '').toString();
-    final lower = desc.toLowerCase();
-    final icon = lower.contains('rain') || lower.contains('mvua')
-        ? Icons.water_drop_outlined
-        : lower.contains('cloud') || lower.contains('mawingu')
-        ? Icons.wb_cloudy_outlined
-        : Icons.wb_sunny_outlined;
-    final location = weather['location']?.toString() ?? '';
+    final current = report?['current'] as Map<String, dynamic>?;
+    final forecast = report?['forecast'] as List?;
+    final tomorrow = forecast != null && forecast.length > 1
+        ? forecast[1] as Map<String, dynamic>?
+        : null;
+    final desc = (current?['description'] ?? '').toString();
+    final location = (report?['location'] ?? current?['location'] ?? '')
+        .toString();
+    final temp = parseNum(current?['temperature']);
+
+    const white = TextStyle(color: Colors.white);
+    final white70 = TextStyle(color: Colors.white.withValues(alpha: 0.9));
 
     return Material(
-      color: Colors.transparent,
+      color: MkColors.heroDeep,
+      borderRadius: BorderRadius.circular(MkRadii.card),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 56),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            border: Border.all(color: MkColors.border),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: MkColors.warning),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        borderRadius: BorderRadius.circular(MkRadii.card),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: current == null
+              ? Row(
                   children: [
-                    Text(
-                      '${weather['temperature']}° · $desc',
-                      style: MkText.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    const Icon(Icons.cloud_off_outlined, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Hali ya hewa haipatikani kwa sasa. Gusa kujaribu tena.',
+                        style: white.copyWith(fontSize: 15),
+                      ),
                     ),
-                    if (location.isNotEmpty)
-                      Text(location, style: MkText.caption),
+                    const Icon(Icons.chevron_right, color: Colors.white),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Icon(
+                      _iconFor(desc),
+                      color: const Color(0xFFFDE68A),
+                      size: 34,
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          temp == null ? '–' : '${temp.toStringAsFixed(1)}°C',
+                          style: white.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'Hali ya Hewa',
+                          style: white70.copyWith(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (location.isNotEmpty)
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.place_outlined,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 2),
+                                Flexible(
+                                  child: Text(
+                                    location,
+                                    style: white.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          Text(
+                            desc,
+                            style: white70.copyWith(fontSize: 13),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (tomorrow != null) ...[
+                      Container(
+                        width: 1,
+                        height: 36,
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        color: Colors.white24,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Kesho', style: white70.copyWith(fontSize: 13)),
+                          Text(
+                            '${_deg(tomorrow['temp_max'])} / ${_deg(tomorrow['temp_min'])}',
+                            style: white.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    const Icon(Icons.chevron_right, color: Colors.white),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Mkulima AI scanner card. Diagnosis needs the server, so the copy promises
+/// only what is true offline: the photo is kept and checked later.
+class _ScannerCard extends StatelessWidget {
+  final VoidCallback onScan;
+  const _ScannerCard({required this.onScan});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(MkRadii.card),
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [MkColors.heroMid, MkColors.heroDeep],
+          ),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(
+                width: 112,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    MkSpottedLeaf(),
+                    MkScanCorners(inset: 14, length: 20, stroke: 3.5),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: MkColors.muted),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: MkColors.surface,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.eco, size: 15, color: MkColors.primary),
+                            SizedBox(width: 4),
+                            Text(
+                              'Mkulima AI',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: MkColors.primaryDark,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Mmea wako una tatizo?',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Piga picha ya jani au mmea. Tambua tatizo na upate '
+                        'ushauri. Bila mtandao, picha huhifadhiwa.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          height: 1.35,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: onScan,
+                          icon: const Icon(Icons.photo_camera_outlined),
+                          label: const Text('Scan Mmea Sasa'),
+                          iconAlignment: IconAlignment.start,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: MkColors.cta,
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size(0, 48),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            textStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -425,14 +747,9 @@ class _WeatherStrip extends StatelessWidget {
 
 class _TrendingRow extends StatelessWidget {
   final dynamic thread;
-  final bool divider;
   final VoidCallback onTap;
 
-  const _TrendingRow({
-    required this.thread,
-    required this.divider,
-    required this.onTap,
-  });
+  const _TrendingRow({required this.thread, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -447,60 +764,82 @@ class _TrendingRow extends StatelessWidget {
     final replies = thread['reply_count'] ?? thread['replies_count'] ?? 0;
     final region = thread['region']?.toString() ?? '';
     final expert = thread['user']?['is_verified_expert'] == true;
+    final meta = [
+      if (author.isNotEmpty) author,
+      'Majibu $replies',
+      if (region.isNotEmpty) region,
+    ].join('  •  ');
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          border: divider
-              ? const Border(bottom: BorderSide(color: MkColors.border))
-              : null,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: MkColors.surfaceMuted,
-              foregroundColor: MkColors.primaryDark,
-              child: initials.isEmpty
-                  ? const Icon(Icons.person_outline, size: 20)
-                  : Text(
-                      initials,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Material(
+        color: MkColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: MkColors.border),
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    thread['title'] ?? '',
-                    style: MkText.label.copyWith(height: 1.35),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: MkColors.leafPale,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                  child: initials.isEmpty
+                      ? const Icon(
+                          Icons.forum_outlined,
+                          color: MkColors.primary,
+                        )
+                      : Text(
+                          initials,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: MkColors.primaryDark,
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (expert) const _ExpertPill(),
-                      Text('Majibu $replies', style: MkText.caption),
-                      if (region.isNotEmpty)
-                        Text('· $region', style: MkText.caption),
+                      Text(
+                        thread['title'] ?? '',
+                        style: MkText.label.copyWith(height: 1.3),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          if (expert) const _ExpertPill(),
+                          Text(
+                            meta,
+                            style: MkText.caption,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -537,41 +876,66 @@ class _ExpertPill extends StatelessWidget {
   }
 }
 
-class _ServiceIcon extends StatelessWidget {
+class _ServiceTile extends StatelessWidget {
   final MkService service;
+  final String? subtitle;
   final VoidCallback onTap;
-  const _ServiceIcon({required this.service, required this.onTap});
+  const _ServiceTile({
+    required this.service,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Column(
-        children: [
-          const SizedBox(height: 4),
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: service.isLive ? MkColors.leafPale : MkColors.surfaceMuted,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              service.icon,
-              color: service.isLive ? MkColors.primary : MkColors.muted,
-              size: 24,
+    final live = service.isLive;
+    final label = _homeLabels[service.key] ?? service.label;
+    return Semantics(
+      button: true,
+      label: live ? label : '$label, bado haijawashwa',
+      excludeSemantics: true,
+      child: Material(
+        color: live ? MkColors.leafPale : MkColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(2, 12, 2, 8),
+            child: Column(
+              children: [
+                Icon(
+                  service.icon,
+                  size: 32,
+                  color: live ? MkColors.primary : MkColors.muted,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: MkColors.ink,
+                    height: 1.15,
+                  ),
+                ),
+                if (subtitle != null)
+                  Text(
+                    // No parentheses: at 360px "(Agronomist)" is wider than
+                    // the tile and broke mid-word.
+                    subtitle!,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: MkText.caption.copyWith(height: 1.15),
+                  ),
+              ],
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            service.label,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: MkText.caption.copyWith(color: MkColors.ink, height: 1.15),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -584,6 +948,15 @@ class _InputCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = product.images?.firstWhere(
+      (u) => u.trim().isNotEmpty,
+      orElse: () => '',
+    );
+    final placeholder = Container(
+      color: MkColors.leafPale,
+      alignment: Alignment.center,
+      child: const Icon(Icons.eco_outlined, color: MkColors.primary, size: 32),
+    );
     return Material(
       color: MkColors.surface,
       borderRadius: BorderRadius.circular(MkRadii.card),
@@ -591,8 +964,8 @@ class _InputCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(MkRadii.card),
         child: Container(
-          width: 140,
-          padding: const EdgeInsets.all(10),
+          width: 148,
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             border: Border.all(color: MkColors.border),
             borderRadius: BorderRadius.circular(MkRadii.card),
@@ -600,28 +973,43 @@ class _InputCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: 52,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: MkColors.leafPale,
-                  borderRadius: BorderRadius.circular(10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                  height: 88,
+                  width: double.infinity,
+                  child: image == null || image.isEmpty
+                      ? placeholder
+                      : Image.network(
+                          image,
+                          fit: BoxFit.cover,
+                          // Decode small: this is a 148px card on metered data.
+                          cacheWidth: 300,
+                          errorBuilder: (_, _, _) => placeholder,
+                        ),
                 ),
-                child: const Icon(Icons.eco_outlined, color: MkColors.primary),
               ),
               const SizedBox(height: 8),
               Text(
                 product.name,
-                style: MkText.label,
+                style: MkText.label.copyWith(fontSize: 15, height: 1.2),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              if (product.description.trim().isNotEmpty)
+                Text(
+                  product.description.trim(),
+                  style: MkText.caption,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               const Spacer(),
               Text(
-                '${mkMoney(product.price)} / ${product.unit}',
-                style: MkText.caption.copyWith(
-                  color: MkColors.primary,
-                  fontWeight: FontWeight.w700,
+                mkMoney(product.price),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: MkColors.cta,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

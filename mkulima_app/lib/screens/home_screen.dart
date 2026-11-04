@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const titles = [
       MkStrings.titleHome,
       'Pembejeo',
-      MkStrings.scannerBrand,
+      'Scan Mmea',
       MkStrings.navForum,
       MkStrings.titleProfile,
     ];
@@ -107,7 +107,10 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: CircleAvatar(
                 radius: 22,
                 backgroundColor: MkColors.primary,
-                child: Icon(Icons.document_scanner_outlined, color: Colors.white),
+                child: Icon(
+                  Icons.document_scanner_outlined,
+                  color: Colors.white,
+                ),
               ),
               label: 'Scan',
             ),

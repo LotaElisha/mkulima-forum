@@ -91,7 +91,13 @@ never allowed to gate the launch.
 ## Design
 
 Roughly **90% white**, green used strategically — CTAs, nav, badges, icons. A
-large green field is wrong. Mobile-first from 360px. 44px minimum touch targets,
+large green field is wrong — with one exception the owner chose on 2026-11-04:
+the Flutter **Home** and **Scanner** screens follow their mockup, with a painted
+landscape hero, deep-green weather and scanner cards, and an orange CTA
+(`MkColors.cta`, `#C2410C`; the mockup's brighter orange fails contrast with
+white text). The mockup's offline-AI claims were deliberately not copied: there
+is no on-device model, so the app says only that photos are saved offline and
+checked when the connection returns. Mobile-first from 360px. 44px minimum touch targets,
 48px on primary actions, nothing below 13px. Icons are inline SVG
 (`resources/views/components/icon.blade.php`) rather than an icon font, because
 a ligature font that fails to load prints `check_circle` as literal text on the
