@@ -19,7 +19,7 @@ final class AppDownload
     /**
      * Newest Android build in public/app, or null when none is published.
      *
-     * @return array{url: string, filename: string, bytes: int, human: string}|null
+     * @return array{url: string, filename: string, bytes: int, human: string, version: ?string}|null
      */
     public static function android(): ?array
     {
@@ -68,7 +68,7 @@ final class AppDownload
     }
 
     /**
-     * @return array{url: string, filename: string, bytes: int, human: string}|null
+     * @return array{url: string, filename: string, bytes: int, human: string, version: ?string}|null
      */
     private static function describeIfApk(string $absolutePath, string $url): ?array
     {
@@ -95,7 +95,7 @@ final class AppDownload
     }
 
     /**
-     * @return array{url: string, filename: string, bytes: int, human: string}
+     * @return array{url: string, filename: string, bytes: int, human: string, version: ?string}
      */
     private static function describe(string $absolutePath, string $url): array
     {
@@ -106,7 +106,36 @@ final class AppDownload
             'filename' => basename($absolutePath),
             'bytes' => $bytes,
             'human' => self::humanBytes($bytes),
+            'version' => self::version($absolutePath),
         ];
+    }
+
+    /**
+     * The version of this specific build, or null when it cannot be known.
+     *
+     * scripts/build-mobile.sh writes "<apk>.json" beside the APK with the
+     * versionName from pubspec.yaml. That is preferred over config because a
+     * config value can drift from whatever file was last copied to the server;
+     * the sidecar travels with the file. Anything that does not look like a
+     * version is ignored rather than printed.
+     */
+    private static function version(string $apkPath): ?string
+    {
+        $sidecar = $apkPath.'.json';
+        if (is_file($sidecar)) {
+            $data = json_decode((string) file_get_contents($sidecar), true);
+            $fromSidecar = is_array($data) ? self::cleanVersion($data['version'] ?? null) : null;
+            if ($fromSidecar !== null) {
+                return $fromSidecar;
+            }
+        }
+
+        return self::cleanVersion(config('app.version'));
+    }
+
+    private static function cleanVersion(mixed $value): ?string
+    {
+        return is_string($value) && preg_match('/^\d+\.\d+\.\d+$/', $value) === 1 ? $value : null;
     }
 
     private static function humanBytes(int $bytes): string

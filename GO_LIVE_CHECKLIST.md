@@ -125,7 +125,11 @@ Merged to `master` as `db2e7438` — the branch your runbook deploys from.
       loudly rather than writing a broken file
 - [ ] `php artisan config:cache route:cache view:cache` in production
 - [ ] `APP_DEBUG=false` confirmed in production
-- [ ] Application version set (`config('app.version')`) — the download page reads it
+- [x] Application version wired — `scripts/build-mobile.sh` writes `public/app/<apk>.json`
+      from `pubspec.yaml`, and `/download` reads the version of the exact file it serves.
+      `APP_VERSION` is a fallback only; with neither, no version label is shown
+      (it used to print a hardcoded `1.0.0`). `/api/health` reports `config('app.version')`
+- [ ] Bump `version:` in `mkulima_app/pubspec.yaml` before each release build
 
 ## Observability
 

@@ -21,5 +21,16 @@ flutter build apk --release --dart-define=API_URL="${API_URL}"
 mkdir -p "${PUBLIC_DIR}"
 cp "${APP_DIR}/build/app/outputs/flutter-apk/app-release.apk" "${PUBLIC_DIR}/mkulima-forum.apk"
 
+# Record the version beside the APK so /download describes this exact file.
+# pubspec "version: 1.2.3+45" -> versionName 1.2.3, versionCode 45.
+PUBSPEC_VERSION="$(sed -n 's/^version:[[:space:]]*//p' "${APP_DIR}/pubspec.yaml" | head -1)"
+VERSION_NAME="${PUBSPEC_VERSION%%+*}"
+VERSION_CODE="${PUBSPEC_VERSION#*+}"
+[ "${VERSION_CODE}" = "${PUBSPEC_VERSION}" ] && VERSION_CODE=""
+printf '{"version":"%s","build":"%s","built_at":"%s"}\n' \
+  "${VERSION_NAME}" "${VERSION_CODE}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  > "${PUBLIC_DIR}/mkulima-forum.apk.json"
+
 echo "== APK published to ${PUBLIC_DIR}/mkulima-forum.apk =="
 ls -lh "${PUBLIC_DIR}/mkulima-forum.apk"
+cat "${PUBLIC_DIR}/mkulima-forum.apk.json"

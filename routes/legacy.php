@@ -68,7 +68,7 @@ Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
         'service' => 'mkulima-forum',
-        'version' => '1.0.0',
+        'version' => config('app.version'),
         'timestamp' => now()->toIso8601String(),
     ]);
 });
