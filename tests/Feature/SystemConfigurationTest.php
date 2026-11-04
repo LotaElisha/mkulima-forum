@@ -11,6 +11,8 @@ use App\Support\Roles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Filament\Pages\SystemConfiguration;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
@@ -300,5 +302,35 @@ class SystemConfigurationTest extends TestCase
             ->assertJsonStructure(['checks' => [['group', 'name', 'status', 'blocking']], 'summary', 'ready']);
 
         $this->assertStringNotContainsString('do-not-leak-me', $response->getContent());
+    }
+
+    public function test_the_screen_renders_real_form_fields_and_secret_status(): void
+    {
+        // The old view used Tailwind classes Filament's precompiled CSS does
+        // not ship, so production showed bare labels with invisible inputs.
+        $super = $this->staff(Roles::SUPERADMIN);
+        app(SettingsManager::class)->set('sms.webhook_secret', 'already-there', $super);
+        $this->actingAs($super);
+
+        Livewire::test(SystemConfiguration::class)
+            ->assertSeeHtml('fi-section')
+            ->assertSeeHtml('fi-input-wrp')
+            ->assertSeeHtml('id="form.mail__smtp_password"')
+            ->assertSee('Imewekwa')
+            ->assertSee('Haijawekwa')
+            ->assertDontSee('already-there');
+    }
+
+    public function test_a_saved_secret_shows_as_set_without_a_reload(): void
+    {
+        $this->actingAs($this->staff(Roles::SUPERADMIN));
+
+        Livewire::test(SystemConfiguration::class)
+            ->set('values.mail__smtp_password', 'fresh-app-password')
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertSet('values.mail__smtp_password', '')
+            ->assertDontSee('fresh-app-password')
+            ->assertSeeHtml('placeholder="Acha tupu usibadilishe"');
     }
 }
