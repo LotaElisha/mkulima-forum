@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Pages\SystemConfiguration;
 use App\Models\AuditLog;
 use App\Models\ConfigSetting;
 use App\Models\Tenant;
@@ -11,7 +12,6 @@ use App\Support\Roles;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Filament\Pages\SystemConfiguration;
 use Livewire\Livewire;
 use Tests\TestCase;
 
