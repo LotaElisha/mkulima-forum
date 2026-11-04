@@ -21,16 +21,19 @@ class ScanQueue {
   }
 
   /// False when the queue is full.
-  static Future<bool> add(Uint8List bytes, String name) async {
+  static Future<bool> add(Uint8List bytes, String name, {String? crop}) async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getStringList(_key) ?? <String>[];
     if (raw.length >= maxItems) return false;
-    raw.add(jsonEncode({
-      'id': DateTime.now().microsecondsSinceEpoch.toString(),
-      'name': name,
-      'at': DateTime.now().toIso8601String(),
-      'image': base64Encode(bytes),
-    }));
+    raw.add(
+      jsonEncode({
+        'id': DateTime.now().microsecondsSinceEpoch.toString(),
+        'name': name,
+        'at': DateTime.now().toIso8601String(),
+        'image': base64Encode(bytes),
+        'crop': ?crop,
+      }),
+    );
     await prefs.setStringList(_key, raw);
     return true;
   }
@@ -48,8 +51,15 @@ class PendingScan {
   final String name;
   final DateTime at;
   final Uint8List bytes;
+  final String? crop;
 
-  const PendingScan({required this.id, required this.name, required this.at, required this.bytes});
+  const PendingScan({
+    required this.id,
+    required this.name,
+    required this.at,
+    required this.bytes,
+    this.crop,
+  });
 
   static PendingScan? tryDecode(String raw) {
     try {
@@ -59,6 +69,7 @@ class PendingScan {
         name: m['name'] as String,
         at: DateTime.parse(m['at'] as String),
         bytes: base64Decode(m['image'] as String),
+        crop: m['crop'] as String?,
       );
     } catch (_) {
       return null;

@@ -68,6 +68,17 @@ class MkColors {
   /// Skeleton placeholder fill.
   static const Color skeleton = Color(0xFFEDF1EE);
   static const Color dangerBorder = Color(0xFFF2C9C5);
+
+  /// Orange call-to-action ("Scan Mmea Sasa", "Chunguza Mmea"). Deeper than
+  /// the mockup's #F07A1A because white text on that is ~2.6:1; this is 5.2:1.
+  static const Color cta = Color(0xFFC2410C);
+
+  /// The Forum half of the wordmark.
+  static const Color brandOrange = Color(0xFFD9480F);
+
+  /// Deep green panels on Home (weather, scanner card, hero scrim).
+  static const Color heroDeep = Color(0xFF14532D);
+  static const Color heroMid = Color(0xFF1F6F3A);
 }
 
 /// The type scale. Six sizes, nothing below 13. Screens use these rather than
