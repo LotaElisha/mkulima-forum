@@ -16,6 +16,7 @@ import '../screens/mkulima_bot_screen.dart';
 import '../screens/orders_screen.dart';
 import '../screens/scanner_screen.dart';
 import '../screens/sms_screen.dart';
+import '../screens/trace/trace_home_screen.dart';
 import '../screens/wallet_screen.dart';
 import '../screens/weather_screen.dart';
 import '../screens/yield_screen.dart';
@@ -67,7 +68,7 @@ class MkServices {
     'equipment',
     'pembejeo',
     'logistics',
-    'iot',
+    'trace',
     'prices',
     'produce_market',
     'farm',
@@ -176,6 +177,14 @@ class MkServices {
       icon: Icons.local_shipping_outlined,
       group: groups[2],
       screen: () => const LogisticsScreen(),
+    ),
+    MkService(
+      key: 'trace',
+      label: 'Mkulima Trace',
+      description: 'Shamba hadi Soko: fuatilia mzigo wa mazao kwa QR kutoka shambani hadi kwa mnunuzi.',
+      icon: Icons.qr_code_2,
+      group: groups[2],
+      screen: () => const TraceHomeScreen(),
     ),
     MkService(
       key: 'yield',
