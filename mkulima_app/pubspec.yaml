@@ -65,6 +65,10 @@ dependencies:
   sign_in_with_apple: ^7.0.1
   # Coarse location for "near me" lists (agronomists, equipment).
   geolocator: ^14.0.2
+  # Mkulima Trace: draw a lot's QR code on the phone, and scan one with
+  # the camera. Both work offline; mobile_scanner decodes on the device.
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^6.0.2
   # workmanager: ^0.5.2
   
 dev_dependencies:

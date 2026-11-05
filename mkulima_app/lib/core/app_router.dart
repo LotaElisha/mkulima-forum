@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
 
+import '../screens/trace/trace_home_screen.dart';
 import '../screens/agronomists_screen.dart';
 import '../screens/equipment_screen.dart';
 import '../screens/account_identities_screen.dart';
@@ -132,6 +133,10 @@ GoRouter buildAppRouter(AuthProvider auth) {
       GoRoute(path: '/ivr', builder: (context, state) => const IvrScreen()),
       GoRoute(path: '/sms', builder: (context, state) => const SmsScreen()),
       GoRoute(path: '/yield', builder: (context, state) => const YieldScreen()),
+      GoRoute(
+        path: '/trace',
+        builder: (context, state) => const TraceHomeScreen(),
+      ),
       GoRoute(
         path: '/farms',
         builder: (context, state) => const FarmManagementScreen(),

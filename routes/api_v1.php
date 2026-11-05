@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\EquipmentController;
 use App\Http\Controllers\Api\V1\ForumController;
 use App\Http\Controllers\Api\V1\MarketPriceController;
+use App\Http\Controllers\Api\V1\TraceController;
 use App\Http\Controllers\Api\V1\WeatherController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,5 +59,33 @@ Route::prefix('v1')->group(function () {
         Route::get('/me/rentals', [EquipmentController::class, 'rentals']);
         Route::post('/rentals/{uuid}/{action}', [EquipmentController::class, 'decide'])
             ->whereIn('action', DecideRental::actions());
+    });
+
+    // Mkulima Trace — Shamba hadi Soko. A scan works without an account and
+    // shows only a limited summary; a token shows more to people in the chain.
+    Route::prefix('trace')->group(function () {
+        Route::get('/scan/{code}', [TraceController::class, 'scan'])->middleware('throttle:60,1');
+        Route::get('/lots/{uuid}', [TraceController::class, 'show'])->whereUuid('uuid')->middleware('throttle:60,1');
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('/me', [TraceController::class, 'me']);
+            Route::post('/participants', [TraceController::class, 'register'])->middleware('throttle:10,1');
+            Route::get('/participants/{code}', [TraceController::class, 'participant'])->middleware('throttle:30,1');
+            Route::get('/plots', [TraceController::class, 'plots']);
+            Route::post('/plots', [TraceController::class, 'storePlot'])->middleware('throttle:30,1');
+            Route::post('/plots/{uuid}/seasons', [TraceController::class, 'storeSeason'])->middleware('throttle:30,1');
+            Route::post('/seasons/{uuid}/observations', [TraceController::class, 'linkObservation'])->middleware('throttle:30,1');
+            Route::get('/lots', [TraceController::class, 'lots']);
+            Route::post('/lots', [TraceController::class, 'harvest'])->middleware('throttle:60,1');
+            Route::post('/lots/merge', [TraceController::class, 'merge'])->middleware('throttle:30,1');
+            Route::post('/lots/{uuid}/events', [TraceController::class, 'recordEvent'])->middleware('throttle:60,1');
+            Route::post('/lots/{uuid}/handoff', [TraceController::class, 'handoff'])->middleware('throttle:60,1');
+            Route::post('/lots/{uuid}/split', [TraceController::class, 'split'])->middleware('throttle:30,1');
+            Route::post('/lots/{uuid}/process', [TraceController::class, 'process'])->middleware('throttle:30,1');
+            Route::get('/pending', [TraceController::class, 'pending']);
+            Route::post('/events/{uuid}/confirm', [TraceController::class, 'confirm'])->middleware('throttle:60,1');
+            Route::post('/events/{uuid}/dispute', [TraceController::class, 'dispute'])->middleware('throttle:30,1');
+            Route::post('/events/{uuid}/evidence', [TraceController::class, 'evidence'])->middleware('throttle:20,1');
+        });
     });
 });

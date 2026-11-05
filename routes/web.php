@@ -6,6 +6,13 @@ use App\Actions\Home\PublicHome;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Models\LandingSetting;
 use App\Models\ShortLink;
+use App\Models\TraceLot;
+use App\Services\Trace\TraceCode;
+use App\Services\Trace\TracePresenter;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QROutputInterface;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/web-app-assets/sqlite', function () {
@@ -194,6 +201,33 @@ Route::get('/download', function () use ($publicSettings) {
 
     return view('pages.download', compact('settings'));
 })->name('download');
+
+// ─── Mkulima Trace: what a lot's QR code opens ──────────────────────────────
+// The QR holds only /t/{code}. This page shows the public summary: crop,
+// region, month of harvest and the number of recorded steps. Names, phones,
+// prices and coordinates are only in the app, for people in the chain.
+Route::get('/t/{code}', function (string $code) use ($publicSettings) {
+    $code = strtoupper($code);
+    $lot = TraceLot::withoutGlobalScopes()->with('plot')->where('code', $code)->firstOrFail();
+    $summary = (new TracePresenter(null))->publicSummary($lot);
+    $settings = $publicSettings();
+
+    return view('pages.trace.lot', compact('settings', 'summary'));
+})->where('code', '[2-9A-Za-z]{10}')->middleware('throttle:60,1')->name('trace.public');
+
+// A printable label: the QR code, the lot code and the crop. Nothing personal.
+Route::get('/t/{code}/label', function (string $code) {
+    $code = strtoupper($code);
+    $lot = TraceLot::withoutGlobalScopes()->where('code', $code)->firstOrFail();
+    $svg = (new QRCode(new QROptions([
+        'outputType' => QROutputInterface::MARKUP_SVG,
+        'outputBase64' => false,
+        'eccLevel' => EccLevel::M,
+        'addQuietzone' => true,
+    ])))->render(TraceCode::url($lot->code));
+
+    return view('pages.trace.label', compact('lot', 'svg'));
+})->where('code', '[2-9A-Za-z]{10}')->middleware('throttle:30,1')->name('trace.label');
 
 // ─── Short Link Resolver (1.9 / QR Service) ──────────────────────────────────
 Route::get('/c/{slug}', function (string $slug) {
