@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class AgronomistResource extends Resource
 {
+    public const STATUS_COLORS = ['verified' => 'success', 'rejected' => 'danger'];
+
     public const STATUSES = [
         'pending' => 'Inasubiri', 'verified' => 'Amethibitishwa', 'rejected' => 'Amekataliwa',
     ];
@@ -98,30 +100,28 @@ class AgronomistResource extends Resource
                 TextColumn::make('license_number')->label('Leseni')->toggleable(),
                 TextColumn::make('verification_status')->label('Hali')->badge()
                     ->formatStateUsing(fn (string $state) => self::STATUSES[$state] ?? $state)
-                    ->color(fn (string $state) => match ($state) {
-                        'verified' => 'success', 'rejected' => 'danger', default => 'warning',
-                    }),
+                    ->color(fn (string $state) => self::STATUS_COLORS[$state] ?? 'warning'),
                 IconColumn::make('latitude')->label('GPS')->boolean()
                     ->getStateUsing(fn (ServiceProvider $record) => $record->latitude !== null),
                 IconColumn::make('is_active')->label('Hai')->boolean(),
                 TextColumn::make('created_at')->label('Alijisajili')->date('d/m/Y')->sortable(),
             ])
             ->filters([
-                    SelectFilter::make('verification_status')->label('Hali')->options(self::STATUSES),
+                SelectFilter::make('verification_status')->label('Hali')->options(self::STATUSES),
             ])
             ->recordActions([
-                    Action::make('verify')->label('Thibitisha')
-                        ->icon('heroicon-o-check-badge')->color('success')
-                        ->visible(fn (ServiceProvider $record) => $record->verification_status !== 'verified')
-                        ->requiresConfirmation()
-                        ->modalDescription('Mtaalamu ataonekana kwa wakulima. Hakiki leseni yake kwanza.')
-                        ->action(fn (ServiceProvider $record) => $record->update(['verification_status' => 'verified'])),
-                    Action::make('reject')->label('Kataa')
-                        ->icon('heroicon-o-x-circle')->color('danger')
-                        ->visible(fn (ServiceProvider $record) => $record->verification_status !== 'rejected')
-                        ->requiresConfirmation()
-                        ->action(fn (ServiceProvider $record) => $record->update(['verification_status' => 'rejected'])),
-                    EditAction::make(),
+                Action::make('verify')->label('Thibitisha')
+                    ->icon('heroicon-o-check-badge')->color('success')
+                    ->visible(fn (ServiceProvider $record) => $record->verification_status !== 'verified')
+                    ->requiresConfirmation()
+                    ->modalDescription('Mtaalamu ataonekana kwa wakulima. Hakiki leseni yake kwanza.')
+                    ->action(fn (ServiceProvider $record) => $record->update(['verification_status' => 'verified'])),
+                Action::make('reject')->label('Kataa')
+                    ->icon('heroicon-o-x-circle')->color('danger')
+                    ->visible(fn (ServiceProvider $record) => $record->verification_status !== 'rejected')
+                    ->requiresConfirmation()
+                    ->action(fn (ServiceProvider $record) => $record->update(['verification_status' => 'rejected'])),
+                EditAction::make(),
             ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateIcon('heroicon-o-academic-cap')
