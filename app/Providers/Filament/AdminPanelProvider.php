@@ -8,16 +8,19 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -31,16 +34,27 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile()
             ->brandName('Mkulima Forum')
-            // The original farmer emblem, so the admin tab and header match
-            // the public site and the app.
-            ->brandLogo(asset('images/logo-icon.jpg'))
-            ->brandLogoHeight('2.25rem')
+            // The farmer emblem plus the name, so the topbar says where you
+            // are. The emblem alone was a small square that read as clipped.
+            ->brandLogo(fn () => new HtmlString(view('filament.admin.brand')->render()))
+            ->brandLogoHeight('2.5rem')
             ->favicon(asset('images/logo-icon.jpg'))
             ->colors([
                 'primary' => Color::hex('#166534'),
             ])
+            // Filament centres content in an 80rem column by default, which on
+            // a wide screen leaves a large empty band beside the sidebar.
+            ->maxContentWidth(Width::Full)
+            ->sidebarWidth('18rem')
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                NavigationGroup::make('Huduma'),
+                NavigationGroup::make('Maudhui'),
+                NavigationGroup::make('Mfumo'),
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->pages([
                 Dashboard::class,
             ])

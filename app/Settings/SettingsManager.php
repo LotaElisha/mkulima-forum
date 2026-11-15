@@ -108,7 +108,7 @@ class SettingsManager
         $this->flush();
 
         $change = $definition->secret
-            ? ['setting' => $key, 'change' => $definition->label.' rotated']
+            ? ['setting' => $key, 'change' => $definition->label.' imebadilishwa']
             : [
                 'setting' => $key,
                 'from' => $this->auditSafe($previous),

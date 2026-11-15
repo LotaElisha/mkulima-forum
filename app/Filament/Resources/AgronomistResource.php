@@ -24,21 +24,43 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class AgronomistResource extends Resource
 {
+    public const STATUS_COLORS = ['verified' => 'success', 'rejected' => 'danger'];
+
+    public const STATUSES = [
+        'pending' => 'Inasubiri', 'verified' => 'Amethibitishwa', 'rejected' => 'Amekataliwa',
+    ];
+
     protected static ?string $model = ServiceProvider::class;
 
-    protected static ?string $navigationLabel = 'Agronomists';
+    protected static ?string $navigationLabel = 'Wataalamu wa kilimo';
 
-    protected static ?string $modelLabel = 'agronomist';
+    protected static ?string $modelLabel = 'mtaalamu wa kilimo';
+
+    protected static ?string $pluralModelLabel = 'Wataalamu wa kilimo';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
+    protected static ?int $navigationSort = 1;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Services';
+    protected static string|\UnitEnum|null $navigationGroup = 'Huduma';
 
     protected static ?string $recordRouteKeyName = 'uuid';
 
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('service_type', 'agronomist')->with('user:id,name,phone,email');
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Wanasubiri uthibitisho';
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'warning';
     }
 
     public static function getNavigationBadge(): ?string
@@ -51,20 +73,18 @@ class AgronomistResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            TextInput::make('business_name')->maxLength(255),
-            Textarea::make('bio')->maxLength(2000)->columnSpanFull(),
-            TextInput::make('region')->required()->maxLength(64),
-            TextInput::make('district')->maxLength(64),
-            TextInput::make('latitude')->numeric()->minValue(-90)->maxValue(90)
-                ->helperText('Base for farm visits. Leave empty to list by region only.'),
-            TextInput::make('longitude')->numeric()->minValue(-180)->maxValue(180),
-            TextInput::make('license_number')->maxLength(100),
-            TextInput::make('consultation_fee')->numeric()->minValue(0)->suffix('TZS'),
-            TextInput::make('visit_fee')->numeric()->minValue(0)->suffix('TZS'),
-            Select::make('verification_status')->options([
-                'pending' => 'Pending', 'verified' => 'Verified', 'rejected' => 'Rejected',
-            ])->required(),
-            Toggle::make('is_active'),
+            TextInput::make('business_name')->label('Jina la biashara')->maxLength(255),
+            Textarea::make('bio')->label('Maelezo')->maxLength(2000)->columnSpanFull(),
+            TextInput::make('region')->label('Mkoa')->required()->maxLength(64),
+            TextInput::make('district')->label('Wilaya')->maxLength(64),
+            TextInput::make('latitude')->label('Latitudo')->numeric()->minValue(-90)->maxValue(90)
+                ->helperText('Kituo cha kutembelea mashamba. Acha tupu ili aorodheshwe kwa mkoa tu.'),
+            TextInput::make('longitude')->label('Longitudo')->numeric()->minValue(-180)->maxValue(180),
+            TextInput::make('license_number')->label('Namba ya leseni')->maxLength(100),
+            TextInput::make('consultation_fee')->label('Ada ya ushauri')->numeric()->minValue(0)->suffix('TZS'),
+            TextInput::make('visit_fee')->label('Ada ya kutembelea shamba')->numeric()->minValue(0)->suffix('TZS'),
+            Select::make('verification_status')->label('Hali ya uthibitisho')->options(self::STATUSES)->required(),
+            Toggle::make('is_active')->label('Anaonekana kwa wakulima'),
         ]);
     }
 
@@ -72,40 +92,41 @@ class AgronomistResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('business_name')->label('Name')->searchable()
+                TextColumn::make('business_name')->label('Jina')->searchable()
                     ->formatStateUsing(fn ($state, ServiceProvider $record) => $state ?: $record->user?->name),
-                TextColumn::make('user.phone')->label('Phone')->toggleable(),
-                TextColumn::make('region')->searchable()->sortable(),
-                TextColumn::make('district')->toggleable(),
-                TextColumn::make('license_number')->label('Licence')->toggleable(),
-                TextColumn::make('verification_status')->label('Status')->badge()->color(fn (string $state) => match ($state) {
-                    'verified' => 'success', 'rejected' => 'danger', default => 'warning',
-                }),
+                TextColumn::make('user.phone')->label('Simu')->toggleable(),
+                TextColumn::make('region')->label('Mkoa')->searchable()->sortable(),
+                TextColumn::make('district')->label('Wilaya')->toggleable(),
+                TextColumn::make('license_number')->label('Leseni')->toggleable(),
+                TextColumn::make('verification_status')->label('Hali')->badge()
+                    ->formatStateUsing(fn (string $state) => self::STATUSES[$state] ?? $state)
+                    ->color(fn (string $state) => self::STATUS_COLORS[$state] ?? 'warning'),
                 IconColumn::make('latitude')->label('GPS')->boolean()
                     ->getStateUsing(fn (ServiceProvider $record) => $record->latitude !== null),
-                IconColumn::make('is_active')->boolean(),
-                TextColumn::make('created_at')->date()->sortable(),
+                IconColumn::make('is_active')->label('Hai')->boolean(),
+                TextColumn::make('created_at')->label('Alijisajili')->date('d/m/Y')->sortable(),
             ])
             ->filters([
-                SelectFilter::make('verification_status')->options([
-                    'pending' => 'Pending', 'verified' => 'Verified', 'rejected' => 'Rejected',
-                ]),
+                SelectFilter::make('verification_status')->label('Hali')->options(self::STATUSES),
             ])
             ->recordActions([
-                Action::make('verify')
+                Action::make('verify')->label('Thibitisha')
                     ->icon('heroicon-o-check-badge')->color('success')
                     ->visible(fn (ServiceProvider $record) => $record->verification_status !== 'verified')
                     ->requiresConfirmation()
-                    ->modalDescription('The agronomist will be listed to farmers. Confirm the licence first.')
+                    ->modalDescription('Mtaalamu ataonekana kwa wakulima. Hakiki leseni yake kwanza.')
                     ->action(fn (ServiceProvider $record) => $record->update(['verification_status' => 'verified'])),
-                Action::make('reject')
+                Action::make('reject')->label('Kataa')
                     ->icon('heroicon-o-x-circle')->color('danger')
                     ->visible(fn (ServiceProvider $record) => $record->verification_status !== 'rejected')
                     ->requiresConfirmation()
                     ->action(fn (ServiceProvider $record) => $record->update(['verification_status' => 'rejected'])),
                 EditAction::make(),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateIcon('heroicon-o-academic-cap')
+            ->emptyStateHeading('Bado hakuna mtaalamu wa kilimo')
+            ->emptyStateDescription('Wataalamu hujisajili kupitia programu ya Mkulima. Maombi yao yataonekana hapa ili uhakiki leseni na kuwathibitisha.');
     }
 
     public static function getPages(): array

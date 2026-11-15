@@ -16,13 +16,13 @@ class SystemConfiguration extends Page
 {
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationLabel = 'Configuration';
+    protected static ?string $navigationLabel = 'Mipangilio';
 
-    protected static ?string $title = 'Configuration';
+    protected static ?string $title = 'Mipangilio ya mfumo';
 
     protected static ?string $slug = 'configuration';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'System';
+    protected static string|\UnitEnum|null $navigationGroup = 'Mfumo';
 
     protected static ?int $navigationSort = 90;
 
