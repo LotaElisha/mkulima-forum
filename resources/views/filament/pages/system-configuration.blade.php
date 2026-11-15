@@ -1,60 +1,98 @@
+{{--
+    Built from Filament's own components and fi-* classes: the panel ships
+    Filament's prebuilt CSS, so plain Tailwind utilities (bg-white, border-gray-200)
+    either do nothing or stay white in dark mode.
+--}}
 <x-filament-panels::page>
-    <form wire:submit="save" class="space-y-8">
-        <p class="text-sm text-gray-600">
-            Siri zinahifadhiwa zikiwa zimesimbwa. Sehemu tupu inaacha thamani ya sasa.
-            Thamani ya siri haionyeshwi tena baada ya kuhifadhiwa.
-        </p>
+    <form wire:submit="save" style="display:flex;flex-direction:column;gap:1.5rem">
+        <x-filament::callout
+            icon="heroicon-o-lock-closed"
+            color="info"
+            heading="Siri zinahifadhiwa zikiwa zimesimbwa"
+            description="Sehemu ya siri iliyoachwa tupu inabaki na thamani yake ya sasa. Thamani ya siri haionyeshwi tena baada ya kuhifadhiwa."
+        />
 
-        @foreach (collect($fields)->groupBy('group') as $group => $items)
-            <section class="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
-                <h2 class="text-base font-semibold">{{ $group }}</h2>
-                @foreach ($items as $item)
-                    <div>
-                        <label class="mb-1 block text-sm font-medium" for="setting-{{ $item['field'] }}">
-                            {{ $item['label'] }}
-                            @if ($item['secret'] && $item['is_set'])
-                                <span class="font-normal text-gray-500">— imewashwa, acha tupu usibadilishe</span>
-                            @endif
-                        </label>
-                        @if ($item['options'])
-                            <select id="setting-{{ $item['field'] }}" wire:model="values.{{ $item['field'] }}" class="w-full rounded-lg border-gray-300">
-                                <option value="">—</option>
-                                @foreach ($item['options'] as $option)
-                                    <option value="{{ $option }}">{{ $option }}</option>
-                                @endforeach
-                            </select>
-                        @elseif ($item['type'] === 'json')
-                            <textarea id="setting-{{ $item['field'] }}" rows="3" wire:model="values.{{ $item['field'] }}" class="w-full rounded-lg border-gray-300 font-mono text-sm"></textarea>
-                        @else
-                            <input
-                                id="setting-{{ $item['field'] }}"
-                                type="{{ $item['secret'] ? 'password' : 'text' }}"
-                                wire:model="values.{{ $item['field'] }}"
-                                autocomplete="{{ $item['secret'] ? 'new-password' : 'off' }}"
-                                class="w-full rounded-lg border-gray-300"
-                            >
-                        @endif
-                        @if ($item['help'])
-                            <p class="mt-1 text-xs text-gray-500">{{ $item['help'] }}</p>
-                        @endif
-                        @error('values.'.$item['field'])
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,34rem),1fr));gap:1.5rem;align-items:start">
+            @foreach (collect($fields)->groupBy('group') as $group => $items)
+                <x-filament::section :heading="$group">
+                    <div style="display:flex;flex-direction:column;gap:1.25rem">
+                        @foreach ($items as $item)
+                            @php($id = 'setting-'.$item['field'])
+                            <div class="fi-fo-field">
+                                <div class="fi-fo-field-label-col">
+                                    <div class="fi-fo-field-label-ctn">
+                                        <label for="{{ $id }}" class="fi-fo-field-label">
+                                            <span class="fi-fo-field-label-content">{{ $item['label'] }}</span>
+                                        </label>
+                                        @if ($item['secret'] && $item['is_set'])
+                                            <x-filament::badge color="success" size="sm">Imewekwa</x-filament::badge>
+                                        @elseif ($item['secret'])
+                                            <x-filament::badge color="gray" size="sm">Haijawekwa</x-filament::badge>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="fi-fo-field-content-col">
+                                    @if ($item['options'])
+                                        <x-filament::input.wrapper :valid="! $errors->has('values.'.$item['field'])">
+                                            <x-filament::input.select id="{{ $id }}" wire:model="values.{{ $item['field'] }}">
+                                                <option value="">—</option>
+                                                @foreach ($item['options'] as $option)
+                                                    <option value="{{ $option }}">{{ $option }}</option>
+                                                @endforeach
+                                            </x-filament::input.select>
+                                        </x-filament::input.wrapper>
+                                    @elseif ($item['type'] === 'json')
+                                        <x-filament::input.wrapper :valid="! $errors->has('values.'.$item['field'])">
+                                            <textarea
+                                                id="{{ $id }}"
+                                                rows="3"
+                                                wire:model="values.{{ $item['field'] }}"
+                                                class="fi-input"
+                                                style="font-family:ui-monospace,monospace;font-size:.875rem;resize:vertical"
+                                            ></textarea>
+                                        </x-filament::input.wrapper>
+                                    @else
+                                        <x-filament::input.wrapper :valid="! $errors->has('values.'.$item['field'])">
+                                            <x-filament::input
+                                                id="{{ $id }}"
+                                                type="{{ $item['secret'] ? 'password' : 'text' }}"
+                                                wire:model="values.{{ $item['field'] }}"
+                                                autocomplete="{{ $item['secret'] ? 'new-password' : 'off' }}"
+                                                :placeholder="$item['secret'] && $item['is_set'] ? 'Acha tupu usibadilishe' : null"
+                                            />
+                                        </x-filament::input.wrapper>
+                                    @endif
+
+                                    @if ($item['help'])
+                                        <p style="font-size:.8125rem;line-height:1.4;opacity:.7">{{ $item['help'] }}</p>
+                                    @endif
+
+                                    @error('values.'.$item['field'])
+                                        <p class="fi-fo-field-wrp-error-message">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
-            </section>
-        @endforeach
+                </x-filament::section>
+            @endforeach
+        </div>
 
-        <label class="flex items-start gap-2 text-sm">
-            <input type="checkbox" wire:model="confirmHighImpact" class="mt-1">
-            <span>Ninathibitisha mabadiliko ya anwani ya tovuti na mipangilio mingine yenye athari kubwa.</span>
-        </label>
-        @error('confirmHighImpact')
-            <p class="text-sm text-red-600">{{ $message }}</p>
-        @enderror
+        <x-filament::section>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem">
+                <label style="display:flex;align-items:flex-start;gap:.625rem;font-size:.875rem;max-width:44rem">
+                    <x-filament::input.checkbox wire:model="confirmHighImpact" style="margin-top:.15rem" />
+                    <span>Ninathibitisha mabadiliko ya anwani ya tovuti na mipangilio mingine yenye athari kubwa.</span>
+                </label>
 
-        <x-filament::button type="submit">
-            Hifadhi
-        </x-filament::button>
+                <x-filament::button type="submit" icon="heroicon-o-check">
+                    Hifadhi
+                </x-filament::button>
+            </div>
+            @error('confirmHighImpact')
+                <p class="fi-fo-field-wrp-error-message" style="margin-top:.5rem">{{ $message }}</p>
+            @enderror
+        </x-filament::section>
     </form>
 </x-filament-panels::page>

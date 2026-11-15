@@ -246,7 +246,7 @@ class PhaseOneTest extends TestCase
         $page->assertHasNoErrors();
 
         $this->assertSame($secret, app(SettingsManager::class)->get('sms.webhook_secret'));
-        $this->assertContains('SMS webhook secret rotated', $seen);
+        $this->assertContains('Siri ya webhook ya SMS imebadilishwa', $seen);
         $this->assertStringNotContainsString($secret, implode("\n", $seen));
 
         $raw = DB::table('config_settings')

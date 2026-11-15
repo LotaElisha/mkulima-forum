@@ -59,11 +59,11 @@ final class SettingsSchema
     public static function groupLabel(string $group): string
     {
         return match ($group) {
-            self::GROUP_GENERAL => 'General',
-            self::GROUP_MAIL => 'Email / SMTP',
+            self::GROUP_GENERAL => 'Jumla',
+            self::GROUP_MAIL => 'Barua pepe (SMTP)',
             self::GROUP_SMS => 'SMS',
             self::GROUP_IVR => 'IVR',
-            self::GROUP_LINKS => 'Short links',
+            self::GROUP_LINKS => 'Viungo vifupi',
             default => ucfirst($group),
         };
     }
@@ -76,7 +76,7 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'app.name',
                 group: self::GROUP_GENERAL,
-                label: 'Application name',
+                label: 'Jina la programu',
                 configPath: 'app.name',
                 envKey: 'APP_NAME',
                 rules: ['required', 'string', 'max:80'],
@@ -84,32 +84,32 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'app.url',
                 group: self::GROUP_GENERAL,
-                label: 'Application URL',
+                label: 'Anwani ya tovuti (URL)',
                 configPath: 'app.url',
                 envKey: 'APP_URL',
                 rules: ['required', 'url', 'max:255'],
-                help: 'Every verification link, password-reset link and emailed URL is built from this. '
-                    .'A wrong value sends every user to the wrong server.',
+                help: 'Kila kiungo cha uthibitisho, cha kubadilisha nenosiri na kila URL kwenye barua pepe hujengwa kutoka hapa. '
+                    .'Thamani isiyo sahihi inapeleka kila mtumiaji kwenye seva isiyo sahihi.',
                 superadminOnly: true,
                 highImpact: true,
             ),
             new ManagedSetting(
                 key: 'app.support_email',
                 group: self::GROUP_GENERAL,
-                label: 'Support email',
+                label: 'Barua pepe ya msaada',
                 rules: ['nullable', 'email', 'max:255'],
-                help: 'Shown on public pages as the contact address.',
+                help: 'Inaonyeshwa kwenye kurasa za umma kama anwani ya mawasiliano.',
             ),
             new ManagedSetting(
                 key: 'app.support_phone',
                 group: self::GROUP_GENERAL,
-                label: 'Support phone',
+                label: 'Simu ya msaada',
                 rules: ['nullable', 'string', 'max:32'],
             ),
             new ManagedSetting(
                 key: 'app.timezone',
                 group: self::GROUP_GENERAL,
-                label: 'Default timezone',
+                label: 'Saa za eneo (chaguo-msingi)',
                 configPath: 'app.timezone',
                 envKey: 'APP_TIMEZONE',
                 rules: ['required', 'timezone'],
@@ -118,29 +118,29 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'app.locale',
                 group: self::GROUP_GENERAL,
-                label: 'Default language',
+                label: 'Lugha ya chaguo-msingi',
                 configPath: 'app.locale',
                 envKey: 'APP_LOCALE',
                 rules: ['required', 'string', 'in:sw,en'],
                 options: ['sw', 'en'],
-                help: 'Language used for system emails and SMS when a user has no preference.',
+                help: 'Lugha ya barua pepe na SMS za mfumo pale mtumiaji hajachagua lugha.',
             ),
 
             // ── Mail ──────────────────────────────────────────────────
             new ManagedSetting(
                 key: 'mail.mailer',
                 group: self::GROUP_MAIL,
-                label: 'Mail driver',
+                label: 'Njia ya kutuma barua pepe',
                 configPath: 'mail.default',
                 envKey: 'MAIL_MAILER',
                 rules: ['required', 'string', 'in:smtp,log,array,sendmail'],
                 options: ['smtp', 'log', 'sendmail'],
-                help: '"log" writes mail to the application log instead of sending it. Never use it in production.',
+                help: '"log" huandika barua kwenye kumbukumbu za mfumo badala ya kuzituma. Usiitumie kwenye mfumo halisi.',
             ),
             new ManagedSetting(
                 key: 'mail.smtp_host',
                 group: self::GROUP_MAIL,
-                label: 'SMTP host',
+                label: 'Seva ya SMTP',
                 configPath: 'mail.mailers.smtp.host',
                 envKey: 'MAIL_HOST',
                 rules: ['nullable', 'string', 'max:255'],
@@ -148,17 +148,17 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'mail.smtp_port',
                 group: self::GROUP_MAIL,
-                label: 'SMTP port',
+                label: 'Port ya SMTP',
                 type: 'integer',
                 configPath: 'mail.mailers.smtp.port',
                 envKey: 'MAIL_PORT',
                 rules: ['nullable', 'integer', 'between:1,65535'],
-                help: '587 for STARTTLS, 465 for implicit TLS.',
+                help: '587 kwa STARTTLS, 465 kwa TLS ya moja kwa moja.',
             ),
             new ManagedSetting(
                 key: 'mail.smtp_username',
                 group: self::GROUP_MAIL,
-                label: 'SMTP username',
+                label: 'Jina la mtumiaji la SMTP',
                 configPath: 'mail.mailers.smtp.username',
                 envKey: 'MAIL_USERNAME',
                 rules: ['nullable', 'string', 'max:255'],
@@ -166,19 +166,19 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'mail.smtp_password',
                 group: self::GROUP_MAIL,
-                label: 'SMTP password',
+                label: 'Nenosiri la SMTP',
                 type: 'secret',
                 configPath: 'mail.mailers.smtp.password',
                 envKey: 'MAIL_PASSWORD',
                 rules: ['nullable', 'string', 'max:512'],
-                help: 'Gmail requires an app password, not the account password. Stored encrypted and never shown again.',
+                help: 'Gmail inahitaji nenosiri la programu (app password), si nenosiri la akaunti. Linahifadhiwa likiwa limesimbwa na halionyeshwi tena.',
                 secret: true,
                 superadminOnly: true,
             ),
             new ManagedSetting(
                 key: 'mail.smtp_encryption',
                 group: self::GROUP_MAIL,
-                label: 'Encryption',
+                label: 'Usimbaji (encryption)',
                 configPath: 'mail.mailers.smtp.encryption',
                 envKey: 'MAIL_ENCRYPTION',
                 rules: ['nullable', 'string', 'in:tls,ssl,none'],
@@ -187,7 +187,7 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'mail.from_address',
                 group: self::GROUP_MAIL,
-                label: 'From address',
+                label: 'Anwani ya mtumaji',
                 configPath: 'mail.from.address',
                 envKey: 'MAIL_FROM_ADDRESS',
                 rules: ['nullable', 'email', 'max:255'],
@@ -195,7 +195,7 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'mail.from_name',
                 group: self::GROUP_MAIL,
-                label: 'From name',
+                label: 'Jina la mtumaji',
                 configPath: 'mail.from.name',
                 envKey: 'MAIL_FROM_NAME',
                 rules: ['nullable', 'string', 'max:120'],
@@ -205,26 +205,26 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'sms.provider',
                 group: self::GROUP_SMS,
-                label: 'SMS provider',
+                label: 'Mtoa huduma wa SMS',
                 configPath: 'services.sms.provider',
                 envKey: 'SMS_PROVIDER',
                 rules: ['required', 'string', 'in:africastalking,twilio,log'],
                 options: ['africastalking', 'twilio', 'log'],
-                help: '"log" writes messages to the application log instead of sending them.',
+                help: '"log" huandika ujumbe kwenye kumbukumbu za mfumo badala ya kuutuma.',
             ),
             new ManagedSetting(
                 key: 'sms.sender_id',
                 group: self::GROUP_SMS,
-                label: 'Sender ID',
+                label: 'Jina la mtumaji wa SMS (Sender ID)',
                 configPath: 'services.sms.sender_id',
                 envKey: 'SMS_SENDER_ID',
                 rules: ['nullable', 'string', 'max:11'],
-                help: 'Must be registered with TCRA before it will deliver in Tanzania.',
+                help: 'Lazima lisajiliwe TCRA kabla ujumbe haujafika Tanzania.',
             ),
             new ManagedSetting(
                 key: 'sms.africastalking_username',
                 group: self::GROUP_SMS,
-                label: "Africa's Talking username",
+                label: "Jina la mtumiaji la Africa's Talking",
                 configPath: 'services.africastalking.username',
                 envKey: 'AFRICASTALKING_USERNAME',
                 rules: ['nullable', 'string', 'max:120'],
@@ -232,7 +232,7 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'sms.africastalking_api_key',
                 group: self::GROUP_SMS,
-                label: "Africa's Talking API key",
+                label: "API key ya Africa's Talking",
                 type: 'secret',
                 configPath: 'services.africastalking.api_key',
                 envKey: 'AFRICASTALKING_API_KEY',
@@ -251,7 +251,7 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'sms.twilio_token',
                 group: self::GROUP_SMS,
-                label: 'Twilio auth token',
+                label: 'Auth token ya Twilio',
                 type: 'secret',
                 configPath: 'services.twilio.token',
                 envKey: 'TWILIO_TOKEN',
@@ -262,7 +262,7 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'sms.twilio_from',
                 group: self::GROUP_SMS,
-                label: 'Twilio from number',
+                label: 'Namba ya kutuma ya Twilio',
                 configPath: 'services.twilio.from',
                 envKey: 'TWILIO_FROM',
                 rules: ['nullable', 'string', 'max:32'],
@@ -270,13 +270,13 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'sms.webhook_secret',
                 group: self::GROUP_SMS,
-                label: 'SMS webhook secret',
+                label: 'Siri ya webhook ya SMS',
                 type: 'secret',
                 configPath: 'services.sms.webhook_secret',
                 envKey: 'SMS_WEBHOOK_SECRET',
                 rules: ['nullable', 'string', 'min:16', 'max:512'],
-                help: 'Set the same value at the provider, sent as the X-Webhook-Signature header. '
-                    .'Without it, /api/sms/* refuses all traffic in production.',
+                help: 'Weka thamani hiyo hiyo kwa mtoa huduma; inatumwa kama kichwa cha X-Webhook-Signature. '
+                    .'Bila hiyo, /api/sms/* inakataa maombi yote kwenye mfumo halisi.',
                 secret: true,
                 superadminOnly: true,
             ),
@@ -285,12 +285,12 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'ivr.webhook_secret',
                 group: self::GROUP_IVR,
-                label: 'IVR webhook secret',
+                label: 'Siri ya webhook ya IVR',
                 type: 'secret',
                 configPath: 'services.ivr.webhook_secret',
                 envKey: 'IVR_WEBHOOK_SECRET',
                 rules: ['nullable', 'string', 'min:16', 'max:512'],
-                help: 'Without it, /api/ivr/* refuses all traffic in production.',
+                help: 'Bila hiyo, /api/ivr/* inakataa maombi yote kwenye mfumo halisi.',
                 secret: true,
                 superadminOnly: true,
             ),
@@ -299,14 +299,14 @@ final class SettingsSchema
             new ManagedSetting(
                 key: 'links.allowed_hosts',
                 group: self::GROUP_LINKS,
-                label: 'Allowed redirect hosts',
+                label: 'Tovuti zinazoruhusiwa kuelekezwa',
                 type: 'json',
                 configPath: 'services.short_links.allowed_hosts',
                 envKey: 'SHORT_LINK_ALLOWED_HOSTS',
                 rules: ['array'],
-                help: 'Hosts a short link may redirect straight to. Subdomains are included. '
-                    .'Anything else shows an interstitial naming the destination, so this domain '
-                    .'cannot be borrowed for a phishing redirect.',
+                help: 'Tovuti ambazo kiungo kifupi kinaweza kuelekeza moja kwa moja, pamoja na subdomain zake. '
+                    .'Nyingine zote zinaonyesha ukurasa wa kati unaotaja mahali kiungo kinaenda, ili '
+                    .'tovuti hii isitumike kwa utapeli (phishing).',
             ),
         ];
     }
